@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
-import { desc, eq, sql, isNull } from 'drizzle-orm';
+import { desc, eq, inArray, isNull, sql } from 'drizzle-orm';
 import { getDb } from '@dexter/core/db/client';
 import { webSessions, webMessages } from '@dexter/core/db/schema/web-sessions';
 
@@ -34,37 +34,57 @@ export async function GET(_request: NextRequest): Promise<Response> {
     const jar = await cookies();
     const currentId = jar.get('dexter_session')?.value;
 
-    // Pull last 50 sessions plus the first user query as a preview title.
-    const rows = await db
-      .select({
-        id: webSessions.id,
-        updatedAt: webSessions.updatedAt,
-        firstQuery: sql<string | null>`(
-          SELECT ${webMessages.query}
-          FROM ${webMessages}
-          WHERE ${webMessages.sessionId} = ${webSessions.id}
-          ORDER BY ${webMessages.turnIndex} ASC
-          LIMIT 1
-        )`,
-        turnCount: sql<number>`(
-          SELECT COUNT(*)::int
-          FROM ${webMessages}
-          WHERE ${webMessages.sessionId} = ${webSessions.id}
-        )`,
-      })
+    // 1) Pull last 50 sessions.
+    const sessionRows = await db
+      .select({ id: webSessions.id, updatedAt: webSessions.updatedAt })
       .from(webSessions)
       .where(isNull(webSessions.userId))
       .orderBy(desc(webSessions.updatedAt))
       .limit(50);
 
-    summaries = rows.map((row) => {
-      const raw = (row.firstQuery ?? '').trim();
+    const sessionIds = sessionRows.map((r) => r.id);
+
+    // 2) For those sessions, pull turn counts and the first-turn query in
+    //    one query each. (Two queries is simpler and faster than a
+    //    correlated subquery; drizzle's `sql` template does not always
+    //    qualify outer columns inside subqueries.)
+    const statsRows = sessionIds.length
+      ? await db
+          .select({
+            sessionId: webMessages.sessionId,
+            turnCount: sql<number>`COUNT(*)::int`.as('turn_count'),
+          })
+          .from(webMessages)
+          .where(inArray(webMessages.sessionId, sessionIds))
+          .groupBy(webMessages.sessionId)
+      : [];
+
+    const firstTurnRows = sessionIds.length
+      ? await db
+          .select({
+            sessionId: webMessages.sessionId,
+            query: webMessages.query,
+          })
+          .from(webMessages)
+          .where(
+            sql`${webMessages.sessionId} IN (${sql.join(
+              sessionIds.map((id) => sql`${id}`),
+              sql`, `,
+            )}) AND ${webMessages.turnIndex} = 0`,
+          )
+      : [];
+
+    const statsBySession = new Map(statsRows.map((s) => [s.sessionId, s.turnCount]));
+    const firstQueryBySession = new Map(firstTurnRows.map((f) => [f.sessionId, f.query]));
+
+    summaries = sessionRows.map((row) => {
+      const raw = (firstQueryBySession.get(row.id) ?? '').trim();
       const title = raw.length > 0 ? clip(raw, 60) : 'New conversation';
       return {
         sessionId: row.id,
         title,
         preview: clip(raw, 120),
-        turnCount: row.turnCount,
+        turnCount: statsBySession.get(row.id) ?? 0,
         updatedAt: row.updatedAt.getTime(),
         isCurrent: row.id === currentId,
       };
