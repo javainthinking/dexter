@@ -3,48 +3,26 @@
 import * as React from 'react';
 import { ArrowRight, TrendingUp, Building2, BarChart3, Newspaper } from 'lucide-react';
 import { cn } from '../../lib/utils';
-
-interface Prompt {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  prompt: string;
-}
-
-const PROMPTS: Prompt[] = [
-  {
-    icon: TrendingUp,
-    label: 'Quick DCF',
-    prompt: 'Run a quick DCF on NVDA using the latest 10-Q. Show me your assumptions.',
-  },
-  {
-    icon: Building2,
-    label: 'Comparable',
-    prompt: 'Compare AAPL and MSFT cash flow trends over the last 5 years.',
-  },
-  {
-    icon: BarChart3,
-    label: 'Macro',
-    prompt: 'What does the latest CPI print mean for the 10-year Treasury yield?',
-  },
-  {
-    icon: Newspaper,
-    label: 'Thesis',
-    prompt: 'Summarize the current bull and bear thesis for TSMC.',
-  },
-];
+import { useDictionary } from '../i18n/dictionary-provider';
 
 export function EmptyState({ onPick }: { onPick: (prompt: string) => void }) {
+  const dict = useDictionary();
+  const PROMPTS = [
+    { icon: TrendingUp, ...dict.chat.empty.prompts.quickDcf },
+    { icon: Building2, ...dict.chat.empty.prompts.comparable },
+    { icon: BarChart3, ...dict.chat.empty.prompts.macro },
+    { icon: Newspaper, ...dict.chat.empty.prompts.thesis },
+  ];
   return (
     <div className="mx-auto flex max-w-3xl flex-col items-center px-4 py-12 text-center sm:py-20">
       <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-subtle">
-        Workbench · Ready
+        {dict.chat.empty.eyebrow}
       </p>
       <h1 className="mt-4 font-serif text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl">
-        What would you like to research?
+        {dict.chat.empty.title}
       </h1>
       <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-        Ask anything you would hand to a junior analyst. Dexter plans, fetches
-        live data, and shows its work.
+        {dict.chat.empty.subtitle}
       </p>
 
       <div className="mt-8 grid w-full gap-2.5 sm:mt-10 sm:grid-cols-2">

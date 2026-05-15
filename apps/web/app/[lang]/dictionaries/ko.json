@@ -1,0 +1,126 @@
+{
+  "common": {
+    "appName": "Dexter",
+    "openGraphTitle": "Dexter — 금융 리서치를 위한 자율 AI 에이전트",
+    "openGraphDescription": "Dexter는 복잡한 질문을 분해하고, 실시간 시장 데이터를 가져오며, 스스로 검증해 출처가 명확한 답변을 만들어 냅니다."
+  },
+  "landing": {
+    "badge": "자율 리서치 에이전트",
+    "version": "v2026.5",
+    "hero": {
+      "title": "깊이 있는 금융 리서치,",
+      "titleEmphasis": "필요할 때 바로.",
+      "subtitle": "Dexter는 복잡한 질문을 분해하고, 실시간 시장 데이터를 조회하며, 자기 결론을 검증해 출처가 명확한 답을 돌려줍니다. 동일한 에이전트 코어가 터미널 CLI, WhatsApp, 그리고 웹을 함께 구동합니다 — 리서치하는 모든 곳에서.",
+      "primaryCta": "워크벤치 열기",
+      "secondaryCta": "GitHub에서 보기",
+      "tagline": "실시간 · 스트리밍 · 메모리 연동"
+    },
+    "features": {
+      "reasoning": {
+        "eyebrow": "01 — 추론 루프",
+        "title": "계획, 실행, 자기 검증",
+        "body": "Dexter는 질문을 리서치 플랜으로 분해하고, 도구를 병렬로 실행한 뒤, 실제 데이터에 근거가 잡힐 때까지 자신의 답을 다시 점검합니다."
+      },
+      "liveData": {
+        "eyebrow": "02 — 실시간 데이터",
+        "title": "시장과 공시에 직접 접근",
+        "body": "Financial Datasets를 통한 실시간 시세·재무지표·비율·뉴스에 더해, 웹 검색과 문서 도구까지 — 묵은 스냅숏을 쓰지 않습니다."
+      },
+      "memory": {
+        "eyebrow": "03 — 영구 메모리",
+        "title": "당신의 투자 논리를 기억",
+        "body": "장기 메모리는 MemoryLake에 보관됩니다. Dexter는 매 턴마다 과거 포지션, 선호, 규칙을 다시 끌어와 분석이 사용자에게 맞춰지도록 유지합니다."
+      }
+    },
+    "samples": {
+      "eyebrow": "써 보기",
+      "title": "주니어 애널리스트에게 시킬 만한 일을 그대로 물어보세요.",
+      "quickDcf": "최근 10-Q를 사용해 NVDA의 간단한 DCF를 돌려 줘.",
+      "comparable": "지난 5년 AAPL과 MSFT의 현금흐름 추세를 비교해 줘.",
+      "macro": "최근 CPI 발표가 10년물 미국 국채 금리에 의미하는 바는?",
+      "thesis": "TSMC에 대한 현재의 강세·약세 논리를 요약해 줘."
+    },
+    "footer": {
+      "disclaimer": "투자 자문이 아닙니다"
+    }
+  },
+  "chat": {
+    "header": {
+      "workbench": "워크벤치",
+      "ready": "준비됨",
+      "turnsOne": "이 대화에서 {count}턴",
+      "turnsOther": "이 대화에서 {count}턴",
+      "reset": "초기화",
+      "openSidebar": "사이드바 열기",
+      "newConversation": "새 대화"
+    },
+    "composer": {
+      "placeholder": "Dexter에게 질문…",
+      "sendHint": "전송",
+      "newlineHint": "줄바꿈",
+      "stop": "중지",
+      "send": "보내기",
+      "footer": "DEXTER · 리서치 목적 전용 — 투자 자문이 아닙니다."
+    },
+    "sidebar": {
+      "close": "사이드바 닫기",
+      "newConversation": "새 대화",
+      "recent": "최근",
+      "empty": "아직 대화 기록이 없습니다.",
+      "workbench": "워크벤치",
+      "turnOne": "턴",
+      "turnOther": "턴",
+      "justNow": "방금"
+    },
+    "empty": {
+      "eyebrow": "워크벤치 · 준비됨",
+      "title": "어떤 주제를 리서치할까요?",
+      "subtitle": "주니어 애널리스트에게 맡길 만한 일을 그대로 물어보세요. Dexter는 계획을 세우고, 실시간 데이터를 가져오고, 과정을 그대로 보여 줍니다.",
+      "prompts": {
+        "quickDcf": {
+          "label": "간단 DCF",
+          "prompt": "최근 10-Q를 사용해 NVDA의 간단한 DCF를 돌려 줘. 가정도 같이 보여 줘."
+        },
+        "comparable": {
+          "label": "비교",
+          "prompt": "지난 5년 AAPL과 MSFT의 현금흐름 추세를 비교해 줘."
+        },
+        "macro": {
+          "label": "매크로",
+          "prompt": "최근 CPI 발표가 10년물 미국 국채 금리에 의미하는 바는?"
+        },
+        "thesis": {
+          "label": "투자 논리",
+          "prompt": "TSMC에 대한 현재의 강세·약세 논리를 요약해 줘."
+        }
+      }
+    },
+    "message": {
+      "you": "사용자",
+      "dexter": "Dexter",
+      "status": {
+        "thinking": "생각 중",
+        "writingAnswer": "답변 작성 중",
+        "callingTool": "도구 호출",
+        "planningTool": "도구 호출 준비",
+        "runningTool": "{tool} 실행 중",
+        "stopped": "중지됨",
+        "error": "오류"
+      },
+      "errorTitle": "오류"
+    },
+    "tool": {
+      "running": "실행 중",
+      "arguments": "인수",
+      "result": "결과",
+      "errorLabel": "오류"
+    }
+  },
+  "theme": {
+    "switchToLight": "라이트 모드로 전환",
+    "switchToDark": "다크 모드로 전환"
+  },
+  "language": {
+    "label": "언어"
+  }
+}

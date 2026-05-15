@@ -1,0 +1,126 @@
+{
+  "common": {
+    "appName": "Dexter",
+    "openGraphTitle": "Dexter — autonomous AI agent for financial research",
+    "openGraphDescription": "Dexter decomposes complex questions, fetches live market data, validates its own work, and produces citation-backed answers."
+  },
+  "landing": {
+    "badge": "Autonomous research agent",
+    "version": "v2026.5",
+    "hero": {
+      "title": "Deep financial research,",
+      "titleEmphasis": "on demand.",
+      "subtitle": "Dexter decomposes complex questions, fetches live market data, validates its own work, and produces citation-backed answers. The same agent core powers the terminal CLI, WhatsApp, and the web — wherever you do research.",
+      "primaryCta": "Open the workbench",
+      "secondaryCta": "View on GitHub",
+      "tagline": "Live · Streaming · Memory-grounded"
+    },
+    "features": {
+      "reasoning": {
+        "eyebrow": "01 — Reasoning loop",
+        "title": "Plans, executes, self-validates",
+        "body": "Dexter breaks down a question into a research plan, runs tools concurrently, and revisits its own answer until it is grounded in real data."
+      },
+      "liveData": {
+        "eyebrow": "02 — Live data",
+        "title": "Direct market & filings access",
+        "body": "Real-time prices, fundamentals, ratios and news through Financial Datasets, plus web search and document tooling — no stale snapshots."
+      },
+      "memory": {
+        "eyebrow": "03 — Persistent memory",
+        "title": "Remembers your thesis",
+        "body": "Long-term memory is held in MemoryLake. Dexter recalls your prior positions, preferences, and rules every turn so the analysis stays personal."
+      }
+    },
+    "samples": {
+      "eyebrow": "Try it",
+      "title": "Ask anything you would ask a junior analyst.",
+      "quickDcf": "Run a quick DCF on NVDA using the latest 10-Q.",
+      "comparable": "Compare AAPL and MSFT cash flow trends over the last 5 years.",
+      "macro": "What does the latest CPI print mean for the 10Y?",
+      "thesis": "Summarize the bull and bear thesis for TSMC right now."
+    },
+    "footer": {
+      "disclaimer": "Not investment advice"
+    }
+  },
+  "chat": {
+    "header": {
+      "workbench": "Workbench",
+      "ready": "Ready",
+      "turnsOne": "{count} turn in this conversation",
+      "turnsOther": "{count} turns in this conversation",
+      "reset": "Reset",
+      "openSidebar": "Open sidebar",
+      "newConversation": "New conversation"
+    },
+    "composer": {
+      "placeholder": "Ask Dexter…",
+      "sendHint": "send",
+      "newlineHint": "newline",
+      "stop": "Stop",
+      "send": "Send",
+      "footer": "DEXTER · For research only — not investment advice."
+    },
+    "sidebar": {
+      "close": "Close sidebar",
+      "newConversation": "New conversation",
+      "recent": "Recent",
+      "empty": "No prior conversations yet.",
+      "workbench": "Workbench",
+      "turnOne": "turn",
+      "turnOther": "turns",
+      "justNow": "just now"
+    },
+    "empty": {
+      "eyebrow": "Workbench · Ready",
+      "title": "What would you like to research?",
+      "subtitle": "Ask anything you would hand to a junior analyst. Dexter plans, fetches live data, and shows its work.",
+      "prompts": {
+        "quickDcf": {
+          "label": "Quick DCF",
+          "prompt": "Run a quick DCF on NVDA using the latest 10-Q. Show me your assumptions."
+        },
+        "comparable": {
+          "label": "Comparable",
+          "prompt": "Compare AAPL and MSFT cash flow trends over the last 5 years."
+        },
+        "macro": {
+          "label": "Macro",
+          "prompt": "What does the latest CPI print mean for the 10-year Treasury yield?"
+        },
+        "thesis": {
+          "label": "Thesis",
+          "prompt": "Summarize the current bull and bear thesis for TSMC."
+        }
+      }
+    },
+    "message": {
+      "you": "You",
+      "dexter": "Dexter",
+      "status": {
+        "thinking": "thinking",
+        "writingAnswer": "writing answer",
+        "callingTool": "calling tool",
+        "planningTool": "planning tool call",
+        "runningTool": "running {tool}",
+        "stopped": "stopped",
+        "error": "error"
+      },
+      "errorTitle": "Error"
+    },
+    "tool": {
+      "running": "running",
+      "arguments": "arguments",
+      "result": "result",
+      "errorLabel": "error"
+    }
+  },
+  "theme": {
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode"
+  },
+  "language": {
+    "label": "Language"
+  }
+}

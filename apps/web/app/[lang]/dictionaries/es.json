@@ -1,0 +1,126 @@
+{
+  "common": {
+    "appName": "Dexter",
+    "openGraphTitle": "Dexter — agente de IA autónomo para análisis financiero",
+    "openGraphDescription": "Dexter descompone preguntas complejas, consulta datos de mercado en vivo, valida su propio trabajo y entrega respuestas con fuentes."
+  },
+  "landing": {
+    "badge": "Agente de investigación autónomo",
+    "version": "v2026.5",
+    "hero": {
+      "title": "Investigación financiera profunda,",
+      "titleEmphasis": "cuando la necesites.",
+      "subtitle": "Dexter descompone preguntas complejas, consulta datos de mercado en vivo, valida su propio trabajo y entrega respuestas con fuentes. El mismo núcleo de agente alimenta la CLI, WhatsApp y la web — dondequiera que investigues.",
+      "primaryCta": "Abrir el escritorio",
+      "secondaryCta": "Ver en GitHub",
+      "tagline": "En vivo · Streaming · Con memoria"
+    },
+    "features": {
+      "reasoning": {
+        "eyebrow": "01 — Bucle de razonamiento",
+        "title": "Planifica, ejecuta y se autovalida",
+        "body": "Dexter descompone una pregunta en un plan de investigación, ejecuta herramientas en paralelo y revisa su propia respuesta hasta apoyarla en datos reales."
+      },
+      "liveData": {
+        "eyebrow": "02 — Datos en vivo",
+        "title": "Acceso directo al mercado y a los informes",
+        "body": "Precios en tiempo real, fundamentales, ratios y noticias vía Financial Datasets, más búsqueda web y herramientas documentales — sin instantáneas obsoletas."
+      },
+      "memory": {
+        "eyebrow": "03 — Memoria persistente",
+        "title": "Recuerda tu tesis",
+        "body": "La memoria a largo plazo vive en MemoryLake. Dexter recupera tus posiciones, preferencias y reglas en cada turno para que el análisis siga siendo tuyo."
+      }
+    },
+    "samples": {
+      "eyebrow": "Pruébalo",
+      "title": "Pide cualquier cosa que le pedirías a un analista junior.",
+      "quickDcf": "Calcula un DCF rápido para NVDA usando el último 10-Q.",
+      "comparable": "Compara las tendencias de flujo de caja de AAPL y MSFT en los últimos 5 años.",
+      "macro": "¿Qué implica la última publicación del CPI para el bono a 10 años?",
+      "thesis": "Resume la tesis alcista y bajista actual sobre TSMC."
+    },
+    "footer": {
+      "disclaimer": "No constituye asesoramiento de inversión"
+    }
+  },
+  "chat": {
+    "header": {
+      "workbench": "Escritorio",
+      "ready": "Listo",
+      "turnsOne": "{count} turno en esta conversación",
+      "turnsOther": "{count} turnos en esta conversación",
+      "reset": "Reiniciar",
+      "openSidebar": "Abrir barra lateral",
+      "newConversation": "Nueva conversación"
+    },
+    "composer": {
+      "placeholder": "Pregúntale a Dexter…",
+      "sendHint": "enviar",
+      "newlineHint": "salto de línea",
+      "stop": "Detener",
+      "send": "Enviar",
+      "footer": "DEXTER · Solo para investigación — no constituye asesoramiento de inversión."
+    },
+    "sidebar": {
+      "close": "Cerrar barra lateral",
+      "newConversation": "Nueva conversación",
+      "recent": "Recientes",
+      "empty": "Aún no hay conversaciones anteriores.",
+      "workbench": "Escritorio",
+      "turnOne": "turno",
+      "turnOther": "turnos",
+      "justNow": "hace un momento"
+    },
+    "empty": {
+      "eyebrow": "Escritorio · Listo",
+      "title": "¿Qué quieres investigar?",
+      "subtitle": "Pide lo que le pasarías a un analista junior. Dexter planifica, busca datos en vivo y muestra su trabajo.",
+      "prompts": {
+        "quickDcf": {
+          "label": "DCF rápido",
+          "prompt": "Calcula un DCF rápido para NVDA usando el último 10-Q. Muéstrame tus supuestos."
+        },
+        "comparable": {
+          "label": "Comparable",
+          "prompt": "Compara las tendencias de flujo de caja de AAPL y MSFT en los últimos 5 años."
+        },
+        "macro": {
+          "label": "Macro",
+          "prompt": "¿Qué implica la última publicación del CPI para el rendimiento del Treasury a 10 años?"
+        },
+        "thesis": {
+          "label": "Tesis",
+          "prompt": "Resume la tesis alcista y bajista actual sobre TSMC."
+        }
+      }
+    },
+    "message": {
+      "you": "Tú",
+      "dexter": "Dexter",
+      "status": {
+        "thinking": "pensando",
+        "writingAnswer": "redactando respuesta",
+        "callingTool": "llamando a herramienta",
+        "planningTool": "planificando llamada a herramienta",
+        "runningTool": "ejecutando {tool}",
+        "stopped": "detenido",
+        "error": "error"
+      },
+      "errorTitle": "Error"
+    },
+    "tool": {
+      "running": "en curso",
+      "arguments": "argumentos",
+      "result": "resultado",
+      "errorLabel": "error"
+    }
+  },
+  "theme": {
+    "switchToLight": "Cambiar al modo claro",
+    "switchToDark": "Cambiar al modo oscuro"
+  },
+  "language": {
+    "label": "Idioma"
+  }
+}

@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from 'next';
+import type { Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { Inter, JetBrains_Mono, Source_Serif_4 } from 'next/font/google';
 import { Providers } from './providers';
@@ -23,13 +23,6 @@ const serifDisplay = Source_Serif_4({
   weight: ['400', '500', '600', '700'],
 });
 
-export const metadata: Metadata = {
-  title: 'Dexter — autonomous AI agent for financial research',
-  description:
-    'Dexter decomposes complex financial questions, fetches live market data, validates its own work, and produces data-backed answers.',
-  applicationName: 'Dexter',
-};
-
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#fafafa' },
@@ -39,6 +32,12 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+/**
+ * Root layout owns <html>/<body>, font CSS variables, and the theme
+ * provider. Locale-aware metadata + dictionary loading lives in the
+ * [lang] layout one level deeper, so the same html/body shell serves
+ * every language.
+ */
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html

@@ -1,0 +1,126 @@
+{
+  "common": {
+    "appName": "Dexter",
+    "openGraphTitle": "Dexter — 金融リサーチのための自律型AIエージェント",
+    "openGraphDescription": "Dexterは複雑な質問を分解し、ライブの市場データを取得し、自らの作業を検証して、出典付きの回答を生成します。"
+  },
+  "landing": {
+    "badge": "自律型リサーチエージェント",
+    "version": "v2026.5",
+    "hero": {
+      "title": "深いファイナンス・リサーチを、",
+      "titleEmphasis": "必要なときに。",
+      "subtitle": "Dexterは複雑な問いを分解し、リアルタイムの市場データを参照し、自らの結論を検証して、出典付きの回答を返します。同じエージェントコアがターミナルCLI、WhatsApp、そしてWebを支えます — 調査するすべての場所で。",
+      "primaryCta": "ワークベンチを開く",
+      "secondaryCta": "GitHubで見る",
+      "tagline": "ライブ · ストリーミング · メモリ連携"
+    },
+    "features": {
+      "reasoning": {
+        "eyebrow": "01 — 推論ループ",
+        "title": "計画・実行・自己検証",
+        "body": "Dexterは質問をリサーチプランに分解し、ツールを並行実行しながら、実データに裏付けられるまで自らの回答を見直します。"
+      },
+      "liveData": {
+        "eyebrow": "02 — ライブデータ",
+        "title": "市場データ・開示文書への直接アクセス",
+        "body": "Financial Datasetsを通じたリアルタイムの株価・ファンダメンタル・指標・ニュースに加え、Web検索とドキュメントツールも — 古いスナップショットには頼りません。"
+      },
+      "memory": {
+        "eyebrow": "03 — 永続メモリ",
+        "title": "あなたのテーゼを記憶",
+        "body": "長期メモリはMemoryLakeに保持されます。Dexterは過去のポジション・選好・ルールを毎ターン呼び戻し、分析をあなた仕様に保ちます。"
+      }
+    },
+    "samples": {
+      "eyebrow": "試してみる",
+      "title": "ジュニアアナリストに頼むつもりで、何でも聞いてください。",
+      "quickDcf": "最新の10-Qを使ってNVDAの簡易DCFを実行して。",
+      "comparable": "過去5年のAAPLとMSFTのキャッシュフロー推移を比較して。",
+      "macro": "直近のCPIは10年債利回りに何を意味する?",
+      "thesis": "TSMCの現在の強気・弱気シナリオを要約して。"
+    },
+    "footer": {
+      "disclaimer": "投資助言ではありません"
+    }
+  },
+  "chat": {
+    "header": {
+      "workbench": "ワークベンチ",
+      "ready": "準備完了",
+      "turnsOne": "この会話の{count}ターン目",
+      "turnsOther": "この会話で{count}ターン",
+      "reset": "リセット",
+      "openSidebar": "サイドバーを開く",
+      "newConversation": "新しい会話"
+    },
+    "composer": {
+      "placeholder": "Dexterに質問…",
+      "sendHint": "送信",
+      "newlineHint": "改行",
+      "stop": "停止",
+      "send": "送信",
+      "footer": "DEXTER · 調査目的限定 — 投資助言ではありません。"
+    },
+    "sidebar": {
+      "close": "サイドバーを閉じる",
+      "newConversation": "新しい会話",
+      "recent": "履歴",
+      "empty": "過去の会話はまだありません。",
+      "workbench": "ワークベンチ",
+      "turnOne": "ターン",
+      "turnOther": "ターン",
+      "justNow": "たった今"
+    },
+    "empty": {
+      "eyebrow": "ワークベンチ · 準備完了",
+      "title": "今日は何を調べますか?",
+      "subtitle": "ジュニアアナリストに頼むつもりで何でも聞いてください。Dexterは計画を立て、ライブデータを取りに行き、手の内も見せます。",
+      "prompts": {
+        "quickDcf": {
+          "label": "簡易DCF",
+          "prompt": "最新の10-Qを使ってNVDAの簡易DCFを実行して。前提条件も示して。"
+        },
+        "comparable": {
+          "label": "比較",
+          "prompt": "過去5年のAAPLとMSFTのキャッシュフロー推移を比較して。"
+        },
+        "macro": {
+          "label": "マクロ",
+          "prompt": "直近のCPIは10年米国債利回りに何を意味する?"
+        },
+        "thesis": {
+          "label": "シナリオ",
+          "prompt": "TSMCの現在の強気・弱気シナリオを要約して。"
+        }
+      }
+    },
+    "message": {
+      "you": "あなた",
+      "dexter": "Dexter",
+      "status": {
+        "thinking": "思考中",
+        "writingAnswer": "回答を作成中",
+        "callingTool": "ツール呼び出し",
+        "planningTool": "ツール呼び出しを準備中",
+        "runningTool": "{tool}を実行中",
+        "stopped": "停止しました",
+        "error": "エラー"
+      },
+      "errorTitle": "エラー"
+    },
+    "tool": {
+      "running": "実行中",
+      "arguments": "引数",
+      "result": "結果",
+      "errorLabel": "エラー"
+    }
+  },
+  "theme": {
+    "switchToLight": "ライトモードに切替",
+    "switchToDark": "ダークモードに切替"
+  },
+  "language": {
+    "label": "言語"
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "common": {
+    "appName": "Dexter",
+    "openGraphTitle": "Dexter — autonomer KI-Agent für Finanzanalyse",
+    "openGraphDescription": "Dexter zerlegt komplexe Fragestellungen, ruft Live-Marktdaten ab, validiert die eigene Arbeit und liefert quellenbelegte Antworten."
+  },
+  "landing": {
+    "badge": "Autonomer Research-Agent",
+    "version": "v2026.5",
+    "hero": {
+      "title": "Tiefgehende Finanzanalyse,",
+      "titleEmphasis": "auf Abruf.",
+      "subtitle": "Dexter zerlegt komplexe Fragen, ruft Marktdaten in Echtzeit ab, prüft die eigenen Schlüsse und liefert Antworten mit Quellenbelegen. Derselbe Agenten-Kern treibt die Terminal-CLI, WhatsApp und das Web — überall, wo Sie recherchieren.",
+      "primaryCta": "Arbeitsbereich öffnen",
+      "secondaryCta": "Auf GitHub ansehen",
+      "tagline": "Live · Streaming · Mit Gedächtnis"
+    },
+    "features": {
+      "reasoning": {
+        "eyebrow": "01 — Argumentationsschleife",
+        "title": "Plant, führt aus, validiert",
+        "body": "Dexter zerlegt eine Frage in einen Rechercheplan, führt Werkzeuge parallel aus und überarbeitet die eigene Antwort, bis sie auf belastbaren Daten beruht."
+      },
+      "liveData": {
+        "eyebrow": "02 — Live-Daten",
+        "title": "Direkter Markt- und Filings-Zugriff",
+        "body": "Echtzeitkurse, Fundamentaldaten, Kennzahlen und Nachrichten über Financial Datasets, plus Websuche und Dokumenten-Tools — keine veralteten Snapshots."
+      },
+      "memory": {
+        "eyebrow": "03 — Persistentes Gedächtnis",
+        "title": "Erinnert sich an Ihre These",
+        "body": "Das Langzeitgedächtnis liegt in MemoryLake. Dexter ruft frühere Positionen, Präferenzen und Regeln in jedem Schritt ab, damit die Analyse persönlich bleibt."
+      }
+    },
+    "samples": {
+      "eyebrow": "Ausprobieren",
+      "title": "Fragen Sie alles, was Sie einem Junior-Analysten geben würden.",
+      "quickDcf": "Mach eine schnelle DCF-Bewertung von NVDA auf Basis des letzten 10-Q.",
+      "comparable": "Vergleiche die Cashflow-Trends von AAPL und MSFT der letzten 5 Jahre.",
+      "macro": "Was bedeutet die aktuelle CPI-Veröffentlichung für die 10-jährigen Renditen?",
+      "thesis": "Fasse die aktuelle Bullen- und Bären-These zu TSMC zusammen."
+    },
+    "footer": {
+      "disclaimer": "Keine Anlageberatung"
+    }
+  },
+  "chat": {
+    "header": {
+      "workbench": "Arbeitsbereich",
+      "ready": "Bereit",
+      "turnsOne": "{count} Runde in dieser Unterhaltung",
+      "turnsOther": "{count} Runden in dieser Unterhaltung",
+      "reset": "Zurücksetzen",
+      "openSidebar": "Seitenleiste öffnen",
+      "newConversation": "Neue Unterhaltung"
+    },
+    "composer": {
+      "placeholder": "Frage an Dexter …",
+      "sendHint": "senden",
+      "newlineHint": "Zeilenumbruch",
+      "stop": "Stopp",
+      "send": "Senden",
+      "footer": "DEXTER · Nur zu Recherchezwecken — keine Anlageberatung."
+    },
+    "sidebar": {
+      "close": "Seitenleiste schließen",
+      "newConversation": "Neue Unterhaltung",
+      "recent": "Verlauf",
+      "empty": "Noch keine früheren Unterhaltungen.",
+      "workbench": "Arbeitsbereich",
+      "turnOne": "Runde",
+      "turnOther": "Runden",
+      "justNow": "gerade eben"
+    },
+    "empty": {
+      "eyebrow": "Arbeitsbereich · Bereit",
+      "title": "Was möchten Sie recherchieren?",
+      "subtitle": "Fragen Sie alles, was Sie sonst einem Junior-Analysten in die Hand drücken. Dexter plant, holt Live-Daten und zeigt seine Arbeit.",
+      "prompts": {
+        "quickDcf": {
+          "label": "Schnelle DCF",
+          "prompt": "Mach eine schnelle DCF-Bewertung von NVDA auf Basis des letzten 10-Q. Zeig mir deine Annahmen."
+        },
+        "comparable": {
+          "label": "Vergleich",
+          "prompt": "Vergleiche die Cashflow-Trends von AAPL und MSFT über die letzten 5 Jahre."
+        },
+        "macro": {
+          "label": "Makro",
+          "prompt": "Was bedeutet die aktuelle CPI-Veröffentlichung für die Rendite 10-jähriger US-Staatsanleihen?"
+        },
+        "thesis": {
+          "label": "These",
+          "prompt": "Fasse die aktuelle Bullen- und Bären-These zu TSMC zusammen."
+        }
+      }
+    },
+    "message": {
+      "you": "Sie",
+      "dexter": "Dexter",
+      "status": {
+        "thinking": "denkt nach",
+        "writingAnswer": "formuliert Antwort",
+        "callingTool": "Werkzeug-Aufruf",
+        "planningTool": "Werkzeug-Aufruf in Planung",
+        "runningTool": "führt {tool} aus",
+        "stopped": "gestoppt",
+        "error": "Fehler"
+      },
+      "errorTitle": "Fehler"
+    },
+    "tool": {
+      "running": "läuft",
+      "arguments": "Argumente",
+      "result": "Ergebnis",
+      "errorLabel": "Fehler"
+    }
+  },
+  "theme": {
+    "switchToLight": "Zum hellen Modus wechseln",
+    "switchToDark": "Zum dunklen Modus wechseln"
+  },
+  "language": {
+    "label": "Sprache"
+  }
+}

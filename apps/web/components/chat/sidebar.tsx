@@ -7,8 +7,9 @@ import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
 import { Logo } from '../logo';
 import { ThemeToggle } from '../theme-toggle';
+import { LocalizedLink } from '../i18n/localized-link';
+import { useDictionary, format } from '../i18n/dictionary-provider';
 import { cn } from '../../lib/utils';
-import Link from 'next/link';
 
 export interface SessionSummary {
   sessionId: string;
@@ -28,30 +29,44 @@ interface SidebarProps {
 }
 
 export function Sidebar({ sessions, loading, onNew, onSwitch, onClose }: SidebarProps) {
+  const dict = useDictionary();
   return (
     <aside className="flex h-full w-72 shrink-0 flex-col border-r border-border bg-background">
       <div className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border px-4">
-        <Link href="/" className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+        <LocalizedLink
+          href="/"
+          className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
           <Logo />
-        </Link>
+        </LocalizedLink>
         {onClose && (
-          <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label="Close sidebar">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={onClose}
+            aria-label={dict.chat.sidebar.close}
+          >
             <X className="size-4" />
           </Button>
         )}
       </div>
 
       <div className="p-3">
-        <Button variant="outline" size="default" className="w-full justify-start gap-2" onClick={onNew}>
+        <Button
+          variant="outline"
+          size="default"
+          className="w-full justify-start gap-2"
+          onClick={onNew}
+        >
           <Plus className="size-4" />
-          New conversation
+          {dict.chat.sidebar.newConversation}
         </Button>
       </div>
 
       <div className="flex items-center gap-2 px-4 pb-2 pt-2">
         <History className="size-3.5 text-subtle" />
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
-          Recent
+          {dict.chat.sidebar.recent}
         </span>
       </div>
       <Separator />
@@ -64,9 +79,7 @@ export function Sidebar({ sessions, loading, onNew, onSwitch, onClose }: Sidebar
             ))}
           </div>
         ) : sessions.length === 0 ? (
-          <div className="px-4 py-6 text-xs text-subtle">
-            No prior conversations yet.
-          </div>
+          <div className="px-4 py-6 text-xs text-subtle">{dict.chat.sidebar.empty}</div>
         ) : (
           <ul className="space-y-0.5 px-2 py-2">
             {sessions.map((s) => (
@@ -96,9 +109,14 @@ export function Sidebar({ sessions, loading, onNew, onSwitch, onClose }: Sidebar
                       {s.title}
                     </span>
                     <span className="mt-0.5 flex items-center gap-2 font-mono text-[10px] tabular-nums text-subtle">
-                      <span>{s.turnCount} turn{s.turnCount === 1 ? '' : 's'}</span>
+                      <span>
+                        {s.turnCount}{' '}
+                        {s.turnCount === 1
+                          ? dict.chat.sidebar.turnOne
+                          : dict.chat.sidebar.turnOther}
+                      </span>
                       <span>·</span>
-                      <span>{formatRelative(s.updatedAt)}</span>
+                      <span>{formatRelative(s.updatedAt, dict.chat.sidebar.justNow)}</span>
                     </span>
                   </span>
                 </button>
@@ -111,7 +129,7 @@ export function Sidebar({ sessions, loading, onNew, onSwitch, onClose }: Sidebar
       <Separator />
       <div className="flex items-center justify-between px-3 py-3">
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
-          Workbench
+          {dict.chat.sidebar.workbench}
         </span>
         <ThemeToggle />
       </div>
@@ -119,12 +137,12 @@ export function Sidebar({ sessions, loading, onNew, onSwitch, onClose }: Sidebar
   );
 }
 
-function formatRelative(ts: number): string {
+function formatRelative(ts: number, justNowLabel: string): string {
   const diff = Date.now() - ts;
   const minute = 60_000;
   const hour = 60 * minute;
   const day = 24 * hour;
-  if (diff < minute) return 'just now';
+  if (diff < minute) return justNowLabel;
   if (diff < hour) return `${Math.floor(diff / minute)}m`;
   if (diff < day) return `${Math.floor(diff / hour)}h`;
   if (diff < 7 * day) return `${Math.floor(diff / day)}d`;

@@ -1,0 +1,126 @@
+{
+  "common": {
+    "appName": "Dexter",
+    "openGraphTitle": "Dexter — 面向金融研究的自主 AI 代理",
+    "openGraphDescription": "Dexter 拆解复杂问题、抓取实时市场数据、自我验证,产出带引用的答案。"
+  },
+  "landing": {
+    "badge": "自主研究代理",
+    "version": "v2026.5",
+    "hero": {
+      "title": "深度金融研究,",
+      "titleEmphasis": "随取随用。",
+      "subtitle": "Dexter 把复杂问题拆解成研究计划,实时调取市场数据,反复验证自己的结论,产出带引用的答案。同一套代理内核同时驱动终端 CLI、WhatsApp 和网页 — 你在哪里做研究,它就在哪里。",
+      "primaryCta": "进入工作台",
+      "secondaryCta": "在 GitHub 查看",
+      "tagline": "实时 · 流式 · 带长期记忆"
+    },
+    "features": {
+      "reasoning": {
+        "eyebrow": "01 — 推理循环",
+        "title": "规划、执行、自我验证",
+        "body": "Dexter 把问题拆解成研究计划,并行调用多个工具,反复修正自己的答案,直到结论由真实数据支撑。"
+      },
+      "liveData": {
+        "eyebrow": "02 — 实时数据",
+        "title": "直连市场与披露文件",
+        "body": "通过 Financial Datasets 获取实时行情、基本面、关键比率与新闻,再叠加网页搜索和文档工具 — 不用过期快照。"
+      },
+      "memory": {
+        "eyebrow": "03 — 持久记忆",
+        "title": "记得你的投资逻辑",
+        "body": "长期记忆存放在 MemoryLake。Dexter 每一轮都会调取你过往的持仓、偏好与规则,让分析始终贴合你本人。"
+      }
+    },
+    "samples": {
+      "eyebrow": "试一试",
+      "title": "你会丢给初级分析师的问题,直接丢给它就行。",
+      "quickDcf": "用最新 10-Q 给 NVDA 做一个快速 DCF。",
+      "comparable": "对比 AAPL 和 MSFT 过去 5 年的现金流走势。",
+      "macro": "最新一期 CPI 对 10 年期美债收益率意味着什么?",
+      "thesis": "总结当前 TSMC 的看多和看空逻辑。"
+    },
+    "footer": {
+      "disclaimer": "不构成投资建议"
+    }
+  },
+  "chat": {
+    "header": {
+      "workbench": "工作台",
+      "ready": "就绪",
+      "turnsOne": "本次会话已有 {count} 轮",
+      "turnsOther": "本次会话已有 {count} 轮",
+      "reset": "重置",
+      "openSidebar": "打开侧边栏",
+      "newConversation": "新建会话"
+    },
+    "composer": {
+      "placeholder": "向 Dexter 提问…",
+      "sendHint": "发送",
+      "newlineHint": "换行",
+      "stop": "停止",
+      "send": "发送",
+      "footer": "DEXTER · 仅供研究 — 不构成投资建议。"
+    },
+    "sidebar": {
+      "close": "关闭侧边栏",
+      "newConversation": "新建会话",
+      "recent": "最近",
+      "empty": "暂无历史会话。",
+      "workbench": "工作台",
+      "turnOne": "轮",
+      "turnOther": "轮",
+      "justNow": "刚刚"
+    },
+    "empty": {
+      "eyebrow": "工作台 · 就绪",
+      "title": "今天想研究点什么?",
+      "subtitle": "你交给初级分析师的活儿,Dexter 都能接 — 它会先规划、再调取实时数据,过程全部展示给你看。",
+      "prompts": {
+        "quickDcf": {
+          "label": "快速 DCF",
+          "prompt": "用最新 10-Q 给 NVDA 做一个快速 DCF,顺便把假设条件列出来。"
+        },
+        "comparable": {
+          "label": "对比",
+          "prompt": "对比 AAPL 和 MSFT 过去 5 年的现金流走势。"
+        },
+        "macro": {
+          "label": "宏观",
+          "prompt": "最新一期 CPI 对 10 年期美债收益率意味着什么?"
+        },
+        "thesis": {
+          "label": "投资逻辑",
+          "prompt": "总结当前 TSMC 的看多和看空逻辑。"
+        }
+      }
+    },
+    "message": {
+      "you": "你",
+      "dexter": "Dexter",
+      "status": {
+        "thinking": "思考中",
+        "writingAnswer": "撰写答案",
+        "callingTool": "调用工具",
+        "planningTool": "规划工具调用",
+        "runningTool": "正在运行 {tool}",
+        "stopped": "已停止",
+        "error": "错误"
+      },
+      "errorTitle": "出错了"
+    },
+    "tool": {
+      "running": "进行中",
+      "arguments": "参数",
+      "result": "结果",
+      "errorLabel": "错误"
+    }
+  },
+  "theme": {
+    "switchToLight": "切换到浅色模式",
+    "switchToDark": "切换到深色模式"
+  },
+  "language": {
+    "label": "语言"
+  }
+}

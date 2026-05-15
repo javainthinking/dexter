@@ -1,0 +1,126 @@
+{
+  "common": {
+    "appName": "Dexter",
+    "openGraphTitle": "Dexter — agent IA autonome pour la recherche financière",
+    "openGraphDescription": "Dexter décompose les questions complexes, récupère les données de marché en direct, vérifie son propre travail et produit des réponses sourcées."
+  },
+  "landing": {
+    "badge": "Agent de recherche autonome",
+    "version": "v2026.5",
+    "hero": {
+      "title": "Recherche financière approfondie,",
+      "titleEmphasis": "à la demande.",
+      "subtitle": "Dexter décompose les questions complexes, interroge les données de marché en temps réel, vérifie ses propres conclusions et produit des réponses sourcées. Le même noyau d'agent alimente la CLI, WhatsApp et le web — partout où vous menez vos recherches.",
+      "primaryCta": "Ouvrir le poste de travail",
+      "secondaryCta": "Voir sur GitHub",
+      "tagline": "Temps réel · Streaming · Mémoire intégrée"
+    },
+    "features": {
+      "reasoning": {
+        "eyebrow": "01 — Boucle de raisonnement",
+        "title": "Planifie, exécute, s'auto-vérifie",
+        "body": "Dexter décompose une question en plan de recherche, exécute les outils en parallèle et revient sur sa propre réponse jusqu'à ce qu'elle soit fondée sur des données réelles."
+      },
+      "liveData": {
+        "eyebrow": "02 — Données en direct",
+        "title": "Accès direct au marché et aux publications",
+        "body": "Prix, fondamentaux, ratios et actualités en temps réel via Financial Datasets, plus recherche web et outils documentaires — pas d'instantanés périmés."
+      },
+      "memory": {
+        "eyebrow": "03 — Mémoire persistante",
+        "title": "Se souvient de votre thèse",
+        "body": "La mémoire à long terme est conservée dans MemoryLake. Dexter rappelle vos positions, préférences et règles à chaque tour pour que l'analyse reste personnelle."
+      }
+    },
+    "samples": {
+      "eyebrow": "Essayez",
+      "title": "Posez tout ce que vous demanderiez à un analyste junior.",
+      "quickDcf": "Réalise un DCF rapide sur NVDA à partir du dernier 10-Q.",
+      "comparable": "Compare les tendances de flux de trésorerie d'AAPL et MSFT sur les 5 dernières années.",
+      "macro": "Que signifie la dernière publication du CPI pour le rendement du 10 ans ?",
+      "thesis": "Résume les arguments haussiers et baissiers actuels sur TSMC."
+    },
+    "footer": {
+      "disclaimer": "Ne constitue pas un conseil en investissement"
+    }
+  },
+  "chat": {
+    "header": {
+      "workbench": "Poste de travail",
+      "ready": "Prêt",
+      "turnsOne": "{count} échange dans cette conversation",
+      "turnsOther": "{count} échanges dans cette conversation",
+      "reset": "Réinitialiser",
+      "openSidebar": "Ouvrir la barre latérale",
+      "newConversation": "Nouvelle conversation"
+    },
+    "composer": {
+      "placeholder": "Demandez à Dexter…",
+      "sendHint": "envoyer",
+      "newlineHint": "saut de ligne",
+      "stop": "Stop",
+      "send": "Envoyer",
+      "footer": "DEXTER · Pour la recherche uniquement — ne constitue pas un conseil en investissement."
+    },
+    "sidebar": {
+      "close": "Fermer la barre latérale",
+      "newConversation": "Nouvelle conversation",
+      "recent": "Récent",
+      "empty": "Aucune conversation antérieure.",
+      "workbench": "Poste de travail",
+      "turnOne": "échange",
+      "turnOther": "échanges",
+      "justNow": "à l'instant"
+    },
+    "empty": {
+      "eyebrow": "Poste de travail · Prêt",
+      "title": "Sur quoi souhaitez-vous travailler ?",
+      "subtitle": "Posez ce que vous confieriez à un analyste junior. Dexter planifie, va chercher les données en direct et montre son raisonnement.",
+      "prompts": {
+        "quickDcf": {
+          "label": "DCF rapide",
+          "prompt": "Réalise un DCF rapide sur NVDA à partir du dernier 10-Q. Montre-moi tes hypothèses."
+        },
+        "comparable": {
+          "label": "Comparaison",
+          "prompt": "Compare les tendances de flux de trésorerie d'AAPL et MSFT sur les 5 dernières années."
+        },
+        "macro": {
+          "label": "Macro",
+          "prompt": "Que signifie la dernière publication du CPI pour le rendement du Trésor à 10 ans ?"
+        },
+        "thesis": {
+          "label": "Thèse",
+          "prompt": "Résume les thèses haussières et baissières actuelles sur TSMC."
+        }
+      }
+    },
+    "message": {
+      "you": "Vous",
+      "dexter": "Dexter",
+      "status": {
+        "thinking": "réfléchit",
+        "writingAnswer": "rédige la réponse",
+        "callingTool": "appelle un outil",
+        "planningTool": "planifie l'appel d'outil",
+        "runningTool": "exécute {tool}",
+        "stopped": "arrêté",
+        "error": "erreur"
+      },
+      "errorTitle": "Erreur"
+    },
+    "tool": {
+      "running": "en cours",
+      "arguments": "arguments",
+      "result": "résultat",
+      "errorLabel": "erreur"
+    }
+  },
+  "theme": {
+    "switchToLight": "Passer en mode clair",
+    "switchToDark": "Passer en mode sombre"
+  },
+  "language": {
+    "label": "Langue"
+  }
+}

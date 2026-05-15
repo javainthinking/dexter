@@ -4,6 +4,7 @@ import * as React from 'react';
 import { ArrowUp, Square } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Kbd } from '../ui/kbd';
+import { useDictionary } from '../i18n/dictionary-provider';
 import { cn } from '../../lib/utils';
 
 interface ComposerProps {
@@ -24,9 +25,10 @@ export function Composer({
   onStop,
   pending,
   disabled,
-  placeholder = 'Ask Dexter…',
+  placeholder,
   autoFocus,
 }: ComposerProps) {
+  const dict = useDictionary();
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
   // Autosize the textarea up to a maximum height.
@@ -64,7 +66,7 @@ export function Composer({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}
-        placeholder={placeholder}
+        placeholder={placeholder ?? dict.chat.composer.placeholder}
         rows={1}
         disabled={disabled}
         autoFocus={autoFocus}
@@ -77,11 +79,11 @@ export function Composer({
       <div className="flex items-center justify-between gap-2 px-2 pb-2 pt-1">
         <p className="hidden items-center gap-1.5 px-2 text-[11px] text-subtle sm:flex">
           <Kbd>↩</Kbd>
-          <span>send</span>
+          <span>{dict.chat.composer.sendHint}</span>
           <span className="mx-1 text-border-strong">·</span>
           <Kbd>Shift</Kbd>
           <Kbd>↩</Kbd>
-          <span>newline</span>
+          <span>{dict.chat.composer.newlineHint}</span>
         </p>
         <div className="ml-auto flex items-center gap-1.5">
           {pending && onStop && (
@@ -93,7 +95,7 @@ export function Composer({
               className="h-8"
             >
               <Square className="size-3.5 fill-current" />
-              Stop
+              {dict.chat.composer.stop}
             </Button>
           )}
           <Button
@@ -101,7 +103,7 @@ export function Composer({
             size="icon-sm"
             variant={canSend ? 'accent' : 'ghost'}
             disabled={!canSend}
-            aria-label="Send"
+            aria-label={dict.chat.composer.send}
           >
             <ArrowUp className="size-4" />
           </Button>

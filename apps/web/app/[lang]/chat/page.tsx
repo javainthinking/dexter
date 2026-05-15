@@ -4,20 +4,26 @@ import * as React from 'react';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Menu, RotateCcw } from 'lucide-react';
-import { Sidebar, type SessionSummary } from '../../components/chat/sidebar';
-import { Composer } from '../../components/chat/composer';
-import { EmptyState } from '../../components/chat/empty-state';
+import { Sidebar, type SessionSummary } from '../../../components/chat/sidebar';
+import { Composer } from '../../../components/chat/composer';
+import { EmptyState } from '../../../components/chat/empty-state';
 import {
   AssistantMessage,
   UserMessage,
   type ChatTurn,
-} from '../../components/chat/message';
-import type { ToolCardEvent, ToolStatus } from '../../components/chat/tool-card';
-import { Button } from '../../components/ui/button';
-import { Separator } from '../../components/ui/separator';
-import { ThemeToggle } from '../../components/theme-toggle';
-import { Logo } from '../../components/logo';
-import { cn } from '../../lib/utils';
+} from '../../../components/chat/message';
+import type { ToolCardEvent, ToolStatus } from '../../../components/chat/tool-card';
+import { Button } from '../../../components/ui/button';
+import { Separator } from '../../../components/ui/separator';
+import { ThemeToggle } from '../../../components/theme-toggle';
+import { Logo } from '../../../components/logo';
+import { LanguageSwitcher } from '../../../components/i18n/language-switcher';
+import {
+  useDictionary,
+  useLocale,
+  format,
+} from '../../../components/i18n/dictionary-provider';
+import { cn } from '../../../lib/utils';
 
 export default function ChatRoute() {
   return (
@@ -30,6 +36,8 @@ export default function ChatRoute() {
 function ChatPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const dict = useDictionary();
+  const _locale = useLocale();
   const promptFromUrl = searchParams.get('prompt') ?? '';
 
   const [sessions, setSessions] = useState<SessionSummary[]>([]);
@@ -85,7 +93,7 @@ function ChatPage() {
           question: q,
           answer: '',
           status: 'streaming',
-          statusLabel: 'thinking',
+          statusLabel: dict.chat.message.status.thinking,
           tools: [],
         },
       ]);
@@ -115,7 +123,7 @@ function ChatPage() {
           const records = buf.split('\n\n');
           buf = records.pop() ?? '';
           for (const record of records) {
-            if (record.trim()) applyRecord(turnId, record, setTurns);
+            if (record.trim()) applyRecord(turnId, record, setTurns, dict);
           }
         }
 
@@ -154,7 +162,7 @@ function ChatPage() {
         void refreshSessions();
       }
     },
-    [pending, refreshSessions],
+    [pending, refreshSessions, dict],
   );
 
   const consumed = useRef(false);
@@ -164,7 +172,8 @@ function ChatPage() {
     consumed.current = true;
     setInput('');
     void send(promptFromUrl);
-    router.replace('/chat');
+    // strip ?prompt off so refresh doesn't resend
+    router.replace(window.location.pathname);
   }, [promptFromUrl, router, send]);
 
   const stop = useCallback(() => {
@@ -204,6 +213,12 @@ function ChatPage() {
   );
 
   const empty = turns.length === 0 && !pending;
+  const turnCountLabel =
+    turns.length === 0
+      ? dict.chat.header.ready
+      : turns.length === 1
+        ? format(dict.chat.header.turnsOne, { count: turns.length })
+        : format(dict.chat.header.turnsOther, { count: turns.length });
 
   return (
     <div className="flex h-[100dvh] w-full overflow-hidden bg-background">
@@ -240,14 +255,13 @@ function ChatPage() {
       )}
 
       <main className="flex min-w-0 flex-1 flex-col">
-        {/* Mobile header */}
         <header className="flex h-14 shrink-0 items-center justify-between border-b border-border px-3 md:hidden">
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               size="icon-sm"
               onClick={() => setSidebarOpen(true)}
-              aria-label="Open sidebar"
+              aria-label={dict.chat.header.openSidebar}
             >
               <Menu className="size-4" />
             </Button>
@@ -258,34 +272,32 @@ function ChatPage() {
               variant="ghost"
               size="icon-sm"
               onClick={newConversation}
-              aria-label="New conversation"
+              aria-label={dict.chat.header.newConversation}
             >
               <RotateCcw className="size-4" />
             </Button>
+            <LanguageSwitcher />
             <ThemeToggle />
           </div>
         </header>
 
-        {/* Desktop top bar */}
         <header className="hidden h-14 shrink-0 items-center justify-between border-b border-border px-5 md:flex">
           <div className="flex items-center gap-3">
             <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
-              Workbench
+              {dict.chat.header.workbench}
             </span>
             <Separator orientation="vertical" className="h-4" />
-            <span className="text-sm text-muted-foreground">
-              {turns.length > 0
-                ? `${turns.length} turn${turns.length === 1 ? '' : 's'} in this conversation`
-                : 'Ready'}
-            </span>
+            <span className="text-sm text-muted-foreground">{turnCountLabel}</span>
           </div>
-          <Button variant="ghost" size="sm" onClick={newConversation}>
-            <RotateCcw className="size-3.5" />
-            Reset
-          </Button>
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <Button variant="ghost" size="sm" onClick={newConversation}>
+              <RotateCcw className="size-3.5" />
+              {dict.chat.header.reset}
+            </Button>
+          </div>
         </header>
 
-        {/* Thread */}
         <div
           ref={threadRef}
           className={cn(
@@ -310,7 +322,6 @@ function ChatPage() {
           )}
         </div>
 
-        {/* Composer */}
         <div className="shrink-0 border-t border-border bg-background px-3 pb-4 pt-3 sm:px-6">
           <div className="mx-auto w-full max-w-3xl">
             <Composer
@@ -321,7 +332,7 @@ function ChatPage() {
               pending={pending}
             />
             <p className="mt-2 text-center font-mono text-[10px] tracking-[0.14em] text-subtle">
-              DEXTER · For research only — not investment advice.
+              {dict.chat.composer.footer}
             </p>
           </div>
         </div>
@@ -334,6 +345,7 @@ function applyRecord(
   turnId: string,
   record: string,
   setTurns: React.Dispatch<React.SetStateAction<ChatTurn[]>>,
+  dict: ReturnType<typeof useDictionary>,
 ): void {
   const lines = record.split('\n');
   let eventType = 'message';
@@ -350,7 +362,7 @@ function applyRecord(
     return;
   }
   setTurns((prev) =>
-    prev.map((t) => (t.id === turnId ? reduceEvent(t, eventType, payload) : t)),
+    prev.map((t) => (t.id === turnId ? reduceEvent(t, eventType, payload, dict) : t)),
   );
 }
 
@@ -358,10 +370,12 @@ function reduceEvent(
   turn: ChatTurn,
   type: string,
   payload: Record<string, unknown>,
+  dict: ReturnType<typeof useDictionary>,
 ): ChatTurn {
+  const s = dict.chat.message.status;
   switch (type) {
     case 'thinking':
-      return { ...turn, statusLabel: 'thinking' };
+      return { ...turn, statusLabel: s.thinking };
     case 'tool_start': {
       const id = (payload.toolCallId as string) ?? `tool-${Date.now()}`;
       const tool = (payload.tool as string) ?? 'tool';
@@ -369,7 +383,7 @@ function reduceEvent(
       const card: ToolCardEvent = { id, tool, status: 'running', args };
       return {
         ...turn,
-        statusLabel: `running ${tool}`,
+        statusLabel: format(s.runningTool, { tool }),
         tools: [...turn.tools, card],
       };
     }
@@ -391,7 +405,7 @@ function reduceEvent(
       const duration = payload.duration as number | undefined;
       return {
         ...turn,
-        statusLabel: 'thinking',
+        statusLabel: s.thinking,
         tools: turn.tools.map((t) =>
           t.id === id
             ? {
@@ -419,11 +433,11 @@ function reduceEvent(
       const mode = payload.mode as string | undefined;
       if (!mode) return turn;
       const labelMap: Record<string, string> = {
-        requesting: 'thinking',
-        thinking: 'thinking',
-        responding: 'writing answer',
-        'tool-input': 'planning tool call',
-        'tool-use': 'calling tool',
+        requesting: s.thinking,
+        thinking: s.thinking,
+        responding: s.writingAnswer,
+        'tool-input': s.planningTool,
+        'tool-use': s.callingTool,
       };
       return { ...turn, statusLabel: labelMap[mode] ?? mode };
     }

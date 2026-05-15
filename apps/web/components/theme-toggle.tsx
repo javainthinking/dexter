@@ -5,8 +5,10 @@ import { useTheme } from 'next-themes';
 import { Moon, Sun } from 'lucide-react';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
+import { useDictionary } from './i18n/dictionary-provider';
 
 export function ThemeToggle({ className }: { className?: string }) {
+  const dict = useDictionary();
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
@@ -22,6 +24,7 @@ export function ThemeToggle({ className }: { className?: string }) {
 
   const isDark = resolvedTheme === 'dark';
   const next = isDark ? 'light' : 'dark';
+  const label = isDark ? dict.theme.switchToLight : dict.theme.switchToDark;
 
   return (
     <TooltipProvider delayDuration={250}>
@@ -32,7 +35,7 @@ export function ThemeToggle({ className }: { className?: string }) {
             size="icon"
             onClick={() => setTheme(next)}
             className={className}
-            aria-label={`Switch to ${next} mode`}
+            aria-label={label}
           >
             {isDark ? (
               <Sun className="size-4 transition-transform duration-200" />
@@ -41,7 +44,7 @@ export function ThemeToggle({ className }: { className?: string }) {
             )}
           </Button>
         </TooltipTrigger>
-        <TooltipContent>Switch to {next} mode</TooltipContent>
+        <TooltipContent>{label}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );

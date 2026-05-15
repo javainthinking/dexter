@@ -1,0 +1,126 @@
+{
+  "common": {
+    "appName": "Dexter",
+    "openGraphTitle": "Dexter — 面向金融研究的自主 AI 代理",
+    "openGraphDescription": "Dexter 拆解複雜問題、抓取即時市場資料、自我驗證,產出帶引用的答案。"
+  },
+  "landing": {
+    "badge": "自主研究代理",
+    "version": "v2026.5",
+    "hero": {
+      "title": "深度金融研究,",
+      "titleEmphasis": "隨取隨用。",
+      "subtitle": "Dexter 將複雜問題拆解為研究計畫,即時調取市場資料,反覆驗證自己的結論,產出帶引用的答案。同一套代理核心同時驅動終端 CLI、WhatsApp 與網頁 — 你在哪裡做研究,它就在哪裡。",
+      "primaryCta": "進入工作台",
+      "secondaryCta": "在 GitHub 檢視",
+      "tagline": "即時 · 串流 · 具長期記憶"
+    },
+    "features": {
+      "reasoning": {
+        "eyebrow": "01 — 推理迴圈",
+        "title": "規劃、執行、自我驗證",
+        "body": "Dexter 將問題拆解為研究計畫,並行呼叫多項工具,反覆修正自己的答案,直到結論由真實資料支撐。"
+      },
+      "liveData": {
+        "eyebrow": "02 — 即時資料",
+        "title": "直連市場與公告文件",
+        "body": "透過 Financial Datasets 取得即時行情、基本面、關鍵比率與新聞,再加上網頁搜尋與文件工具 — 不用過時快照。"
+      },
+      "memory": {
+        "eyebrow": "03 — 持久記憶",
+        "title": "記得你的投資邏輯",
+        "body": "長期記憶存放在 MemoryLake。Dexter 每一輪都會調取你過往的部位、偏好與規則,讓分析始終貼合你本人。"
+      }
+    },
+    "samples": {
+      "eyebrow": "試試看",
+      "title": "你會丟給初階分析師的問題,直接丟給它就行。",
+      "quickDcf": "用最新 10-Q 幫 NVDA 跑一份快速 DCF。",
+      "comparable": "比較 AAPL 與 MSFT 過去 5 年的現金流走勢。",
+      "macro": "最新一期 CPI 對 10 年期美債殖利率代表什麼?",
+      "thesis": "整理當前 TSMC 的看多與看空邏輯。"
+    },
+    "footer": {
+      "disclaimer": "不構成投資建議"
+    }
+  },
+  "chat": {
+    "header": {
+      "workbench": "工作台",
+      "ready": "就緒",
+      "turnsOne": "本次對話已有 {count} 輪",
+      "turnsOther": "本次對話已有 {count} 輪",
+      "reset": "重設",
+      "openSidebar": "開啟側邊欄",
+      "newConversation": "新增對話"
+    },
+    "composer": {
+      "placeholder": "向 Dexter 提問…",
+      "sendHint": "送出",
+      "newlineHint": "換行",
+      "stop": "停止",
+      "send": "送出",
+      "footer": "DEXTER · 僅供研究 — 不構成投資建議。"
+    },
+    "sidebar": {
+      "close": "關閉側邊欄",
+      "newConversation": "新增對話",
+      "recent": "最近",
+      "empty": "尚無歷史對話。",
+      "workbench": "工作台",
+      "turnOne": "輪",
+      "turnOther": "輪",
+      "justNow": "剛剛"
+    },
+    "empty": {
+      "eyebrow": "工作台 · 就緒",
+      "title": "今天想研究什麼?",
+      "subtitle": "你交給初階分析師的活兒,Dexter 都能接 — 它會先規劃、再調取即時資料,整個過程都會展示給你看。",
+      "prompts": {
+        "quickDcf": {
+          "label": "快速 DCF",
+          "prompt": "用最新 10-Q 幫 NVDA 跑一份快速 DCF,順便把假設條件列出來。"
+        },
+        "comparable": {
+          "label": "比較",
+          "prompt": "比較 AAPL 與 MSFT 過去 5 年的現金流走勢。"
+        },
+        "macro": {
+          "label": "總體",
+          "prompt": "最新一期 CPI 對 10 年期美債殖利率代表什麼?"
+        },
+        "thesis": {
+          "label": "投資邏輯",
+          "prompt": "整理當前 TSMC 的看多與看空邏輯。"
+        }
+      }
+    },
+    "message": {
+      "you": "你",
+      "dexter": "Dexter",
+      "status": {
+        "thinking": "思考中",
+        "writingAnswer": "撰寫答案",
+        "callingTool": "呼叫工具",
+        "planningTool": "規劃工具呼叫",
+        "runningTool": "正在執行 {tool}",
+        "stopped": "已停止",
+        "error": "錯誤"
+      },
+      "errorTitle": "發生錯誤"
+    },
+    "tool": {
+      "running": "進行中",
+      "arguments": "參數",
+      "result": "結果",
+      "errorLabel": "錯誤"
+    }
+  },
+  "theme": {
+    "switchToLight": "切換到淺色模式",
+    "switchToDark": "切換到深色模式"
+  },
+  "language": {
+    "label": "語言"
+  }
+}

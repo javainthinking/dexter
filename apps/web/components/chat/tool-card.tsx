@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { ChevronRight, Loader2, Check, AlertTriangle } from 'lucide-react';
 import { Badge } from '../ui/badge';
+import { useDictionary } from '../i18n/dictionary-provider';
 import { cn } from '../../lib/utils';
 
 export type ToolStatus = 'running' | 'done' | 'error';
@@ -19,6 +20,7 @@ export interface ToolCardEvent {
 }
 
 export function ToolCard({ event }: { event: ToolCardEvent }) {
+  const dict = useDictionary();
   const [open, setOpen] = React.useState(false);
   const StatusIcon = event.status === 'running' ? Loader2 : event.status === 'error' ? AlertTriangle : Check;
 
@@ -55,7 +57,7 @@ export function ToolCard({ event }: { event: ToolCardEvent }) {
             </span>
             {event.status === 'running' && (
               <Badge variant="info" size="sm">
-                running
+                {dict.chat.tool.running}
               </Badge>
             )}
             {event.status === 'done' && typeof event.durationMs === 'number' && (
@@ -65,7 +67,7 @@ export function ToolCard({ event }: { event: ToolCardEvent }) {
             )}
             {event.status === 'error' && (
               <Badge variant="negative" size="sm">
-                error
+                {dict.chat.tool.errorLabel}
               </Badge>
             )}
           </span>
@@ -87,13 +89,20 @@ export function ToolCard({ event }: { event: ToolCardEvent }) {
       {open && (
         <div className="space-y-3 border-t border-border bg-muted/40 p-3">
           {event.args && Object.keys(event.args).length > 0 && (
-            <CodeBlock title="arguments" content={JSON.stringify(event.args, null, 2)} />
+            <CodeBlock
+              title={dict.chat.tool.arguments}
+              content={JSON.stringify(event.args, null, 2)}
+            />
           )}
           {event.result && (
-            <CodeBlock title="result" content={event.result} maxLines={20} />
+            <CodeBlock title={dict.chat.tool.result} content={event.result} maxLines={20} />
           )}
           {event.errorMessage && (
-            <CodeBlock title="error" content={event.errorMessage} tone="negative" />
+            <CodeBlock
+              title={dict.chat.tool.errorLabel}
+              content={event.errorMessage}
+              tone="negative"
+            />
           )}
         </div>
       )}
