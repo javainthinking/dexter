@@ -1,0 +1,9 @@
+/**
+ * Drizzle schema barrel. drizzle-kit reads from here via drizzle.config.ts.
+ * All tables in the database are prefixed `dexter_` so they coexist with
+ * other Supabase projects without collision.
+ */
+
+export * from './web-sessions.js';
+export * from './memory.js';
+export * from './cron.js';

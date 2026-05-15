@@ -1,6 +1,6 @@
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { MemoryManager } from '../../memory/index.js';
+import { getCurrentMemory } from '../../runtime/memory-context.js';
 import { formatToolResult } from '../types.js';
 
 export const MEMORY_SEARCH_DESCRIPTION = `
@@ -29,7 +29,7 @@ export const memorySearchTool = new DynamicStructuredTool({
     'Search persistent memory (MEMORY.md + daily logs + past conversation transcripts) with hybrid semantic + keyword retrieval.',
   schema: memorySearchSchema,
   func: async (input) => {
-    const manager = await MemoryManager.get();
+    const manager = await getCurrentMemory();
     if (!manager.isAvailable()) {
       return formatToolResult({
         results: [],

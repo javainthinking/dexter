@@ -1,6 +1,6 @@
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { MemoryManager } from '../../memory/index.js';
+import { getCurrentMemory } from '../../runtime/memory-context.js';
 import { formatToolResult } from '../types.js';
 
 export const MEMORY_GET_DESCRIPTION = `
@@ -29,7 +29,7 @@ export const memoryGetTool = new DynamicStructuredTool({
     'Read a specific memory file segment from persistent memory storage for precise citation-backed recall.',
   schema: memoryGetSchema,
   func: async (input) => {
-    const manager = await MemoryManager.get();
+    const manager = await getCurrentMemory();
     const result = await manager.get({
       path: input.path,
       from: input.from,

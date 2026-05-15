@@ -1,6 +1,6 @@
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { MemoryManager } from '../../memory/index.js';
+import { getCurrentMemory } from '../../runtime/memory-context.js';
 import { formatToolResult } from '../types.js';
 
 export const MEMORY_UPDATE_DESCRIPTION = `
@@ -62,7 +62,7 @@ export const memoryUpdateTool = new DynamicStructuredTool({
     'Add, edit, or delete persistent memory entries in MEMORY.md or daily logs.',
   schema: memoryUpdateSchema,
   func: async (input) => {
-    const manager = await MemoryManager.get();
+    const manager = await getCurrentMemory();
     const file = resolveDisplayName(input.file);
 
     switch (input.action) {

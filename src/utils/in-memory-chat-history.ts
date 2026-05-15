@@ -96,6 +96,20 @@ Generate a brief 1-2 sentence summary of this answer.`;
   }
 
   /**
+   * Bulk-restore previously persisted turns without invoking the LLM
+   * (no summary regeneration). Used by Web entrypoint when hydrating from
+   * Postgres so multi-turn context survives function-instance rotation.
+   */
+  restoreTurns(turns: Array<{ query: string; answer: string | null; summary: string | null }>): void {
+    this.messages = turns.map((turn, index) => ({
+      id: index,
+      query: turn.query,
+      answer: turn.answer,
+      summary: turn.summary,
+    }));
+  }
+
+  /**
    * Returns recent completed turns as proper LangChain BaseMessage objects.
    * Recent turns get full answers; older turns get summaries.
    */
