@@ -1,0 +1,29 @@
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+}
+
+.bg-zinc-950 {
+  background-color: #09090b;
+}
+.text-zinc-100 {
+  color: #f4f4f5;
+}
+.min-h-screen {
+  min-height: 100vh;
+}
+.antialiased {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

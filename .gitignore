@@ -15,8 +15,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+/lib/
+/lib64/
 parts/
 sdist/
 var/
@@ -52,8 +52,9 @@ yarn-error.log*
 # Cursor files
 .cursor/
 
-# Dexter context files (offloaded tool outputs)
-.dexter/*
+# Dexter context files (offloaded tool outputs) — anywhere in the tree
+.dexter/
+**/.dexter/
 
 
 logs/
