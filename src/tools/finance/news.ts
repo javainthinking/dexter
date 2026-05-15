@@ -1,8 +1,9 @@
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { api } from './api.js';
+import { api, withFallback } from './api.js';
 import { formatToolResult } from '../types.js';
 import { TTL_15M } from './utils.js';
+import { fetchYahooNews } from './yahoo.js';
 
 const CompanyNewsInputSchema = z.object({
   ticker: z
@@ -21,11 +22,14 @@ export const getCompanyNews = new DynamicStructuredTool({
     'Retrieves recent news headlines, including title, source, publication date, and URL. Pass a ticker for company-specific news, or omit the ticker for broad market news covering macro, rates, earnings, geopolitics, and more. Also useful when trying to explain broad price moves — omit the ticker to check for market-wide catalysts.',
   schema: CompanyNewsInputSchema,
   func: async (input) => {
-    const params: Record<string, string | number | undefined> = {
-      ticker: input.ticker?.trim().toUpperCase(),
-      limit: Math.min(input.limit, 10),
-    };
-    const { data, url } = await api.get('/news', params, { cacheable: true, ttlMs: TTL_15M });
+    const ticker = input.ticker?.trim().toUpperCase();
+    const limit = Math.min(input.limit, 10);
+    const params: Record<string, string | number | undefined> = { ticker, limit };
+    const { data, url } = await withFallback(
+      () => api.get('/news', params, { cacheable: true, ttlMs: TTL_15M }),
+      () => fetchYahooNews(ticker, limit),
+      `news ${ticker ?? 'market'}`,
+    );
     return formatToolResult((data.news as unknown[]) || [], [url]);
   },
 });

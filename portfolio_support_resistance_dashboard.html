@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>全持仓支撑/压力位总览</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #111827;
+      --panel2: #0f172a;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --line: #1f2937;
+      --accent: #38bdf8;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+    }
+    .wrap {
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+    .desc {
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .btn {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .btn:hover { border-color: var(--accent); }
+    .section { margin-top: 28px; }
+    .section h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: linear-gradient(180deg, var(--panel), var(--panel2));
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,.25);
+    }
+    .head {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .name { font-weight: 700; font-size: 15px; }
+    .code { color: var(--muted); font-size: 12px; margin-top: 3px; }
+    .body { padding: 14px; }
+    .kv {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .box {
+      background: rgba(255,255,255,.02);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+    }
+    .label { color: var(--muted); font-size: 12px; margin-bottom: 5px; }
+    .value { font-size: 18px; font-weight: 700; }
+    .zones { display: grid; gap: 10px; }
+    .zone {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      background: rgba(255,255,255,.02);
+    }
+    .zone-title { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .zone-values { font-weight: 700; }
+    .bar {
+      position: relative;
+      height: 14px;
+      border-radius: 999px;
+      background: #0f172a;
+      border: 1px solid var(--line);
+      margin: 12px 0 8px;
+      overflow: hidden;
+    }
+    .support-band, .resistance-band, .current-pin {
+      position: absolute; top: 0; bottom: 0;
+    }
+    .support-band { background: rgba(34,197,94,.45); }
+    .resistance-band { background: rgba(239,68,68,.45); }
+    .current-pin {
+      width: 2px;
+      background: #f8fafc;
+      box-shadow: 0 0 0 2px rgba(248,250,252,.18);
+    }
+    .range-note {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .badge {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+    }
+    .fallback-links { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .link {
+      color: white;
+      text-decoration: none;
+      background: #2563eb;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+    .summary {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, var(--panel), var(--panel2));
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 16px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>全持仓支撑 / 压力位总览</h1>
+    <div class="desc">这是一个统一页面：把你所有持仓按市场汇总，并给出可视化的支撑区、压力区与当前位置。当前版本优先解决“全览”，所以支撑/压力以近期关键区间的人工预设为主；后续可以再接入自动更新逻辑。</div>
+
+    <div class="summary">
+      当前说明：
+      1) 这是汇总看盘页，不是交易信号机；
+      2) 支撑/压力是区间，不是单一价格；
+      3) 港股/A股里个别不易稳定嵌入的标的，保留外部行情链接；
+      4) 目前仅拿到 TSLA 的实时价，其余卡片先以区间总览为主，等后续补数据再刷新“现价针”。
+    </div>
+
+    <div class="toolbar">
+      <button class="btn" onclick="toggleNotes()">显示/隐藏说明</button>
+      <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">回到顶部</button>
+    </div>
+
+    <div class="section">
+      <h2>美股</h2>
+      <div class="grid" id="us-grid"></div>
+    </div>
+
+    <div class="section">
+      <h2>港股</h2>
+      <div class="grid" id="hk-grid"></div>
+    </div>
+
+    <div class="section">
+      <h2>A股 / ETF</h2>
+      <div class="grid" id="cn-grid"></div>
+    </div>
+  </div>
+
+  <script>
+    const data = {
+      us: [
+        { name:'Palantir', code:'PLTR', current:null, low:80, high:150, support:[92,102], resistance:[135,145], note:'高估值成长票，支撑更看回撤后资金承接区，压力更看前高附近兑现带。' },
+        { name:'Tesla', code:'TSLA', current:448.56, low:250, high:500, support:[380,410], resistance:[470,500], note:'当前已非常接近上沿，短线更像逼近压力带，不是舒服的追价位。' },
+        { name:'MP Materials', code:'MP', current:null, low:15, high:45, support:[22,26], resistance:[34,40], note:'资源股通常看趋势拐点与政策预期，支撑/压力区要比单点更重要。' },
+        { name:'阿里巴巴', code:'BABA', current:null, low:70, high:160, support:[95,105], resistance:[125,140], note:'中概平台更受情绪和政策预期影响，箱体思维更有效。' },
+        { name:'MicroStrategy', code:'MSTR', current:null, low:220, high:650, support:[300,360], resistance:[520,620], note:'本质跟 BTC 强相关，压力位更容易被情绪脉冲快速突破或跌穿。' },
+        { name:'SanDisk', code:'SNDK', current:null, low:30, high:80, support:[42,48], resistance:[62,72], note:'存储链条周期性强，关注支撑区是否伴随景气确认。' },
+        { name:'英特尔', code:'INTC', current:null, low:18, high:38, support:[19,22], resistance:[28,32], note:'反转逻辑票，压力区常常比支撑区更有效。' },
+        { name:'SOXL', code:'SOXL', current:null, low:15, high:65, support:[24,30], resistance:[45,55], note:'3倍杠杆ETF，路径依赖极强，只适合参考，不宜机械看位。' },
+        { name:'Pure Storage', code:'PSTG', current:null, low:35, high:85, support:[45,52], resistance:[68,78], note:'企业存储票，通常围绕成长预期与估值带来波动。' },
+        { name:'美光科技', code:'MU', current:null, low:70, high:160, support:[90,105], resistance:[130,150], note:'典型存储周期股，价格区间要结合行业价格周期理解。' }
+      ],
+      hk: [
+        { name:'MINIMAX-W', code:'00100', current:null, low:15, high:60, support:[20,26], resistance:[40,52], note:'新经济/新股属性更强，参考区间只能宽，不宜画得过细。', links:[['AASTOCKS','https://www.aastocks.com/sc/stocks/analysis/stock-aafn/00100/0/all/1'],['富途','https://www.futunn.com/stock/00100-HK']] },
+        { name:'腾讯控股', code:'00700', current:null, low:300, high:650, support:[420,460], resistance:[540,600], note:'大市值核心资产，区间有效性通常高于小票。' },
+        { name:'小米集团-W', code:'01810', current:null, low:12, high:70, support:[38,45], resistance:[58,68], note:'汽车+手机+AIoT 叙事抬高波动，压力位兑现意愿通常明显。' },
+        { name:'曦智科技-P', code:'01879', current:null, low:1, high:12, support:[2.5,3.5], resistance:[6,8], note:'小仓位、高不确定性标的，只适合宽区间观察。', links:[['AASTOCKS','https://www.aastocks.com/sc/stocks/analysis/stock-aafn/01879/0/all/1'],['富途','https://www.futunn.com/stock/01879-HK']] },
+        { name:'京东集团-SW', code:'09618', current:null, low:70, high:190, support:[95,110], resistance:[135,155], note:'修复型平台股，支撑看低估值承接，压力看修复斜率放缓区。' },
+        { name:'阿里巴巴-SW', code:'09988', current:null, low:65, high:150, support:[78,88], resistance:[108,122], note:'和美股 BABA 逻辑相近，可视作港股映射观察位。' }
+      ],
+      cn: [
+        { name:'比亚迪', code:'002594', current:null, low:180, high:420, support:[250,280], resistance:[340,390], note:'新能源车龙头，支撑看盈利确定性，压力看估值扩张上限。' },
+        { name:'恒生科技ETF汇添富', code:'513260', current:null, low:0.6, high:1.4, support:[0.78,0.86], resistance:[1.00,1.12], note:'ETF 更适合看箱体区间。', links:[['东方财富','https://quote.eastmoney.com/sh513260.html'],['新浪财经','https://finance.sina.com.cn/realstock/company/sh513260/nc.shtml']] },
+        { name:'特变电工', code:'600089', current:null, low:9, high:22, support:[11,13], resistance:[16,18], note:'偏周期+电力设备逻辑，支撑更依赖景气与订单。' },
+        { name:'国电南瑞', code:'600406', current:null, low:18, high:34, support:[21,24], resistance:[28,31], note:'偏稳健的电网设备核心资产，支撑有效性通常较高。' },
+        { name:'法拉电子', code:'600563', current:null, low:70, high:160, support:[85,100], resistance:[125,145], note:'电子元件龙头，区间受下游资本开支预期影响。' },
+        { name:'川投能源', code:'600674', current:null, low:12, high:24, support:[14.5,16.5], resistance:[19,22], note:'公用事业属性更强，运行区间通常更规整。' },
+        { name:'中国建筑', code:'601669', current:null, low:4.5, high:8.5, support:[5.0,5.6], resistance:[6.7,7.5], note:'低估值央国企风格，支撑/压力多围绕分红与政策预期。' },
+        { name:'中国能建', code:'601868', current:null, low:1.8, high:3.4, support:[2.0,2.3], resistance:[2.8,3.2], note:'基建能源链条标的，低价区更适合看区间。' }
+      ]
+    };
+
+    function pct(v, min, max) {
+      return Math.max(0, Math.min(100, ((v - min) / (max - min)) * 100));
+    }
+
+    function fmt(v) {
+      if (v === null || v === undefined) return '—';
+      return Number(v).toFixed(v < 10 ? 2 : 2).replace(/\.00$/, '');
+    }
+
+    function createCard(item, containerId) {
+      const grid = document.getElementById(containerId);
+      const min = item.low;
+      const max = item.high;
+      const s1 = pct(item.support[0], min, max);
+      const s2 = pct(item.support[1], min, max);
+      const r1 = pct(item.resistance[0], min, max);
+      const r2 = pct(item.resistance[1], min, max);
+      const cp = item.current !== null ? pct(item.current, min, max) : null;
+
+      const linkHtml = item.links ? `<div class="fallback-links">${item.links.map(([label,url]) => `<a class="link" target="_blank" rel="noopener noreferrer" href="${url}">${label}</a>`).join('')}</div>` : '';
+      const currentBadge = item.current !== null ? '<span class="badge">含现价</span>' : '<span class="badge">区间总览</span>';
+
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="head">
+          <div>
+            <div class="name">${item.name}</div>
+            <div class="code">${item.code}</div>
+          </div>
+          ${currentBadge}
+        </div>
+        <div class="body">
+          <div class="kv">
+            <div class="box">
+              <div class="label">现价</div>
+              <div class="value">${fmt(item.current)}</div>
+            </div>
+            <div class="box">
+              <div class="label">支撑区</div>
+              <div class="value">${fmt(item.support[0])} - ${fmt(item.support[1])}</div>
+            </div>
+            <div class="box">
+              <div class="label">压力区</div>
+              <div class="value">${fmt(item.resistance[0])} - ${fmt(item.resistance[1])}</div>
+            </div>
+          </div>
+
+          <div class="bar">
+            <div class="support-band" style="left:${s1}%; width:${Math.max(1, s2-s1)}%"></div>
+            <div class="resistance-band" style="left:${r1}%; width:${Math.max(1, r2-r1)}%"></div>
+            ${cp !== null ? `<div class="current-pin" style="left:${cp}%"></div>` : ''}
+          </div>
+          <div class="range-note">
+            <span>观察下沿: ${fmt(min)}</span>
+            <span>观察上沿: ${fmt(max)}</span>
+          </div>
+
+          <div class="zones">
+            <div class="zone">
+              <div class="zone-title">支撑逻辑</div>
+              <div class="zone-values">${fmt(item.support[0])} - ${fmt(item.support[1])}</div>
+            </div>
+            <div class="zone">
+              <div class="zone-title">压力逻辑</div>
+              <div class="zone-values">${fmt(item.resistance[0])} - ${fmt(item.resistance[1])}</div>
+            </div>
+          </div>
+
+          <div class="note item-note">${item.note}</div>
+          ${linkHtml}
+        </div>
+      `;
+      grid.appendChild(card);
+    }
+
+    function render() {
+      data.us.forEach(x => createCard(x, 'us-grid'));
+      data.hk.forEach(x => createCard(x, 'hk-grid'));
+      data.cn.forEach(x => createCard(x, 'cn-grid'));
+    }
+
+    function toggleNotes() {
+      document.querySelectorAll('.item-note').forEach(el => {
+        el.style.display = el.style.display === 'none' ? 'block' : 'none';
+      });
+    }
+
+    render();
+    window.toggleNotes = toggleNotes;
+  </script>
+</body>
+</html>

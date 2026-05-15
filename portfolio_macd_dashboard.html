@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>持仓 MACD 汇总视图</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #111827;
+      --panel-2: #0f172a;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --line: #1f2937;
+      --accent: #38bdf8;
+      --red: #ef4444;
+      --green: #22c55e;
+      --yellow: #f59e0b;
+      --chip: #1e293b;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif; background: var(--bg); color: var(--text); }
+    .wrap { max-width: 1800px; margin: 0 auto; padding: 20px; }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    .desc { color: var(--muted); margin-bottom: 18px; line-height: 1.5; }
+    .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .sum-card, .overview { background: linear-gradient(180deg, var(--panel), var(--panel-2)); border: 1px solid var(--line); border-radius: 14px; padding: 14px; box-shadow: 0 6px 20px rgba(0,0,0,.22); }
+    .overview { margin-bottom: 14px; }
+    .sum-title { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+    .overview p { margin: 6px 0; color: var(--text); }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; background: var(--chip); border: 1px solid var(--line); border-radius: 999px; padding: 6px 10px; font-size: 12px; }
+    .dot { width: 8px; height: 8px; border-radius: 999px; display: inline-block; }
+    .red { background: var(--red); }
+    .green { background: var(--green); }
+    .yellow { background: var(--yellow); }
+    .section { margin-top: 28px; }
+    .section h2 { margin: 0 0 12px; font-size: 20px; border-left: 4px solid var(--accent); padding-left: 10px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px; }
+    .card { background: linear-gradient(180deg, var(--panel), var(--panel-2)); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; min-height: 600px; box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+    .card-link { color: inherit; text-decoration: none; display: block; }
+    .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+    .name { font-weight: 700; font-size: 15px; }
+    .code { color: var(--muted); font-size: 12px; margin-top: 3px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+    .badge { font-size: 12px; padding: 4px 8px; border-radius: 999px; white-space: nowrap; border: 1px solid rgba(255,255,255,.08); background: rgba(59,130,246,.12); color: #dbeafe; }
+    .badge.red { color: #fecaca; background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.25); }
+    .badge.green { color: #bbf7d0; background: rgba(34,197,94,.12); border-color: rgba(34,197,94,.25); }
+    .badge.yellow { color: #fde68a; background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.25); }
+    .chart-wrap { padding: 10px 12px 14px; }
+    .chart { width: 100%; height: 390px; display: block; background: #0a0f1a; border-radius: 10px; }
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+    .metric { background: #0b1323; border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+    .metric .k { color: var(--muted); font-size: 11px; margin-bottom: 4px; }
+    .metric .v { font-size: 13px; font-weight: 700; }
+    .up { color: #fca5a5; }
+    .down { color: #86efac; }
+    .note { margin-top: 10px; color: var(--muted); font-size: 12px; line-height: 1.5; border-top: 1px dashed var(--line); padding-top: 10px; }
+    .fallback { padding: 18px 16px 20px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; min-height: 420px; gap: 10px; }
+    .fallback p { margin: 0; color: var(--muted); line-height: 1.5; }
+    .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+    .btn { text-decoration: none; color: white; background: #2563eb; border: 1px solid rgba(255,255,255,.08); padding: 9px 12px; border-radius: 10px; font-size: 13px; }
+    .foot { margin-top: 28px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>持仓 MACD 汇总视图</h1>
+    <div class="desc">基于最新获取的最近日线收盘序列，统一计算 MACD(12,26,9)。顶部先看全仓动能分布；下方逐标的查看价格、DIF、DEA、MACD 柱和最新日涨跌。统一按你的偏好使用红涨绿跌。</div>
+
+    <div class="overview">
+      <div class="sum-title">组合结论</div>
+      <p id="overview-text">加载中...</p>
+    </div>
+
+    <div class="summary">
+      <div class="sum-card">
+        <div class="sum-title">红柱放大 / 金叉</div>
+        <div class="chips" id="bullish-list"></div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-title">绿柱放大 / 死叉</div>
+        <div class="chips" id="bearish-list"></div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-title">临界拐点 / 接近翻转</div>
+        <div class="chips" id="turn-list"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>美股</h2>
+      <div class="grid" id="us-grid"></div>
+    </div>
+
+    <div class="section">
+      <h2>港股</h2>
+      <div class="grid" id="hk-grid"></div>
+    </div>
+
+    <div class="section">
+      <h2>A股 / ETF</h2>
+      <div class="grid" id="cn-grid"></div>
+    </div>
+
+    <div class="foot">
+      注：<br>
+      1) 本页基于最近抓取到的日线收盘价近似计算 MACD，用于统一巡检，不替代交易软件逐根K线复核；<br>
+      2) MINIMAX-W（00100）本次未成功取得稳定序列；曦智科技-P（01879）序列较短，仍可参考但可靠性弱于其余标的；<br>
+      3) 美股中的 SanDisk（SNDK）、美光科技（MU）抓取到的价格量级明显异常，更适合看 MACD 相对变化，不适合把绝对价位当作精确报价。<br>
+    </div>
+  </div>
+
+  <script>
+    const holdings = {
+      us: [
+        { name: 'Palantir', code: 'PLTR', url: 'https://finance.yahoo.com/quote/PLTR/history', closes: [152.72,155.08,152.77,155.68,150.68,160.84,154.78,154.96,147.56,143.06,137.55,146.28,146.49,148.46,147.93,150.07,140.76,130.49,128.06,132.37] },
+        { name: '特斯拉', code: 'TSLA', url: 'https://finance.yahoo.com/quote/TSLA/history', closes: [395.56,399.27,392.78,380.30,367.96,380.85,383.03,385.95,372.11,361.83,355.28,371.75,381.26,360.59,352.82,346.65,343.25,345.62,348.95,352.42] },
+        { name: 'MP Materials', code: 'MP', url: 'https://finance.yahoo.com/quote/MP/history', closes: [59.36,59.30,57.54,53.10,50.60,53.28,53.29,53.74,51.70,51.80,45.59,48.26,48.41,49.73,51.17,49.49,54.44,53.90,55.24,56.80] },
+        { name: '阿里巴巴', code: 'BABA', url: 'https://finance.yahoo.com/quote/BABA/history', closes: [136.71,136.57,134.43,124.90,122.41,126.06,125.48,129.87,125.41,122.69,121.98,125.46,123.73,122.05,122.31,119.72,125.32,127.68,127.33,128.01] },
+        { name: 'MicroStrategy / Strategy', code: 'MSTR', url: 'https://finance.yahoo.com/quote/MSTR/history', closes: [147.52,150.28,140.56,138.24,135.66,138.20,136.25,139.13,132.93,126.03,121.44,124.80,122.78,119.83,127.69,123.72,128.30,128.86,128.64,132.36] },
+        { name: 'SanDisk', code: 'SNDK', url: 'https://finance.yahoo.com/quote/SNDK/history', closes: [703.63,720.17,753.69,772.09,709.71,702.49,702.48,677.86,603.17,615.83,572.50,635.34,692.73,701.59,724.63,710.80,780.90,851.57,851.77,952.50] },
+        { name: '英特尔', code: 'INTC', url: 'https://finance.yahoo.com/quote/INTC/history', closes: [45.76,44.06,45.03,46.18,43.87,44.01,44.06,47.18,44.10,43.13,41.19,44.13,48.03,50.38,50.78,52.91,58.95,61.72,62.38,65.18] },
+        { name: 'Direxion 半导体3倍做多ETF', code: 'SOXL', url: 'https://finance.yahoo.com/quote/SOXL/history', closes: [53.69,54.95,54.02,54.85,51.14,53.03,54.96,57.04,48.97,46.61,40.62,47.91,52.26,52.75,54.81,56.55,67.50,71.98,76.39,80.56] },
+        { name: 'Pure Storage', code: 'PSTG', url: 'https://finance.yahoo.com/quote/PSTG/history', closes: [62.85,63.44,64.39,65.45,62.63,64.46,65.15,65.47,62.04,58.98,56.99,59.04,61.07,62.48,61.17,61.89,62.25,60.19,60.94,63.25] },
+        { name: '美光科技', code: 'MU', url: 'https://finance.yahoo.com/quote/MU/history', closes: [441.80,461.69,461.73,444.27,422.90,404.35,395.53,382.09,355.46,357.22,321.80,337.84,367.85,366.24,377.76,377.58,406.73,421.51,420.59,426.56] }
+      ],
+      hk: [
+        { name: 'MINIMAX-W', code: '00100', fallback: true, url: 'https://www.futunn.com/stock/00100-HK' },
+        { name: '腾讯控股', code: '00700', url: 'https://finance.yahoo.com/quote/0700.HK/history', closes: [558.50,550.00,550.50,513.00,508.00,498.40,514.00,505.50,495.60,493.40,481.60,484.00,496.60,489.20,508.00,508.50,504.50,490.00,493.20,499.00] },
+        { name: '小米集团-W', code: '01810', url: 'https://finance.yahoo.com/quote/1810.HK/history', closes: [35.20,35.36,35.14,36.32,33.20,32.06,32.68,32.52,32.44,33.00,32.38,31.76,32.02,30.88,32.76,31.36,30.90,30.66,30.88,30.90] },
+        { name: '曦智科技-P', code: '01879', url: 'https://finance.yahoo.com/quote/1879.HK/history', closes: [886.00,819.00,814.00,938.00,938.50,888.50,892.50,861.00,874.00,829.50,870.00,817.00] },
+        { name: '京东集团-SW', code: '09618', url: 'https://finance.yahoo.com/quote/9618.HK/history', closes: [111.50,112.10,112.80,110.70,108.60,105.10,107.20,112.40,113.60,113.70,113.00,113.20,112.90,111.90,111.90,111.70,111.40,112.30,115.40,120.70] },
+        { name: '阿里巴巴-SW', code: '09988', url: 'https://finance.yahoo.com/quote/9988.HK/history', closes: [134.00,134.60,137.70,132.00,123.70,119.70,123.20,128.90,123.00,122.60,120.50,119.00,122.70,118.50,126.50,122.90,125.50,123.20,124.50,128.60] }
+      ],
+      cn: [
+        { name: '比亚迪', code: '002594', url: 'https://finance.yahoo.com/quote/002594.SZ/history', closes: [104.62,102.87,101.69,102.31,103.03,107.63,106.64,106.60,103.14,105.30,106.05,105.25,102.65,101.65,99.01,97.98,101.22,99.03,101.67,104.25] },
+        { name: '恒生科技ETF汇添富', code: '513260', url: 'https://finance.yahoo.com/quote/513260.SS/history', closes: [1.27,1.27,1.27,1.24,1.21,1.17,1.19,1.21,1.19,1.20,1.17,1.15,1.18,1.15,1.15,1.15,1.21,1.19,1.20,1.18] },
+        { name: '特变电工', code: '600089', url: 'https://finance.yahoo.com/quote/600089.SS/history', closes: [29.30,28.59,29.11,28.14,28.01,28.15,28.51,29.08,28.32,28.25,27.77,26.50,26.78,26.17,25.50,25.35,26.92,26.73,27.09,26.92] },
+        { name: '国电南瑞', code: '600406', url: 'https://finance.yahoo.com/quote/600406.SS/history', closes: [28.70,28.08,28.23,27.81,27.40,27.09,26.98,27.52,26.99,27.13,26.63,25.99,26.42,26.09,26.00,25.54,26.58,25.96,26.36,25.89] },
+        { name: '法拉电子', code: '600563', url: 'https://finance.yahoo.com/quote/600563.SS/history', closes: [118.41,115.00,124.47,122.96,124.60,120.03,127.18,136.77,134.88,142.68,132.50,124.91,129.55,123.66,119.18,116.65,121.08,120.26,120.00,119.39] },
+        { name: '川投能源', code: '600674', url: 'https://finance.yahoo.com/quote/600674.SS/history', closes: [15.56,15.51,15.51,15.47,15.60,15.24,15.42,15.70,15.63,15.41,15.12,14.89,14.75,15.19,15.07,14.85,14.87,14.66,14.65,14.43] },
+        { name: '中国电建', code: '601669', url: 'https://finance.yahoo.com/quote/601669.SS/history', closes: [6.47,6.12,6.13,6.01,5.85,5.81,5.95,6.13,5.95,5.93,5.86,5.74,5.80,5.67,5.56,5.62,5.80,5.69,5.66,5.68] },
+        { name: '中国能建', code: '601868', url: 'https://finance.yahoo.com/quote/601868.SS/history', closes: [3.43,3.31,3.38,3.36,3.17,3.19,3.28,3.34,3.18,3.10,3.02,2.90,2.92,2.85,2.82,2.84,2.93,2.86,2.85,2.87] }
+      ]
+    };
+
+    function ema(series, period) {
+      const k = 2 / (period + 1);
+      let prev = series[0];
+      const out = [prev];
+      for (let i = 1; i < series.length; i++) {
+        prev = series[i] * k + prev * (1 - k);
+        out.push(prev);
+      }
+      return out;
+    }
+
+    function macd(series) {
+      const ordered = [...series].reverse();
+      const ema12 = ema(ordered, 12);
+      const ema26 = ema(ordered, 26);
+      const dif = ordered.map((_, i) => ema12[i] - ema26[i]);
+      const dea = ema(dif, 9);
+      const hist = dif.map((v, i) => (v - dea[i]) * 2);
+      const latestClose = ordered[ordered.length - 1];
+      const prevClose = ordered[ordered.length - 2] ?? latestClose;
+      const change = latestClose - prevClose;
+      const changePct = prevClose ? change / prevClose * 100 : 0;
+      return {
+        ordered, dif, dea, hist,
+        latest: {
+          close: latestClose,
+          prevClose,
+          change,
+          changePct,
+          dif: dif[dif.length - 1],
+          dea: dea[dea.length - 1],
+          hist: hist[hist.length - 1],
+          prevHist: hist[hist.length - 2] ?? 0,
+          prevDif: dif[dif.length - 2] ?? 0,
+          prevDea: dea[dea.length - 2] ?? 0
+        }
+      };
+    }
+
+    function fmt(n, digits = 2) { return Math.abs(n) < 1 ? n.toFixed(3) : n.toFixed(digits); }
+
+    function classify(m) {
+      const crossUp = m.prevDif <= m.prevDea && m.dif > m.dea;
+      const crossDown = m.prevDif >= m.prevDea && m.dif < m.dea;
+      const histUp = m.hist > 0 && m.hist > m.prevHist;
+      const histDown = m.hist < 0 && m.hist < m.prevHist;
+      const nearCross = Math.abs(m.dif - m.dea) < Math.max(Math.abs(m.close) * 0.001, 0.03);
+      let status = '观察', tone = 'yellow';
+      if (crossUp) { status = '金叉'; tone = 'red'; }
+      else if (crossDown) { status = '死叉'; tone = 'green'; }
+      else if (histUp) { status = '红柱放大'; tone = 'red'; }
+      else if (histDown) { status = '绿柱放大'; tone = 'green'; }
+      else if (m.hist > 0) { status = '红柱缩短'; }
+      else if (m.hist < 0) { status = '绿柱缩短'; }
+      return { status, tone, crossUp, crossDown, histUp, histDown, nearCross };
+    }
+
+    function buildChip(text, tone) {
+      const chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.innerHTML = `<span class="dot ${tone}"></span>${text}`;
+      return chip;
+    }
+
+    function createChartSVG(series, res) {
+      const ordered = res.ordered, dif = res.dif, dea = res.dea, hist = res.hist;
+      const w = 760, h = 390, pad = 24, topH = 220, botY = 240, botH = 120;
+      const priceMin = Math.min(...ordered), priceMax = Math.max(...ordered);
+      const oscMin = Math.min(...dif, ...dea, ...hist, 0), oscMax = Math.max(...dif, ...dea, ...hist, 0);
+      const px = i => pad + i * (w - pad * 2) / Math.max(ordered.length - 1, 1);
+      const py = v => topH - pad - ((v - priceMin) / ((priceMax - priceMin) || 1)) * (topH - pad * 2);
+      const oy = v => botY + botH - (((v - oscMin) / ((oscMax - oscMin) || 1)) * botH);
+      const pricePath = ordered.map((v,i)=>`${i===0?'M':'L'}${px(i).toFixed(1)},${py(v).toFixed(1)}`).join(' ');
+      const difPath = dif.map((v,i)=>`${i===0?'M':'L'}${px(i).toFixed(1)},${oy(v).toFixed(1)}`).join(' ');
+      const deaPath = dea.map((v,i)=>`${i===0?'M':'L'}${px(i).toFixed(1)},${oy(v).toFixed(1)}`).join(' ');
+      const zeroY = oy(0);
+      const bars = hist.map((v,i)=>{
+        const x = px(i) - 8, y = v >= 0 ? oy(v) : zeroY, hh = Math.max(1, Math.abs(oy(v) - zeroY));
+        const color = v >= 0 ? '#ef4444' : '#22c55e';
+        return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="16" height="${hh.toFixed(1)}" fill="${color}" opacity="0.85" rx="2" />`;
+      }).join('');
+      return `<svg class="chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><rect x="0" y="0" width="${w}" height="${h}" fill="#0a0f1a" /><line x1="${pad}" y1="${topH}" x2="${w-pad}" y2="${topH}" stroke="#243042" stroke-dasharray="4 4" /><line x1="${pad}" y1="${zeroY.toFixed(1)}" x2="${w-pad}" y2="${zeroY.toFixed(1)}" stroke="#334155" stroke-dasharray="4 4" /><text x="${pad}" y="16" fill="#94a3b8" font-size="12">Price</text><text x="${pad}" y="${botY - 6}" fill="#94a3b8" font-size="12">MACD</text>${bars}<path d="${pricePath}" fill="none" stroke="#60a5fa" stroke-width="3" /><path d="${difPath}" fill="none" stroke="#f59e0b" stroke-width="2.4" /><path d="${deaPath}" fill="none" stroke="#a78bfa" stroke-width="2.2" /></svg>`;
+    }
+
+    const summaryStats = { bull: 0, bear: 0, turn: 0, upDay: 0, downDay: 0 };
+
+    function renderCard(item, containerId) {
+      const grid = document.getElementById(containerId);
+      const card = document.createElement('a');
+      card.className = 'card card-link';
+      card.href = item.url;
+      card.target = '_blank';
+      card.rel = 'noopener noreferrer';
+
+      if (item.fallback) {
+        card.innerHTML = `<div class="card-head"><div><div class="name">${item.name}</div><div class="code">${item.code}</div></div><div class="meta"><span class="badge yellow">外部行情</span></div></div><div class="fallback"><p>该标的本次未取得足够稳定的历史序列，暂保留原始页面入口。</p><div class="links"><span class="btn">打开原始页面</span></div></div>`;
+        grid.appendChild(card);
+        return;
+      }
+
+      const res = macd(item.closes);
+      const c = classify(res.latest);
+      const zeroState = res.latest.dif >= 0 && res.latest.dea >= 0 ? '零轴上' : (res.latest.dif <= 0 && res.latest.dea <= 0 ? '零轴下' : '零轴附近');
+      const dayCls = res.latest.change >= 0 ? 'up' : 'down';
+      const dayText = `${res.latest.change >= 0 ? '+' : ''}${fmt(res.latest.change)} / ${res.latest.changePct >= 0 ? '+' : ''}${fmt(res.latest.changePct,2)}%`;
+      const note = c.crossUp ? '刚形成金叉，先看红柱能否继续放大。'
+        : c.crossDown ? '刚形成死叉，先看绿柱是否继续放大。'
+        : c.histUp ? '红柱延续，短线动能偏强。'
+        : c.histDown ? '绿柱延续，短线动能偏弱。'
+        : c.nearCross ? 'DIF/DEA 靠近，处于临界拐点。'
+        : '当前偏过渡段，需看后续一两根K线确认。';
+
+      card.innerHTML = `<div class="card-head"><div><div class="name">${item.name}</div><div class="code">${item.code}</div></div><div class="meta"><span class="badge ${c.tone}">${c.status}</span><span class="badge">${zeroState}</span></div></div><div class="chart-wrap">${createChartSVG(item.closes, res)}<div class="metrics"><div class="metric"><div class="k">Close</div><div class="v">${fmt(res.latest.close)}</div></div><div class="metric"><div class="k">日变动</div><div class="v ${dayCls}">${dayText}</div></div><div class="metric"><div class="k">DIF</div><div class="v">${fmt(res.latest.dif,3)}</div></div><div class="metric"><div class="k">DEA</div><div class="v">${fmt(res.latest.dea,3)}</div></div></div><div class="note">${note}</div></div>`;
+      grid.appendChild(card);
+
+      const label = `${item.name}（${item.code}）`;
+      if (res.latest.change >= 0) summaryStats.upDay++; else summaryStats.downDay++;
+      if (c.histUp || c.crossUp) { document.getElementById('bullish-list').appendChild(buildChip(label, 'red')); summaryStats.bull++; }
+      else if (c.histDown || c.crossDown) { document.getElementById('bearish-list').appendChild(buildChip(label, 'green')); summaryStats.bear++; }
+      else if (c.nearCross) { document.getElementById('turn-list').appendChild(buildChip(label, 'yellow')); summaryStats.turn++; }
+    }
+
+    holdings.us.forEach(x => renderCard(x, 'us-grid'));
+    holdings.hk.forEach(x => renderCard(x, 'hk-grid'));
+    holdings.cn.forEach(x => renderCard(x, 'cn-grid'));
+
+    ['bullish-list','bearish-list','turn-list'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el.children.length) el.appendChild(buildChip('暂无', 'yellow'));
+    });
+
+    const overview = [];
+    if (summaryStats.bull > summaryStats.bear) overview.push(`当前全仓 MACD 偏强，红柱放大/金叉 ${summaryStats.bull} 个，高于绿柱放大/死叉 ${summaryStats.bear} 个。`);
+    else if (summaryStats.bull < summaryStats.bear) overview.push(`当前全仓 MACD 偏弱，绿柱放大/死叉 ${summaryStats.bear} 个，高于红柱放大/金叉 ${summaryStats.bull} 个。`);
+    else overview.push(`当前全仓强弱大致均衡，红柱与绿柱数量接近。`);
+    overview.push(`最新日线层面，红涨 ${summaryStats.upDay} 个，绿跌 ${summaryStats.downDay} 个。`);
+    if (summaryStats.turn > 0) overview.push(`另有 ${summaryStats.turn} 个标的处于临界拐点，最值得继续跟踪下一根K线确认。`);
+    document.getElementById('overview-text').textContent = overview.join(' ');
+  </script>
+</body>
+</html>

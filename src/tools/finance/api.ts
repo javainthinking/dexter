@@ -146,3 +146,30 @@ export const api = {
 
 /** @deprecated Use `api.get` instead */
 export const callApi = api.get;
+
+/**
+ * Run a primary data fetch, falling back to a secondary source on failure.
+ *
+ * Used by the finance tools to try Financial Datasets first and silently
+ * switch to Yahoo Finance when the primary throws. Both sources are expected
+ * to return shape-compatible `ApiResponse` objects so callers don't branch.
+ */
+export async function withFallback(
+  primary: () => Promise<ApiResponse>,
+  fallback: () => Promise<ApiResponse>,
+  label: string,
+): Promise<ApiResponse> {
+  try {
+    return await primary();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.warn(`[Finance] primary source failed for ${label}: ${message} — falling back to Yahoo`);
+    try {
+      return await fallback();
+    } catch (fallbackError) {
+      const fallbackMessage = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
+      logger.error(`[Finance] fallback (Yahoo) also failed for ${label}: ${fallbackMessage}`);
+      throw new Error(`${label}: primary and fallback both failed (primary: ${message}; fallback: ${fallbackMessage})`);
+    }
+  }
+}

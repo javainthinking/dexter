@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>持仓行情仪表盘</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #111827;
+      --panel-2: #0f172a;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --line: #1f2937;
+      --accent: #38bdf8;
+      --ok: #22c55e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 1680px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+    .desc {
+      color: var(--muted);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .section {
+      margin-top: 28px;
+    }
+    .section h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      min-height: 420px;
+      box-shadow: 0 6px 20px rgba(0,0,0,.25);
+    }
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .name {
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .code {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+    .badge {
+      font-size: 12px;
+      color: #d1fae5;
+      background: rgba(34,197,94,.15);
+      border: 1px solid rgba(34,197,94,.35);
+      padding: 4px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .tv-wrap {
+      height: 360px;
+    }
+    .fallback {
+      padding: 18px 16px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 360px;
+      gap: 10px;
+    }
+    .fallback p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .btn {
+      text-decoration: none;
+      color: white;
+      background: #2563eb;
+      border: 1px solid rgba(255,255,255,.08);
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+    }
+    .btn.alt {
+      background: #374151;
+    }
+    .foot {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>持仓行情仪表盘</h1>
+    <div class="desc">日线视图。优先使用 TradingView 嵌入；对可能不存在或映射不稳定的港股/A股/ETF，改为稳定的外部行情页入口，避免空白图。</div>
+
+    <div class="section">
+      <h2>美股</h2>
+      <div class="grid" id="us-grid"></div>
+    </div>
+
+    <div class="section">
+      <h2>港股</h2>
+      <div class="grid" id="hk-grid"></div>
+    </div>
+
+    <div class="section">
+      <h2>A股 / ETF</h2>
+      <div class="grid" id="cn-grid"></div>
+    </div>
+
+    <div class="foot">
+      注：
+      1) TradingView 对部分港股、新股、特殊股类别、A股ETF 代码支持不稳定；
+      2) 因此对已知高风险代码采用外链回退；
+      3) 如需，我可以下一步继续逐个校验代码映射并替换成可直接显示的其他图表提供商页面。
+    </div>
+  </div>
+
+  <script src="https://s3.tradingview.com/tv.js"></script>
+  <script>
+    const usHoldings = [
+      { name: 'Palantir', code: 'PLTR', tv: 'NASDAQ:PLTR' },
+      { name: 'Tesla', code: 'TSLA', tv: 'NASDAQ:TSLA' },
+      { name: 'MP Materials', code: 'MP', tv: 'NYSE:MP' },
+      { name: '阿里巴巴', code: 'BABA', tv: 'NYSE:BABA' },
+      { name: 'MicroStrategy', code: 'MSTR', tv: 'NASDAQ:MSTR' },
+      { name: 'SanDisk', code: 'SNDK', tv: 'NASDAQ:SNDK' },
+      { name: '英特尔', code: 'INTC', tv: 'NASDAQ:INTC' },
+      { name: 'Direxion 半导体 3x', code: 'SOXL', tv: 'AMEX:SOXL' },
+      { name: 'Pure Storage', code: 'PSTG', tv: 'NYSE:PSTG' },
+      { name: '美光科技', code: 'MU', tv: 'NASDAQ:MU' }
+    ];
+
+    const hkHoldings = [
+      {
+        name: 'MINIMAX-W', code: '00100', type: 'fallback',
+        links: [
+          { label: 'AASTOCKS', url: 'https://www.aastocks.com/sc/stocks/analysis/stock-aafn/00100/0/all/1' },
+          { label: '富途', url: 'https://www.futunn.com/stock/00100-HK' }
+        ]
+      },
+      { name: '腾讯控股', code: '00700', tv: 'HKEX:700' },
+      { name: '小米集团-W', code: '01810', tv: 'HKEX:1810' },
+      {
+        name: '曦智科技-P', code: '01879', type: 'fallback',
+        links: [
+          { label: 'AASTOCKS', url: 'https://www.aastocks.com/sc/stocks/analysis/stock-aafn/01879/0/all/1' },
+          { label: '富途', url: 'https://www.futunn.com/stock/01879-HK' }
+        ]
+      },
+      { name: '京东集团-SW', code: '09618', tv: 'HKEX:9618' },
+      { name: '阿里巴巴-SW', code: '09988', tv: 'HKEX:9988' }
+    ];
+
+    const cnHoldings = [
+      { name: '比亚迪', code: '002594', tv: 'SZSE:002594' },
+      {
+        name: '恒生科技ETF汇添富', code: '513260', type: 'fallback',
+        links: [
+          { label: '东方财富', url: 'https://quote.eastmoney.com/sh513260.html' },
+          { label: '新浪财经', url: 'https://finance.sina.com.cn/realstock/company/sh513260/nc.shtml' }
+        ]
+      },
+      { name: '特变电工', code: '600089', tv: 'SSE:600089' },
+      { name: '国电南瑞', code: '600406', tv: 'SSE:600406' },
+      { name: '法拉电子', code: '600563', tv: 'SSE:600563' },
+      { name: '川投能源', code: '600674', tv: 'SSE:600674' },
+      { name: '中国建筑', code: '601669', tv: 'SSE:601669' },
+      { name: '中国能建', code: '601868', tv: 'SSE:601868' }
+    ];
+
+    function createTVCard(item, idx, containerId) {
+      const grid = document.getElementById(containerId);
+      const card = document.createElement('div');
+      card.className = 'card';
+      const wid = `${containerId}-tv-${idx}`;
+      card.innerHTML = `
+        <div class="card-head">
+          <div>
+            <div class="name">${item.name}</div>
+            <div class="code">${item.code}</div>
+          </div>
+          <div class="badge">TradingView</div>
+        </div>
+        <div class="tv-wrap" id="${wid}"></div>
+      `;
+      grid.appendChild(card);
+      new TradingView.widget({
+        autosize: true,
+        symbol: item.tv,
+        interval: 'D',
+        timezone: 'Asia/Shanghai',
+        theme: 'dark',
+        style: '1',
+        locale: 'zh_CN',
+        toolbar_bg: '#0f172a',
+        enable_publishing: false,
+        hide_top_toolbar: true,
+        hide_legend: false,
+        withdateranges: false,
+        allow_symbol_change: false,
+        save_image: false,
+        studies: ['Volume@tv-basicstudies'],
+        container_id: wid
+      });
+    }
+
+    function createFallbackCard(item, containerId) {
+      const grid = document.getElementById(containerId);
+      const card = document.createElement('div');
+      card.className = 'card';
+      const links = item.links.map(l => `<a class="btn" href="${l.url}" target="_blank" rel="noopener noreferrer">${l.label}</a>`).join('');
+      card.innerHTML = `
+        <div class="card-head">
+          <div>
+            <div class="name">${item.name}</div>
+            <div class="code">${item.code}</div>
+          </div>
+          <div class="badge">外部行情</div>
+        </div>
+        <div class="fallback">
+          <p>该标的在单一嵌入图表源中可能无法稳定显示，已切换为更稳妥的外部行情入口。</p>
+          <div class="links">${links}</div>
+        </div>
+      `;
+      grid.appendChild(card);
+    }
+
+    function render(items, containerId) {
+      items.forEach((item, idx) => {
+        if (item.type === 'fallback') createFallbackCard(item, containerId);
+        else createTVCard(item, idx, containerId);
+      });
+    }
+
+    render(usHoldings, 'us-grid');
+    render(hkHoldings, 'hk-grid');
+    render(cnHoldings, 'cn-grid');
+  </script>
+</body>
+</html>

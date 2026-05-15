@@ -1,7 +1,8 @@
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { api } from './api.js';
+import { api, withFallback } from './api.js';
 import { formatToolResult } from '../types.js';
+import { fetchYahooPriceSnapshot, fetchYahooHistoricalPrices } from './yahoo.js';
 
 export const STOCK_PRICE_DESCRIPTION = `
 Fetches current stock price snapshots for equities, including open, high, low, close prices, volume, and market cap. Powered by Financial Datasets.
@@ -21,7 +22,11 @@ export const getStockPrice = new DynamicStructuredTool({
   func: async (input) => {
     const ticker = input.ticker.trim().toUpperCase();
     const params = { ticker };
-    const { data, url } = await api.get('/prices/snapshot/', params);
+    const { data, url } = await withFallback(
+      () => api.get('/prices/snapshot/', params),
+      () => fetchYahooPriceSnapshot(ticker),
+      `prices/snapshot ${ticker}`,
+    );
     return formatToolResult(data.snapshot || {}, [url]);
   },
 });
@@ -54,7 +59,12 @@ export const getStockPrices = new DynamicStructuredTool({
     const endDate = new Date(input.end_date + 'T00:00:00');
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const { data, url } = await api.get('/prices/', params, { cacheable: endDate < today });
+    const ticker = params.ticker;
+    const { data, url } = await withFallback(
+      () => api.get('/prices/', params, { cacheable: endDate < today }),
+      () => fetchYahooHistoricalPrices(ticker, input.start_date, input.end_date, input.interval),
+      `prices ${ticker} ${input.start_date}..${input.end_date}`,
+    );
     return formatToolResult(data.prices || [], [url]);
   },
 });

@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>全持仓顶背离识别视图</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #121a2b;
+      --panel2: #18233a;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --up: #ef4444;
+      --down: #22c55e;
+      --warn: #f59e0b;
+      --line: #243047;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap { max-width: 1600px; margin: 0 auto; padding: 20px; }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    .sub { color: var(--muted); margin-bottom: 18px; }
+    .notice {
+      background: #1f2937; border: 1px solid #374151; color: #f3f4f6;
+      padding: 12px 14px; border-radius: 10px; margin-bottom: 20px;
+    }
+    .toolbar {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .pill {
+      padding: 6px 10px; border-radius: 999px; background: var(--panel2);
+      border: 1px solid var(--line); color: var(--text); font-size: 12px;
+    }
+    .section-title { margin: 26px 0 12px; font-size: 20px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,.18);
+    }
+    .head {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .title { font-weight: 700; }
+    .meta { color: var(--muted); font-size: 12px; }
+    .badges { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+    .badge {
+      font-size: 11px; padding: 4px 8px; border-radius: 999px; border: 1px solid transparent;
+    }
+    .risk-high { background: rgba(245,158,11,.12); color: #fbbf24; border-color: rgba(245,158,11,.3); }
+    .risk-med { background: rgba(59,130,246,.12); color: #93c5fd; border-color: rgba(59,130,246,.3); }
+    .risk-low { background: rgba(34,197,94,.12); color: #86efac; border-color: rgba(34,197,94,.3); }
+    .body { padding: 12px 14px 14px; }
+    .desc { color: var(--muted); font-size: 13px; line-height: 1.45; min-height: 56px; }
+    .signals { margin-top: 10px; display: grid; gap: 8px; }
+    .sig {
+      display: flex; justify-content: space-between; gap: 8px; padding: 8px 10px;
+      border-radius: 10px; background: var(--panel2); border: 1px solid var(--line); font-size: 13px;
+    }
+    .label { color: var(--muted); }
+    .value { color: var(--text); text-align: right; }
+    .links { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+    a.btn {
+      text-decoration: none; color: white; background: #2563eb; padding: 8px 10px;
+      border-radius: 8px; font-size: 12px;
+    }
+    a.btn.alt { background: #334155; }
+    iframe { width: 100%; height: 380px; border: 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>全持仓顶背离识别视图</h1>
+    <div class="sub">用途：统一扫一遍所有持仓，优先识别“价格创新高但动能未创新高”的疑似顶背离风险。颜色统一采用红涨绿跌。</div>
+    <div class="notice">
+      当前页以日线 D 为主，侧重“看盘汇总”。部分标的因嵌入兼容性问题使用外链回退。<br>
+      顶背离判断依赖价格高点与 MACD/RSI/量能的配合，这一版先给你一个统一巡检框架；若要严格结论，下一步应逐个标的做真实K线校准。
+    </div>
+    <div class="toolbar">
+      <span class="pill">规则 1：价格新高 + MACD柱体/DIFF未新高 → 顶背离候选</span>
+      <span class="pill">规则 2：价格新高 + RSI高点下移 → 顶背离增强</span>
+      <span class="pill">规则 3：放量滞涨 / 缩量新高 → 警惕上攻衰竭</span>
+      <span class="pill">红涨绿跌</span>
+    </div>
+
+    <div class="section-title">美股</div>
+    <div class="grid">
+      <div class="card">
+        <div class="head"><div><div class="title">Palantir（PLTR）</div><div class="meta">NASDAQ: PLTR</div></div><div class="badges"><span class="badge risk-med">中等警惕</span></div></div>
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ:PLTR&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe>
+        <div class="body"><div class="desc">观察近期股价若继续抬高，但 MACD 柱体或 RSI 未同步抬高，则进入顶背离候选区。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">前高突破后的动能是否衰减</span></div><div class="sig"><span class="label">确认信号</span><span class="value">跌破短期趋势线/死叉</span></div></div></div>
+      </div>
+      <div class="card">
+        <div class="head"><div><div class="title">特斯拉（TSLA）</div><div class="meta">NASDAQ: TSLA</div></div><div class="badges"><span class="badge risk-high">高警惕</span></div></div>
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ:TSLA&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe>
+        <div class="body"><div class="desc">波动大，假突破常见。若反弹接近前高但 MACD/RSI明显弱于上一轮，通常是优先排查的顶背离对象。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">前高附近量价背离</span></div><div class="sig"><span class="label">确认信号</span><span class="value">高位长阴或失守20D均线</span></div></div></div>
+      </div>
+      <div class="card">
+        <div class="head"><div><div class="title">MP Materials（MP）</div><div class="meta">NYSE: MP</div></div><div class="badges"><span class="badge risk-med">中等警惕</span></div></div>
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=NYSE:MP&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe>
+        <div class="body"><div class="desc">资源股弹性高，常出现情绪推动的新高。若新高时量能跟不上，顶背离有效性会提升。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">价格高点抬升但 RSI 高点下移</span></div><div class="sig"><span class="label">确认信号</span><span class="value">MACD死叉 + 回落破位</span></div></div></div>
+      </div>
+      <div class="card">
+        <div class="head"><div><div class="title">阿里巴巴（BABA）</div><div class="meta">NYSE: BABA</div></div><div class="badges"><span class="badge risk-low">低警惕</span></div></div>
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=NYSE:BABA&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe>
+        <div class="body"><div class="desc">若仍处中期修复结构，顶背离优先级低于高位强趋势股。重点看是否出现“反弹新高但量价钝化”。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">修复段末端动能钝化</span></div><div class="sig"><span class="label">确认信号</span><span class="value">回踩关键平台失败</span></div></div></div>
+      </div>
+      <div class="card">
+        <div class="head"><div><div class="title">MicroStrategy（MSTR）</div><div class="meta">NASDAQ: MSTR</div></div><div class="badges"><span class="badge risk-high">高警惕</span></div></div>
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ:MSTR&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe>
+        <div class="body"><div class="desc">高 Beta，强相关 BTC。价格冲高时若 MACD 高点明显递减，顶背离风险通常比普通成长股更快兑现。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">BTC新高下 MSTR 动能是否同步</span></div><div class="sig"><span class="label">确认信号</span><span class="value">放量冲高回落</span></div></div></div>
+      </div>
+      <div class="card">
+        <div class="head"><div><div class="title">Sandisk（SNDK）</div><div class="meta">NASDAQ: SNDK</div></div><div class="badges"><span class="badge risk-med">中等警惕</span></div></div>
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ:SNDK&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe>
+        <div class="body"><div class="desc">若处在重组/拆分后的价格发现阶段，需看趋势延续质量，避免把震荡误判为顶背离。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">新高时成交量与 MACD 斜率</span></div><div class="sig"><span class="label">确认信号</span><span class="value">跌回平台内部</span></div></div></div>
+      </div>
+      <div class="card">
+        <div class="head"><div><div class="title">英特尔（INTC）</div><div class="meta">NASDAQ: INTC</div></div><div class="badges"><span class="badge risk-low">低警惕</span></div></div>
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ:INTC&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe>
+        <div class="body"><div class="desc">更常见的是区间震荡而非趋势顶部。若出现顶背离，通常需要先有一段明确上升趋势作前提。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">区间上沿突破后的持续性</span></div><div class="sig"><span class="label">确认信号</span><span class="value">假突破回落</span></div></div></div>
+      </div>
+      <div class="card">
+        <div class="head"><div><div class="title">Direxion 半导体3X（SOXL）</div><div class="meta">NYSEARCA: SOXL</div></div><div class="badges"><span class="badge risk-high">高警惕</span></div></div>
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=NYSEARCA:SOXL&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe>
+        <div class="body"><div class="desc">杠杆ETF最适合做顶背离巡检。价格继续冲但动能跟不上时，回撤往往更急。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">前高附近 MACD 双顶/钝化</span></div><div class="sig"><span class="label">确认信号</span><span class="value">失守5D/10D均线簇</span></div></div></div>
+      </div>
+      <div class="card">
+        <div class="head"><div><div class="title">Pure Storage（PSTG）</div><div class="meta">NYSE: PSTG</div></div><div class="badges"><span class="badge risk-med">中等警惕</span></div></div>
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=NYSE:PSTG&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe>
+        <div class="body"><div class="desc">若股价处于平台上沿，优先看突破是否伴随量能与动能同步放大，否则容易形成假突破顶背离。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">平台突破后的 RSI 强弱</span></div><div class="sig"><span class="label">确认信号</span><span class="value">突破失败回落</span></div></div></div>
+      </div>
+      <div class="card">
+        <div class="head"><div><div class="title">美光科技（MU）</div><div class="meta">NASDAQ: MU</div></div><div class="badges"><span class="badge risk-med">中等警惕</span></div></div>
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ:MU&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe>
+        <div class="body"><div class="desc">周期股上行末段常出现价格延续但指标先走弱。若AI链条预期切换，顶背离信号值得重视。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">创新高时柱体是否缩短</span></div><div class="sig"><span class="label">确认信号</span><span class="value">放量阴线吞没</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="section-title">港股</div>
+    <div class="grid">
+      <div class="card"><div class="head"><div><div class="title">MINIMAX-W（00100）</div><div class="meta">港股映射不稳定</div></div><div class="badges"><span class="badge risk-med">待校验</span></div></div><div class="body"><div class="desc">该标的当前嵌入兼容性不稳定，先保留外部行情入口。若接近阶段前高，优先看 MACD 与 RSI 是否同步。</div><div class="links"><a class="btn" target="_blank" href="https://www.aastocks.com/sc/stocks/analysis/stock-aafn/00100/0/all/1">AASTOCKS</a><a class="btn alt" target="_blank" href="https://quote.eastmoney.com/hk/00100.html">东方财富</a></div></div></div>
+      <div class="card"><div class="head"><div><div class="title">腾讯控股（00700）</div><div class="meta">HKEX: 00700</div></div><div class="badges"><span class="badge risk-med">中等警惕</span></div></div><iframe src="https://s.tradingview.com/widgetembed/?symbol=HKEX:00700&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe><div class="body"><div class="desc">大型平台股更适合看中期顶背离。若价格贴近波段高点但 RSI/MACD 不确认，说明上攻效率下降。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">前高区附近动能确认</span></div><div class="sig"><span class="label">确认信号</span><span class="value">跌破平台中轴</span></div></div></div></div>
+      <div class="card"><div class="head"><div><div class="title">小米集团-W（01810）</div><div class="meta">HKEX: 01810</div></div><div class="badges"><span class="badge risk-high">高警惕</span></div></div><iframe src="https://s.tradingview.com/widgetembed/?symbol=HKEX:01810&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe><div class="body"><div class="desc">若处于强趋势拉升后段，最容易出现“价格新高、指标不新高”的典型顶背离。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">连续上冲后的柱体衰减</span></div><div class="sig"><span class="label">确认信号</span><span class="value">高位放量回落</span></div></div></div></div>
+      <div class="card"><div class="head"><div><div class="title">曦智科技-P（01879）</div><div class="meta">港股映射不稳定</div></div><div class="badges"><span class="badge risk-med">待校验</span></div></div><div class="body"><div class="desc">先保留外部行情入口。若流动性偏弱，顶背离误判率更高，应结合成交额与高点结构看。</div><div class="links"><a class="btn" target="_blank" href="https://www.aastocks.com/sc/stocks/analysis/stock-aafn/01879/0/all/1">AASTOCKS</a><a class="btn alt" target="_blank" href="https://quote.eastmoney.com/hk/01879.html">东方财富</a></div></div></div>
+      <div class="card"><div class="head"><div><div class="title">京东集团-SW（09618）</div><div class="meta">HKEX: 09618</div></div><div class="badges"><span class="badge risk-low">低警惕</span></div></div><iframe src="https://s.tradingview.com/widgetembed/?symbol=HKEX:09618&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe><div class="body"><div class="desc">若仍在修复行情中，先看趋势是否真正转强；没有明确上升趋势，顶背离意义有限。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">反弹高点是否伴随量价背离</span></div><div class="sig"><span class="label">确认信号</span><span class="value">回落失守突破位</span></div></div></div></div>
+      <div class="card"><div class="head"><div><div class="title">阿里巴巴-SW（09988）</div><div class="meta">HKEX: 09988</div></div><div class="badges"><span class="badge risk-low">低警惕</span></div></div><iframe src="https://s.tradingview.com/widgetembed/?symbol=HKEX:09988&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe><div class="body"><div class="desc">与 BABA 逻辑类似。若港股这边先冲前高而指标没跟，反而更值得提前警惕。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">前高测试时 RSI/MACD 同步性</span></div><div class="sig"><span class="label">确认信号</span><span class="value">形成双顶雏形</span></div></div></div></div>
+    </div>
+
+    <div class="section-title">A股 / ETF</div>
+    <div class="grid">
+      <div class="card"><div class="head"><div><div class="title">比亚迪（002594）</div><div class="meta">SZSE: 002594</div></div><div class="badges"><span class="badge risk-med">中等警惕</span></div></div><iframe src="https://s.tradingview.com/widgetembed/?symbol=SZSE:002594&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe><div class="body"><div class="desc">大票更适合中期背离判断。若价格抬升但量能与 RSI 同时钝化，通常是减速信号。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">前高附近量价是否协调</span></div><div class="sig"><span class="label">确认信号</span><span class="value">MACD死叉后失守均线</span></div></div></div></div>
+      <div class="card"><div class="head"><div><div class="title">恒生科技ETF汇添富（513260）</div><div class="meta">A股ETF 映射不稳定</div></div><div class="badges"><span class="badge risk-med">待校验</span></div></div><div class="body"><div class="desc">ETF可直接观察指数层面的顶背离。当前先保留外链入口，后续可改成指数代理图表。</div><div class="links"><a class="btn" target="_blank" href="https://quote.eastmoney.com/sh513260.html">东方财富</a><a class="btn alt" target="_blank" href="https://finance.sina.com.cn/realstock/company/sh513260/nc.shtml">新浪财经</a></div></div></div>
+      <div class="card"><div class="head"><div><div class="title">特变电工（600089）</div><div class="meta">SSE: 600089</div></div><div class="badges"><span class="badge risk-low">低警惕</span></div></div><iframe src="https://s.tradingview.com/widgetembed/?symbol=SSE:600089&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe><div class="body"><div class="desc">若未脱离大区间，顶背离信号权重较低。先确认是否进入明确上升波段。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">区间上沿突破后动能持续性</span></div><div class="sig"><span class="label">确认信号</span><span class="value">假突破回落</span></div></div></div></div>
+      <div class="card"><div class="head"><div><div class="title">国电南瑞（600406）</div><div class="meta">SSE: 600406</div></div><div class="badges"><span class="badge risk-low">低警惕</span></div></div><iframe src="https://s.tradingview.com/widgetembed/?symbol=SSE:600406&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe><div class="body"><div class="desc">偏稳健品种更看中波段级背离。若上涨斜率变缓且 RSI 高点下移，才值得提高警惕。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">上升趋势斜率是否放缓</span></div><div class="sig"><span class="label">确认信号</span><span class="value">跌破前低结构</span></div></div></div></div>
+      <div class="card"><div class="head"><div><div class="title">法拉电子（600563）</div><div class="meta">SSE: 600563</div></div><div class="badges"><span class="badge risk-med">中等警惕</span></div></div><iframe src="https://s.tradingview.com/widgetembed/?symbol=SSE:600563&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe><div class="body"><div class="desc">成长制造股若连续拉升，容易在第二次或第三次冲高时出现典型顶背离。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">高点抬升但柱体缩短</span></div><div class="sig"><span class="label">确认信号</span><span class="value">放量长上影</span></div></div></div></div>
+      <div class="card"><div class="head"><div><div class="title">川投能源（600674）</div><div class="meta">SSE: 600674</div></div><div class="badges"><span class="badge risk-low">低警惕</span></div></div><iframe src="https://s.tradingview.com/widgetembed/?symbol=SSE:600674&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe><div class="body"><div class="desc">防御类标的若出现顶背离，通常兑现较慢。更重要的是看趋势破坏而不是单一指标转弱。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">慢牛结构中的高点动能</span></div><div class="sig"><span class="label">确认信号</span><span class="value">跌破上升通道</span></div></div></div></div>
+      <div class="card"><div class="head"><div><div class="title">中国建筑（601669）</div><div class="meta">SSE: 601669</div></div><div class="badges"><span class="badge risk-low">低警惕</span></div></div><iframe src="https://s.tradingview.com/widgetembed/?symbol=SSE:601669&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe><div class="body"><div class="desc">价值/红利属性更强，顶背离更多用于波段提示，不宜单独作为卖出依据。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">反弹高位的量价钝化</span></div><div class="sig"><span class="label">确认信号</span><span class="value">再度跌回箱体</span></div></div></div></div>
+      <div class="card"><div class="head"><div><div class="title">中国能建（601868）</div><div class="meta">SSE: 601868</div></div><div class="badges"><span class="badge risk-low">低警惕</span></div></div><iframe src="https://s.tradingview.com/widgetembed/?symbol=SSE:601868&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&studies=%5B%22MACD%40tv-basicstudies%22%2C%22RSI%40tv-basicstudies%22%5D&theme=dark"></iframe><div class="body"><div class="desc">若仍是低位修复或政策驱动行情，优先看结构突破，顶背离次之。</div><div class="signals"><div class="sig"><span class="label">重点观察</span><span class="value">冲高回落的频率是否增加</span></div><div class="sig"><span class="label">确认信号</span><span class="value">高点下移 + 死叉</span></div></div></div></div>
+    </div>
+  </div>
+</body>
+</html>

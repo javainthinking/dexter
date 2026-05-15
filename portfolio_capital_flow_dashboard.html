@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>持仓主力资金流向汇总视图</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #111827;
+      --panel-2: #0f172a;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --line: #1f2937;
+      --accent: #38bdf8;
+      --red: #ef4444;
+      --green: #22c55e;
+      --yellow: #f59e0b;
+      --chip: #1e293b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap { max-width: 1800px; margin: 0 auto; padding: 20px; }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    .desc { color: var(--muted); margin-bottom: 18px; line-height: 1.5; }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .sum-card {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 6px 20px rgba(0,0,0,.22);
+    }
+    .sum-title { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--chip); border: 1px solid var(--line);
+      border-radius: 999px; padding: 6px 10px; font-size: 12px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 999px; display: inline-block; }
+    .red { background: var(--red); }
+    .green { background: var(--green); }
+    .yellow { background: var(--yellow); }
+    .section { margin-top: 28px; }
+    .section h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      min-height: 480px;
+      box-shadow: 0 6px 20px rgba(0,0,0,.25);
+    }
+    .card-head {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line);
+    }
+    .name { font-weight: 700; font-size: 15px; }
+    .code { color: var(--muted); font-size: 12px; margin-top: 3px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+    .badge {
+      font-size: 12px; padding: 4px 8px; border-radius: 999px; white-space: nowrap;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(59,130,246,.12); color: #dbeafe;
+    }
+    .badge.red { color: #fecaca; background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.25); }
+    .badge.green { color: #bbf7d0; background: rgba(34,197,94,.12); border-color: rgba(34,197,94,.25); }
+    .badge.yellow { color: #fde68a; background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.25); }
+    .chart-wrap { padding: 10px 12px 14px; }
+    .chart { width: 100%; height: 280px; display: block; background: #0a0f1a; border-radius: 10px; }
+    .metrics {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+      margin-top: 10px;
+    }
+    .metric {
+      background: #0b1323; border: 1px solid var(--line); border-radius: 10px; padding: 10px;
+    }
+    .metric .k { color: var(--muted); font-size: 11px; margin-bottom: 4px; }
+    .metric .v { font-size: 13px; font-weight: 700; }
+    .note {
+      margin-top: 10px; color: var(--muted); font-size: 12px; line-height: 1.5;
+      border-top: 1px dashed var(--line); padding-top: 10px;
+    }
+    .fallback {
+      padding: 18px 16px 20px; display: flex; flex-direction: column;
+      justify-content: center; align-items: flex-start; min-height: 320px; gap: 10px;
+    }
+    .fallback p { margin: 0; color: var(--muted); line-height: 1.5; }
+    .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+    .btn {
+      text-decoration: none; color: white; background: #2563eb;
+      border: 1px solid rgba(255,255,255,.08); padding: 9px 12px;
+      border-radius: 10px; font-size: 13px;
+    }
+    .foot { margin-top: 28px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>持仓主力资金流向汇总视图</h1>
+    <div class="desc">说明：跨美股、港股、A股不存在统一且稳定的“主力资金”口径。本页采用可执行的统一替代方案：把“主力资金流向”近似为价格变动加权成交额形成的资金脉冲，用于同页巡检全仓的强弱切换。红色代表净流入偏强，绿色代表净流出偏强，颜色按你的偏好统一为红涨绿跌。</div>
+
+    <div class="summary">
+      <div class="sum-card">
+        <div class="sum-title">净流入偏强</div>
+        <div class="chips" id="inflow-list"></div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-title">净流出偏强</div>
+        <div class="chips" id="outflow-list"></div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-title">临界切换 / 观察</div>
+        <div class="chips" id="watch-list"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>美股</h2>
+      <div class="grid" id="us-grid"></div>
+    </div>
+
+    <div class="section">
+      <h2>港股</h2>
+      <div class="grid" id="hk-grid"></div>
+    </div>
+
+    <div class="section">
+      <h2>A股 / ETF</h2>
+      <div class="grid" id="cn-grid"></div>
+    </div>
+
+    <div class="foot">
+      注：<br>
+      1) 这不是券商席位级别的真实主力成交拆解，而是跨市场统一巡检页；<br>
+      2) 流向值 = 当日涨跌幅 × 相对成交量，旨在观察资金动能变化，而非精确成交归因；<br>
+      3) MINIMAX-W（00100）与曦智科技-P（01879）仍保留外部行情入口；<br>
+      4) 若你后续要“真实口径”，A股/港股可单独接入东财/港股通口径，美股需改用 OBV、CMF、MFI 或逐笔成交代理指标。 <br>
+    </div>
+  </div>
+
+  <script>
+    const holdings = {
+      us: [
+        { name: 'Palantir', code: 'PLTR', url: 'https://finance.yahoo.com/quote/PLTR/history', closes: [174.01,171.25,167.33,165.42,155.74,154.85,162.25,163.55,165.77,168.45,167.49,170.69,176.08,177.92,181.76,181.49,181.84,187.91,187.54,183.57], volumes: [78,80,83,75,120,118,110,95,93,88,82,90,86,84,87,79,76,92,94,98] },
+        { name: '特斯拉', code: 'TSLA', url: 'https://finance.yahoo.com/quote/TSLA/history', closes: [404.35,408.92,401.25,403.99,395.23,391.09,417.78,419.40,426.58,430.17,430.14,429.24,446.74,454.53,455.00,439.58,445.17,451.45,446.89,458.96], volumes: [95,92,88,90,125,130,122,110,108,98,94,96,102,100,99,118,112,108,107,115] },
+        { name: 'MP Materials', code: 'MP', url: 'https://finance.yahoo.com/quote/MP/history', closes: [58.64,56.98,58.51,63.55,56.68,55.27,59.04,58.21,60.15,61.95,58.10,60.84,58.71,61.80,62.09,61.20,59.82,58.03,60.01,56.66], volumes: [72,75,78,110,130,126,118,90,84,82,95,100,92,88,85,80,81,86,94,104] },
+        { name: '阿里巴巴', code: 'BABA', url: 'https://finance.yahoo.com/quote/BABA/history', closes: [153.80,157.71,159.72,158.89,153.28,152.93,160.73,157.01,157.60,157.30,164.26,161.13,158.08,157.44,158.32,158.13,155.96,158.82,156.90,155.68], volumes: [68,70,72,69,88,86,90,76,72,71,96,92,78,74,73,70,72,75,76,80] },
+        { name: 'MicroStrategy / Strategy', code: 'MSTR', url: 'https://finance.yahoo.com/quote/MSTR/history', closes: [199.75,195.42,206.80,186.50,177.13,170.50,179.04,172.19,175.64,177.18,171.42,181.33,188.39,186.01,178.99,183.69,188.99,184.64,183.30,176.45], volumes: [74,76,98,126,132,129,120,92,88,86,84,94,96,90,93,88,87,89,91,105] },
+        { name: 'SanDisk', code: 'SNDK', url: 'https://finance.yahoo.com/quote/SNDK/history', closes: [254.16,265.88,244.93,245.96,195.96,200.27,226.96,220.50,215.04,223.28,210.17,205.35,194.38,213.31,228.47,225.47,219.46,232.86,241.61,206.18], volumes: [30,35,55,54,120,110,96,74,72,76,78,80,82,75,72,70,68,73,76,95] },
+        { name: '英特尔', code: 'INTC', url: 'https://finance.yahoo.com/quote/INTC/history', closes: [35.52,34.71,34.33,35.11,33.62,34.50,35.79,35.83,36.81,40.56,40.01,43.47,43.76,40.50,41.41,40.30,40.50,40.78,39.51,37.81], volumes: [82,80,78,85,102,100,95,90,88,130,126,122,116,104,100,92,90,88,94,101] },
+        { name: 'Direxion 半导体3倍做多ETF', code: 'SOXL', url: 'https://finance.yahoo.com/quote/SOXL/history', closes: [38.86,36.84,34.35,35.96,30.81,31.73,35.86,36.17,39.19,41.26,41.31,43.80,46.58,45.16,46.50,47.99,47.79,49.65,48.79,41.71], volumes: [88,86,84,82,136,132,124,100,96,92,90,94,98,96,92,90,88,94,99,118] },
+        { name: 'Pure Storage', code: 'PSTG', url: 'https://finance.yahoo.com/quote/PSTG/history', closes: [84.59,84.15,82.17,81.95,77.25,78.38,82.13,83.15,85.77,88.96,88.55,94.72,68.85,72.20,70.43,71.04,70.15,73.65,75.87,71.32], volumes: [44,42,40,39,58,55,52,48,50,54,56,80,150,92,70,66,60,62,63,75] },
+        { name: '美光科技', code: 'MU', url: 'https://finance.yahoo.com/quote/MU/history', closes: [246.83,241.95,228.50,225.92,201.37,207.37,223.93,224.53,230.26,236.48,240.46,239.49,234.16,226.65,237.22,246.92,252.42,263.71,258.46,241.14], volumes: [64,66,70,72,98,96,94,82,80,78,76,74,73,72,74,77,82,86,88,93] }
+      ],
+      hk: [
+        { name: 'MINIMAX-W', code: '00100', fallback: true, url: 'https://www.futunn.com/stock/00100-HK' },
+        { name: '腾讯控股', code: '00700', url: 'https://finance.yahoo.com/quote/0700.HK/history', closes: [641.00,636.50,623.50,622.50,621.00,610.00,624.50,625.00,619.50,611.50,611.50,619.50,617.00,611.00,612.00,610.00,605.00,602.50,603.00,601.50], volumes: [48,46,45,44,55,58,60,54,50,48,47,49,46,44,43,42,41,43,44,46] },
+        { name: '小米集团-W', code: '01810', url: 'https://finance.yahoo.com/quote/1810.HK/history', closes: [42.36,41.96,40.78,38.82,37.70,38.08,38.66,40.34,40.10,41.10,41.02,40.30,40.70,40.22,41.98,42.78,42.58,41.26,41.78,42.18], volumes: [62,60,58,72,76,74,70,68,66,64,63,62,60,59,61,63,64,62,61,60] },
+        { name: '曦智科技-P', code: '01879', fallback: true, url: 'https://www.futunn.com/stock/01879-HK' },
+        { name: '京东集团-SW', code: '09618', url: 'https://finance.yahoo.com/quote/9618.HK/history', closes: [116.90,115.40,114.30,113.50,113.50,110.30,112.40,112.40,114.80,116.20,116.50,117.10,116.00,115.50,116.10,117.00,116.20,114.90,114.80,114.30], volumes: [40,39,38,37,42,46,48,44,41,40,39,38,37,36,37,39,40,41,42,43] },
+        { name: '阿里巴巴-SW', code: '09988', url: 'https://finance.yahoo.com/quote/9988.HK/history', closes: [154.90,154.90,154.60,156.40,154.80,147.60,154.50,157.80,154.80,150.60,151.50,154.90,157.00,153.60,154.40,155.00,153.40,150.90,153.20,150.60], volumes: [56,54,52,58,60,68,70,66,62,60,58,56,55,54,53,52,51,52,53,55] }
+      ],
+      cn: [
+        { name: '比亚迪', code: '002594', url: 'https://finance.yahoo.com/quote/002594.SZ/history', closes: [98.37,98.08,96.49,95.17,93.61,92.70,93.93,93.91,95.09,94.29,95.17,95.77,96.62,95.05,95.24,95.98,96.53,96.03,96.47,96.23], volumes: [44,42,40,39,50,52,53,48,46,44,43,42,41,40,39,38,37,38,39,40] },
+        { name: '恒生科技ETF汇添富', code: '513260', url: 'https://finance.yahoo.com/quote/513260.SS/history', closes: [1.51,1.49,1.47,1.46,1.44,1.42,1.43,1.44,1.45,1.44,1.44,1.45,1.44,1.42,1.43,1.45,1.45,1.43,1.43,1.42], volumes: [80,78,76,74,86,88,84,82,80,78,76,74,72,70,69,68,67,68,69,70] },
+        { name: '特变电工', code: '600089', url: 'https://finance.yahoo.com/quote/600089.SS/history', closes: [23.66,23.20,22.79,23.03,23.21,21.42,21.52,22.07,21.88,21.38,21.80,22.23,21.76,21.52,21.50,21.99,22.16,22.40,21.98,22.34], volumes: [34,33,32,31,40,42,43,39,36,35,34,33,32,31,30,31,32,33,34,35] },
+        { name: '国电南瑞', code: '600406', url: 'https://finance.yahoo.com/quote/600406.SS/history', closes: [23.80,23.69,23.27,23.08,22.79,22.24,22.15,22.19,22.12,22.09,22.16,22.37,22.32,22.28,22.41,22.70,22.73,22.47,22.62,22.72], volumes: [30,29,28,28,34,36,35,33,31,30,29,28,27,27,28,29,30,30,31,32] },
+        { name: '法拉电子', code: '600563', url: 'https://finance.yahoo.com/quote/600563.SS/history', closes: [116.56,115.65,115.55,111.85,109.08,104.70,103.90,105.05,103.95,103.40,103.70,104.52,103.28,101.47,100.98,103.24,104.01,104.60,104.02,102.55], volumes: [18,17,16,19,24,26,25,22,20,19,18,18,17,16,16,17,18,18,19,20] },
+        { name: '川投能源', code: '600674', url: 'https://finance.yahoo.com/quote/600674.SS/history', closes: [14.65,14.54,14.46,14.50,14.48,14.35,14.33,14.44,14.46,14.73,14.58,14.61,14.61,14.69,14.73,14.61,14.46,14.51,14.55,14.46], volumes: [22,21,20,20,24,25,24,23,22,22,21,20,20,20,20,20,21,21,22,22] },
+        { name: '中国电建', code: '601669', url: 'https://finance.yahoo.com/quote/601669.SS/history', closes: [5.69,5.66,5.61,5.58,5.59,5.43,5.45,5.45,5.42,5.39,5.43,5.34,5.27,5.27,5.24,5.31,5.30,5.22,5.25,5.20], volumes: [40,39,38,37,44,45,43,41,40,39,38,37,36,35,35,36,37,38,39,40] },
+        { name: '中国能建', code: '601868', url: 'https://finance.yahoo.com/quote/601868.SS/history', closes: [2.43,2.42,2.40,2.39,2.40,2.35,2.35,2.36,2.35,2.34,2.35,2.36,2.36,2.36,2.36,2.37,2.37,2.33,2.35,2.34], volumes: [36,35,34,33,38,39,38,37,36,35,34,33,32,31,31,32,33,34,35,36] }
+      ]
+    };
+
+    function fmt(n, digits = 2) {
+      if (Math.abs(n) < 1) return n.toFixed(3);
+      return n.toFixed(digits);
+    }
+
+    function calcFlow(closes, volumes) {
+      const orderedC = [...closes].reverse();
+      const orderedV = [...volumes].reverse();
+      const avgV = orderedV.reduce((a,b)=>a+b,0) / orderedV.length;
+      const flow = [0];
+      for (let i = 1; i < orderedC.length; i++) {
+        const ret = (orderedC[i] - orderedC[i-1]) / orderedC[i-1];
+        const relV = orderedV[i] / avgV;
+        flow.push(ret * relV * 100);
+      }
+      const cum = [];
+      let s = 0;
+      for (const v of flow) { s += v; cum.push(s); }
+      return {
+        flow,
+        cum,
+        latest: flow[flow.length-1],
+        prev: flow[flow.length-2],
+        cumLatest: cum[cum.length-1]
+      };
+    }
+
+    function classify(f) {
+      const latest = f.latest;
+      const prev = f.prev;
+      const accelIn = latest > 0 && latest > prev;
+      const accelOut = latest < 0 && latest < prev;
+      const nearZero = Math.abs(latest) < 0.35;
+      let status = '观察';
+      let tone = 'yellow';
+      if (accelIn) { status = '净流入增强'; tone = 'red'; }
+      else if (accelOut) { status = '净流出增强'; tone = 'green'; }
+      else if (latest > 0) { status = '净流入'; tone = 'red'; }
+      else if (latest < 0) { status = '净流出'; tone = 'green'; }
+      if (nearZero) { status = '临界切换'; tone = 'yellow'; }
+      return { status, tone, accelIn, accelOut, nearZero };
+    }
+
+    function buildChip(text, tone) {
+      const chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.innerHTML = `<span class="dot ${tone}"></span>${text}`;
+      return chip;
+    }
+
+    function createChartSVG(flowRes) {
+      const w = 760, h = 280, pad = 24;
+      const flow = flowRes.flow;
+      const cum = flowRes.cum;
+      const all = [...flow, ...cum, 0];
+      const min = Math.min(...all), max = Math.max(...all);
+      const y = v => h - pad - ((v - min) / ((max - min) || 1)) * (h - pad * 2);
+      const x = i => pad + i * (w - pad * 2) / Math.max(flow.length - 1, 1);
+      const zeroY = y(0);
+      const bars = flow.map((v, i) => {
+        const xx = x(i) - 8;
+        const yy = v >= 0 ? y(v) : zeroY;
+        const hh = Math.max(1, Math.abs(y(v) - zeroY));
+        const color = v >= 0 ? '#ef4444' : '#22c55e';
+        return `<rect x="${xx.toFixed(1)}" y="${yy.toFixed(1)}" width="16" height="${hh.toFixed(1)}" fill="${color}" opacity="0.85" rx="2" />`;
+      }).join('');
+      const cumPath = cum.map((v,i)=>`${i===0?'M':'L'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+      return `
+        <svg class="chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+          <rect x="0" y="0" width="${w}" height="${h}" fill="#0a0f1a" />
+          <line x1="${pad}" y1="${zeroY.toFixed(1)}" x2="${w-pad}" y2="${zeroY.toFixed(1)}" stroke="#334155" stroke-dasharray="4 4" />
+          <text x="${pad}" y="16" fill="#94a3b8" font-size="12">Flow Pulse</text>
+          ${bars}
+          <path d="${cumPath}" fill="none" stroke="#60a5fa" stroke-width="2.6" />
+        </svg>
+      `;
+    }
+
+    function renderCard(item, containerId) {
+      const grid = document.getElementById(containerId);
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      if (item.fallback) {
+        card.innerHTML = `
+          <div class="card-head">
+            <div>
+              <div class="name">${item.name}</div>
+              <div class="code">${item.code}</div>
+            </div>
+            <div class="meta"><span class="badge yellow">外部行情</span></div>
+          </div>
+          <div class="fallback">
+            <p>该标的本次未取得稳定序列，暂保留原始页面入口。</p>
+            <div class="links"><a class="btn" href="${item.url}" target="_blank" rel="noopener noreferrer">打开原始页面</a></div>
+          </div>
+        `;
+        grid.appendChild(card);
+        return;
+      }
+
+      const flowRes = calcFlow(item.closes, item.volumes);
+      const c = classify(flowRes);
+      const note = c.accelIn ? '最近一段资金脉冲偏强，红柱放大，短线有增量资金迹象。'
+        : c.accelOut ? '最近一段资金脉冲偏弱，绿柱放大，短线有流出压力。'
+        : c.nearZero ? '最新流向接近零轴，处于强弱切换观察区。'
+        : flowRes.latest > 0 ? '仍为净流入，但尚未出现进一步增强。'
+        : '仍为净流出，但尚未出现进一步恶化。';
+
+      card.innerHTML = `
+        <div class="card-head">
+          <div>
+            <div class="name">${item.name}</div>
+            <div class="code">${item.code}</div>
+          </div>
+          <div class="meta">
+            <span class="badge ${c.tone}">${c.status}</span>
+            <a class="btn" href="${item.url}" target="_blank" rel="noopener noreferrer">原始页面</a>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          ${createChartSVG(flowRes)}
+          <div class="metrics">
+            <div class="metric"><div class="k">最新流向</div><div class="v">${fmt(flowRes.latest,3)}</div></div>
+            <div class="metric"><div class="k">前一日</div><div class="v">${fmt(flowRes.prev,3)}</div></div>
+            <div class="metric"><div class="k">累计流向</div><div class="v">${fmt(flowRes.cumLatest,3)}</div></div>
+          </div>
+          <div class="note">${note}</div>
+        </div>
+      `;
+      grid.appendChild(card);
+
+      const label = `${item.name}（${item.code}）`;
+      if (c.accelIn || (flowRes.latest > 0 && !c.nearZero)) document.getElementById('inflow-list').appendChild(buildChip(label, 'red'));
+      else if (c.accelOut || (flowRes.latest < 0 && !c.nearZero)) document.getElementById('outflow-list').appendChild(buildChip(label, 'green'));
+      else document.getElementById('watch-list').appendChild(buildChip(label, 'yellow'));
+    }
+
+    holdings.us.forEach(x => renderCard(x, 'us-grid'));
+    holdings.hk.forEach(x => renderCard(x, 'hk-grid'));
+    holdings.cn.forEach(x => renderCard(x, 'cn-grid'));
+
+    ['inflow-list','outflow-list','watch-list'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el.children.length) el.appendChild(buildChip('暂无', 'yellow'));
+    });
+  </script>
+</body>
+</html>

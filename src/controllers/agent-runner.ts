@@ -9,6 +9,8 @@ import type {
 } from '../agent/index.js';
 import type { DisplayEvent, StreamMode } from '../agent/types.js';
 import type { HistoryItem, HistoryItemStatus, WorkingState } from '../types.js';
+import type { CorePorts, EventSink } from '../ports/index.js';
+import { withMemory } from '../runtime/memory-context.js';
 
 export interface TurnStats {
   turnStartMs: number;
@@ -22,6 +24,19 @@ export interface RunQueryResult {
   answer: string;
 }
 
+/**
+ * Optional bundle of runtime dependencies the controller delegates IO through.
+ *
+ * Phase 0: ports are accepted but the deeper `Agent` class still references
+ * its own modules directly. Composition roots construct adapters and pass
+ * them in so the seam is observable; Phase 2 will rewire `Agent` to consume
+ * them as well, which is what unlocks Postgres/Vercel-Blob backed Web runs.
+ */
+export interface AgentRunnerPorts extends Partial<CorePorts> {
+  /** Optional sink that receives every AgentEvent the runner produces. */
+  events?: EventSink;
+}
+
 export class AgentRunnerController {
   private historyValue: HistoryItem[] = [];
   private workingStateValue: WorkingState = { status: 'idle' };
@@ -33,6 +48,7 @@ export class AgentRunnerController {
   private agentConfig: AgentConfig;
   private readonly inMemoryChatHistory: InMemoryChatHistory;
   private readonly onChange?: ChangeListener;
+  private readonly ports: AgentRunnerPorts;
   private abortController: AbortController | null = null;
   private approvalResolve: ((decision: ApprovalDecision) => void) | null = null;
   private sessionApprovedTools = new Set<string>();
@@ -41,10 +57,22 @@ export class AgentRunnerController {
     agentConfig: AgentConfig,
     inMemoryChatHistory: InMemoryChatHistory,
     onChange?: ChangeListener,
+    ports: AgentRunnerPorts = {},
   ) {
     this.agentConfig = agentConfig;
     this.inMemoryChatHistory = inMemoryChatHistory;
     this.onChange = onChange;
+    this.ports = ports;
+  }
+
+  /** Inject or replace ports after construction (used by tests / composition roots). */
+  setPorts(ports: AgentRunnerPorts): void {
+    Object.assign(this.ports, ports);
+  }
+
+  /** Expose for surfaces that want direct access (Web SSE wiring, etc). */
+  get runtimePorts(): Readonly<AgentRunnerPorts> {
+    return this.ports;
   }
 
   get history(): HistoryItem[] {
@@ -124,6 +152,17 @@ export class AgentRunnerController {
   }
 
   async runQuery(query: string): Promise<RunQueryResult | undefined> {
+    // Enter the Memory scope so memory_* tools that run inside this turn
+    // pick up the injected port (MemoryLake for cloud Web, LocalMemoryAdapter
+    // for CLI). When no Memory port is injected (legacy callers) the scope
+    // is skipped and tools fall back to the local default.
+    if (this.ports.memory) {
+      return withMemory(this.ports.memory, () => this.runQueryInner(query));
+    }
+    return this.runQueryInner(query);
+  }
+
+  private async runQueryInner(query: string): Promise<RunQueryResult | undefined> {
     this.abortController = new AbortController();
     let finalAnswer: string | undefined;
 
@@ -189,6 +228,15 @@ export class AgentRunnerController {
       return undefined;
     } finally {
       this.abortController = null;
+      // Let WhatsApp / SSE sinks flush whatever they buffered for this turn.
+      // Failures are swallowed so a broken sink can't poison the agent loop.
+      if (this.ports.events) {
+        try {
+          await this.ports.events.flush();
+        } catch {
+          /* swallow */
+        }
+      }
     }
   }
 
@@ -208,6 +256,13 @@ export class AgentRunnerController {
   };
 
   private async handleEvent(event: AgentEvent) {
+    // Fan out to any injected EventSink (Web SSE, WhatsApp, test collector).
+    // CLI Ink renderer still consumes the reduced history below.
+    try {
+      this.ports.events?.emit(event);
+    } catch {
+      /* sink failures must never break the agent loop */
+    }
     switch (event.type) {
       case 'thinking':
         this.workingStateValue = { status: 'thinking' };

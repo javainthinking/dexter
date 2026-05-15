@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>持仓KDJ可视化总览</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #111827;
+      --panel-2: #0f172a;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --line: #1f2937;
+      --accent: #38bdf8;
+      --red: #ef4444;
+      --green: #22c55e;
+      --yellow: #f59e0b;
+      --purple: #8b5cf6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 1680px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    .desc, .note, .foot {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .desc { margin-bottom: 10px; }
+    .note { margin-bottom: 18px; font-size: 13px; }
+    .summary {
+      margin: 18px 0 24px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(17,24,39,.96), rgba(15,23,42,.96));
+      box-shadow: 0 6px 20px rgba(0,0,0,.25);
+    }
+    .summary-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .summary-title { font-size: 18px; font-weight: 700; }
+    .summary-sub { color: var(--muted); font-size: 13px; }
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+    .ghost-btn {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .sum-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(255,255,255,.02);
+    }
+    .sum-card.red { border-color: rgba(239,68,68,.35); }
+    .sum-card.green { border-color: rgba(34,197,94,.35); }
+    .sum-card.yellow { border-color: rgba(245,158,11,.35); }
+    .sum-card.purple { border-color: rgba(139,92,246,.35); }
+    .sum-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+    .sum-list { font-size: 14px; line-height: 1.6; min-height: 44px; }
+    .sum-list.empty { color: var(--muted); }
+    .conclusion {
+      border: 1px solid rgba(56,189,248,.25);
+      border-radius: 12px;
+      padding: 12px 14px;
+      background: rgba(56,189,248,.08);
+      line-height: 1.7;
+    }
+    .section { margin-top: 28px; }
+    .section h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      min-height: 500px;
+      box-shadow: 0 6px 20px rgba(0,0,0,.25);
+    }
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      gap: 8px;
+    }
+    .name { font-weight: 700; font-size: 15px; }
+    .code { color: var(--muted); font-size: 12px; margin-top: 3px; }
+    .badge {
+      font-size: 12px;
+      color: #dbeafe;
+      background: rgba(59,130,246,.15);
+      border: 1px solid rgba(59,130,246,.35);
+      padding: 4px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .tv-wrap { height: 360px; }
+    .status-panel {
+      padding: 12px 14px 14px;
+      border-top: 1px solid var(--line);
+    }
+    .status-title { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+    .status-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .status-btn {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .status-btn.active-red { background: rgba(239,68,68,.16); border-color: rgba(239,68,68,.45); }
+    .status-btn.active-green { background: rgba(34,197,94,.16); border-color: rgba(34,197,94,.45); }
+    .status-btn.active-yellow { background: rgba(245,158,11,.16); border-color: rgba(245,158,11,.45); }
+    .status-btn.active-purple { background: rgba(139,92,246,.16); border-color: rgba(139,92,246,.45); }
+    .status-text { font-size: 12px; color: var(--muted); line-height: 1.5; min-height: 18px; }
+    .fallback {
+      padding: 18px 16px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 360px;
+      gap: 10px;
+    }
+    .fallback p { margin: 0; color: var(--muted); line-height: 1.5; }
+    .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+    .btn {
+      text-decoration: none;
+      color: white;
+      background: #2563eb;
+      border: 1px solid rgba(255,255,255,.08);
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+    }
+    .foot { margin-top: 28px; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>持仓KDJ可视化总览</h1>
+    <div class="desc">全持仓统一看盘页。可显示的标的直接嵌入 TradingView 日线图，并预加载 Stochastic 近似观察 KDJ/KD 交叉节奏；映射不稳定的标的保留外部行情入口。</div>
+    <div class="note">说明：TradingView 基础组件通常没有完全等同于部分国内软件的 KDJ 指标，这里用 Stochastic 作为近似替代。顶部 Highlight 汇总由你在卡片中手动标记驱动，不是自动计算。红涨绿跌表达已保留。</div>
+
+    <div class="summary">
+      <div class="summary-head">
+        <div>
+          <div class="summary-title">顶部 Highlight 汇总</div>
+          <div class="summary-sub">在每张卡片下方手动标记状态，顶部会自动汇总并给出组合层面的短线结论。</div>
+        </div>
+        <div class="toolbar">
+          <button class="ghost-btn" id="clear-all">清空全部标记</button>
+        </div>
+      </div>
+      <div class="summary-grid">
+        <div class="sum-card red"><div class="sum-label">今日金叉</div><div class="sum-list empty" id="sum-golden">暂无</div></div>
+        <div class="sum-card green"><div class="sum-label">今日死叉</div><div class="sum-list empty" id="sum-death">暂无</div></div>
+        <div class="sum-card yellow"><div class="sum-label">高位钝化</div><div class="sum-list empty" id="sum-overbought">暂无</div></div>
+        <div class="sum-card purple"><div class="sum-label">低位修复</div><div class="sum-list empty" id="sum-repair">暂无</div></div>
+        <div class="sum-card green"><div class="sum-label">顶背离</div><div class="sum-list empty" id="sum-bear-div">暂无</div></div>
+        <div class="sum-card red"><div class="sum-label">底背离</div><div class="sum-list empty" id="sum-bull-div">暂无</div></div>
+        <div class="sum-card yellow"><div class="sum-label">疑似顶背离</div><div class="sum-list empty" id="sum-bear-watch">暂无</div></div>
+        <div class="sum-card purple"><div class="sum-label">疑似底背离</div><div class="sum-list empty" id="sum-bull-watch">暂无</div></div>
+      </div>
+      <div class="conclusion" id="conclusion-box"><strong>综合结论：</strong> 暂无人工标记，当前仅提供图表观察视图。</div>
+    </div>
+
+    <div class="section">
+      <h2>美股</h2>
+      <div class="grid" id="us-grid"></div>
+    </div>
+
+    <div class="section">
+      <h2>港股</h2>
+      <div class="grid" id="hk-grid"></div>
+    </div>
+
+    <div class="section">
+      <h2>A股 / ETF</h2>
+      <div class="grid" id="cn-grid"></div>
+    </div>
+
+    <div class="foot">
+      注：1) 这是统一扫全仓 KDJ/KD 结构的可视化页；2) 可显示标的默认加载日线 Stochastic；3) 顶部汇总基于手动标记；4) 如需全自动版，需要稳定 OHLC 历史数据再计算真实 KDJ。
+    </div>
+  </div>
+
+  <script src="https://s3.tradingview.com/tv.js"></script>
+  <script>
+    const usHoldings = [
+      { name: 'Palantir', code: 'PLTR', tv: 'NASDAQ:PLTR' },
+      { name: '特斯拉', code: 'TSLA', tv: 'NASDAQ:TSLA' },
+      { name: 'MP Materials', code: 'MP', tv: 'NYSE:MP' },
+      { name: '阿里巴巴', code: 'BABA', tv: 'NYSE:BABA' },
+      { name: 'MicroStrategy', code: 'MSTR', tv: 'NASDAQ:MSTR' },
+      { name: 'SanDisk', code: 'SNDK', tv: 'NASDAQ:SNDK' },
+      { name: '英特尔', code: 'INTC', tv: 'NASDAQ:INTC' },
+      { name: 'Direxion 半导体3倍做多ETF', code: 'SOXL', tv: 'AMEX:SOXL' },
+      { name: 'Pure Storage', code: 'PSTG', tv: 'NYSE:PSTG' },
+      { name: '美光科技', code: 'MU', tv: 'NASDAQ:MU' }
+    ];
+
+    const hkHoldings = [
+      { name: 'MINIMAX-W', code: '00100', type: 'fallback', links: [
+        { label: 'AASTOCKS', url: 'https://www.aastocks.com/sc/stocks/analysis/stock-aafn/00100/0/all/1' },
+        { label: '富途', url: 'https://www.futunn.com/stock/00100-HK' }
+      ]},
+      { name: '腾讯控股', code: '00700', tv: 'HKEX:700' },
+      { name: '小米集团-W', code: '01810', tv: 'HKEX:1810' },
+      { name: '曦智科技-P', code: '01879', type: 'fallback', links: [
+        { label: 'AASTOCKS', url: 'https://www.aastocks.com/sc/stocks/analysis/stock-aafn/01879/0/all/1' },
+        { label: '富途', url: 'https://www.futunn.com/stock/01879-HK' }
+      ]},
+      { name: '京东集团-SW', code: '09618', tv: 'HKEX:9618' },
+      { name: '阿里巴巴-SW', code: '09988', tv: 'HKEX:9988' }
+    ];
+
+    const cnHoldings = [
+      { name: '比亚迪', code: '002594', tv: 'SZSE:002594' },
+      { name: '恒生科技ETF汇添富', code: '513260', type: 'fallback', links: [
+        { label: '东方财富', url: 'https://quote.eastmoney.com/sh513260.html' },
+        { label: '新浪财经', url: 'https://finance.sina.com.cn/realstock/company/sh513260/nc.shtml' }
+      ]},
+      { name: '特变电工', code: '600089', tv: 'SSE:600089' },
+      { name: '国电南瑞', code: '600406', tv: 'SSE:600406' },
+      { name: '法拉电子', code: '600563', tv: 'SSE:600563' },
+      { name: '川投能源', code: '600674', tv: 'SSE:600674' },
+      { name: '中国电建', code: '601669', tv: 'SSE:601669' },
+      { name: '中国能建', code: '601868', tv: 'SSE:601868' }
+    ];
+
+    const statusMeta = {
+      golden: { label: '金叉', cls: 'active-red' },
+      death: { label: '死叉', cls: 'active-green' },
+      overbought: { label: '高位钝化', cls: 'active-yellow' },
+      repair: { label: '低位修复', cls: 'active-purple' },
+      bearDiv: { label: '顶背离', cls: 'active-green' },
+      bullDiv: { label: '底背离', cls: 'active-red' },
+      bearWatch: { label: '疑似顶背离', cls: 'active-yellow' },
+      bullWatch: { label: '疑似底背离', cls: 'active-purple' }
+    };
+
+    const state = {};
+    function keyOf(item) { return `${item.code}-${item.name}`; }
+    function displayName(item) { return `${item.name}（${item.code}）`; }
+
+    function createStatusPanel(item) {
+      const itemKey = keyOf(item);
+      return `
+        <div class="status-panel">
+          <div class="status-title">人工标记状态</div>
+          <div class="status-buttons">
+            <button class="status-btn" data-key="${itemKey}" data-status="golden">金叉</button>
+            <button class="status-btn" data-key="${itemKey}" data-status="death">死叉</button>
+            <button class="status-btn" data-key="${itemKey}" data-status="overbought">高位钝化</button>
+            <button class="status-btn" data-key="${itemKey}" data-status="repair">低位修复</button>
+            <button class="status-btn" data-key="${itemKey}" data-status="bearDiv">顶背离</button>
+            <button class="status-btn" data-key="${itemKey}" data-status="bullDiv">底背离</button>
+            <button class="status-btn" data-key="${itemKey}" data-status="bearWatch">疑似顶背离</button>
+            <button class="status-btn" data-key="${itemKey}" data-status="bullWatch">疑似底背离</button>
+            <button class="status-btn" data-key="${itemKey}" data-status="clear">清除</button>
+          </div>
+          <div class="status-text" id="status-text-${itemKey}">未标记</div>
+        </div>
+      `;
+    }
+
+    function createTVCard(item, idx, containerId) {
+      const grid = document.getElementById(containerId);
+      const card = document.createElement('div');
+      card.className = 'card';
+      const wid = `${containerId}-tv-${idx}`;
+      card.innerHTML = `
+        <div class="card-head">
+          <div>
+            <div class="name">${item.name}</div>
+            <div class="code">${item.code}</div>
+          </div>
+          <div class="badge">日K KDJ</div>
+        </div>
+        <div class="tv-wrap" id="${wid}"></div>
+        ${createStatusPanel(item)}
+      `;
+      grid.appendChild(card);
+      new TradingView.widget({
+        autosize: true,
+        symbol: item.tv,
+        interval: 'D',
+        timezone: 'Asia/Shanghai',
+        theme: 'dark',
+        style: '1',
+        locale: 'zh_CN',
+        toolbar_bg: '#0f172a',
+        enable_publishing: false,
+        hide_top_toolbar: true,
+        hide_legend: false,
+        withdateranges: false,
+        allow_symbol_change: false,
+        save_image: false,
+        studies: ['Stochastic@tv-basicstudies'],
+        container_id: wid
+      });
+    }
+
+    function createFallbackCard(item, containerId) {
+      const grid = document.getElementById(containerId);
+      const card = document.createElement('div');
+      card.className = 'card';
+      const links = item.links.map(l => `<a class="btn" href="${l.url}" target="_blank" rel="noopener noreferrer">${l.label}</a>`).join('');
+      card.innerHTML = `
+        <div class="card-head">
+          <div>
+            <div class="name">${item.name}</div>
+            <div class="code">${item.code}</div>
+          </div>
+          <div class="badge">外部行情</div>
+        </div>
+        <div class="fallback">
+          <p>该标的图表映射不稳定，暂保留外部行情入口。你仍可在下方手动标记其 KDJ 状态，顶部会同步汇总。</p>
+          <div class="links">${links}</div>
+        </div>
+        ${createStatusPanel(item)}
+      `;
+      grid.appendChild(card);
+    }
+
+    function render(items, containerId) {
+      items.forEach((item, idx) => {
+        if (item.type === 'fallback') createFallbackCard(item, containerId);
+        else createTVCard(item, idx, containerId);
+      });
+    }
+
+    function updateButtonStates(itemKey) {
+      const buttons = document.querySelectorAll(`.status-btn[data-key="${itemKey}"]`);
+      buttons.forEach(btn => {
+        btn.classList.remove('active-red', 'active-green', 'active-yellow', 'active-purple');
+        const status = btn.dataset.status;
+        if (status !== 'clear' && state[itemKey] === status) btn.classList.add(statusMeta[status].cls);
+      });
+      const textEl = document.getElementById(`status-text-${itemKey}`);
+      textEl.textContent = state[itemKey] ? `当前标记：${statusMeta[state[itemKey]].label}` : '未标记';
+    }
+
+    function namesByStatus(targetStatus) {
+      const all = [...usHoldings, ...hkHoldings, ...cnHoldings];
+      return all.filter(item => state[keyOf(item)] === targetStatus).map(displayName);
+    }
+
+    function fillSummary(id, arr) {
+      const el = document.getElementById(id);
+      if (!arr.length) {
+        el.textContent = '暂无';
+        el.classList.add('empty');
+        return;
+      }
+      el.textContent = arr.join('、');
+      el.classList.remove('empty');
+    }
+
+    function buildConclusion(golden, death, overbought, repair, bearDiv, bullDiv, bearWatch, bullWatch) {
+      const any = [golden, death, overbought, repair, bearDiv, bullDiv, bearWatch, bullWatch].some(arr => arr.length);
+      if (!any) return '<strong>综合结论：</strong> 暂无人工标记，当前仅提供图表观察视图。';
+      const lines = [];
+      if (golden.length > death.length) lines.push('金叉标的多于死叉，组合短线情绪偏强。');
+      else if (death.length > golden.length) lines.push('死叉标的多于金叉，组合短线更偏防守。');
+      else if (golden.length && death.length) lines.push('金叉与死叉数量接近，组合呈分化状态。');
+      if (overbought.length) lines.push('存在高位钝化标的，强势方向虽可能延续，但追高性价比下降。');
+      if (repair.length) lines.push('低位修复标的增加，部分弱势资产出现边际改善。');
+      if (bearDiv.length || bearWatch.length) lines.push('顶背离与疑似顶背离出现，需警惕高位转弱与冲高回落。');
+      if (bullDiv.length || bullWatch.length) lines.push('底背离与疑似底背离增加，部分标的有止跌修复可能。');
+      return `<strong>综合结论：</strong> ${lines.join(' ')}`;
+    }
+
+    function updateSummary() {
+      const golden = namesByStatus('golden');
+      const death = namesByStatus('death');
+      const overbought = namesByStatus('overbought');
+      const repair = namesByStatus('repair');
+      const bearDiv = namesByStatus('bearDiv');
+      const bullDiv = namesByStatus('bullDiv');
+      const bearWatch = namesByStatus('bearWatch');
+      const bullWatch = namesByStatus('bullWatch');
+      fillSummary('sum-golden', golden);
+      fillSummary('sum-death', death);
+      fillSummary('sum-overbought', overbought);
+      fillSummary('sum-repair', repair);
+      fillSummary('sum-bear-div', bearDiv);
+      fillSummary('sum-bull-div', bullDiv);
+      fillSummary('sum-bear-watch', bearWatch);
+      fillSummary('sum-bull-watch', bullWatch);
+      document.getElementById('conclusion-box').innerHTML = buildConclusion(golden, death, overbought, repair, bearDiv, bullDiv, bearWatch, bullWatch);
+    }
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.status-btn');
+      if (!btn) return;
+      const itemKey = btn.dataset.key;
+      const status = btn.dataset.status;
+      if (status === 'clear') delete state[itemKey];
+      else state[itemKey] = state[itemKey] === status ? undefined : status;
+      if (!state[itemKey]) delete state[itemKey];
+      updateButtonStates(itemKey);
+      updateSummary();
+    });
+
+    document.getElementById('clear-all').addEventListener('click', () => {
+      Object.keys(state).forEach(k => delete state[k]);
+      document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active-red', 'active-green', 'active-yellow', 'active-purple'));
+      [...usHoldings, ...hkHoldings, ...cnHoldings].forEach(item => updateButtonStates(keyOf(item)));
+      updateSummary();
+    });
+
+    render(usHoldings, 'us-grid');
+    render(hkHoldings, 'hk-grid');
+    render(cnHoldings, 'cn-grid');
+    updateSummary();
+  </script>
+</body>
+</html>

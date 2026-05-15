@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MACD 金叉死叉汇总</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #0b1220; color: #e5e7eb; }
+    .wrap { max-width: 1400px; margin: 0 auto; padding: 20px; }
+    h1 { margin: 0 0 12px; font-size: 26px; }
+    .note { color: #9ca3af; margin-bottom: 18px; line-height: 1.6; }
+    .group { margin: 26px 0; }
+    .group h2 { font-size: 20px; margin: 0 0 12px; color: #f3f4f6; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+    .card { background: #111827; border: 1px solid #1f2937; border-radius: 14px; overflow: hidden; }
+    .hd { padding: 12px 14px; border-bottom: 1px solid #1f2937; }
+    .name { font-size: 15px; font-weight: 700; }
+    .sub { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+    .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .tag-red { background: rgba(239,68,68,.15); color: #f87171; border: 1px solid rgba(239,68,68,.35); padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+    .tag-green { background: rgba(34,197,94,.15); color: #4ade80; border: 1px solid rgba(34,197,94,.35); padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+    .tv { height: 420px; }
+    .fallback { padding: 14px; }
+    a { color: #93c5fd; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>MACD 金叉 / 死叉汇总视图</h1>
+    <div class="note">
+      统一展示日线 D，并直接显示 MACD 指标，便于核对金叉、死叉是否与图形一致。颜色按你的偏好统一：红涨绿跌。<br/>
+      说明：金叉=MACD线自下向上穿越信号线；死叉=MACD线自上向下穿越信号线。是否属于“水下金叉”，需再看是否发生在零轴下方。
+    </div>
+
+    <div class="group">
+      <h2>美股</h2>
+      <div class="grid">
+        <div class="card"><div class="hd"><div class="name">Palantir（PLTR）</div><div class="sub">日线 + MACD</div><div class="tags"><span class="tag-red">查看金叉/死叉</span><span class="tag-green">查看零轴位置</span></div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ%3APLTR&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="card"><div class="hd"><div class="name">特斯拉（TSLA）</div><div class="sub">日线 + MACD</div><div class="tags"><span class="tag-red">查看金叉/死叉</span><span class="tag-green">趋势确认</span></div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ%3ATSLA&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="card"><div class="hd"><div class="name">MP Materials（MP）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=NYSE%3AMP&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="card"><div class="hd"><div class="name">阿里巴巴（BABA）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=NYSE%3ABABA&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="card"><div class="hd"><div class="name">MicroStrategy（MSTR）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ%3AMSTR&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="card"><div class="hd"><div class="name">SanDisk（SNDK）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ%3ASNDK&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="card"><div class="hd"><div class="name">英特尔（INTC）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ%3AINTC&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="card"><div class="hd"><div class="name">Direxion 半导体3倍做多ETF（SOXL）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=NYSEARCA%3ASOXL&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="card"><div class="hd"><div class="name">Pure Storage（PSTG）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=NYSE%3APSTG&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="card"><div class="hd"><div class="name">美光科技（MU）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ%3AMU&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+      </div>
+    </div>
+
+    <div class="group">
+      <h2>港股</h2>
+      <div class="grid">
+        <div class="card"><div class="hd"><div class="name">MINIMAX-W（00100）</div><div class="sub">映射不稳定，使用外链查看 MACD</div></div><div class="fallback"><a target="_blank" href="https://www.aastocks.com/sc/stocks/analysis/stock-aafn/00100/0/all/1">打开外部行情</a></div></div>
+        <div class="card"><div class="hd"><div class="name">腾讯控股（00700）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=HKEX%3A700&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="card"><div class="hd"><div class="name">小米集团-W（01810）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=HKEX%3A1810&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="card"><div class="hd"><div class="name">曦智科技-P（01879）</div><div class="sub">映射不稳定，使用外链查看 MACD</div></div><div class="fallback"><a target="_blank" href="https://www.aastocks.com/sc/stocks/analysis/stock-aafn/01879/0/all/1">打开外部行情</a></div></div>
+        <div class="card"><div class="hd"><div class="name">京东集团-SW（09618）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=HKEX%3A9618&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="card"><div class="hd"><div class="name">阿里巴巴-SW（09988）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=HKEX%3A9988&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+      </div>
+    </div>
+
+    <div class="group">
+      <h2>A股 / ETF</h2>
+      <div class="grid">
+        <div class="card"><div class="hd"><div class="name">比亚迪（002594）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=SZSE%3A002594&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="card"><div class="hd"><div class="name">恒生科技ETF汇添富（513260）</div><div class="sub">映射不稳定，使用外链查看 MACD</div></div><div class="fallback"><a target="_blank" href="https://quote.eastmoney.com/sh513260.html">打开外部行情</a></div></div>
+        <div class="card"><div class="hd"><div class="name">特变电工（600089）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=SSE%3A600089&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="card"><div class="hd"><div class="name">国电南瑞（600406）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=SSE%3A600406&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="card"><div class="hd"><div class="name">法拉电子（600563）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=SSE%3A600563&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="card"><div class="hd"><div class="name">川投能源（600674）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=SSE%3A600674&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="card"><div class="hd"><div class="name">中国建筑（601669）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=SSE%3A601669&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="card"><div class="hd"><div class="name">中国能建（601868）</div><div class="sub">日线 + MACD</div></div><div class="tv"><iframe src="https://s.tradingview.com/widgetembed/?symbol=SSE%3A601868&interval=D&theme=dark&style=1&studies=%5B%22MACD%40tv-basicstudies%22%5D&withdateranges=1&hide_side_toolbar=0&allow_symbol_change=0" width="100%" height="100%" frameborder="0"></iframe></div></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,8 +1,14 @@
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { api, stripFieldsDeep } from './api.js';
+import { api, stripFieldsDeep, withFallback } from './api.js';
 import { formatToolResult } from '../types.js';
 import { TTL_24H } from './utils.js';
+import {
+  fetchYahooIncomeStatements,
+  fetchYahooBalanceSheets,
+  fetchYahooCashFlowStatements,
+  fetchYahooAllFinancials,
+} from './yahoo.js';
 
 const REDUNDANT_FINANCIAL_FIELDS = ['accession_number', 'currency', 'period'] as const;
 
@@ -63,7 +69,12 @@ export const getIncomeStatements = new DynamicStructuredTool({
   schema: FinancialStatementsInputSchema,
   func: async (input) => {
     const params = createParams(input);
-    const { data, url } = await api.get('/financials/income-statements/', params, { cacheable: true, ttlMs: TTL_24H });
+    const ticker = input.ticker.trim().toUpperCase();
+    const { data, url } = await withFallback(
+      () => api.get('/financials/income-statements/', params, { cacheable: true, ttlMs: TTL_24H }),
+      () => fetchYahooIncomeStatements(ticker, input.period, input.limit),
+      `income-statements ${ticker} ${input.period}`,
+    );
     return formatToolResult(
       stripFieldsDeep(data.income_statements || {}, REDUNDANT_FINANCIAL_FIELDS),
       [url]
@@ -77,7 +88,12 @@ export const getBalanceSheets = new DynamicStructuredTool({
   schema: FinancialStatementsInputSchema,
   func: async (input) => {
     const params = createParams(input);
-    const { data, url } = await api.get('/financials/balance-sheets/', params, { cacheable: true, ttlMs: TTL_24H });
+    const ticker = input.ticker.trim().toUpperCase();
+    const { data, url } = await withFallback(
+      () => api.get('/financials/balance-sheets/', params, { cacheable: true, ttlMs: TTL_24H }),
+      () => fetchYahooBalanceSheets(ticker, input.period, input.limit),
+      `balance-sheets ${ticker} ${input.period}`,
+    );
     return formatToolResult(
       stripFieldsDeep(data.balance_sheets || {}, REDUNDANT_FINANCIAL_FIELDS),
       [url]
@@ -91,7 +107,12 @@ export const getCashFlowStatements = new DynamicStructuredTool({
   schema: FinancialStatementsInputSchema,
   func: async (input) => {
     const params = createParams(input);
-    const { data, url } = await api.get('/financials/cash-flow-statements/', params, { cacheable: true, ttlMs: TTL_24H });
+    const ticker = input.ticker.trim().toUpperCase();
+    const { data, url } = await withFallback(
+      () => api.get('/financials/cash-flow-statements/', params, { cacheable: true, ttlMs: TTL_24H }),
+      () => fetchYahooCashFlowStatements(ticker, input.period, input.limit),
+      `cash-flow-statements ${ticker} ${input.period}`,
+    );
     return formatToolResult(
       stripFieldsDeep(data.cash_flow_statements || {}, REDUNDANT_FINANCIAL_FIELDS),
       [url]
@@ -105,7 +126,12 @@ export const getAllFinancialStatements = new DynamicStructuredTool({
   schema: FinancialStatementsInputSchema,
   func: async (input) => {
     const params = createParams(input);
-    const { data, url } = await api.get('/financials/', params, { cacheable: true, ttlMs: TTL_24H });
+    const ticker = input.ticker.trim().toUpperCase();
+    const { data, url } = await withFallback(
+      () => api.get('/financials/', params, { cacheable: true, ttlMs: TTL_24H }),
+      () => fetchYahooAllFinancials(ticker, input.period, input.limit),
+      `financials ${ticker} ${input.period}`,
+    );
     return formatToolResult(
       stripFieldsDeep(data.financials || {}, REDUNDANT_FINANCIAL_FIELDS),
       [url]

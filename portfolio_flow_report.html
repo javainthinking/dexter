@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>持仓最新资金流量汇总报告</title>
+  <style>
+    :root {
+      --bg:#0b1220; --panel:#111827; --panel2:#0f172a; --line:#1f2937;
+      --text:#e5e7eb; --muted:#94a3b8; --red:#ef4444; --green:#22c55e;
+      --yellow:#f59e0b; --blue:#38bdf8;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1400px;margin:0 auto;padding:24px}
+    h1{margin:0 0 8px;font-size:30px}
+    .sub{color:var(--muted);line-height:1.6;margin-bottom:18px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+    .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,.22)}
+    .k{font-size:12px;color:var(--muted);margin-bottom:8px}
+    .v{font-size:26px;font-weight:800}
+    .red{color:var(--red)} .green{color:var(--green)} .yellow{color:var(--yellow)} .blue{color:var(--blue)}
+    .section{margin-top:26px}
+    .section h2{font-size:20px;margin:0 0 12px;padding-left:10px;border-left:4px solid var(--blue)}
+    table{width:100%;border-collapse:collapse;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:14px;overflow:hidden}
+    th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:14px;vertical-align:top}
+    th{color:var(--muted);font-weight:600;background:rgba(255,255,255,.02)}
+    tr:last-child td{border-bottom:none}
+    .tag{display:inline-block;padding:3px 8px;border-radius:999px;font-size:12px;border:1px solid rgba(255,255,255,.08)}
+    .tag.red{background:rgba(239,68,68,.12);color:#fecaca;border-color:rgba(239,68,68,.25)}
+    .tag.green{background:rgba(34,197,94,.12);color:#bbf7d0;border-color:rgba(34,197,94,.25)}
+    .tag.yellow{background:rgba(245,158,11,.12);color:#fde68a;border-color:rgba(245,158,11,.25)}
+    ul{margin:8px 0 0 18px;padding:0;line-height:1.7}
+    .foot{margin-top:24px;color:var(--muted);font-size:12px;line-height:1.7}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>持仓最新资金流量汇总报告</h1>
+  <div class="sub">口径说明：本报告把“资金流量”分为三层看：1）价格表现反映的即时资金偏好；2）A股主力净流入与港股南向资金等可用公开口径；3）新闻与业绩催化带来的板块轮动。颜色按你的偏好统一为红涨绿跌。</div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="k">组合结论</div>
+      <div class="v red">结构性回流</div>
+      <div>不是全面 risk-on，而是资金集中回到<strong>中概平台 + 半导体弹性 + 少数AI龙头</strong>。</div>
+    </div>
+    <div class="card">
+      <div class="k">最强回流方向</div>
+      <div class="v red">阿里 / 京东 / SOXL / MU / TSLA</div>
+      <div>业绩、AI CapEx、半导体弹性与风险偏好回升共同驱动。</div>
+    </div>
+    <div class="card">
+      <div class="k">明显承压方向</div>
+      <div class="v green">PLTR / MSTR / MP</div>
+      <div>高位兑现、主题分流、以及比特币/稀土链的短线波动放大。</div>
+    </div>
+    <div class="card">
+      <div class="k">A股资金面</div>
+      <div class="v yellow">分化</div>
+      <div>电力设备板块整体有流出，但电网设备此前承接较强；你持仓内部强弱不一。</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>全持仓最新强弱汇总</h2>
+    <table>
+      <tr><th>标的</th><th>最新表现</th><th>资金流判断</th></tr>
+      <tr><td>阿里巴巴（BABA）</td><td class="red">+8.18%</td><td><span class="tag red">明显回流</span> 财报与AI/云资本开支预期上修，资金直接追逐业绩确定性。</td></tr>
+      <tr><td>阿里巴巴-SW（09988）</td><td class="red">+3.84%</td><td><span class="tag red">回流</span> 南向当日小幅净买入约0.90亿港元，价格强于资金口径，说明短线外资/交易盘也在参与。</td></tr>
+      <tr><td>京东集团-SW（09618）</td><td class="red">+1.48%</td><td><span class="tag red">偏回流</span> 属于港股科技修复链，跟随平台股情绪改善。</td></tr>
+      <tr><td>特斯拉（TSLA）</td><td class="red">+3.47%</td><td><span class="tag red">回流</span> 高Beta成长再获承接，偏风险偏好回升交易。</td></tr>
+      <tr><td>Direxion 半导体3倍做多ETF（SOXL）</td><td class="red">+6.79%</td><td><span class="tag red">强回流</span> 半导体弹性被重新点火，属高波动放大器。</td></tr>
+      <tr><td>美光科技（MU）</td><td class="red">+4.83%</td><td><span class="tag red">强回流</span> 资金偏向更有基本面支撑的存储链。</td></tr>
+      <tr><td>腾讯控股（00700）</td><td class="green">-0.52%</td><td><span class="tag green">南向流出</span> 5月14日南向净卖出约8.99亿港元，但财报利好仍对板块有支撑。</td></tr>
+      <tr><td>小米集团-W（01810）</td><td class="green">-0.25%</td><td><span class="tag green">明显流出</span> 5月14日南向净卖出约15.44亿港元，虽属活跃龙头，但短线兑现压力最大。</td></tr>
+      <tr><td>Palantir（PLTR）</td><td class="green">-4.38%</td><td><span class="tag green">流出/兑现</span> 前期涨幅大，高位获利回吐明显。</td></tr>
+      <tr><td>MicroStrategy / Strategy（MSTR）</td><td class="green">-3.46%</td><td><span class="tag green">流出</span> 属于比特币杠杆代理，波动放大，易被资金当作先减仓对象。</td></tr>
+      <tr><td>MP Materials（MP）</td><td class="green">-2.84%</td><td><span class="tag green">回吐</span> 题材仍在，但短线没有形成持续增量。</td></tr>
+      <tr><td>英特尔（INTC）</td><td class="green">-0.27%</td><td><span class="tag yellow">中性偏弱</span> 半导体回流里它不是最强受益者。</td></tr>
+      <tr><td>SanDisk（SNDK）</td><td class="green">-0.33%</td><td><span class="tag yellow">中性偏弱</span> 同属芯片链，但资金更偏向美光这类更强标的。</td></tr>
+      <tr><td>比亚迪（002594）</td><td class="red">+0.13%</td><td><span class="tag yellow">中性</span> 有承接，但不是今日核心资金主线。</td></tr>
+      <tr><td>曦智科技-P（01879）</td><td class="green">-6.09%</td><td><span class="tag green">弱势流出</span> 早期/小票弹性大，承接差时回撤更陡。</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>港股资金流：南向资金与科网主线</h2>
+    <table>
+      <tr><th>项目</th><th>数据</th><th>解读</th></tr>
+      <tr><td>南向资金总净流入</td><td class="red">+67.07亿港元</td><td>总体风险偏好改善，南向重新回流港股。</td></tr>
+      <tr><td>阿里巴巴-W（09988）</td><td class="red">净买入约0.90亿港元</td><td>资金认可财报与AI资本开支逻辑，但净买入力度不算爆发式。</td></tr>
+      <tr><td>腾讯控股（00700）</td><td class="green">净卖出约8.99亿港元</td><td>虽然财报提振板块情绪，但南向短线仍在兑现腾讯。</td></tr>
+      <tr><td>小米集团-W（01810）</td><td class="green">净卖出约15.44亿港元</td><td>成交最活跃之一，但也是净流出最大之一，说明分歧很大。</td></tr>
+      <tr><td>板块情绪</td><td class="red">恒生科技指数盘中一度涨超3%</td><td>阿里、腾讯财报和AI CapEx预期，是这轮港股科技修复的核心催化。</td></tr>
+    </table>
+    <ul>
+      <li>你的港股仓位里，资金最认可的是阿里巴巴-SW（09988）这条“业绩+AI投入”逻辑。</li>
+      <li>腾讯控股（00700）和小米集团-W（01810）虽然都是核心科技资产，但当天南向偏兑现，不宜简单理解为全面强势。</li>
+      <li>恒生科技ETF汇添富（513260）会放大你已经持有的港股科技单股暴露。</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>A股资金流：主力净流入与行业轮动</h2>
+    <table>
+      <tr><th>项目</th><th>数据</th><th>解读</th></tr>
+      <tr><td>A股全市场主力资金</td><td class="red">+45.92亿元</td><td>市场整体并不差，但结构分化明显。</td></tr>
+      <tr><td>电力设备行业</td><td class="green">-28.94亿元</td><td>你持仓里电力设备相关票，短线受板块流出拖累。</td></tr>
+      <tr><td>国电南瑞（600406）</td><td class="red">5月13日主力净流入约1334.53万元</td><td>电网自动化是相对更稳的一环，承接尚可。</td></tr>
+      <tr><td>中国电建（601669）</td><td class="green">5月14日主力净流出约1.25亿元</td><td>基建电力链内部也在分化，资金没有全面回流。</td></tr>
+      <tr><td>电网设备板块</td><td class="red">5月12日净流入约32.37亿元</td><td>说明市场此前对电网设备有避风港式配置需求。</td></tr>
+    </table>
+    <ul>
+      <li>你的A股仓位不是单边强，而是“电网设备相对稳、基建施工链偏弱、新能源制造中性”。</li>
+      <li>国电南瑞（600406）在你A股组合里质量更高，资金承接也相对更健康。</li>
+      <li>中国电建（601669）、中国能建（601868）更受基建风格和订单预期影响，资金弹性不如科技线。</li>
+      <li>特变电工（600089）、法拉电子（600563）、川投能源（600674）本次缺少统一即时主力净流数据，判断以行业与价格轮动为主，整体不算主升浪核心。</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>按市场分组的资金流判断</h2>
+    <table>
+      <tr><th>市场</th><th>结论</th><th>你需要注意什么</th></tr>
+      <tr><td>美股</td><td><span class="tag red">强弱分化</span> 资金回到阿里巴巴（BABA）、美光科技（MU）、特斯拉（TSLA）、SOXL；撤出Palantir（PLTR）、MicroStrategy（MSTR）、MP Materials（MP）。</td><td>你美股仓位高Beta很重，风格切换时波动会被放大。</td></tr>
+      <tr><td>港股</td><td><span class="tag red">指数回流，个股分化</span> 阿里更强，腾讯/小米南向偏卖出。</td><td>别把指数强势误解成你所有港股持仓都同步强。</td></tr>
+      <tr><td>A股</td><td><span class="tag yellow">结构性轮动</span> 电网设备好于施工基建链，整体不如港股科技吸金。</td><td>你A股更适合作为实体资产锚，不是短线最强进攻方向。</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>对你组合的核心结论</h2>
+    <ul>
+      <li><strong>最新增量资金主要去了“中概平台龙头 + 半导体弹性”</strong>，也就是阿里巴巴（BABA / 09988）、京东集团-SW（09618）、美光科技（MU）、SOXL。</li>
+      <li><strong>你组合里最容易拖累短线体验的仍是高波动放大器</strong>：Palantir（PLTR）、MicroStrategy（MSTR）、曦智科技-P（01879）。</li>
+      <li><strong>港股科技你有重复暴露</strong>：腾讯控股（00700）/ 小米集团-W（01810）/ 京东集团-SW（09618）/ 阿里巴巴-SW（09988） + 恒生科技ETF汇添富（513260）。行情来时收益集中，回撤时也会同步。</li>
+      <li><strong>A股更像稳定器而不是当下主线</strong>。国电南瑞（600406）这类电网自动化标的，比施工链更适合承担“组合锚”的角色。</li>
+    </ul>
+  </div>
+
+  <div class="foot">
+    数据依据：当日/最近一个交易日行情、公开新闻、A股主力净流入报道、港股南向资金活跃股数据。<br>
+    限制：美股不存在统一公开“主力净流入口径”，因此美股部分更偏价格+新闻+风格轮动判断。<br>
+    如果你要，我下一步可以继续把这个 HTML 升级成带图表的版本：加入红榜/绿榜柱状图、按你仓位权重排序、以及“重复暴露风险”可视化。 
+  </div>
+</div>
+</body>
+</html>
