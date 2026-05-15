@@ -63,9 +63,53 @@ function ChatPage() {
     }
   }, []);
 
+  // Map persisted WebChatTurn rows into the client-side ChatTurn shape used
+  // by the thread. Historical turns have no tool-call records (we don't
+  // persist tool events yet) and are always considered 'done' for status.
+  const hydrateFromRecord = useCallback(
+    (record: { turns: Array<{ turnIndex: number; query: string; answer: string | null }> } | null) => {
+      if (!record) {
+        setTurns([]);
+        return;
+      }
+      setTurns(
+        record.turns.map((t) => ({
+          id: `turn-${t.turnIndex}`,
+          question: t.query,
+          answer: t.answer ?? '',
+          status: 'done' as const,
+          tools: [],
+        })),
+      );
+    },
+    [],
+  );
+
   useEffect(() => {
     void refreshSessions();
   }, [refreshSessions]);
+
+  // On first mount, hydrate the thread from the session referenced by the
+  // dexter_session cookie. Without this, refreshing /chat would always
+  // show an empty thread even though the conversation lives in Postgres.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/sessions/current', { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = (await res.json()) as {
+          session: { turns: Array<{ turnIndex: number; query: string; answer: string | null }> } | null;
+        };
+        if (!cancelled) hydrateFromRecord(data.session);
+      } catch {
+        /* ignore */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [hydrateFromRecord]);
 
   useEffect(() => {
     threadRef.current?.scrollTo({
@@ -201,7 +245,12 @@ function ChatPage() {
           body: JSON.stringify({ sessionId }),
         });
         if (res.ok) {
-          setTurns([]);
+          const data = (await res.json()) as {
+            session: {
+              turns: Array<{ turnIndex: number; query: string; answer: string | null }>;
+            } | null;
+          };
+          hydrateFromRecord(data.session);
           void refreshSessions();
           setSidebarOpen(false);
         }
@@ -209,7 +258,7 @@ function ChatPage() {
         /* ignore */
       }
     },
-    [refreshSessions],
+    [hydrateFromRecord, refreshSessions],
   );
 
   const empty = turns.length === 0 && !pending;

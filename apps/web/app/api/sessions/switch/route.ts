@@ -1,12 +1,11 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
-import { eq } from 'drizzle-orm';
-import { getDb } from '@dexter/core/db/client';
-import { webSessions } from '@dexter/core/db/schema/web-sessions';
+import { PostgresWebSessionStore } from '@dexter/core/adapters/storage/postgres/web-session-store';
 
 /**
- * POST /api/sessions/switch — set the session cookie to an existing session id.
- * Used by the sidebar when the user clicks a past conversation.
+ * POST /api/sessions/switch — set the session cookie to an existing session id
+ * and return that session's full record (including turns) so the client can
+ * hydrate the conversation thread immediately without a follow-up round trip.
  *
  * Body: { sessionId: string }
  */
@@ -24,14 +23,11 @@ export async function POST(request: NextRequest): Promise<Response> {
       return NextResponse.json({ error: 'missing sessionId' }, { status: 400 });
     }
 
+    let session = null;
     if (process.env.DATABASE_URL) {
-      const db = getDb();
-      const [row] = await db
-        .select({ id: webSessions.id })
-        .from(webSessions)
-        .where(eq(webSessions.id, sessionId))
-        .limit(1);
-      if (!row) {
+      const store = new PostgresWebSessionStore();
+      session = await store.get(sessionId);
+      if (!session) {
         return NextResponse.json({ error: 'not found' }, { status: 404 });
       }
     }
@@ -53,10 +49,11 @@ export async function POST(request: NextRequest): Promise<Response> {
         route: '/api/sessions/switch',
         requestId,
         sessionId,
+        turnCount: session?.turns.length ?? 0,
         msg: 'session_switched',
       }),
     );
-    return NextResponse.json({ sessionId });
+    return NextResponse.json({ sessionId, session });
   } catch (err) {
     console.error(
       JSON.stringify({
