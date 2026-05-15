@@ -1,198 +1,446 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import * as React from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { Menu, RotateCcw } from 'lucide-react';
+import { Sidebar, type SessionSummary } from '../../components/chat/sidebar';
+import { Composer } from '../../components/chat/composer';
+import { EmptyState } from '../../components/chat/empty-state';
+import {
+  AssistantMessage,
+  UserMessage,
+  type ChatTurn,
+} from '../../components/chat/message';
+import type { ToolCardEvent, ToolStatus } from '../../components/chat/tool-card';
+import { Button } from '../../components/ui/button';
+import { Separator } from '../../components/ui/separator';
+import { ThemeToggle } from '../../components/theme-toggle';
+import { Logo } from '../../components/logo';
+import { cn } from '../../lib/utils';
 
-interface Turn {
-  id: string;
-  question: string;
-  answer: string;
-  status: 'streaming' | 'done' | 'error';
-  events: string[];
+export default function ChatRoute() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <ChatPage />
+    </Suspense>
+  );
 }
 
-export default function ChatPage() {
-  const [turns, setTurns] = useState<Turn[]>([]);
+function ChatPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const promptFromUrl = searchParams.get('prompt') ?? '';
+
+  const [sessions, setSessions] = useState<SessionSummary[]>([]);
+  const [sessionsLoading, setSessionsLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const [turns, setTurns] = useState<ChatTurn[]>([]);
   const [input, setInput] = useState('');
   const [pending, setPending] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const threadRef = useRef<HTMLDivElement>(null);
+
+  const refreshSessions = useCallback(async () => {
+    try {
+      const res = await fetch('/api/sessions', { cache: 'no-store' });
+      if (!res.ok) return;
+      const data = (await res.json()) as { sessions: SessionSummary[] };
+      setSessions(data.sessions ?? []);
+    } catch {
+      /* ignore */
+    } finally {
+      setSessionsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+    void refreshSessions();
+  }, [refreshSessions]);
+
+  useEffect(() => {
+    threadRef.current?.scrollTo({
+      top: threadRef.current.scrollHeight,
+      behavior: 'smooth',
+    });
   }, [turns]);
 
-  async function send() {
-    const question = input.trim();
-    if (!question || pending) return;
+  const send = useCallback(
+    async (question: string) => {
+      const q = question.trim();
+      if (!q || pending) return;
+      setInput('');
+      setPending(true);
+
+      const turnId =
+        typeof crypto !== 'undefined' && 'randomUUID' in crypto
+          ? crypto.randomUUID()
+          : String(Date.now());
+
+      setTurns((prev) => [
+        ...prev,
+        {
+          id: turnId,
+          question: q,
+          answer: '',
+          status: 'streaming',
+          statusLabel: 'thinking',
+          tools: [],
+        },
+      ]);
+
+      const controller = new AbortController();
+      abortRef.current = controller;
+
+      try {
+        const res = await fetch('/api/agent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: q }),
+          signal: controller.signal,
+        });
+
+        if (!res.ok || !res.body) {
+          throw new Error(`agent_failed_${res.status}`);
+        }
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buf = '';
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value, { stream: true });
+          const records = buf.split('\n\n');
+          buf = records.pop() ?? '';
+          for (const record of records) {
+            if (record.trim()) applyRecord(turnId, record, setTurns);
+          }
+        }
+
+        setTurns((prev) =>
+          prev.map((t) =>
+            t.id === turnId ? { ...t, status: 'done' as const, statusLabel: undefined } : t,
+          ),
+        );
+      } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') {
+          setTurns((prev) =>
+            prev.map((t) =>
+              t.id === turnId
+                ? { ...t, status: 'interrupted' as const, statusLabel: undefined }
+                : t,
+            ),
+          );
+        } else {
+          const message = err instanceof Error ? err.message : String(err);
+          setTurns((prev) =>
+            prev.map((t) =>
+              t.id === turnId
+                ? {
+                    ...t,
+                    status: 'error' as const,
+                    statusLabel: undefined,
+                    errorMessage: message,
+                  }
+                : t,
+            ),
+          );
+        }
+      } finally {
+        abortRef.current = null;
+        setPending(false);
+        void refreshSessions();
+      }
+    },
+    [pending, refreshSessions],
+  );
+
+  const consumed = useRef(false);
+  useEffect(() => {
+    if (consumed.current) return;
+    if (!promptFromUrl) return;
+    consumed.current = true;
     setInput('');
-    setPending(true);
+    void send(promptFromUrl);
+    router.replace('/chat');
+  }, [promptFromUrl, router, send]);
 
-    const turnId = crypto.randomUUID();
-    setTurns((prev) => [
-      ...prev,
-      { id: turnId, question, answer: '', status: 'streaming', events: [] },
-    ]);
+  const stop = useCallback(() => {
+    abortRef.current?.abort();
+  }, []);
 
+  const newConversation = useCallback(async () => {
+    abortRef.current?.abort();
+    setTurns([]);
     try {
-      const res = await fetch('/api/agent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: question }),
-      });
-
-      if (!res.ok || !res.body) {
-        throw new Error(`Agent request failed: ${res.status}`);
-      }
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buf = '';
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        buf += decoder.decode(value, { stream: true });
-        const records = buf.split('\n\n');
-        buf = records.pop() ?? '';
-        for (const record of records) {
-          if (!record.trim()) continue;
-          handleSseRecord(turnId, record);
-        }
-      }
-      setTurns((prev) =>
-        prev.map((t) => (t.id === turnId ? { ...t, status: 'done' } : t)),
-      );
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      setTurns((prev) =>
-        prev.map((t) =>
-          t.id === turnId ? { ...t, status: 'error', answer: msg } : t,
-        ),
-      );
-    } finally {
-      setPending(false);
-    }
-  }
-
-  function handleSseRecord(turnId: string, record: string) {
-    const lines = record.split('\n');
-    let eventType = 'message';
-    let data = '';
-    for (const line of lines) {
-      if (line.startsWith('event:')) eventType = line.slice(6).trim();
-      else if (line.startsWith('data:')) data += line.slice(5).trim();
-    }
-    if (!data) return;
-    let payload: Record<string, unknown> = {};
-    try {
-      payload = JSON.parse(data);
+      await fetch('/api/sessions', { method: 'POST' });
     } catch {
-      payload = { raw: data };
+      /* ignore */
     }
-    setTurns((prev) =>
-      prev.map((t) => {
-        if (t.id !== turnId) return t;
-        if (eventType === 'done' && typeof payload.answer === 'string') {
-          return { ...t, answer: payload.answer, status: 'done' };
+    void refreshSessions();
+  }, [refreshSessions]);
+
+  const switchSession = useCallback(
+    async (sessionId: string) => {
+      abortRef.current?.abort();
+      try {
+        const res = await fetch('/api/sessions/switch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId }),
+        });
+        if (res.ok) {
+          setTurns([]);
+          void refreshSessions();
+          setSidebarOpen(false);
         }
-        return { ...t, events: [...t.events, `${eventType}: ${data.slice(0, 80)}`] };
-      }),
-    );
-  }
+      } catch {
+        /* ignore */
+      }
+    },
+    [refreshSessions],
+  );
+
+  const empty = turns.length === 0 && !pending;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <header
-        style={{
-          padding: '16px 24px',
-          borderBottom: '1px solid #27272a',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <strong>Dexter</strong>
-        <span style={{ color: '#a1a1aa', fontSize: 13 }}>chat preview</span>
-      </header>
-
-      <div ref={scrollRef} style={{ flex: 1, overflow: 'auto', padding: '24px' }}>
-        <div style={{ maxWidth: 720, margin: '0 auto' }}>
-          {turns.length === 0 && (
-            <p style={{ color: '#71717a' }}>
-              Ask Dexter a financial question. Streaming agent runs land here.
-            </p>
-          )}
-          {turns.map((t) => (
-            <article
-              key={t.id}
-              style={{
-                marginBottom: 32,
-                padding: 16,
-                background: '#18181b',
-                borderRadius: 12,
-                border: '1px solid #27272a',
-              }}
-            >
-              <p style={{ fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>You</p>
-              <p style={{ margin: 0 }}>{t.question}</p>
-              <hr style={{ border: 'none', borderTop: '1px solid #27272a', margin: '12px 0' }} />
-              <p style={{ fontSize: 13, color: '#a1a1aa', marginBottom: 4 }}>
-                Dexter {t.status === 'streaming' && '…thinking'}
-              </p>
-              {t.answer && <p style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{t.answer}</p>}
-              {t.events.length > 0 && (
-                <details style={{ marginTop: 12 }}>
-                  <summary style={{ color: '#71717a', fontSize: 12 }}>
-                    {t.events.length} agent events
-                  </summary>
-                  <pre style={{ fontSize: 11, color: '#a1a1aa', overflow: 'auto' }}>
-                    {t.events.join('\n')}
-                  </pre>
-                </details>
-              )}
-            </article>
-          ))}
-        </div>
+    <div className="flex h-[100dvh] w-full overflow-hidden bg-background">
+      {/* Desktop sidebar */}
+      <div className="hidden md:flex">
+        <Sidebar
+          sessions={sessions}
+          loading={sessionsLoading}
+          onNew={newConversation}
+          onSwitch={switchSession}
+        />
       </div>
 
-      <footer style={{ padding: 16, borderTop: '1px solid #27272a' }}>
-        <form
-          style={{ maxWidth: 720, margin: '0 auto', display: 'flex', gap: 8 }}
-          onSubmit={(e) => {
-            e.preventDefault();
-            void send();
-          }}
-        >
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask Dexter…"
-            disabled={pending}
-            style={{
-              flex: 1,
-              background: '#18181b',
-              color: '#fafafa',
-              border: '1px solid #27272a',
-              padding: '12px 16px',
-              borderRadius: 8,
-              fontSize: 15,
-            }}
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-40 flex md:hidden">
+          <div
+            className="absolute inset-0 bg-background/70 backdrop-blur-sm"
+            onClick={() => setSidebarOpen(false)}
           />
-          <button
-            type="submit"
-            disabled={pending || !input.trim()}
-            style={{
-              background: pending ? '#3f3f46' : '#fafafa',
-              color: pending ? '#a1a1aa' : '#09090b',
-              padding: '12px 20px',
-              borderRadius: 8,
-              border: 'none',
-              fontWeight: 600,
-              cursor: pending ? 'not-allowed' : 'pointer',
-            }}
-          >
-            {pending ? 'Working…' : 'Send'}
-          </button>
-        </form>
-      </footer>
+          <div className="relative z-10 h-full">
+            <Sidebar
+              sessions={sessions}
+              loading={sessionsLoading}
+              onNew={() => {
+                void newConversation();
+                setSidebarOpen(false);
+              }}
+              onSwitch={switchSession}
+              onClose={() => setSidebarOpen(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      <main className="flex min-w-0 flex-1 flex-col">
+        {/* Mobile header */}
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-border px-3 md:hidden">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setSidebarOpen(true)}
+              aria-label="Open sidebar"
+            >
+              <Menu className="size-4" />
+            </Button>
+            <Logo size="sm" />
+          </div>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={newConversation}
+              aria-label="New conversation"
+            >
+              <RotateCcw className="size-4" />
+            </Button>
+            <ThemeToggle />
+          </div>
+        </header>
+
+        {/* Desktop top bar */}
+        <header className="hidden h-14 shrink-0 items-center justify-between border-b border-border px-5 md:flex">
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
+              Workbench
+            </span>
+            <Separator orientation="vertical" className="h-4" />
+            <span className="text-sm text-muted-foreground">
+              {turns.length > 0
+                ? `${turns.length} turn${turns.length === 1 ? '' : 's'} in this conversation`
+                : 'Ready'}
+            </span>
+          </div>
+          <Button variant="ghost" size="sm" onClick={newConversation}>
+            <RotateCcw className="size-3.5" />
+            Reset
+          </Button>
+        </header>
+
+        {/* Thread */}
+        <div
+          ref={threadRef}
+          className={cn(
+            'flex-1 overflow-y-auto',
+            empty && 'flex items-center justify-center',
+          )}
+        >
+          {empty ? (
+            <EmptyState onPick={(p) => void send(p)} />
+          ) : (
+            <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
+              <div className="space-y-7">
+                {turns.map((turn, idx) => (
+                  <div key={turn.id} className="space-y-4">
+                    <UserMessage text={turn.question} />
+                    <AssistantMessage turn={turn} />
+                    {idx < turns.length - 1 && <Separator className="my-7" />}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Composer */}
+        <div className="shrink-0 border-t border-border bg-background px-3 pb-4 pt-3 sm:px-6">
+          <div className="mx-auto w-full max-w-3xl">
+            <Composer
+              value={input}
+              onChange={setInput}
+              onSubmit={() => void send(input)}
+              onStop={stop}
+              pending={pending}
+            />
+            <p className="mt-2 text-center font-mono text-[10px] tracking-[0.14em] text-subtle">
+              DEXTER · For research only — not investment advice.
+            </p>
+          </div>
+        </div>
+      </main>
     </div>
   );
+}
+
+function applyRecord(
+  turnId: string,
+  record: string,
+  setTurns: React.Dispatch<React.SetStateAction<ChatTurn[]>>,
+): void {
+  const lines = record.split('\n');
+  let eventType = 'message';
+  let dataLine = '';
+  for (const line of lines) {
+    if (line.startsWith('event:')) eventType = line.slice(6).trim();
+    else if (line.startsWith('data:')) dataLine += line.slice(5).trim();
+  }
+  if (!dataLine) return;
+  let payload: Record<string, unknown> = {};
+  try {
+    payload = JSON.parse(dataLine) as Record<string, unknown>;
+  } catch {
+    return;
+  }
+  setTurns((prev) =>
+    prev.map((t) => (t.id === turnId ? reduceEvent(t, eventType, payload) : t)),
+  );
+}
+
+function reduceEvent(
+  turn: ChatTurn,
+  type: string,
+  payload: Record<string, unknown>,
+): ChatTurn {
+  switch (type) {
+    case 'thinking':
+      return { ...turn, statusLabel: 'thinking' };
+    case 'tool_start': {
+      const id = (payload.toolCallId as string) ?? `tool-${Date.now()}`;
+      const tool = (payload.tool as string) ?? 'tool';
+      const args = payload.args as Record<string, unknown> | undefined;
+      const card: ToolCardEvent = { id, tool, status: 'running', args };
+      return {
+        ...turn,
+        statusLabel: `running ${tool}`,
+        tools: [...turn.tools, card],
+      };
+    }
+    case 'tool_progress': {
+      const tool = payload.tool as string | undefined;
+      const message = payload.message as string | undefined;
+      return {
+        ...turn,
+        tools: turn.tools.map((t) =>
+          t.tool === tool && t.status === 'running'
+            ? { ...t, progressMessage: message }
+            : t,
+        ),
+      };
+    }
+    case 'tool_end': {
+      const id = (payload.toolCallId as string) ?? '';
+      const result = payload.result as string | undefined;
+      const duration = payload.duration as number | undefined;
+      return {
+        ...turn,
+        statusLabel: 'thinking',
+        tools: turn.tools.map((t) =>
+          t.id === id
+            ? {
+                ...t,
+                status: 'done' as ToolStatus,
+                result,
+                durationMs: duration,
+                progressMessage: undefined,
+              }
+            : t,
+        ),
+      };
+    }
+    case 'tool_error': {
+      const id = (payload.toolCallId as string) ?? '';
+      const errorMessage = (payload.error as string) ?? (payload.message as string);
+      return {
+        ...turn,
+        tools: turn.tools.map((t) =>
+          t.id === id ? { ...t, status: 'error' as ToolStatus, errorMessage } : t,
+        ),
+      };
+    }
+    case 'stream_progress': {
+      const mode = payload.mode as string | undefined;
+      if (!mode) return turn;
+      const labelMap: Record<string, string> = {
+        requesting: 'thinking',
+        thinking: 'thinking',
+        responding: 'writing answer',
+        'tool-input': 'planning tool call',
+        'tool-use': 'calling tool',
+      };
+      return { ...turn, statusLabel: labelMap[mode] ?? mode };
+    }
+    case 'done': {
+      const answer = (payload.answer as string) ?? '';
+      return { ...turn, answer, status: 'done', statusLabel: undefined };
+    }
+    case 'error': {
+      const message = (payload.message as string) ?? 'Unknown error';
+      return {
+        ...turn,
+        status: 'error',
+        statusLabel: undefined,
+        errorMessage: message,
+      };
+    }
+    default:
+      return turn;
+  }
 }
