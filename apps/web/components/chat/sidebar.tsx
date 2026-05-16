@@ -165,23 +165,17 @@ function SessionRow({
       <li>
         <div
           className={cn(
-            'flex w-full items-center justify-between gap-2 rounded-md p-2.5',
+            'flex w-full items-center gap-2 rounded-md p-2.5',
             'border border-[color:var(--negative)]/40 bg-[color:var(--negative)]/8',
           )}
         >
-          <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-medium text-foreground">
-              {confirmText}
-            </span>
-            <span className="mt-0.5 block truncate font-mono text-[10px] text-subtle">
-              {s.title}
-            </span>
-          </span>
+          {/* Action buttons on the LEFT — confirm (red) + cancel (ghost) */}
           <div className="flex shrink-0 items-center gap-1">
             <button
               type="button"
               onClick={onConfirmDelete}
               aria-label={confirmLabel}
+              title={confirmLabel}
               className={cn(
                 'inline-flex size-7 items-center justify-center rounded-md',
                 'bg-[color:var(--negative)] text-[color:var(--destructive-foreground)]',
@@ -195,6 +189,7 @@ function SessionRow({
               type="button"
               onClick={onCancelDelete}
               aria-label={cancelLabel}
+              title={cancelLabel}
               className={cn(
                 'inline-flex size-7 items-center justify-center rounded-md',
                 'border border-border bg-card text-foreground transition-colors hover:bg-muted',
@@ -204,6 +199,16 @@ function SessionRow({
               <X className="size-3.5" />
             </button>
           </div>
+
+          {/* "Delete?" prompt + title preview on the right */}
+          <span className="block min-w-0 flex-1 overflow-hidden">
+            <span className="block truncate text-sm font-medium text-foreground">
+              {confirmText}
+            </span>
+            <span className="mt-0.5 block truncate font-mono text-[10px] text-subtle">
+              {s.title}
+            </span>
+          </span>
         </div>
       </li>
     );
@@ -213,26 +218,57 @@ function SessionRow({
     <li>
       <div
         className={cn(
-          'group relative flex w-full items-start gap-2 rounded-md transition-colors',
+          'group relative flex w-full items-start rounded-md transition-colors',
           'hover:bg-muted',
           s.isCurrent && 'bg-muted',
         )}
       >
+        {/*
+         * Left icon zone — two overlayed elements at the same spot:
+         *   1. MessageSquare (chat indicator) — visible at rest, fades on
+         *      group-hover. Lives inside the switch button below so it
+         *      decorates the title text.
+         *   2. Trash button — invisible at rest (pointer-events-none so
+         *      clicks pass through to the switch underneath), fades in
+         *      and re-enables pointer events on group-hover.
+         */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onAskDelete();
+          }}
+          aria-label={deleteLabel}
+          title={deleteLabel}
+          className={cn(
+            'absolute left-1.5 top-1.5 z-10 inline-flex size-7 items-center justify-center rounded-md',
+            'text-subtle transition-all duration-150',
+            'opacity-0 pointer-events-none',
+            'group-hover:opacity-100 group-hover:pointer-events-auto',
+            'hover:bg-background hover:text-[color:var(--negative)]',
+            'focus-visible:opacity-100 focus-visible:pointer-events-auto',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+          )}
+        >
+          <Trash2 className="size-3.5" />
+        </button>
+
         <button
           type="button"
           onClick={onSwitch}
           className={cn(
-            'flex flex-1 min-w-0 items-start gap-2 p-2.5 text-left',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md',
+            'flex flex-1 min-w-0 items-start gap-2 p-2.5 text-left rounded-md',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
           )}
         >
           <MessageSquare
             className={cn(
-              'mt-0.5 size-3.5 shrink-0',
+              'mt-0.5 size-3.5 shrink-0 transition-opacity duration-150',
+              'group-hover:opacity-0',
               s.isCurrent ? 'text-foreground' : 'text-subtle',
             )}
           />
-          <span className="flex-1 min-w-0">
+          <span className="block flex-1 min-w-0 overflow-hidden">
             <span
               className={cn(
                 'block truncate text-sm font-medium leading-tight',
@@ -249,24 +285,6 @@ function SessionRow({
               <span>{formatRelative(s.updatedAt, justNowLabel)}</span>
             </span>
           </span>
-        </button>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onAskDelete();
-          }}
-          aria-label={deleteLabel}
-          title={deleteLabel}
-          className={cn(
-            'absolute right-1.5 top-1/2 -translate-y-1/2 inline-flex size-6 items-center justify-center',
-            'rounded-md text-subtle transition-opacity',
-            'opacity-0 group-hover:opacity-100 focus:opacity-100',
-            'hover:bg-background hover:text-[color:var(--negative)]',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:opacity-100',
-          )}
-        >
-          <Trash2 className="size-3.5" />
         </button>
       </div>
     </li>
