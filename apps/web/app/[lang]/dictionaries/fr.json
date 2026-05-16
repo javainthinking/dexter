@@ -127,6 +127,28 @@
   "language": {
     "label": "Langue"
   },
+  "nav": {
+    "memory": "Mémoire"
+  },
+  "memory": {
+    "title": "Mémoire",
+    "subtitle": "Ce dont Dexter se souvient à votre sujet. Oubliez tout ce que vous préférez qu'il ne retienne pas.",
+    "searchPlaceholder": "Rechercher dans la mémoire…",
+    "clearSearch": "Effacer la recherche",
+    "empty": "Aucun souvenir pour l'instant. Dexter ajoutera des éléments ici au fil de vos recherches.",
+    "emptySearch": "Aucun souvenir ne correspond à « {query} ».",
+    "loading": "Chargement des souvenirs…",
+    "totalCountOne": "1 souvenir",
+    "totalCountOther": "{count} souvenirs",
+    "searchResultCount": "{count} résultats",
+    "forget": "Oublier",
+    "forgetConfirm": "Oublier ?",
+    "forgetConfirmYes": "Confirmer",
+    "forgetConfirmNo": "Annuler",
+    "createdAt": "Enregistré",
+    "notConfigured": "MemoryLake n'est pas configuré. Ajoutez MEMORYLAKE_API_KEY dans l'environnement.",
+    "errorLoading": "Impossible de charger les souvenirs. Veuillez réessayer."
+  },
   "auth": {
     "signInTitle": "Connectez-vous à Dexter",
     "signInSubtitle": "Reprenez votre recherche là où vous l'avez laissée.",

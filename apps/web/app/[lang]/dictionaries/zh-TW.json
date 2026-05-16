@@ -127,6 +127,28 @@
   "language": {
     "label": "語言"
   },
+  "nav": {
+    "memory": "記憶"
+  },
+  "memory": {
+    "title": "記憶",
+    "subtitle": "Dexter 對你的記憶。任何你不想保留的,都可以讓它忘記。",
+    "searchPlaceholder": "搜尋記憶…",
+    "clearSearch": "清除搜尋",
+    "empty": "尚無記憶。在你研究的過程中,Dexter 會在這裡留下紀錄。",
+    "emptySearch": "沒有符合「{query}」的記憶。",
+    "loading": "正在載入記憶…",
+    "totalCountOne": "1 條",
+    "totalCountOther": "共 {count} 條",
+    "searchResultCount": "命中 {count} 條",
+    "forget": "忘記",
+    "forgetConfirm": "確認忘記?",
+    "forgetConfirmYes": "確認",
+    "forgetConfirmNo": "取消",
+    "createdAt": "儲存於",
+    "notConfigured": "MemoryLake 尚未設定。請在環境變數中加入 MEMORYLAKE_API_KEY。",
+    "errorLoading": "無法載入記憶,請再試一次。"
+  },
   "auth": {
     "signInTitle": "登入 Dexter",
     "signInSubtitle": "從上次中斷處繼續你的研究。",

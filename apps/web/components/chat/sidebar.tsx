@@ -1,7 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { Plus, MessageSquare, History, X, Trash2, Check } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { Plus, MessageSquare, History, X, Trash2, Check, BrainCircuit } from 'lucide-react';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
@@ -10,6 +11,7 @@ import { ThemeToggle } from '../theme-toggle';
 import { LocalizedLink } from '../i18n/localized-link';
 import { useDictionary } from '../i18n/dictionary-provider';
 import { UserMenu } from '../auth/user-menu';
+import { stripLocalePrefix } from '../../lib/i18n/paths';
 import { cn } from '../../lib/utils';
 
 export interface SessionSummary {
@@ -125,7 +127,39 @@ export function Sidebar({
         <UserMenu className="min-w-0 flex-1" variant="full" />
         <ThemeToggle />
       </div>
+      <Separator />
+      <SidebarNav />
     </aside>
+  );
+}
+
+function SidebarNav() {
+  const dict = useDictionary();
+  const pathname = usePathname();
+  const cleanPath = stripLocalePrefix(pathname) || '/';
+  const isMemoryActive = cleanPath === '/memory' || cleanPath.startsWith('/memory/');
+
+  return (
+    <nav className="px-2 py-2">
+      <LocalizedLink
+        href="/memory"
+        className={cn(
+          'flex items-center gap-2 rounded-md px-2.5 py-2 text-sm transition-colors',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+          isMemoryActive
+            ? 'bg-muted text-foreground'
+            : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+        )}
+      >
+        <BrainCircuit
+          className={cn(
+            'size-4',
+            isMemoryActive ? 'text-[color:var(--accent)]' : 'text-subtle',
+          )}
+        />
+        <span className="font-medium">{dict.nav.memory}</span>
+      </LocalizedLink>
+    </nav>
   );
 }
 

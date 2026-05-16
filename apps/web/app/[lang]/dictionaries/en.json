@@ -127,6 +127,28 @@
   "language": {
     "label": "Language"
   },
+  "nav": {
+    "memory": "Memory"
+  },
+  "memory": {
+    "title": "Memory",
+    "subtitle": "What Dexter remembers about you. Forget anything you'd rather it not keep.",
+    "searchPlaceholder": "Search memories…",
+    "clearSearch": "Clear search",
+    "empty": "No memories yet. Dexter will save things here as you research.",
+    "emptySearch": "No memories match \"{query}\".",
+    "loading": "Loading memories…",
+    "totalCountOne": "1 memory",
+    "totalCountOther": "{count} memories",
+    "searchResultCount": "{count} matching",
+    "forget": "Forget",
+    "forgetConfirm": "Forget?",
+    "forgetConfirmYes": "Confirm",
+    "forgetConfirmNo": "Cancel",
+    "createdAt": "Saved",
+    "notConfigured": "MemoryLake is not configured. Set MEMORYLAKE_API_KEY in env to enable.",
+    "errorLoading": "Could not load memories. Please try again."
+  },
   "auth": {
     "signInTitle": "Sign in to Dexter",
     "signInSubtitle": "Pick up your research where you left off.",

@@ -127,6 +127,28 @@
   "language": {
     "label": "Idioma"
   },
+  "nav": {
+    "memory": "Memoria"
+  },
+  "memory": {
+    "title": "Memoria",
+    "subtitle": "Lo que Dexter recuerda sobre ti. Olvida cualquier cosa que prefieras que no guarde.",
+    "searchPlaceholder": "Buscar en la memoria…",
+    "clearSearch": "Limpiar búsqueda",
+    "empty": "Aún no hay recuerdos. Dexter guardará cosas aquí mientras investigas.",
+    "emptySearch": "No hay recuerdos que coincidan con «{query}».",
+    "loading": "Cargando recuerdos…",
+    "totalCountOne": "1 recuerdo",
+    "totalCountOther": "{count} recuerdos",
+    "searchResultCount": "{count} resultados",
+    "forget": "Olvidar",
+    "forgetConfirm": "¿Olvidar?",
+    "forgetConfirmYes": "Confirmar",
+    "forgetConfirmNo": "Cancelar",
+    "createdAt": "Guardado",
+    "notConfigured": "MemoryLake no está configurado. Añade MEMORYLAKE_API_KEY al entorno.",
+    "errorLoading": "No se pudieron cargar los recuerdos. Inténtalo de nuevo."
+  },
   "auth": {
     "signInTitle": "Inicia sesión en Dexter",
     "signInSubtitle": "Retoma tu investigación donde la dejaste.",

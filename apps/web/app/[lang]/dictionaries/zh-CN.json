@@ -127,6 +127,28 @@
   "language": {
     "label": "语言"
   },
+  "nav": {
+    "memory": "记忆"
+  },
+  "memory": {
+    "title": "记忆",
+    "subtitle": "Dexter 关于你的记忆。任何你不想保留的,都可以让它忘记。",
+    "searchPlaceholder": "搜索记忆…",
+    "clearSearch": "清除搜索",
+    "empty": "暂无记忆。研究过程中,Dexter 会在这里留下记录。",
+    "emptySearch": "没有匹配「{query}」的记忆。",
+    "loading": "正在加载记忆…",
+    "totalCountOne": "1 条",
+    "totalCountOther": "共 {count} 条",
+    "searchResultCount": "命中 {count} 条",
+    "forget": "忘记",
+    "forgetConfirm": "确认忘记?",
+    "forgetConfirmYes": "确认",
+    "forgetConfirmNo": "取消",
+    "createdAt": "保存于",
+    "notConfigured": "MemoryLake 未配置。请在环境变量中设置 MEMORYLAKE_API_KEY。",
+    "errorLoading": "无法加载记忆,请重试。"
+  },
   "auth": {
     "signInTitle": "登录 Dexter",
     "signInSubtitle": "继续上次未完成的研究。",

@@ -127,6 +127,28 @@
   "language": {
     "label": "言語"
   },
+  "nav": {
+    "memory": "メモリ"
+  },
+  "memory": {
+    "title": "メモリ",
+    "subtitle": "Dexter があなたについて覚えていること。残したくないものは「忘れる」で削除できます。",
+    "searchPlaceholder": "メモリを検索…",
+    "clearSearch": "検索をクリア",
+    "empty": "まだメモリはありません。リサーチを進めると Dexter がここに記憶を残します。",
+    "emptySearch": "「{query}」に一致するメモリはありません。",
+    "loading": "メモリを読み込み中…",
+    "totalCountOne": "1 件",
+    "totalCountOther": "{count} 件",
+    "searchResultCount": "{count} 件ヒット",
+    "forget": "忘れる",
+    "forgetConfirm": "忘れますか?",
+    "forgetConfirmYes": "確認",
+    "forgetConfirmNo": "キャンセル",
+    "createdAt": "保存日時",
+    "notConfigured": "MemoryLake が未設定です。環境変数に MEMORYLAKE_API_KEY を追加してください。",
+    "errorLoading": "メモリを読み込めませんでした。再度お試しください。"
+  },
   "auth": {
     "signInTitle": "Dexter にサインイン",
     "signInSubtitle": "前回の続きから、リサーチを再開しましょう。",

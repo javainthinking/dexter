@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useSession } from 'next-auth/react';
 import { Markdown } from './markdown';
 import { ToolCard, type ToolCardEvent } from './tool-card';
 import { Logo } from '../logo';
@@ -20,16 +21,54 @@ export interface ChatTurn {
 
 export function UserMessage({ text }: { text: string }) {
   const dict = useDictionary();
+  const { data } = useSession();
+  const user = data?.user as { name?: string | null; email?: string | null; image?: string | null } | undefined;
+
   return (
     <div className="flex items-start gap-3">
-      <div className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-md border border-border bg-muted text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-        {dict.chat.message.you}
-      </div>
+      <UserAvatar
+        image={user?.image ?? null}
+        fallback={initialsFor(user) ?? dict.chat.message.you}
+      />
       <div className="prose-dexter flex-1 pt-1 text-foreground">
         <p className="whitespace-pre-wrap">{text}</p>
       </div>
     </div>
   );
+}
+
+function UserAvatar({ image, fallback }: { image: string | null; fallback: string }) {
+  // Track image-load failures so we always show the fallback if the
+  // provider URL 403s, expires, or the user is offline.
+  const [failed, setFailed] = React.useState(false);
+  if (image && !failed) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={image}
+        alt=""
+        referrerPolicy="no-referrer"
+        onError={() => setFailed(true)}
+        className="mt-0.5 size-7 shrink-0 rounded-md border border-border object-cover"
+      />
+    );
+  }
+  return (
+    <div className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-md border border-border bg-muted text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+      {fallback}
+    </div>
+  );
+}
+
+function initialsFor(user: { name?: string | null; email?: string | null } | undefined): string | null {
+  const raw = user?.name?.trim() || user?.email?.split('@')[0];
+  if (!raw) return null;
+  return raw
+    .split(/\s+/)
+    .map((s) => s[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
 }
 
 export function AssistantMessage({ turn }: { turn: ChatTurn }) {

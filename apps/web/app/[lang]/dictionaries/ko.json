@@ -127,6 +127,28 @@
   "language": {
     "label": "언어"
   },
+  "nav": {
+    "memory": "메모리"
+  },
+  "memory": {
+    "title": "메모리",
+    "subtitle": "Dexter가 당신에 대해 기억하는 내용입니다. 남기고 싶지 않은 항목은 잊을 수 있어요.",
+    "searchPlaceholder": "메모리 검색…",
+    "clearSearch": "검색 지우기",
+    "empty": "아직 메모리가 없습니다. 리서치를 진행하면 Dexter가 여기에 기록을 남깁니다.",
+    "emptySearch": "\"{query}\"에 해당하는 메모리가 없습니다.",
+    "loading": "메모리를 불러오는 중…",
+    "totalCountOne": "1개",
+    "totalCountOther": "{count}개",
+    "searchResultCount": "{count}개 일치",
+    "forget": "잊기",
+    "forgetConfirm": "잊을까요?",
+    "forgetConfirmYes": "확인",
+    "forgetConfirmNo": "취소",
+    "createdAt": "저장",
+    "notConfigured": "MemoryLake가 설정되지 않았습니다. 환경에 MEMORYLAKE_API_KEY를 추가해 주세요.",
+    "errorLoading": "메모리를 불러올 수 없습니다. 다시 시도해 주세요."
+  },
   "auth": {
     "signInTitle": "Dexter 로그인",
     "signInSubtitle": "마지막 리서치부터 이어서 시작하세요.",
