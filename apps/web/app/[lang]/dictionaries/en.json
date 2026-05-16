@@ -70,7 +70,11 @@
       "workbench": "Workbench",
       "turnOne": "turn",
       "turnOther": "turns",
-      "justNow": "just now"
+      "justNow": "just now",
+      "deleteConversation": "Delete conversation",
+      "deleteConfirm": "Delete?",
+      "confirmDelete": "Confirm",
+      "cancel": "Cancel"
     },
     "empty": {
       "eyebrow": "Workbench · Ready",

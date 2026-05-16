@@ -70,7 +70,11 @@
       "workbench": "워크벤치",
       "turnOne": "턴",
       "turnOther": "턴",
-      "justNow": "방금"
+      "justNow": "방금",
+      "deleteConversation": "대화 삭제",
+      "deleteConfirm": "삭제할까요?",
+      "confirmDelete": "확인",
+      "cancel": "취소"
     },
     "empty": {
       "eyebrow": "워크벤치 · 준비됨",

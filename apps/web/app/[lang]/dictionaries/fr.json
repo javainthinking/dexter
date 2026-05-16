@@ -70,7 +70,11 @@
       "workbench": "Poste de travail",
       "turnOne": "échange",
       "turnOther": "échanges",
-      "justNow": "à l'instant"
+      "justNow": "à l'instant",
+      "deleteConversation": "Supprimer la conversation",
+      "deleteConfirm": "Supprimer ?",
+      "confirmDelete": "Confirmer",
+      "cancel": "Annuler"
     },
     "empty": {
       "eyebrow": "Poste de travail · Prêt",

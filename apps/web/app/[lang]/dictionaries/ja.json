@@ -70,7 +70,11 @@
       "workbench": "ワークベンチ",
       "turnOne": "ターン",
       "turnOther": "ターン",
-      "justNow": "たった今"
+      "justNow": "たった今",
+      "deleteConversation": "会話を削除",
+      "deleteConfirm": "削除しますか?",
+      "confirmDelete": "確認",
+      "cancel": "キャンセル"
     },
     "empty": {
       "eyebrow": "ワークベンチ · 準備完了",

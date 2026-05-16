@@ -262,6 +262,27 @@ function ChatPage() {
     [hydrateFromRecord, refreshSessions],
   );
 
+  const deleteSession = useCallback(
+    async (sessionId: string) => {
+      const wasCurrent = sessions.find((s) => s.sessionId === sessionId)?.isCurrent ?? false;
+      try {
+        await fetch(`/api/sessions?id=${encodeURIComponent(sessionId)}`, {
+          method: 'DELETE',
+        });
+      } catch {
+        /* ignore — refresh below will reflect server state regardless */
+      }
+      if (wasCurrent) {
+        // Server's ON DELETE CASCADE wiped the row; clear the local thread.
+        // The next /api/agent call will mint a fresh session under this user.
+        abortRef.current?.abort();
+        setTurns([]);
+      }
+      void refreshSessions();
+    },
+    [sessions, refreshSessions],
+  );
+
   const empty = turns.length === 0 && !pending;
   const turnCountLabel =
     turns.length === 0
@@ -279,6 +300,7 @@ function ChatPage() {
           loading={sessionsLoading}
           onNew={newConversation}
           onSwitch={switchSession}
+          onDelete={deleteSession}
         />
       </div>
 
@@ -298,6 +320,7 @@ function ChatPage() {
                 setSidebarOpen(false);
               }}
               onSwitch={switchSession}
+              onDelete={deleteSession}
               onClose={() => setSidebarOpen(false)}
             />
           </div>

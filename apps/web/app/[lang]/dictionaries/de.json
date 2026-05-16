@@ -70,7 +70,11 @@
       "workbench": "Arbeitsbereich",
       "turnOne": "Runde",
       "turnOther": "Runden",
-      "justNow": "gerade eben"
+      "justNow": "gerade eben",
+      "deleteConversation": "Unterhaltung löschen",
+      "deleteConfirm": "Löschen?",
+      "confirmDelete": "Bestätigen",
+      "cancel": "Abbrechen"
     },
     "empty": {
       "eyebrow": "Arbeitsbereich · Bereit",

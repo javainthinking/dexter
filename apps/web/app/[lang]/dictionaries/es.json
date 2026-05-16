@@ -70,7 +70,11 @@
       "workbench": "Escritorio",
       "turnOne": "turno",
       "turnOther": "turnos",
-      "justNow": "hace un momento"
+      "justNow": "hace un momento",
+      "deleteConversation": "Eliminar conversación",
+      "deleteConfirm": "¿Eliminar?",
+      "confirmDelete": "Confirmar",
+      "cancel": "Cancelar"
     },
     "empty": {
       "eyebrow": "Escritorio · Listo",

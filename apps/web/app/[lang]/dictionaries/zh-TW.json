@@ -70,7 +70,11 @@
       "workbench": "工作台",
       "turnOne": "輪",
       "turnOther": "輪",
-      "justNow": "剛剛"
+      "justNow": "剛剛",
+      "deleteConversation": "刪除對話",
+      "deleteConfirm": "確認刪除?",
+      "confirmDelete": "確認",
+      "cancel": "取消"
     },
     "empty": {
       "eyebrow": "工作台 · 就緒",
