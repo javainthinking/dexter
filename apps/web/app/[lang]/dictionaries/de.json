@@ -122,5 +122,36 @@
   },
   "language": {
     "label": "Sprache"
+  },
+  "auth": {
+    "signInTitle": "Bei Dexter anmelden",
+    "signInSubtitle": "Setzen Sie Ihre Recherche dort fort, wo Sie aufgehört haben.",
+    "emailLabel": "E-Mail-Adresse",
+    "emailPlaceholder": "sie@firma.com",
+    "continueWithEmail": "Mit E-Mail fortfahren",
+    "continueWithGoogle": "Mit Google fortfahren",
+    "or": "oder",
+    "backToHome": "Zurück zur Startseite",
+    "useDifferentEmail": "Andere E-Mail-Adresse verwenden",
+    "codeTitle": "Prüfen Sie Ihr Postfach",
+    "codeSubtitle": "Wir haben einen 6-stelligen Code an {email} gesendet. Er läuft in 10 Minuten ab.",
+    "codeLabel": "Bestätigungscode",
+    "verify": "Bestätigen und anmelden",
+    "resend": "Code erneut senden",
+    "resendIn": "Erneut senden in {seconds}s",
+    "loading": "Wird gesendet…",
+    "verifying": "Wird überprüft…",
+    "terms": "Mit der Anmeldung erklären Sie sich einverstanden, Dexter nur für Recherchezwecke zu nutzen. Keine Anlageberatung.",
+    "devCodeBanner": "SMTP nicht konfiguriert — Code zum Testen:",
+    "signOut": "Abmelden",
+    "signedInAs": "Angemeldet als",
+    "memberSince": "Mitglied seit",
+    "errors": {
+      "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+      "throttled": "Bitte warten Sie einen Moment, bevor Sie einen neuen Code anfordern.",
+      "invalidCode": "Dieser Code ist nicht gültig. Versuchen Sie es erneut oder fordern Sie einen neuen an.",
+      "expiredCode": "Dieser Code ist abgelaufen. Fordern Sie einen neuen an.",
+      "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+    }
   }
 }

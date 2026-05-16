@@ -63,6 +63,33 @@ ln -sf ../../.env apps/web/.env.local   # symlink to the repo-root .env the CLI 
 
 `.env.local` is gitignored by Next.js convention either way.
 
+### Auth env vars (NextAuth v4)
+
+```env
+# Required in production. Generate with: openssl rand -base64 32
+NEXTAUTH_SECRET=...
+# Public deployment URL — Vercel auto-injects in prod; set explicitly in preview
+NEXTAUTH_URL=http://localhost:3000
+
+# Google OAuth (optional — omit to disable the "Continue with Google" button)
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+
+# SMTP for the 6-digit email-code flow. If SMTP_PASS is missing the dev
+# environment falls back to surfacing the code directly on the sign-in
+# page so testing still works.
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=noreply@dexter.app
+SMTP_PASS=...
+MAIL_FROM=Dexter <noreply@dexter.app>
+```
+
+Auth uses four database tables — `dexter_users` / `dexter_accounts` /
+`dexter_auth_sessions` / `dexter_verification_tokens` — all created by
+the Drizzle migration (`bun run db:migrate`).
+
 ### Why webpack instead of Turbopack?
 
 The root agent code uses TypeScript ESM with explicit `.js` extensions on

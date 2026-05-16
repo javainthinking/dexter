@@ -8,6 +8,13 @@
       "when": 1778762385571,
       "tag": "0000_gorgeous_riptide",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1778896236623,
+      "tag": "0001_solid_devos",
+      "breakpoints": true
     }
   ]
 }

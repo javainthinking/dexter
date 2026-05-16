@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
 import { PostgresWebSessionStore } from '@dexter/core/adapters/storage/postgres/web-session-store';
+import { getCurrentUser } from '../../../../lib/auth/session';
 
 /**
  * POST /api/sessions/switch — set the session cookie to an existing session id
@@ -25,10 +26,18 @@ export async function POST(request: NextRequest): Promise<Response> {
 
     let session = null;
     if (process.env.DATABASE_URL) {
+      const user = await getCurrentUser();
+      if (!user) {
+        return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
+      }
       const store = new PostgresWebSessionStore();
       session = await store.get(sessionId);
       if (!session) {
         return NextResponse.json({ error: 'not found' }, { status: 404 });
+      }
+      // Cross-user guard: never let user A switch to user B's conversation.
+      if (session.userId && session.userId !== user.id) {
+        return NextResponse.json({ error: 'forbidden' }, { status: 403 });
       }
     }
 

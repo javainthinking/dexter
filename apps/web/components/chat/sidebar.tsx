@@ -9,6 +9,7 @@ import { Logo } from '../logo';
 import { ThemeToggle } from '../theme-toggle';
 import { LocalizedLink } from '../i18n/localized-link';
 import { useDictionary, format } from '../i18n/dictionary-provider';
+import { UserMenu } from '../auth/user-menu';
 import { cn } from '../../lib/utils';
 
 export interface SessionSummary {
@@ -127,10 +128,8 @@ export function Sidebar({ sessions, loading, onNew, onSwitch, onClose }: Sidebar
       </ScrollArea>
 
       <Separator />
-      <div className="flex items-center justify-between px-3 py-3">
-        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
-          {dict.chat.sidebar.workbench}
-        </span>
+      <div className="flex items-center justify-between gap-2 px-3 py-3">
+        <UserMenu className="min-w-0 flex-1" variant="full" />
         <ThemeToggle />
       </div>
     </aside>

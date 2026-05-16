@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
 import { PostgresWebSessionStore } from '@dexter/core/adapters/storage/postgres/web-session-store';
+import { getCurrentUser } from '../../../../lib/auth/session';
 
 /**
  * GET /api/sessions/current — return the full session record (including
@@ -20,6 +21,10 @@ export async function GET(_request: NextRequest): Promise<Response> {
     if (!process.env.DATABASE_URL) {
       return NextResponse.json({ session: null, mode: 'local' });
     }
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
+    }
     const jar = await cookies();
     const sessionId = jar.get('dexter_session')?.value;
     if (!sessionId) {
@@ -27,6 +32,11 @@ export async function GET(_request: NextRequest): Promise<Response> {
     }
     const store = new PostgresWebSessionStore();
     const session = await store.get(sessionId);
+    // Cross-user guard: cookie may point at another user's session if they
+    // shared a browser. Pretend "not found" rather than leak the row.
+    if (session && session.userId && session.userId !== user.id) {
+      return NextResponse.json({ session: null });
+    }
     return NextResponse.json({ session });
   } catch (err) {
     console.error(

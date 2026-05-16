@@ -18,6 +18,7 @@ import { Separator } from '../../../components/ui/separator';
 import { ThemeToggle } from '../../../components/theme-toggle';
 import { Logo } from '../../../components/logo';
 import { LanguageSwitcher } from '../../../components/i18n/language-switcher';
+import { UserMenu } from '../../../components/auth/user-menu';
 import {
   useDictionary,
   useLocale,
@@ -327,6 +328,7 @@ function ChatPage() {
             </Button>
             <LanguageSwitcher />
             <ThemeToggle />
+            <UserMenu />
           </div>
         </header>
 

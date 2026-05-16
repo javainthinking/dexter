@@ -122,5 +122,36 @@
   },
   "language": {
     "label": "Idioma"
+  },
+  "auth": {
+    "signInTitle": "Inicia sesión en Dexter",
+    "signInSubtitle": "Retoma tu investigación donde la dejaste.",
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "tu@empresa.com",
+    "continueWithEmail": "Continuar con correo",
+    "continueWithGoogle": "Continuar con Google",
+    "or": "o",
+    "backToHome": "Volver al inicio",
+    "useDifferentEmail": "Usar otro correo",
+    "codeTitle": "Revisa tu bandeja",
+    "codeSubtitle": "Enviamos un código de 6 dígitos a {email}. Caduca en 10 minutos.",
+    "codeLabel": "Código de verificación",
+    "verify": "Verificar e iniciar sesión",
+    "resend": "Reenviar código",
+    "resendIn": "Reenviar en {seconds}s",
+    "loading": "Enviando…",
+    "verifying": "Verificando…",
+    "terms": "Al continuar aceptas usar Dexter únicamente para investigación. No constituye asesoramiento de inversión.",
+    "devCodeBanner": "SMTP sin configurar — código mostrado para pruebas:",
+    "signOut": "Cerrar sesión",
+    "signedInAs": "Conectado como",
+    "memberSince": "Miembro desde",
+    "errors": {
+      "invalidEmail": "Introduce un correo electrónico válido.",
+      "throttled": "Espera un momento antes de pedir otro código.",
+      "invalidCode": "Ese código no es válido. Inténtalo de nuevo o reenvíalo.",
+      "expiredCode": "Ese código ha caducado. Pide uno nuevo.",
+      "generic": "Algo salió mal. Inténtalo de nuevo."
+    }
   }
 }

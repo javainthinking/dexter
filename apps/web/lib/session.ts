@@ -38,13 +38,21 @@ export interface ResolvedSession {
   flush(): Promise<void>;
 }
 
-export async function resolveSession(model?: string): Promise<ResolvedSession> {
+export interface ResolveSessionOptions {
+  model?: string;
+  /** Authenticated user id. Cloud mode binds the session row to this user. */
+  userId?: string;
+}
+
+export async function resolveSession(
+  options: ResolveSessionOptions = {},
+): Promise<ResolvedSession> {
   const jar = await cookies();
   const cookieValue = jar.get(SESSION_COOKIE)?.value;
   const store = getCloudStore();
 
-  if (store) return resolveCloud({ jar, cookieValue, store, model });
-  return resolveLocal({ jar, cookieValue, model });
+  if (store) return resolveCloud({ jar, cookieValue, store, ...options });
+  return resolveLocal({ jar, cookieValue, model: options.model });
 }
 
 // --- cloud ---
@@ -54,18 +62,29 @@ async function resolveCloud({
   cookieValue,
   store,
   model,
+  userId,
 }: {
   jar: Awaited<ReturnType<typeof cookies>>;
   cookieValue: string | undefined;
   store: WebSessionStore;
   model?: string;
+  userId?: string;
 }): Promise<ResolvedSession> {
   let sessionId = cookieValue;
   let isNew = false;
   let record = sessionId ? await store.get(sessionId) : null;
 
+  // Cross-user cookie hardening: if the cookie points at a session that
+  // doesn't belong to the current user (e.g. they logged out and a different
+  // user signed in on the same browser), mint a fresh session instead of
+  // hijacking the previous user's history.
+  if (record && userId && record.userId && record.userId !== userId) {
+    record = null;
+    sessionId = undefined;
+  }
+
   if (!record) {
-    record = await store.create({ sessionId, model });
+    record = await store.create({ sessionId, model, userId });
     sessionId = record.sessionId;
     isNew = true;
   } else if (model && record.model !== model) {

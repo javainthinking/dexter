@@ -1,14 +1,16 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
-import { desc, eq, inArray, isNull, sql } from 'drizzle-orm';
+import { desc, eq, inArray, sql } from 'drizzle-orm';
 import { getDb } from '@dexter/core/db/client';
 import { webSessions, webMessages } from '@dexter/core/db/schema/web-sessions';
+import { getCurrentUser } from '../../../lib/auth/session';
 
 /**
  * GET /api/sessions — list recent chat sessions for the current user.
  *
- * Phase 3 single-user: all sessions with user_id IS NULL are pooled
- * together. Phase 4 will filter by the authenticated Clerk user_id.
+ * Sessions are scoped to the authenticated user via dexter_web_sessions.user_id.
+ * Anonymous (user_id IS NULL) sessions from before auth landed are not
+ * surfaced — they exist only as orphan history.
  */
 
 export const dynamic = 'force-dynamic';
@@ -28,17 +30,22 @@ export async function GET(_request: NextRequest): Promise<Response> {
     return NextResponse.json({ sessions: [] });
   }
 
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
+  }
+
   let summaries: SessionSummary[] = [];
   try {
     const db = getDb();
     const jar = await cookies();
     const currentId = jar.get('dexter_session')?.value;
 
-    // 1) Pull last 50 sessions.
+    // 1) Pull last 50 sessions belonging to this user.
     const sessionRows = await db
       .select({ id: webSessions.id, updatedAt: webSessions.updatedAt })
       .from(webSessions)
-      .where(isNull(webSessions.userId))
+      .where(eq(webSessions.userId, user.id))
       .orderBy(desc(webSessions.updatedAt))
       .limit(50);
 
@@ -110,15 +117,21 @@ export async function GET(_request: NextRequest): Promise<Response> {
  */
 export async function POST(_request: NextRequest): Promise<Response> {
   if (!process.env.DATABASE_URL) {
-    // Local mode: just clear the cookie; the next /api/agent call will
-    // mint a fresh in-memory ChatHistory.
     const jar = await cookies();
     jar.delete('dexter_session');
     return NextResponse.json({ sessionId: null, mode: 'local' });
   }
 
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
+  }
+
   const db = getDb();
-  const [row] = await db.insert(webSessions).values({}).returning();
+  const [row] = await db
+    .insert(webSessions)
+    .values({ userId: user.id })
+    .returning();
   const jar = await cookies();
   jar.set({
     name: 'dexter_session',
@@ -142,12 +155,17 @@ export async function DELETE(request: NextRequest): Promise<Response> {
   if (!process.env.DATABASE_URL) {
     return NextResponse.json({ deleted: false, mode: 'local' });
   }
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
+  }
   const id = new URL(request.url).searchParams.get('id');
   if (!id) return NextResponse.json({ error: 'missing id' }, { status: 400 });
   const db = getDb();
+  // Scope the delete to the current user so one user can't drop another's history.
   const result = await db
     .delete(webSessions)
-    .where(eq(webSessions.id, id))
+    .where(sql`${webSessions.id} = ${id} AND ${webSessions.userId} = ${user.id}`)
     .returning({ id: webSessions.id });
   return NextResponse.json({ deleted: result.length > 0 });
 }

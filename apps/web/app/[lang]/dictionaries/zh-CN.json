@@ -122,5 +122,36 @@
   },
   "language": {
     "label": "语言"
+  },
+  "auth": {
+    "signInTitle": "登录 Dexter",
+    "signInSubtitle": "继续上次未完成的研究。",
+    "emailLabel": "邮箱地址",
+    "emailPlaceholder": "you@firm.com",
+    "continueWithEmail": "用邮箱继续",
+    "continueWithGoogle": "用 Google 继续",
+    "or": "或",
+    "backToHome": "返回首页",
+    "useDifferentEmail": "换一个邮箱",
+    "codeTitle": "请查收邮箱",
+    "codeSubtitle": "我们已向 {email} 发送了一个 6 位验证码,10 分钟内有效。",
+    "codeLabel": "验证码",
+    "verify": "验证并登录",
+    "resend": "重新发送",
+    "resendIn": "{seconds} 秒后可重发",
+    "loading": "正在发送…",
+    "verifying": "正在验证…",
+    "terms": "继续即表示同意仅将 Dexter 用于研究。不构成投资建议。",
+    "devCodeBanner": "SMTP 未配置 — 测试用验证码:",
+    "signOut": "退出登录",
+    "signedInAs": "已登录账号",
+    "memberSince": "注册时间",
+    "errors": {
+      "invalidEmail": "请输入有效的邮箱地址。",
+      "throttled": "请稍等片刻再请求新验证码。",
+      "invalidCode": "验证码无效,请重试或重新发送。",
+      "expiredCode": "验证码已过期,请重新获取。",
+      "generic": "出错了,请稍后重试。"
+    }
   }
 }

@@ -6,11 +6,12 @@
 
 import { pgTable, uuid, text, timestamp, bigserial, integer, index } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
+import { users } from './auth.js';
 
 export const webSessions = pgTable('dexter_web_sessions', {
   id: uuid('id').defaultRandom().primaryKey(),
-  orgId: text('org_id'),               // Phase 4: tenant scope
-  userId: text('user_id'),             // Phase 4: end-user (Clerk id, etc.)
+  orgId: text('org_id'),               // multi-tenant scope (reserved)
+  userId: text('user_id').references(() => users.id, { onDelete: 'set null' }),
   model: text('model'),                // last selected model
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),

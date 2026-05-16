@@ -2,33 +2,58 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { defaultLocale, isLocale, locales } from './lib/i18n/locales';
 
 /**
- * i18n proxy — Next.js 16 routing primitive for request interception,
- * rewrites, and redirects (introduced as the successor to the legacy
- * request-interceptor in v15).
+ * i18n + auth proxy — Next.js 16 routing primitive.
  *
  * URL contract:
- *   /              → English content (rewrites to /en internally)
- *   /chat          → English chat   (rewrites to /en/chat)
- *   /fr            → French content (no rewrite, the [lang] segment matches)
- *   /fr/chat       → French chat
- *   /en, /en/chat  → permanent redirect to the unprefixed canonical form
- *   /api/*         → untouched
- *   /_next/*       → untouched
+ *   /                    → English landing (rewrites to /en)
+ *   /chat                → must be signed-in (rewrites to /en/chat or
+ *                          redirects to /sign-in)
+ *   /fr, /fr/chat        → French content, chat behind auth
+ *   /en, /en/chat        → 308 redirect to canonical unprefixed form
+ *   /sign-in, /<l>/sign-in → public
+ *   /api/auth/*          → public (NextAuth handles cookies)
+ *   /api/agent, /api/sessions(/*) → must be signed-in
+ *   /_next/*, static files → untouched
  *
- * Locale detection for the unprefixed root: read `dexter_lang` cookie, then
- * Accept-Language header, then fall back to `defaultLocale`. If the detected
- * locale is non-default we **redirect** to its prefixed URL so search engines
- * and analytics see one canonical URL per locale.
+ * Auth check is cookie-presence only (cheap, fast, runs on every request).
+ * The server pages and API routes re-validate the real session before any
+ * user-scoped read or write — proxy is the perimeter, route handlers are
+ * the lock.
  */
 
 const PUBLIC_FILE = /\.(?:.*)$/;
 
+const AUTH_COOKIE_NAMES = [
+  'next-auth.session-token',
+  '__Secure-next-auth.session-token',
+];
+
+/** Paths that require auth (after locale stripping). */
+const PROTECTED_PREFIXES = ['/chat'];
+
+/** API paths that require auth. */
+const PROTECTED_API_PREFIXES = ['/api/agent', '/api/sessions'];
+
 export function proxy(request: NextRequest): NextResponse {
   const { pathname, search } = request.nextUrl;
 
-  // Skip API, Next internals, and static files.
+  // /api/auth/* — let NextAuth handle (sign-in callbacks, etc.).
+  if (pathname.startsWith('/api/auth')) {
+    return NextResponse.next();
+  }
+
+  // Other API: enforce auth for protected endpoints, pass everything else through.
+  if (pathname.startsWith('/api')) {
+    if (PROTECTED_API_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
+      if (!hasAuthCookie(request)) {
+        return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
+      }
+    }
+    return NextResponse.next();
+  }
+
+  // Next internals + static files: untouched.
   if (
-    pathname.startsWith('/api') ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/_vercel') ||
     pathname === '/favicon.ico' ||
@@ -49,25 +74,47 @@ export function proxy(request: NextRequest): NextResponse {
     return NextResponse.redirect(url, 308);
   }
 
+  // Auth gate for protected paths. We need to know both the locale and
+  // the locale-stripped path. Locale-prefixed (e.g. /fr/chat) or unprefixed
+  // (/chat) both flow through this branch.
+  const isPrefixed = first && isLocale(first);
+  const locale = isPrefixed ? first : detectLocale(request);
+  const localeStripped = isPrefixed ? '/' + segments.slice(1).join('/') : pathname;
+  const cleanPath = localeStripped === '' ? '/' : localeStripped;
+
+  if (
+    PROTECTED_PREFIXES.some((p) => cleanPath === p || cleanPath.startsWith(`${p}/`)) &&
+    !hasAuthCookie(request)
+  ) {
+    const url = request.nextUrl.clone();
+    url.pathname =
+      locale === defaultLocale ? '/sign-in' : `/${locale}/sign-in`;
+    url.searchParams.set(
+      'callbackUrl',
+      pathname + (search ? search : ''),
+    );
+    return NextResponse.redirect(url, 302);
+  }
+
   // /xx/* where xx is a known non-default locale → serve as-is.
-  if (first && isLocale(first)) {
+  if (isPrefixed) {
     return NextResponse.next();
   }
 
   // Unprefixed paths: pick a locale and either rewrite (default) or redirect.
-  const target = detectLocale(request);
-  if (target === defaultLocale) {
-    // Rewrite /<path> → /en/<path> so the [lang] segment matches in the FS.
+  if (locale === defaultLocale) {
     const url = request.nextUrl.clone();
     url.pathname = pathname === '/' ? `/${defaultLocale}` : `/${defaultLocale}${pathname}`;
     return NextResponse.rewrite(url);
   }
-
-  // Redirect to the user's preferred locale (302 — preference may change).
   const url = request.nextUrl.clone();
-  url.pathname = pathname === '/' ? `/${target}` : `/${target}${pathname}`;
+  url.pathname = pathname === '/' ? `/${locale}` : `/${locale}${pathname}`;
   url.search = search;
   return NextResponse.redirect(url, 302);
+}
+
+function hasAuthCookie(request: NextRequest): boolean {
+  return AUTH_COOKIE_NAMES.some((name) => !!request.cookies.get(name));
 }
 
 function detectLocale(request: NextRequest): string {

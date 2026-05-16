@@ -4,6 +4,7 @@
  * other Supabase projects without collision.
  */
 
+export * from './auth.js';
 export * from './web-sessions.js';
 export * from './memory.js';
 export * from './cron.js';

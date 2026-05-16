@@ -122,5 +122,36 @@
   },
   "language": {
     "label": "語言"
+  },
+  "auth": {
+    "signInTitle": "登入 Dexter",
+    "signInSubtitle": "從上次中斷處繼續你的研究。",
+    "emailLabel": "電子郵件地址",
+    "emailPlaceholder": "you@firm.com",
+    "continueWithEmail": "以電子郵件繼續",
+    "continueWithGoogle": "以 Google 繼續",
+    "or": "或",
+    "backToHome": "返回首頁",
+    "useDifferentEmail": "更換信箱",
+    "codeTitle": "請查收信件",
+    "codeSubtitle": "已向 {email} 寄出 6 位數驗證碼,10 分鐘內有效。",
+    "codeLabel": "驗證碼",
+    "verify": "驗證並登入",
+    "resend": "重新寄送",
+    "resendIn": "{seconds} 秒後可重寄",
+    "loading": "傳送中…",
+    "verifying": "驗證中…",
+    "terms": "繼續即代表同意僅將 Dexter 用於研究。不構成投資建議。",
+    "devCodeBanner": "SMTP 尚未設定 — 測試用驗證碼:",
+    "signOut": "登出",
+    "signedInAs": "已登入帳號",
+    "memberSince": "加入時間",
+    "errors": {
+      "invalidEmail": "請輸入有效的電子郵件地址。",
+      "throttled": "請稍候片刻再要求新驗證碼。",
+      "invalidCode": "驗證碼無效,請重試或重新寄送。",
+      "expiredCode": "驗證碼已過期,請重新取得。",
+      "generic": "發生錯誤,請稍後再試。"
+    }
   }
 }

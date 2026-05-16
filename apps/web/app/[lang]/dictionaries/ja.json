@@ -122,5 +122,36 @@
   },
   "language": {
     "label": "言語"
+  },
+  "auth": {
+    "signInTitle": "Dexter にサインイン",
+    "signInSubtitle": "前回の続きから、リサーチを再開しましょう。",
+    "emailLabel": "メールアドレス",
+    "emailPlaceholder": "you@firm.com",
+    "continueWithEmail": "メールで続ける",
+    "continueWithGoogle": "Googleで続ける",
+    "or": "または",
+    "backToHome": "ホームに戻る",
+    "useDifferentEmail": "別のメールアドレスを使う",
+    "codeTitle": "メールをご確認ください",
+    "codeSubtitle": "{email} に 6 桁のコードを送信しました。10 分以内に入力してください。",
+    "codeLabel": "認証コード",
+    "verify": "確認してサインイン",
+    "resend": "コードを再送",
+    "resendIn": "{seconds}秒後に再送可能",
+    "loading": "送信中…",
+    "verifying": "確認中…",
+    "terms": "続行することで、Dexter をリサーチ目的のみに使用することに同意したものとみなします。投資助言ではありません。",
+    "devCodeBanner": "SMTP 未設定 — テスト用にコードを表示:",
+    "signOut": "サインアウト",
+    "signedInAs": "サインイン中",
+    "memberSince": "登録日",
+    "errors": {
+      "invalidEmail": "有効なメールアドレスを入力してください。",
+      "throttled": "少し時間を置いてから、もう一度コードをリクエストしてください。",
+      "invalidCode": "コードが無効です。もう一度入力するか、再送してください。",
+      "expiredCode": "コードの有効期限が切れました。新しいコードをリクエストしてください。",
+      "generic": "問題が発生しました。もう一度お試しください。"
+    }
   }
 }

@@ -122,5 +122,36 @@
   },
   "language": {
     "label": "Langue"
+  },
+  "auth": {
+    "signInTitle": "Connectez-vous à Dexter",
+    "signInSubtitle": "Reprenez votre recherche là où vous l'avez laissée.",
+    "emailLabel": "Adresse e-mail",
+    "emailPlaceholder": "vous@cabinet.com",
+    "continueWithEmail": "Continuer par e-mail",
+    "continueWithGoogle": "Continuer avec Google",
+    "or": "ou",
+    "backToHome": "Retour à l'accueil",
+    "useDifferentEmail": "Utiliser une autre adresse",
+    "codeTitle": "Vérifiez votre boîte mail",
+    "codeSubtitle": "Nous avons envoyé un code à 6 chiffres à {email}. Il expire dans 10 minutes.",
+    "codeLabel": "Code de vérification",
+    "verify": "Vérifier et se connecter",
+    "resend": "Renvoyer le code",
+    "resendIn": "Renvoyer dans {seconds}s",
+    "loading": "Envoi…",
+    "verifying": "Vérification…",
+    "terms": "En continuant vous acceptez d'utiliser Dexter uniquement à des fins de recherche. Ne constitue pas un conseil en investissement.",
+    "devCodeBanner": "SMTP non configuré — code affiché pour tests :",
+    "signOut": "Se déconnecter",
+    "signedInAs": "Connecté en tant que",
+    "memberSince": "Membre depuis",
+    "errors": {
+      "invalidEmail": "Veuillez saisir une adresse e-mail valide.",
+      "throttled": "Patientez un instant avant de demander un autre code.",
+      "invalidCode": "Ce code n'est pas valide. Réessayez ou renvoyez-le.",
+      "expiredCode": "Ce code a expiré. Demandez-en un nouveau.",
+      "generic": "Une erreur est survenue. Veuillez réessayer."
+    }
   }
 }

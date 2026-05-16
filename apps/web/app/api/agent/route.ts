@@ -6,6 +6,7 @@ import { composeWebPorts } from '@dexter/core/entrypoints/web/compose';
 import { SseEventSink } from '@dexter/core/adapters/eventsink/sse';
 
 import { resolveSession } from '../../../lib/session';
+import { getCurrentUser } from '../../../lib/auth/session';
 
 /**
  * /api/agent — POST { query: string } → SSE stream of AgentEvent.
@@ -42,7 +43,15 @@ export async function POST(request: NextRequest): Promise<Response> {
     return NextResponse.json({ error: 'Missing query.' }, { status: 400 });
   }
 
-  const session = await resolveSession(body.model);
+  // Auth gate — the proxy already rejects unauthenticated requests for
+  // this route, but we re-validate the real session here before any
+  // user-scoped read or write.
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
+  }
+
+  const session = await resolveSession({ model: body.model, userId: user.id });
 
   console.log(
     JSON.stringify({
@@ -50,6 +59,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       surface: 'web',
       route: '/api/agent',
       requestId,
+      userId: user.id,
       sessionId: session.sessionId,
       isNew: session.isNew,
       queryLength: query.length,
@@ -59,21 +69,12 @@ export async function POST(request: NextRequest): Promise<Response> {
 
   const sink = new SseEventSink();
 
-  // Build the CorePorts bundle for this request, with the SSE sink wired in.
-  //
-  // userId is intentionally NOT the browser session id — that would shard
-  // the MemoryLake user_id namespace per-cookie and prevent the agent's
-  // memory from accumulating across a real user's sessions/devices.
-  //
-  // Phase 4 wiring (Clerk Core 3, async API):
-  //     import { auth } from '@clerk/nextjs/server';
-  //     const { userId, orgId } = await auth();
-  //     const ports = await composeWebPorts({ requestId, events: sink, userId, orgId });
-  //
-  // Until auth lands, composeWebPorts falls back to the anonymous default
-  // user so a single developer testing the app sees one consistent memory pool.
+  // Per-request CorePorts bundle. userId flows to the MemoryLake adapter so
+  // memories accumulate against the real authenticated user (not a session
+  // cookie). orgId is reserved for Phase 5 multi-tenant B2B.
   const ports = await composeWebPorts({
     requestId,
+    userId: user.id,
     events: sink,
   });
 

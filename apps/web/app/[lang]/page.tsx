@@ -9,6 +9,7 @@ import { ThemeToggle } from '../../components/theme-toggle';
 import { Badge } from '../../components/ui/badge';
 import { GithubIcon } from '../../components/icons/github';
 import { LanguageSwitcher } from '../../components/i18n/language-switcher';
+import { UserMenu } from '../../components/auth/user-menu';
 import Link from 'next/link';
 
 export default async function HomePage({
@@ -50,6 +51,7 @@ function Header({ dict }: { dict: Dictionary }) {
           </Button>
           <LanguageSwitcher />
           <ThemeToggle />
+          <UserMenu />
         </div>
       </div>
     </header>
