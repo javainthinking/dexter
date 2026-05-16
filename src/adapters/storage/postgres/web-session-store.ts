@@ -54,12 +54,14 @@ export class PostgresWebSessionStore implements WebSessionStore {
   }
 
   async create(options: WebSessionCreateOptions = {}): Promise<WebSessionRecord> {
+    if (!options.userId) {
+      throw new Error('WebSessionStore.create requires userId — every web session belongs to a user.');
+    }
     const [row] = await this.db
       .insert(webSessions)
       .values({
         ...(options.sessionId ? { id: options.sessionId } : {}),
-        orgId: options.orgId ?? null,
-        userId: options.userId ?? null,
+        userId: options.userId,
         model: options.model ?? null,
       })
       .returning();
@@ -141,8 +143,8 @@ export class PostgresWebSessionStore implements WebSessionStore {
 function toRecord(row: typeof webSessions.$inferSelect, turns: WebChatTurn[]): WebSessionRecord {
   return {
     sessionId: row.id,
-    orgId: row.orgId ?? null,
-    userId: row.userId ?? null,
+    orgId: null,
+    userId: row.userId,
     model: row.model ?? null,
     createdAt: row.createdAt.getTime(),
     updatedAt: row.updatedAt.getTime(),

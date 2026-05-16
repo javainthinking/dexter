@@ -6,8 +6,9 @@
  *   - listFiles / loadSessionContext for system-prompt construction
  *   - search() returns empty until pgvector lands in Phase 3.5
  *
- * orgId default 'global' for single-tenant Phase 3. Phase 4 multi-tenant
- * passes the orgId from the request context.
+ * userId is required — every row in dexter_memory_files / _chunks is
+ * scoped to a real user via FK to dexter_users.id. composeWebPorts derives
+ * it from the authenticated session before constructing this adapter.
  */
 
 import { and, eq, like, sql } from 'drizzle-orm';
@@ -29,20 +30,23 @@ const DAILY_FILE_RE = /^\d{4}-\d{2}-\d{2}\.md$/;
 const DEFAULT_MAX_SESSION_TOKENS = 2000;
 
 export interface PostgresMemoryAdapterOptions {
-  orgId?: string;
+  userId: string;
   db?: DexterDb;
   maxSessionContextTokens?: number;
 }
 
 export class PostgresMemoryAdapter implements Memory {
   private readonly db: DexterDb;
-  private readonly orgId: string;
+  private readonly userId: string;
   private readonly maxSessionContextTokens: number;
   private initError: string | null = null;
 
-  constructor(options: PostgresMemoryAdapterOptions = {}) {
+  constructor(options: PostgresMemoryAdapterOptions) {
+    if (!options.userId) {
+      throw new Error('PostgresMemoryAdapter requires a userId');
+    }
     this.db = options.db ?? getDb();
-    this.orgId = options.orgId ?? 'global';
+    this.userId = options.userId;
     this.maxSessionContextTokens = options.maxSessionContextTokens ?? DEFAULT_MAX_SESSION_TOKENS;
   }
 
@@ -113,7 +117,7 @@ export class PostgresMemoryAdapter implements Memory {
     const rows = await this.db
       .select({ path: memoryFiles.path })
       .from(memoryFiles)
-      .where(eq(memoryFiles.orgId, this.orgId));
+      .where(eq(memoryFiles.userId, this.userId));
     return rows
       .map((r) => r.path)
       .filter((p) => p === LONG_TERM_FILE || DAILY_FILE_RE.test(p))
@@ -161,7 +165,7 @@ export class PostgresMemoryAdapter implements Memory {
     const [row] = await this.db
       .select({ content: memoryFiles.content })
       .from(memoryFiles)
-      .where(and(eq(memoryFiles.orgId, this.orgId), eq(memoryFiles.path, path)))
+      .where(and(eq(memoryFiles.userId, this.userId), eq(memoryFiles.path, path)))
       .limit(1);
     return row?.content ?? '';
   }
@@ -169,9 +173,9 @@ export class PostgresMemoryAdapter implements Memory {
   private async writeFile(path: string, content: string): Promise<void> {
     await this.db
       .insert(memoryFiles)
-      .values({ orgId: this.orgId, path, content })
+      .values({ userId: this.userId, path, content })
       .onConflictDoUpdate({
-        target: [memoryFiles.orgId, memoryFiles.path],
+        target: [memoryFiles.userId, memoryFiles.path],
         set: { content, updatedAt: new Date() },
       });
   }

@@ -15,6 +15,13 @@
       "when": 1778896236623,
       "tag": "0001_solid_devos",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1778903000000,
+      "tag": "0002_user_scope",
+      "breakpoints": true
     }
   ]
 }

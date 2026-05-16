@@ -10,8 +10,9 @@ import { users } from './auth.js';
 
 export const webSessions = pgTable('dexter_web_sessions', {
   id: uuid('id').defaultRandom().primaryKey(),
-  orgId: text('org_id'),               // multi-tenant scope (reserved)
-  userId: text('user_id').references(() => users.id, { onDelete: 'set null' }),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
   model: text('model'),                // last selected model
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),

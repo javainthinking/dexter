@@ -1,9 +1,10 @@
 /**
  * Postgres CronStorage adapter — persists scheduled jobs in dexter_cron_jobs.
  *
- * `definition` and `state` are jsonb columns so the CronJob shape can evolve
- * without lockstep migrations. `enabled` is denormalised into its own column
- * for index-friendly filtering by the Scheduler.
+ * Jobs are user-scoped via dexter_cron_jobs.user_id (FK → dexter_users.id,
+ * ON DELETE CASCADE). definition + state stay in jsonb so the CronJob shape
+ * can evolve without lockstep migrations; enabled is denormalised for
+ * index-friendly filtering by the Scheduler.
  */
 
 import { and, eq } from 'drizzle-orm';
@@ -14,46 +15,47 @@ import type { CronStorage } from '../../../ports/cron-storage.js';
 import type { CronJob, CronJobState } from '../../../cron/types.js';
 
 export interface PostgresCronStorageOptions {
+  userId: string;
   db?: DexterDb;
-  orgId?: string;
 }
 
 export class PostgresCronStorage implements CronStorage {
   private readonly db: DexterDb;
-  private readonly orgId: string;
+  private readonly userId: string;
 
-  constructor(options: PostgresCronStorageOptions = {}) {
+  constructor(options: PostgresCronStorageOptions) {
+    if (!options.userId) {
+      throw new Error('PostgresCronStorage requires a userId');
+    }
     this.db = options.db ?? getDb();
-    this.orgId = options.orgId ?? 'global';
+    this.userId = options.userId;
   }
 
   async load(): Promise<CronJob[]> {
     const rows = await this.db
       .select()
       .from(cronJobs)
-      .where(eq(cronJobs.orgId, this.orgId));
+      .where(eq(cronJobs.userId, this.userId));
     return rows.map(rowToJob);
   }
 
   async save(jobs: CronJob[]): Promise<void> {
-    // Naive rewrite — fine for the in-process scheduler; concurrent edits
-    // are guarded at the Scheduler/runner level rather than the storage.
     await this.db.transaction(async (tx) => {
-      await tx.delete(cronJobs).where(eq(cronJobs.orgId, this.orgId));
+      await tx.delete(cronJobs).where(eq(cronJobs.userId, this.userId));
       if (jobs.length === 0) return;
-      await tx.insert(cronJobs).values(jobs.map((j) => jobToRow(j, this.orgId)));
+      await tx.insert(cronJobs).values(jobs.map((j) => jobToRow(j, this.userId)));
     });
   }
 
   async upsert(job: CronJob): Promise<void> {
-    const row = jobToRow(job, this.orgId);
+    const row = jobToRow(job, this.userId);
     await this.db
       .insert(cronJobs)
       .values(row)
       .onConflictDoUpdate({
         target: cronJobs.id,
         set: {
-          orgId: row.orgId,
+          userId: row.userId,
           enabled: row.enabled,
           definition: row.definition,
           state: row.state,
@@ -65,7 +67,7 @@ export class PostgresCronStorage implements CronStorage {
   async remove(jobId: string): Promise<boolean> {
     const out = await this.db
       .delete(cronJobs)
-      .where(and(eq(cronJobs.id, jobId), eq(cronJobs.orgId, this.orgId)))
+      .where(and(eq(cronJobs.id, jobId), eq(cronJobs.userId, this.userId)))
       .returning({ id: cronJobs.id });
     return out.length > 0;
   }
@@ -74,22 +76,22 @@ export class PostgresCronStorage implements CronStorage {
     const [row] = await this.db
       .select({ state: cronJobs.state })
       .from(cronJobs)
-      .where(and(eq(cronJobs.id, jobId), eq(cronJobs.orgId, this.orgId)))
+      .where(and(eq(cronJobs.id, jobId), eq(cronJobs.userId, this.userId)))
       .limit(1);
     if (!row) return;
     const merged: CronJobState = { ...row.state, ...state };
     await this.db
       .update(cronJobs)
       .set({ state: merged, updatedAt: new Date() })
-      .where(and(eq(cronJobs.id, jobId), eq(cronJobs.orgId, this.orgId)));
+      .where(and(eq(cronJobs.id, jobId), eq(cronJobs.userId, this.userId)));
   }
 }
 
-function jobToRow(job: CronJob, orgId: string) {
+function jobToRow(job: CronJob, userId: string) {
   const { state, ...definition } = job;
   return {
     id: job.id,
-    orgId,
+    userId,
     enabled: job.enabled,
     definition,
     state,

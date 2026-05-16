@@ -68,31 +68,25 @@ function detectMode(): WebPortsMode {
  *      pgvector here for parity.
  */
 function chooseMemoryAdapter(ctx: WebPortsContext): Memory {
+  if (!ctx.userId) {
+    throw new Error(
+      'composeWebPorts(cloud) requires ctx.userId — every request must run as a known user.',
+    );
+  }
   const mlKey = process.env.MEMORYLAKE_API_KEY;
   const mlProject = process.env.MEMORYLAKE_PROJECT_ID;
   const mlBase = process.env.MEMORYLAKE_BASE_URL;
   if (mlKey && mlProject && mlBase) {
-    // user_id scoping policy:
-    //   - Phase 4 (auth landed):    ctx.userId is the authenticated user.id
-    //                               from Clerk/Better Auth. One MemoryLake
-    //                               user per real human, so memory survives
-    //                               cookie wipes, new devices, etc.
-    //   - Pre-auth (today):         ctx.userId is undefined → one shared
-    //                               pool keyed by `dexter-anonymous`. We do
-    //                               NOT use the browser session id here:
-    //                               that would split memory per cookie and
-    //                               prevent the agent from accumulating
-    //                               context across sessions.
-    //   - Phase 5 multi-tenant B2B: prefix with ctx.orgId.
-    const userId = ctx.userId ?? 'dexter-anonymous';
+    // MemoryLake user_id = the authenticated app user id, so memory
+    // survives cookie wipes, new devices, and switching login methods.
     return new MemoryLakeAdapter({
       apiKey: mlKey,
       projectId: mlProject,
       baseUrl: mlBase,
-      userId,
+      userId: ctx.userId,
     });
   }
-  return new PostgresMemoryAdapter({ orgId: ctx.orgId });
+  return new PostgresMemoryAdapter({ userId: ctx.userId });
 }
 
 async function composeCloud(ctx: WebPortsContext): Promise<WebPortsBundle> {
