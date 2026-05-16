@@ -21,6 +21,7 @@ import {
   ModelSelectionController,
   SearchSelectionController,
 } from './controllers/index.js';
+import { composeCliPorts } from './entrypoints/cli/compose.js';
 import {
   ApiKeyInputComponent,
   ApprovalPromptComponent,
@@ -211,6 +212,13 @@ export async function runCli() {
   const finalizedToolIds = new Set<string>();
   let lastPendingApproval: { tool: string; args: Record<string, unknown> } | null = null;
 
+  // Build the CorePorts bundle. When MEMORYLAKE_* env vars are configured,
+  // memory_search / memory_update / memory_get flow through the MemoryLake
+  // adapter (default user_id 'default', overridable via DEXTER_USER_ID).
+  // Otherwise the legacy LocalMemoryAdapter (markdown files in .dexter/)
+  // is used — same as before.
+  const cliPorts = await composeCliPorts();
+
   agentRunner = new AgentRunnerController(
     { model: modelSelection.model, modelProvider: modelSelection.provider, maxIterations: 10 },
     modelSelection.inMemoryChatHistory,
@@ -280,6 +288,7 @@ export async function runCli() {
       }
       throttledRender();
     },
+    cliPorts,
   );
 
   const intro = new IntroComponent(modelSelection.model);
