@@ -7,7 +7,6 @@ import { Button } from '../../components/ui/button';
 import { Logo } from '../../components/logo';
 import { ThemeToggle } from '../../components/theme-toggle';
 import { Badge } from '../../components/ui/badge';
-import { GithubIcon } from '../../components/icons/github';
 import { LanguageSwitcher } from '../../components/i18n/language-switcher';
 import { UserMenu } from '../../components/auth/user-menu';
 import Link from 'next/link';
@@ -39,16 +38,6 @@ function Header({ dict }: { dict: Dictionary }) {
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5 lg:px-8">
         <Logo />
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="sm" asChild>
-            <a
-              href="https://github.com/javainthinking/dexter"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <GithubIcon className="size-4" />
-              <span className="hidden sm:inline">GitHub</span>
-            </a>
-          </Button>
           <LanguageSwitcher />
           <ThemeToggle />
           <UserMenu />
@@ -83,16 +72,6 @@ function Hero({ dict, chatHref }: { dict: Dictionary; chatHref: string }) {
               {dict.landing.hero.primaryCta}
               <ArrowRight className="size-4" />
             </Link>
-          </Button>
-          <Button asChild size="lg" variant="outline">
-            <a
-              href="https://github.com/javainthinking/dexter"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <GithubIcon className="size-4" />
-              {dict.landing.hero.secondaryCta}
-            </a>
           </Button>
         </div>
         <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.16em] text-subtle">
