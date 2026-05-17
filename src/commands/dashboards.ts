@@ -63,7 +63,19 @@ function buildCommonRules(): string {
 2. 若 memory 没有,从近期对话上下文中提取;还没有就明确告知用户并停止
 3. 对每个 ticker 调 get_stock_prices,严格使用上面的 start_date/end_date
 4. 若个别 ticker 拉数据失败,卡片做 fallback:显示 "数据不足" 提示,不要省略
-5. 拉到数据后,在头部 overview 末尾注明:"数据截至 <最后一根 K 线的日期>"
+
+⚠️ 数据顺序 — 不要弄反时间轴(这是最容易出错的地方):
+- get_stock_prices 返回的 prices 数组是 升序 chronological:prices[0] = 最早, prices[N-1] = 最新
+- 处理前用 prices[0].time 和 prices[N-1].time 核对:第一根日期应早于最后一根
+- 若顺序不对(极少见 fallback 数据源会反),先按 time 升序排序再用
+- 所有时间序列(closes/volume/MACD HIST/MA 等)都按这个顺序内联到 HTML 数据数组
+- 画图时:x 轴 左 = 最早, 右 = 最新(标准 K 线图惯例,绝不能反过来)
+- "最新价" / "最新柱" / "current" / "today" 永远指 prices[N-1](即数组末尾)
+- 计算 EMA/MA 等指标时也要按升序滚动,不要反向
+
+5. 拉到数据后,在头部 overview 末尾必须注明:"数据截至 <prices[N-1].time>"
+   每张卡片的 metrics 区也必须显示 "截至 <prices[N-1].time>",让用户能视觉核对
+6. 卡片的 chart 在最右侧 x 轴位置必须打上 <prices[N-1].time> 的日期标签
 
 风格参考(必须先 read_file 一次 ./portfolio_macd_dashboard.html 学习):
 - 暗色主题:background #0b1220,panel linear-gradient(#111827, #0f172a),border #1f2937,muted #94a3b8
@@ -113,7 +125,14 @@ export function MACD_PROMPT(): string {
 - 临界拐点 / 接近翻转 (待观察): HIST 绝对值在最近 3 根内逼近 0,即将变号
 
 每张卡 chart:上半价格折线,下半 DIF/DEA 双线 + HIST 柱(红正绿负)
-每张卡 metrics:最新价、日涨跌%、DIF、HIST
+- HIST 柱数组也按 prices 升序排列,渲染时 i=0 在左, i=N-1 在右
+- 最右侧 HIST 柱必须对应 prices[N-1].time(最新交易日);可在该柱上方加小日期 tooltip
+每张卡 metrics:
+  - 最新价 = prices[N-1].close
+  - 日涨跌% = (prices[N-1].close - prices[N-2].close) / prices[N-2].close × 100
+  - DIF = DIF 数组末尾
+  - HIST = HIST 数组末尾
+  - 都标注 "截至 prices[N-1].time"
 
 输出文件名:portfolio_macd_{YYYY-MM-DD}.html
 `;
