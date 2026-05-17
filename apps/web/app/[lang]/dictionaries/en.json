@@ -128,7 +128,37 @@
     "label": "Language"
   },
   "nav": {
-    "memory": "Memory"
+    "memory": "Memory",
+    "indicators": "Indicators"
+  },
+  "indicators": {
+    "_localeHint": "en",
+    "title": "Indicators",
+    "subtitle": "Technical signals across your watchlist.",
+    "tickers": "Tickers",
+    "tickerPlaceholder": "Add ticker (e.g. NVDA, 0700.HK)",
+    "addTicker": "Add",
+    "saveToMemory": "Save to memory",
+    "saved": "Saved",
+    "lastSavedAt": "Last saved",
+    "confirm": "Confirm",
+    "loading": "Computing indicators…",
+    "error": "Failed to load indicators.",
+    "retry": "Retry",
+    "emptyTitle": "No portfolio found in memory.",
+    "emptyHint": "Tell Dexter your holdings — e.g. NVDA, TSLA, 0700.HK — and pick \"Save to memory\" so you only do this once.",
+    "emptyAfterClear": "Add at least one ticker to view this indicator.",
+    "tabs": {
+      "macd": "MACD",
+      "ma": "Moving avg",
+      "volume": "Volume",
+      "flow": "Capital flow",
+      "movers": "Market movers"
+    },
+    "metrics": {
+      "latest": "Last",
+      "change": "Chg %"
+    }
   },
   "memory": {
     "title": "Memory",

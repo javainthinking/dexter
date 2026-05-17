@@ -128,7 +128,37 @@
     "label": "Langue"
   },
   "nav": {
-    "memory": "Mémoire"
+    "memory": "Mémoire",
+    "indicators": "Indicateurs"
+  },
+  "indicators": {
+    "_localeHint": "fr",
+    "title": "Indicateurs",
+    "subtitle": "Signaux techniques sur votre liste de suivi.",
+    "tickers": "Symboles",
+    "tickerPlaceholder": "Ajouter un symbole (ex. NVDA, 0700.HK)",
+    "addTicker": "Ajouter",
+    "saveToMemory": "Enregistrer en mémoire",
+    "saved": "Enregistré",
+    "lastSavedAt": "Dernier enregistrement",
+    "confirm": "Confirmer",
+    "loading": "Calcul des indicateurs…",
+    "error": "Échec du chargement des indicateurs.",
+    "retry": "Réessayer",
+    "emptyTitle": "Aucun portefeuille en mémoire.",
+    "emptyHint": "Dis à Dexter tes positions — par ex. NVDA, TSLA, 0700.HK — puis clique « Enregistrer en mémoire » pour ne plus avoir à le retaper.",
+    "emptyAfterClear": "Ajoute au moins un symbole pour afficher cet indicateur.",
+    "tabs": {
+      "macd": "MACD",
+      "ma": "Moyennes mobiles",
+      "volume": "Volume",
+      "flow": "Flux de capitaux",
+      "movers": "Plus grands mouvements"
+    },
+    "metrics": {
+      "latest": "Dernier",
+      "change": "Var %"
+    }
   },
   "memory": {
     "title": "Mémoire",

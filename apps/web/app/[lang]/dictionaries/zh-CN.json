@@ -128,7 +128,37 @@
     "label": "语言"
   },
   "nav": {
-    "memory": "记忆"
+    "memory": "记忆",
+    "indicators": "指标"
+  },
+  "indicators": {
+    "_localeHint": "zh",
+    "title": "指标",
+    "subtitle": "持仓的技术面信号。",
+    "tickers": "标的",
+    "tickerPlaceholder": "添加标的(如 NVDA、0700.HK)",
+    "addTicker": "添加",
+    "saveToMemory": "保存到记忆",
+    "saved": "已保存",
+    "lastSavedAt": "上次保存",
+    "confirm": "确认",
+    "loading": "正在计算指标…",
+    "error": "指标加载失败。",
+    "retry": "重试",
+    "emptyTitle": "记忆中暂无持仓。",
+    "emptyHint": "告诉 Dexter 你的持仓 — 例如 NVDA、TSLA、0700.HK — 然后点击「保存到记忆」,这样以后不用再输。",
+    "emptyAfterClear": "至少添加一只标的才能查看该指标。",
+    "tabs": {
+      "macd": "MACD",
+      "ma": "均线",
+      "volume": "量价",
+      "flow": "资金流量",
+      "movers": "涨跌榜"
+    },
+    "metrics": {
+      "latest": "最新价",
+      "change": "涨跌%"
+    }
   },
   "memory": {
     "title": "记忆",

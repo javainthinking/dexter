@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { usePathname } from 'next/navigation';
-import { Plus, MessageSquare, History, X, Trash2, Check, BrainCircuit } from 'lucide-react';
+import { Plus, MessageSquare, History, X, Trash2, Check, BrainCircuit, LineChart } from 'lucide-react';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
@@ -138,9 +138,29 @@ function SidebarNav() {
   const pathname = usePathname();
   const cleanPath = stripLocalePrefix(pathname) || '/';
   const isMemoryActive = cleanPath === '/memory' || cleanPath.startsWith('/memory/');
+  const isIndicatorsActive =
+    cleanPath === '/indicators' || cleanPath.startsWith('/indicators/');
 
   return (
-    <nav className="px-2 py-2">
+    <nav className="px-2 py-2 space-y-0.5">
+      <LocalizedLink
+        href="/indicators"
+        className={cn(
+          'flex items-center gap-2 rounded-md px-2.5 py-2 text-sm transition-colors',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+          isIndicatorsActive
+            ? 'bg-muted text-foreground'
+            : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+        )}
+      >
+        <LineChart
+          className={cn(
+            'size-4',
+            isIndicatorsActive ? 'text-[color:var(--accent)]' : 'text-subtle',
+          )}
+        />
+        <span className="font-medium">{dict.nav?.indicators ?? 'Indicators'}</span>
+      </LocalizedLink>
       <LocalizedLink
         href="/memory"
         className={cn(

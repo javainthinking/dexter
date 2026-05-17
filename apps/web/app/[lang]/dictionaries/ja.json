@@ -128,7 +128,37 @@
     "label": "言語"
   },
   "nav": {
-    "memory": "メモリ"
+    "memory": "メモリ",
+    "indicators": "テクニカル指標"
+  },
+  "indicators": {
+    "_localeHint": "ja",
+    "title": "テクニカル指標",
+    "subtitle": "ウォッチリスト全体のテクニカルシグナル。",
+    "tickers": "ティッカー",
+    "tickerPlaceholder": "ティッカーを追加(例: NVDA、0700.HK)",
+    "addTicker": "追加",
+    "saveToMemory": "メモリに保存",
+    "saved": "保存しました",
+    "lastSavedAt": "最終保存",
+    "confirm": "確定",
+    "loading": "指標を計算中…",
+    "error": "指標を読み込めませんでした。",
+    "retry": "再試行",
+    "emptyTitle": "メモリにポートフォリオがありません。",
+    "emptyHint": "保有銘柄を Dexter に教えてください — 例: NVDA、TSLA、0700.HK — そして「メモリに保存」を選べば、次回からは入力不要です。",
+    "emptyAfterClear": "この指標を表示するには少なくとも 1 つのティッカーを追加してください。",
+    "tabs": {
+      "macd": "MACD",
+      "ma": "移動平均",
+      "volume": "出来高",
+      "flow": "資金フロー",
+      "movers": "値動きランキング"
+    },
+    "metrics": {
+      "latest": "終値",
+      "change": "変動%"
+    }
   },
   "memory": {
     "title": "メモリ",

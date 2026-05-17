@@ -128,7 +128,37 @@
     "label": "Sprache"
   },
   "nav": {
-    "memory": "Gedächtnis"
+    "memory": "Gedächtnis",
+    "indicators": "Indikatoren"
+  },
+  "indicators": {
+    "_localeHint": "de",
+    "title": "Indikatoren",
+    "subtitle": "Technische Signale deiner Watchlist.",
+    "tickers": "Ticker",
+    "tickerPlaceholder": "Ticker hinzufügen (z. B. NVDA, 0700.HK)",
+    "addTicker": "Hinzufügen",
+    "saveToMemory": "Im Gedächtnis speichern",
+    "saved": "Gespeichert",
+    "lastSavedAt": "Zuletzt gespeichert",
+    "confirm": "Bestätigen",
+    "loading": "Indikatoren werden berechnet…",
+    "error": "Indikatoren konnten nicht geladen werden.",
+    "retry": "Erneut versuchen",
+    "emptyTitle": "Kein Portfolio im Gedächtnis.",
+    "emptyHint": "Sag Dexter deine Positionen — z. B. NVDA, TSLA, 0700.HK — und klicke „Im Gedächtnis speichern“, damit du das nicht noch einmal tippen musst.",
+    "emptyAfterClear": "Füge mindestens einen Ticker hinzu, um diesen Indikator zu sehen.",
+    "tabs": {
+      "macd": "MACD",
+      "ma": "Gleitender Durchschnitt",
+      "volume": "Volumen",
+      "flow": "Kapitalfluss",
+      "movers": "Top-Bewegungen"
+    },
+    "metrics": {
+      "latest": "Letzter",
+      "change": "Änd. %"
+    }
   },
   "memory": {
     "title": "Gedächtnis",

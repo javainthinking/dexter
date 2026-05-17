@@ -128,7 +128,37 @@
     "label": "語言"
   },
   "nav": {
-    "memory": "記憶"
+    "memory": "記憶",
+    "indicators": "指標"
+  },
+  "indicators": {
+    "_localeHint": "zh",
+    "title": "指標",
+    "subtitle": "持倉的技術面訊號。",
+    "tickers": "標的",
+    "tickerPlaceholder": "新增標的(如 NVDA、0700.HK)",
+    "addTicker": "新增",
+    "saveToMemory": "儲存到記憶",
+    "saved": "已儲存",
+    "lastSavedAt": "上次儲存",
+    "confirm": "確認",
+    "loading": "正在計算指標…",
+    "error": "指標載入失敗。",
+    "retry": "重試",
+    "emptyTitle": "記憶中暫無持倉。",
+    "emptyHint": "告訴 Dexter 你的持倉 — 例如 NVDA、TSLA、0700.HK — 然後點擊「儲存到記憶」,這樣以後不用再輸入。",
+    "emptyAfterClear": "至少新增一檔標的才能查看該指標。",
+    "tabs": {
+      "macd": "MACD",
+      "ma": "均線",
+      "volume": "量價",
+      "flow": "資金流量",
+      "movers": "漲跌榜"
+    },
+    "metrics": {
+      "latest": "最新價",
+      "change": "漲跌%"
+    }
   },
   "memory": {
     "title": "記憶",

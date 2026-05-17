@@ -29,10 +29,16 @@ const AUTH_COOKIE_NAMES = [
 ];
 
 /** Paths that require auth (after locale stripping). */
-const PROTECTED_PREFIXES = ['/chat', '/memory'];
+const PROTECTED_PREFIXES = ['/chat', '/memory', '/indicators'];
 
 /** API paths that require auth. */
-const PROTECTED_API_PREFIXES = ['/api/agent', '/api/sessions', '/api/memory'];
+const PROTECTED_API_PREFIXES = [
+  '/api/agent',
+  '/api/sessions',
+  '/api/memory',
+  '/api/indicators',
+  '/api/holdings',
+];
 
 export function proxy(request: NextRequest): NextResponse {
   const { pathname, search } = request.nextUrl;

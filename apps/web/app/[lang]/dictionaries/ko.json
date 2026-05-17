@@ -128,7 +128,37 @@
     "label": "언어"
   },
   "nav": {
-    "memory": "메모리"
+    "memory": "메모리",
+    "indicators": "지표"
+  },
+  "indicators": {
+    "_localeHint": "ko",
+    "title": "지표",
+    "subtitle": "관심 종목의 기술적 시그널.",
+    "tickers": "티커",
+    "tickerPlaceholder": "티커 추가 (예: NVDA, 0700.HK)",
+    "addTicker": "추가",
+    "saveToMemory": "메모리에 저장",
+    "saved": "저장됨",
+    "lastSavedAt": "마지막 저장",
+    "confirm": "확인",
+    "loading": "지표 계산 중…",
+    "error": "지표를 불러오지 못했습니다.",
+    "retry": "다시 시도",
+    "emptyTitle": "메모리에 포트폴리오가 없습니다.",
+    "emptyHint": "보유 종목을 Dexter에 알려주세요 — 예: NVDA, TSLA, 0700.HK — 그리고 「메모리에 저장」을 누르면 다시 입력할 필요가 없습니다.",
+    "emptyAfterClear": "이 지표를 보려면 티커를 1개 이상 추가하세요.",
+    "tabs": {
+      "macd": "MACD",
+      "ma": "이동평균선",
+      "volume": "거래량",
+      "flow": "자금 흐름",
+      "movers": "등락주"
+    },
+    "metrics": {
+      "latest": "종가",
+      "change": "등락%"
+    }
   },
   "memory": {
     "title": "메모리",

@@ -128,7 +128,37 @@
     "label": "Idioma"
   },
   "nav": {
-    "memory": "Memoria"
+    "memory": "Memoria",
+    "indicators": "Indicadores"
+  },
+  "indicators": {
+    "_localeHint": "es",
+    "title": "Indicadores",
+    "subtitle": "Señales técnicas de tu watchlist.",
+    "tickers": "Tickers",
+    "tickerPlaceholder": "Añadir ticker (ej. NVDA, 0700.HK)",
+    "addTicker": "Añadir",
+    "saveToMemory": "Guardar en memoria",
+    "saved": "Guardado",
+    "lastSavedAt": "Último guardado",
+    "confirm": "Confirmar",
+    "loading": "Calculando indicadores…",
+    "error": "No se pudieron cargar los indicadores.",
+    "retry": "Reintentar",
+    "emptyTitle": "No hay cartera en memoria.",
+    "emptyHint": "Cuéntale a Dexter tus posiciones — por ej. NVDA, TSLA, 0700.HK — y pulsa «Guardar en memoria» para no tener que repetirlo.",
+    "emptyAfterClear": "Añade al menos un ticker para ver este indicador.",
+    "tabs": {
+      "macd": "MACD",
+      "ma": "Medias móviles",
+      "volume": "Volumen",
+      "flow": "Flujo de capital",
+      "movers": "Top mercado"
+    },
+    "metrics": {
+      "latest": "Último",
+      "change": "Var %"
+    }
   },
   "memory": {
     "title": "Memoria",
