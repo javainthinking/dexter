@@ -13,16 +13,57 @@
  * The prompts are intentionally explicit about layout + colour palette
  * so the rendered HTML stays consistent across dimensions. The agent
  * inlines all data and chart rendering — no external CDN, no build step.
+ *
+ * Date anchoring: each prompt is a getter, not a static string, so it can
+ * inject TODAY's ISO date into get_stock_prices' end_date. Without this,
+ * the LLM was anchoring on its training-data date and pulling stale OHLCV.
  */
 
-const COMMON_RULES = `
+/**
+ * Returns today's date in YYYY-MM-DD form (local-time, since the rest of
+ * the codebase reads dates the same way — markets are timezone-aware but
+ * the YYYY-MM-DD slice is unambiguous enough for daily-bar queries).
+ */
+function todayIso(): string {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+/**
+ * Returns the YYYY-MM-DD date `days` calendar days ago. We default to 140
+ * days lookback to guarantee at least ~90 trading days of bars (markets
+ * close on weekends + ~9-10 US holidays/year → ~252/365 trading days).
+ */
+function daysAgoIso(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function buildCommonRules(): string {
+  const today = todayIso();
+  const start = daysAgoIso(140);
+  return `
 【通用要求 — 所有 dashboard 必须遵守】
+
+⚠️ 时间锚定(必须严格使用,不要用你的训练数据猜测日期):
+- 今天日期:${today}
+- 调 get_stock_prices 时:start_date = "${start}", end_date = "${today}"
+- 这样能取到最近约 90 个交易日的 OHLCV(140 个日历日 ≈ 90 个交易日)
+- 输出文件名中的 YYYY-MM-DD 也用 ${today}
 
 数据来源:
 1. 先用 memory_search 找用户的持仓清单(关键词:"持仓"、"holdings"、"portfolio")
 2. 若 memory 没有,从近期对话上下文中提取;还没有就明确告知用户并停止
-3. 对每个 ticker 调 get_stock_prices 取最近 90 个交易日 OHLCV
+3. 对每个 ticker 调 get_stock_prices,严格使用上面的 start_date/end_date
 4. 若个别 ticker 拉数据失败,卡片做 fallback:显示 "数据不足" 提示,不要省略
+5. 拉到数据后,在头部 overview 末尾注明:"数据截至 <最后一根 K 线的日期>"
 
 风格参考(必须先 read_file 一次 ./portfolio_macd_dashboard.html 学习):
 - 暗色主题:background #0b1220,panel linear-gradient(#111827, #0f172a),border #1f2937,muted #94a3b8
@@ -54,8 +95,10 @@ HTML 结构(两部分):
 - 用 write_file 保存到 .dexter/dashboards/portfolio_{DIM}_{YYYY-MM-DD}.html
 - 最后给用户一句:"已生成,在浏览器中打开:open <path>"
 `;
+}
 
-export const MACD_PROMPT = `${COMMON_RULES}
+export function MACD_PROMPT(): string {
+  return `${buildCommonRules()}
 
 【MACD 维度】
 
@@ -74,8 +117,10 @@ export const MACD_PROMPT = `${COMMON_RULES}
 
 输出文件名:portfolio_macd_{YYYY-MM-DD}.html
 `;
+}
 
-export const VOLUME_PROMPT = `${COMMON_RULES}
+export function VOLUME_PROMPT(): string {
+  return `${buildCommonRules()}
 
 【量价 维度】
 
@@ -94,8 +139,10 @@ export const VOLUME_PROMPT = `${COMMON_RULES}
 
 输出文件名:portfolio_volume_{YYYY-MM-DD}.html
 `;
+}
 
-export const MA_PROMPT = `${COMMON_RULES}
+export function MA_PROMPT(): string {
+  return `${buildCommonRules()}
 
 【均线 维度】
 
@@ -111,6 +158,7 @@ export const MA_PROMPT = `${COMMON_RULES}
 
 输出文件名:portfolio_ma_{YYYY-MM-DD}.html
 `;
+}
 
 /**
  * MOVERS_PROMPT is not portfolio-scoped — it's a market-pulse dashboard.
@@ -118,8 +166,13 @@ export const MA_PROMPT = `${COMMON_RULES}
  * holdings) because the data source is the whole US market, not the user's
  * book.
  */
-export const MOVERS_PROMPT = `
-【美股市场涨跌榜 Dashboard】
+export function MOVERS_PROMPT(): string {
+  const today = todayIso();
+  return `
+【美股市场涨跌榜 Dashboard · ${today}】
+
+⚠️ 时间锚定:今天日期 ${today}。如果需要 30 日 sparkline,调 get_stock_prices 用
+   start_date = "${daysAgoIso(45)}", end_date = "${today}"。文件名 YYYY-MM-DD 也用 ${today}。
 
 数据来源:
 1. 调用 get_market_data,query 写 "today's top US stock market movers gainers and losers"
@@ -160,11 +213,13 @@ HTML 结构(两部分):
 - responsive grid
 
 输出:
-- 用 write_file 保存到 .dexter/dashboards/market_movers_{YYYY-MM-DD}.html
+- 用 write_file 保存到 .dexter/dashboards/market_movers_${today}.html
 - 最后给用户一句:"已生成,在浏览器中打开:open <path>"
 `;
+}
 
-export const FLOW_PROMPT = `${COMMON_RULES}
+export function FLOW_PROMPT(): string {
+  return `${buildCommonRules()}
 
 【主力资金流量 维度】
 
@@ -189,3 +244,4 @@ export const FLOW_PROMPT = `${COMMON_RULES}
 
 输出文件名:portfolio_flow_{YYYY-MM-DD}.html
 `;
+}

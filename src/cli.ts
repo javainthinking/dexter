@@ -382,19 +382,19 @@ export async function runCli() {
         await agentRunner.runQuery('Show me my current heartbeat checklist from .dexter/HEARTBEAT.md');
         break;
       case 'macd':
-        await agentRunner.runQuery(MACD_PROMPT);
+        await agentRunner.runQuery(MACD_PROMPT());
         break;
       case 'vol':
-        await agentRunner.runQuery(VOLUME_PROMPT);
+        await agentRunner.runQuery(VOLUME_PROMPT());
         break;
       case 'ma':
-        await agentRunner.runQuery(MA_PROMPT);
+        await agentRunner.runQuery(MA_PROMPT());
         break;
       case 'flow':
-        await agentRunner.runQuery(FLOW_PROMPT);
+        await agentRunner.runQuery(FLOW_PROMPT());
         break;
       case 'movers':
-        await agentRunner.runQuery(MOVERS_PROMPT);
+        await agentRunner.runQuery(MOVERS_PROMPT());
         break;
       case 'history': {
         const messages = modelSelection.inMemoryChatHistory.getMessages();
