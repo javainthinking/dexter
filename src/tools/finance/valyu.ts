@@ -101,13 +101,35 @@ function parseContent<T>(content: unknown, label: string): T {
 }
 
 /**
- * Build a `cash_flow` payload shaped like Financial Datasets' response so the
- * existing `getCashFlowStatements` tool can swap us in without changes to
- * downstream code paths.
+ * Each Valyu content row arrives as a flat array or a numeric-indexed
+ * object. Both decode through `parseContent`; this helper coerces them
+ * into a real array so downstream `.map`/`.slice` calls are safe.
+ */
+function toRowArray(content: unknown): Array<Record<string, unknown>> {
+  if (Array.isArray(content)) return content as Array<Record<string, unknown>>;
+  if (content && typeof content === 'object') {
+    const obj = content as Record<string, unknown>;
+    const rows: Array<Record<string, unknown>> = [];
+    for (let i = 0; obj[String(i)] !== undefined; i++) {
+      rows.push(obj[String(i)] as Record<string, unknown>);
+    }
+    return rows;
+  }
+  return [];
+}
+
+function num(v: unknown): number | undefined {
+  if (v === null || v === undefined) return undefined;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : undefined;
+}
+
+/**
+ * Build a `cash_flow_statements` payload shaped like Financial Datasets'.
  *
- * Valyu's schema is sparser than Financial Datasets' — it gives us the four
- * top-line cashflows plus capex. The unmapped fields are simply omitted, not
- * faked, so the LLM sees `null`-ish gaps and can flag the limitation.
+ * Valyu nests the cashflows by activity type (operating / investing /
+ * financing), so we lift the relevant scalar fields up to the top level
+ * the formatter + downstream consumers expect.
  */
 export async function fetchValyuCashFlowStatements(
   ticker: string,
@@ -116,16 +138,22 @@ export async function fetchValyuCashFlowStatements(
   const label = `valyu cash-flow ${ticker}`;
   const query = `${ticker} most recent ${limit} cash flow statements`;
   const result = await searchSingleSource(query, VALYU_SOURCES.cashFlow, label);
-  const content = parseContent<Array<Record<string, unknown>>>(result.content, label);
-  const cash_flow_statements = content.slice(0, limit).map((row) => ({
-    ticker: ticker.toUpperCase(),
-    report_period: row.fiscal_date_ending,
-    net_cash_flow_from_operations: row.operating_cashflow,
-    net_cash_flow_from_investing: row.investing_cashflow,
-    net_cash_flow_from_financing: row.financing_cashflow,
-    free_cash_flow: row.free_cashflow,
-    capital_expenditure: row.capital_expenditures,
-  }));
+  const rows = toRowArray(parseContent(result.content, label));
+  const cash_flow_statements = rows.slice(0, limit).map((row) => {
+    const operating = (row.operating_activities ?? {}) as Record<string, unknown>;
+    const investing = (row.investing_activities ?? {}) as Record<string, unknown>;
+    return {
+      ticker: ticker.toUpperCase(),
+      report_period: row.fiscal_date,
+      fiscal_year: row.year,
+      net_cash_flow_from_operations: num(operating.operating_cash_flow),
+      operating_cash_flow: num(operating.operating_cash_flow),
+      capital_expenditure: num(investing.capital_expenditures),
+      free_cash_flow: num(row.free_cash_flow),
+      depreciation_and_amortization: num(operating.depreciation),
+      stock_based_compensation: num(operating.stock_based_compensation),
+    };
+  });
   return { data: { cash_flow_statements }, url: result.url };
 }
 
@@ -137,16 +165,24 @@ export async function fetchValyuIncomeStatements(
   const label = `valyu income ${ticker}`;
   const query = `${ticker} most recent ${limit} income statements`;
   const result = await searchSingleSource(query, VALYU_SOURCES.incomeStatement, label);
-  const content = parseContent<Array<Record<string, unknown>>>(result.content, label);
-  const income_statements = content.slice(0, limit).map((row) => ({
+  const rows = toRowArray(parseContent(result.content, label));
+  const income_statements = rows.slice(0, limit).map((row) => ({
     ticker: ticker.toUpperCase(),
-    report_period: row.fiscal_date_ending,
-    revenue: row.total_revenue,
-    gross_profit: row.gross_profit,
-    operating_income: row.operating_income,
-    net_income: row.net_income,
-    earnings_per_share: row.basic_eps,
-    earnings_per_share_diluted: row.diluted_eps,
+    report_period: row.fiscal_date,
+    fiscal_year: row.year,
+    fiscal_quarter: row.quarter,
+    revenue: num(row.sales),
+    cost_of_revenue: num(row.cost_of_goods),
+    gross_profit: num(row.gross_profit),
+    operating_income: num(row.operating_income),
+    net_income: num(row.net_income),
+    earnings_per_share: num(row.eps_basic),
+    earnings_per_share_diluted: num(row.eps_diluted),
+    basic_earnings_per_share: num(row.eps_basic),
+    weighted_average_shares: num(row.basic_shares_outstanding),
+    weighted_average_shares_diluted: num(row.diluted_shares_outstanding),
+    ebitda: num(row.ebitda),
+    ebit: num(row.ebit),
   }));
   return { data: { income_statements }, url: result.url };
 }
@@ -156,25 +192,41 @@ export async function fetchValyuEarnings(ticker: string): Promise<ApiResponse> {
   const label = `valyu earnings ${ticker}`;
   const query = `${ticker} latest earnings report`;
   const result = await searchSingleSource(query, VALYU_SOURCES.earnings, label);
-  const content = parseContent<Array<Record<string, unknown>>>(result.content, label);
-  const latest = content[0];
+  const rows = toRowArray(parseContent(result.content, label));
+  const latest = rows[0];
   if (!latest) {
     throw new Error(`[Valyu] no earnings data for ${ticker}`);
   }
   const earnings = [{
     ticker: ticker.toUpperCase(),
-    report_period: latest.fiscal_date_ending,
     report_date: latest.date,
-    currency: latest.currency,
-    eps_actual: latest.eps_actual,
-    eps_estimate: latest.eps_estimate,
-    eps_surprise: latest.surprise,
-    eps_surprise_percent: latest.surprise_percentage,
+    report_time: latest.time,
+    eps_actual: num(latest.eps_actual),
+    eps_estimate: num(latest.eps_estimate),
+    eps_surprise: num(latest.difference),
+    eps_surprise_percent: num(latest.surprise_prc),
   }];
   return { data: { earnings }, url: result.url };
 }
 
-/** Build an `insider_trades` payload shaped like Financial Datasets'. */
+/**
+ * Build an `insider_trades` payload shaped like Financial Datasets'.
+ *
+ * Valyu collapses transaction type into a free-text `description` field
+ * ("Sale at price 171.97 - 177.51 per share."). We sniff the first verb so
+ * downstream filters that key off `transaction_type` (buy/sell/exercise)
+ * still work, while the original description rides through verbatim for
+ * audit purposes.
+ */
+function inferTransactionType(description: unknown): string {
+  const text = String(description ?? '').toLowerCase();
+  if (text.includes('sale') || text.includes('sold') || text.includes('sell')) return 'sell';
+  if (text.includes('purchase') || text.includes('bought') || text.includes('buy')) return 'buy';
+  if (text.includes('exercise')) return 'exercise';
+  if (text.includes('gift')) return 'gift';
+  return 'unknown';
+}
+
 export async function fetchValyuInsiderTrades(
   ticker: string,
   limit: number,
@@ -182,35 +234,84 @@ export async function fetchValyuInsiderTrades(
   const label = `valyu insider ${ticker}`;
   const query = `${ticker} recent insider transactions`;
   const result = await searchSingleSource(query, VALYU_SOURCES.insiderTransactions, label);
-  const content = parseContent<Array<Record<string, unknown>>>(result.content, label);
-  const insider_trades = content.slice(0, limit).map((row) => ({
+  const rows = toRowArray(parseContent(result.content, label));
+  const insider_trades = rows.slice(0, limit).map((row) => ({
     ticker: ticker.toUpperCase(),
-    name: row.insider_name,
-    title: row.title,
-    transaction_date: row.trade_date,
-    filing_date: row.filing_date,
-    transaction_shares: row.shares,
-    transaction_price_per_share: row.price,
-    transaction_value: row.value,
-    transaction_type: row.transaction_type,
+    name: row.full_name,
+    title: row.position,
+    transaction_date: row.date_reported,
+    filing_date: row.date_reported,
+    is_direct: row.is_direct,
+    transaction_shares: num(row.shares),
+    transaction_value: num(row.value),
+    transaction_type: inferTransactionType(row.description),
+    description: row.description,
   }));
   return { data: { insider_trades }, url: result.url };
 }
 
-/** Build a key-ratios snapshot shaped like Financial Datasets'. */
+/**
+ * Build a key-ratios snapshot shaped like Financial Datasets'.
+ *
+ * Valyu's statistics object is heavily nested (valuations_metrics /
+ * financials / stock_statistics / stock_price_summary / dividends_and_splits).
+ * We flatten the relevant scalars onto the top level the existing formatter
+ * + downstream consumers expect. Both Financial-Datasets-style long names
+ * (`price_to_earnings_ratio`, `return_on_equity`) and the short aliases the
+ * formatter prefers (`pe_ratio`, `roe`) are populated so neither side has to
+ * branch on source.
+ *
+ * NOTE: Valyu reports debt/equity as a percentage (7.255 -> 7.255%), whereas
+ * FinDatasets reports it as a raw ratio (~0.14 for NVDA). Divide by 100 so
+ * downstream math (e.g. quick screen filters) treats them identically.
+ */
 export async function fetchValyuKeyRatiosSnapshot(ticker: string): Promise<ApiResponse> {
   const label = `valyu statistics ${ticker}`;
   const query = `${ticker} latest statistics`;
   const result = await searchSingleSource(query, VALYU_SOURCES.statistics, label);
   const content = parseContent<Record<string, unknown>>(result.content, label);
+  const valuations = (content.valuations_metrics ?? {}) as Record<string, unknown>;
+  const financials = (content.financials ?? {}) as Record<string, unknown>;
+  const balance = (financials.balance_sheet ?? {}) as Record<string, unknown>;
+  const incomeStmt = (financials.income_statement ?? {}) as Record<string, unknown>;
+  const priceSummary = (content.stock_price_summary ?? {}) as Record<string, unknown>;
+  const dividends = (content.dividends_and_splits ?? {}) as Record<string, unknown>;
+
+  const debtToEquityPct = num(balance.total_debt_to_equity_mrq);
+  const debtToEquity = debtToEquityPct !== undefined ? debtToEquityPct / 100 : undefined;
+
   const snapshot = {
     ticker: ticker.toUpperCase(),
-    market_cap: content.market_cap,
-    price_to_earnings_ratio: content.pe_ratio,
-    return_on_equity: content.roe,
-    debt_to_equity: content.debt_to_equity,
-    dividend_yield: content.dividend_yield,
-    beta: content.beta,
+    market_cap: num(valuations.market_capitalization),
+    enterprise_value: num(valuations.enterprise_value),
+    pe_ratio: num(valuations.trailing_pe),
+    price_to_earnings_ratio: num(valuations.trailing_pe),
+    forward_pe: num(valuations.forward_pe),
+    peg_ratio: num(valuations.peg_ratio),
+    price_to_sales_ratio: num(valuations.price_to_sales_ttm),
+    price_to_book_ratio: num(valuations.price_to_book_mrq),
+    enterprise_value_to_ebitda_ratio: num(valuations.enterprise_to_ebitda),
+    gross_margin: num(financials.gross_margin),
+    operating_margin: num(financials.operating_margin),
+    net_margin: num(financials.profit_margin),
+    roe: num(financials.return_on_equity_ttm),
+    return_on_equity: num(financials.return_on_equity_ttm),
+    roa: num(financials.return_on_assets_ttm),
+    return_on_assets: num(financials.return_on_assets_ttm),
+    quarterly_revenue_growth: num(incomeStmt.quarterly_revenue_growth),
+    quarterly_earnings_growth: num(incomeStmt.quarterly_earnings_growth_yoy),
+    revenue_per_share: num(incomeStmt.revenue_per_share_ttm),
+    eps: num(incomeStmt.diluted_eps_ttm),
+    ebitda: num(incomeStmt.ebitda),
+    current_ratio: num(balance.current_ratio_mrq),
+    debt_to_equity: debtToEquity,
+    book_value_per_share: num(balance.book_value_per_share_mrq),
+    beta: num(priceSummary.beta),
+    fifty_two_week_high: num(priceSummary.fifty_two_week_high),
+    fifty_two_week_low: num(priceSummary.fifty_two_week_low),
+    dividend_yield: num(dividends.trailing_annual_dividend_yield),
+    forward_dividend_yield: num(dividends.forward_annual_dividend_yield),
+    payout_ratio: num(dividends.payout_ratio),
   };
   return { data: { snapshot }, url: result.url };
 }

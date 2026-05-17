@@ -1,6 +1,6 @@
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { api, stripFieldsDeep, withFallback } from './api.js';
+import { api, stripFieldsDeep, withFallback, withFallbackChain } from './api.js';
 import { formatToolResult } from '../types.js';
 import { TTL_24H } from './utils.js';
 import {
@@ -9,6 +9,7 @@ import {
   fetchYahooCashFlowStatements,
   fetchYahooAllFinancials,
 } from './yahoo.js';
+import { fetchValyuCashFlowStatements, fetchValyuIncomeStatements } from './valyu.js';
 
 const REDUNDANT_FINANCIAL_FIELDS = ['accession_number', 'currency', 'period'] as const;
 
@@ -70,10 +71,13 @@ export const getIncomeStatements = new DynamicStructuredTool({
   func: async (input) => {
     const params = createParams(input);
     const ticker = input.ticker.trim().toUpperCase();
-    const { data, url } = await withFallback(
-      () => api.get('/financials/income-statements/', params, { cacheable: true, ttlMs: TTL_24H }),
-      () => fetchYahooIncomeStatements(ticker, input.period, input.limit),
+    const { data, url } = await withFallbackChain(
       `income-statements ${ticker} ${input.period}`,
+      [
+        { name: 'financial-datasets', run: () => api.get('/financials/income-statements/', params, { cacheable: true, ttlMs: TTL_24H }) },
+        { name: 'yahoo', run: () => fetchYahooIncomeStatements(ticker, input.period, input.limit) },
+        { name: 'valyu', run: () => fetchValyuIncomeStatements(ticker, input.limit) },
+      ],
     );
     return formatToolResult(
       stripFieldsDeep(data.income_statements || {}, REDUNDANT_FINANCIAL_FIELDS),
@@ -108,10 +112,13 @@ export const getCashFlowStatements = new DynamicStructuredTool({
   func: async (input) => {
     const params = createParams(input);
     const ticker = input.ticker.trim().toUpperCase();
-    const { data, url } = await withFallback(
-      () => api.get('/financials/cash-flow-statements/', params, { cacheable: true, ttlMs: TTL_24H }),
-      () => fetchYahooCashFlowStatements(ticker, input.period, input.limit),
+    const { data, url } = await withFallbackChain(
       `cash-flow-statements ${ticker} ${input.period}`,
+      [
+        { name: 'financial-datasets', run: () => api.get('/financials/cash-flow-statements/', params, { cacheable: true, ttlMs: TTL_24H }) },
+        { name: 'yahoo', run: () => fetchYahooCashFlowStatements(ticker, input.period, input.limit) },
+        { name: 'valyu', run: () => fetchValyuCashFlowStatements(ticker, input.limit) },
+      ],
     );
     return formatToolResult(
       stripFieldsDeep(data.cash_flow_statements || {}, REDUNDANT_FINANCIAL_FIELDS),

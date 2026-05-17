@@ -1,8 +1,9 @@
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { api } from './api.js';
+import { api, withFallbackChain } from './api.js';
 import { formatToolResult } from '../types.js';
 import { TTL_24H } from './utils.js';
+import { fetchValyuEarnings } from './valyu.js';
 
 const EarningsInputSchema = z.object({
   ticker: z
@@ -17,7 +18,10 @@ export const getEarnings = new DynamicStructuredTool({
   schema: EarningsInputSchema,
   func: async (input) => {
     const ticker = input.ticker.trim().toUpperCase();
-    const { data, url } = await api.get('/earnings', { ticker }, { cacheable: true, ttlMs: TTL_24H });
+    const { data, url } = await withFallbackChain(`earnings ${ticker}`, [
+      { name: 'financial-datasets', run: () => api.get('/earnings', { ticker }, { cacheable: true, ttlMs: TTL_24H }) },
+      { name: 'valyu', run: () => fetchValyuEarnings(ticker) },
+    ]);
     const record = Array.isArray(data?.earnings) ? data.earnings[0] : null;
     return formatToolResult(record || {}, [url]);
   },

@@ -159,17 +159,53 @@ export async function withFallback(
   fallback: () => Promise<ApiResponse>,
   label: string,
 ): Promise<ApiResponse> {
-  try {
-    return await primary();
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    logger.warn(`[Finance] primary source failed for ${label}: ${message} — falling back to Yahoo`);
+  return withFallbackChain(label, [
+    { name: 'primary', run: primary },
+    { name: 'fallback', run: fallback },
+  ]);
+}
+
+export interface FallbackSource {
+  /** Human-readable name used in warn/error logs (e.g. "financial-datasets", "yahoo", "valyu"). */
+  name: string;
+  /** Lazy fetcher — only invoked if all earlier sources failed. */
+  run: () => Promise<ApiResponse>;
+}
+
+/**
+ * Try each source in order and return the first successful response.
+ *
+ * Used for fundamentals (cash-flow, income, earnings, insider, key-ratios)
+ * where we chain Financial Datasets -> Yahoo -> Valyu so a 429 or sparse
+ * record at one provider silently degrades to the next instead of failing
+ * the agent turn. Each source must return a shape-compatible ApiResponse so
+ * downstream code stays provider-agnostic.
+ *
+ * The thrown error on full-chain failure includes every provider's message
+ * so post-mortems don't require re-running the call with logging on.
+ */
+export async function withFallbackChain(
+  label: string,
+  sources: FallbackSource[],
+): Promise<ApiResponse> {
+  if (sources.length === 0) {
+    throw new Error(`${label}: no sources configured`);
+  }
+  const failures: string[] = [];
+  for (let i = 0; i < sources.length; i++) {
+    const source = sources[i];
     try {
-      return await fallback();
-    } catch (fallbackError) {
-      const fallbackMessage = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
-      logger.error(`[Finance] fallback (Yahoo) also failed for ${label}: ${fallbackMessage}`);
-      throw new Error(`${label}: primary and fallback both failed (primary: ${message}; fallback: ${fallbackMessage})`);
+      return await source.run();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      failures.push(`${source.name}: ${message}`);
+      const next = sources[i + 1];
+      if (next) {
+        logger.warn(`[Finance] ${source.name} failed for ${label}: ${message} — falling back to ${next.name}`);
+      } else {
+        logger.error(`[Finance] ${source.name} failed for ${label}: ${message}`);
+      }
     }
   }
+  throw new Error(`${label}: all sources failed (${failures.join('; ')})`);
 }
