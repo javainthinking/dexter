@@ -27,6 +27,7 @@ import {
   VOLUME_PROMPT,
   MA_PROMPT,
   FLOW_PROMPT,
+  MOVERS_PROMPT,
 } from './commands/dashboards.js';
 import {
   ApiKeyInputComponent,
@@ -391,6 +392,9 @@ export async function runCli() {
         break;
       case 'flow':
         await agentRunner.runQuery(FLOW_PROMPT);
+        break;
+      case 'movers':
+        await agentRunner.runQuery(MOVERS_PROMPT);
         break;
       case 'history': {
         const messages = modelSelection.inMemoryChatHistory.getMessages();

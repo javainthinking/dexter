@@ -210,6 +210,36 @@ export function formatEarnings(data: unknown): string {
   return lines.join('\n');
 }
 
+export function formatMarketMovers(data: unknown): string {
+  const d = (data && typeof data === 'object') ? data as Rec : {};
+  const gainers = Array.isArray(d.gainers) ? (d.gainers as Rec[]) : [];
+  const losers = Array.isArray(d.losers) ? (d.losers as Rec[]) : [];
+  if (gainers.length === 0 && losers.length === 0) return 'No market movers data available.';
+
+  const lines: string[] = [];
+  const ts = d.retrieved_at ? ` · as of ${String(d.retrieved_at)}` : '';
+  lines.push(`US Market Movers${ts}`);
+  lines.push('');
+
+  function renderTable(title: string, rows: Rec[]): void {
+    lines.push(`**${title}**`);
+    lines.push('| Symbol | Name | Price | Chg | % Chg | Volume |');
+    lines.push('|--------|------|-------|-----|-------|--------|');
+    for (const row of rows.slice(0, 10)) {
+      const name = String(row.name ?? '—').slice(0, 32);
+      const pct = Number(row.percent_change ?? 0);
+      lines.push(
+        `| ${row.symbol ?? '—'} | ${name} | ${fmtPrice(row.price)} | ${fmtPrice(row.change)} | ${pct.toFixed(2)}% | ${fmtNum(row.volume)} |`,
+      );
+    }
+    lines.push('');
+  }
+
+  if (gainers.length) renderTable('Top Gainers', gainers);
+  if (losers.length) renderTable('Top Losers', losers);
+  return lines.join('\n').trimEnd();
+}
+
 export function formatCryptoPrice(data: unknown): string {
   const d = (data && typeof data === 'object') ? data as Rec : {};
   const ticker = (d.ticker as string)?.toUpperCase() ?? '';
@@ -286,4 +316,5 @@ export const MARKET_DATA_FORMATTERS: Record<string, (data: unknown, args?: Rec) 
   get_crypto_prices: formatStockPrices,
   get_company_news: formatNews,
   get_insider_trades: formatInsiderTrades,
+  get_market_movers: formatMarketMovers,
 };

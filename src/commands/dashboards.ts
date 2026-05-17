@@ -112,6 +112,58 @@ export const MA_PROMPT = `${COMMON_RULES}
 输出文件名:portfolio_ma_{YYYY-MM-DD}.html
 `;
 
+/**
+ * MOVERS_PROMPT is not portfolio-scoped — it's a market-pulse dashboard.
+ * It deliberately bypasses COMMON_RULES (which mandates memory_search for
+ * holdings) because the data source is the whole US market, not the user's
+ * book.
+ */
+export const MOVERS_PROMPT = `
+【美股市场涨跌榜 Dashboard】
+
+数据来源:
+1. 调用 get_market_data,query 写 "today's top US stock market movers gainers and losers"
+   (会路由到 get_market_movers,Valyu valyu-market-movers-US 数据源)
+2. 对每侧前 6 个标的并行调 get_stock_prices 取最近 30 个交易日收盘价(用于绘制 sparkline)
+3. 可选:对每侧 top 3 调 get_company_news 取 1-2 条最新利好/利空标题,加在 note 区
+4. 若 get_market_movers 失败,直接给用户报错并停止 — 这个维度没有 fallback
+
+风格(沿用 portfolio dashboard 视觉语言,先 read_file ./portfolio_macd_dashboard.html):
+- 暗色主题:background #0b1220,panel linear-gradient(#111827, #0f172a),border #1f2937,muted #94a3b8
+- 中国惯例红涨绿跌:up = #ef4444,down = #22c55e
+- max-width 1800px,两栏布局(Gainers 左 / Losers 右),栏内 grid auto-fit minmax(360px, 1fr)
+- 字体:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif
+
+HTML 结构(两部分):
+[头部 — 全市场识别]
+  - <h1> "美股盘中风向标 · {retrieved_at 字段, 显示最后更新时间}"
+  - <p class="desc"> 一句话说明数据来源(Valyu 实时聚合)与口径
+  - <div class="overview"> 多句:今日多少只票涨幅 > X%、多少只跌幅 > X%、最大涨幅/跌幅代表、是否集中在某些题材(若从 ticker 列表能识别 AI/能源/生物科技等板块)
+  - <div class="summary"> 3 列 chip:
+      • Top Gainer 代表(最高 % 那一只 + 涨幅)
+      • Top Loser 代表(最低 % 那一只 + 跌幅)
+      • 成交活跃代表(最高 volume × |percent_change| 那一只)
+
+[主体 — 涨跌榜栅格]
+  两个 section:
+    <section class="gainers"> <h2>🔥 Top Gainers</h2> <div class="grid"> ... </div> </section>
+    <section class="losers">  <h2>❄️ Top Losers</h2>  <div class="grid"> ... </div> </section>
+  每张 card:
+    - card-head: symbol + name + percent_change badge (红/绿底色)
+    - chart-wrap: 30 日收盘价 sparkline SVG,高度 ~80px,红涨绿跌
+    - metrics: 4 格 — 现价 | $ 变动 | % 变动 | 成交量
+    - note(可选,前 3 名带):一句最新新闻标题
+
+技术约束:
+- 单文件 HTML,inline CSS + inline JS + inline 数据数组
+- 不引用任何外部 JS/CSS
+- responsive grid
+
+输出:
+- 用 write_file 保存到 .dexter/dashboards/market_movers_{YYYY-MM-DD}.html
+- 最后给用户一句:"已生成,在浏览器中打开:open <path>"
+`;
+
 export const FLOW_PROMPT = `${COMMON_RULES}
 
 【主力资金流量 维度】

@@ -15,6 +15,7 @@ export const SLASH_COMMANDS: SlashCommand[] = [
   { name: 'vol', description: '持仓量价分析(放量缩量与价格走势关系)' },
   { name: 'ma', description: '持仓均线分析(5/20/60 日均线与价格)' },
   { name: 'flow', description: '持仓主力资金流量(净流入/流出与价格)' },
+  { name: 'movers', description: '美股今日涨跌榜 dashboard(Valyu 实时聚合)' },
   { name: 'help', description: 'Show keyboard shortcuts and tips' },
 ];
 
