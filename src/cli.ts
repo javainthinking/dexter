@@ -23,6 +23,12 @@ import {
 } from './controllers/index.js';
 import { composeCliPorts } from './entrypoints/cli/compose.js';
 import {
+  MACD_PROMPT,
+  VOLUME_PROMPT,
+  MA_PROMPT,
+  FLOW_PROMPT,
+} from './commands/dashboards.js';
+import {
   ApiKeyInputComponent,
   ApprovalPromptComponent,
   ChatLogComponent,
@@ -373,6 +379,18 @@ export async function runCli() {
         break;
       case 'heartbeat':
         await agentRunner.runQuery('Show me my current heartbeat checklist from .dexter/HEARTBEAT.md');
+        break;
+      case 'macd':
+        await agentRunner.runQuery(MACD_PROMPT);
+        break;
+      case 'vol':
+        await agentRunner.runQuery(VOLUME_PROMPT);
+        break;
+      case 'ma':
+        await agentRunner.runQuery(MA_PROMPT);
+        break;
+      case 'flow':
+        await agentRunner.runQuery(FLOW_PROMPT);
         break;
       case 'history': {
         const messages = modelSelection.inMemoryChatHistory.getMessages();
