@@ -1,8 +1,9 @@
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { api, withFallback } from './api.js';
+import { api, withFallbackChain } from './api.js';
 import { formatToolResult } from '../types.js';
 import { fetchYahooPriceSnapshot, fetchYahooHistoricalPrices } from './yahoo.js';
+import { fetchValyuPriceSnapshot, fetchValyuHistoricalPrices } from './valyu.js';
 
 export const STOCK_PRICE_DESCRIPTION = `
 Fetches current stock price snapshots for equities, including open, high, low, close prices, volume, and market cap. Powered by Financial Datasets.
@@ -22,11 +23,11 @@ export const getStockPrice = new DynamicStructuredTool({
   func: async (input) => {
     const ticker = input.ticker.trim().toUpperCase();
     const params = { ticker };
-    const { data, url } = await withFallback(
-      () => api.get('/prices/snapshot/', params),
-      () => fetchYahooPriceSnapshot(ticker),
-      `prices/snapshot ${ticker}`,
-    );
+    const { data, url } = await withFallbackChain(`prices/snapshot ${ticker}`, [
+      { name: 'financial-datasets', run: () => api.get('/prices/snapshot/', params) },
+      { name: 'valyu',              run: () => fetchValyuPriceSnapshot(ticker) },
+      { name: 'yahoo',              run: () => fetchYahooPriceSnapshot(ticker) },
+    ]);
     return formatToolResult(data.snapshot || {}, [url]);
   },
 });
@@ -60,10 +61,13 @@ export const getStockPrices = new DynamicStructuredTool({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const ticker = params.ticker;
-    const { data, url } = await withFallback(
-      () => api.get('/prices/', params, { cacheable: endDate < today }),
-      () => fetchYahooHistoricalPrices(ticker, input.start_date, input.end_date, input.interval),
+    const { data, url } = await withFallbackChain(
       `prices ${ticker} ${input.start_date}..${input.end_date}`,
+      [
+        { name: 'financial-datasets', run: () => api.get('/prices/', params, { cacheable: endDate < today }) },
+        { name: 'valyu',              run: () => fetchValyuHistoricalPrices(ticker, input.start_date, input.end_date, input.interval) },
+        { name: 'yahoo',              run: () => fetchYahooHistoricalPrices(ticker, input.start_date, input.end_date, input.interval) },
+      ],
     );
     return formatToolResult(data.prices || [], [url]);
   },

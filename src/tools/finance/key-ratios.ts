@@ -24,8 +24,8 @@ export const getKeyRatios = new DynamicStructuredTool({
     const params = { ticker };
     const { data, url } = await withFallbackChain(`financial-metrics/snapshot ${ticker}`, [
       { name: 'financial-datasets', run: () => api.get('/financial-metrics/snapshot/', params, { cacheable: true, ttlMs: TTL_1H }) },
-      { name: 'yahoo', run: () => fetchYahooKeyRatiosSnapshot(ticker) },
       { name: 'valyu', run: () => fetchValyuKeyRatiosSnapshot(ticker) },
+      { name: 'yahoo', run: () => fetchYahooKeyRatiosSnapshot(ticker) },
     ]);
     return formatToolResult(data.snapshot || {}, [url]);
   },

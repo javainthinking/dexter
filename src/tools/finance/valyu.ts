@@ -28,6 +28,7 @@ const VALYU_SOURCES = {
   earnings: 'valyu/valyu-earnings-US',
   statistics: 'valyu/valyu-statistics-US',
   insiderTransactions: 'valyu/valyu-insider-transactions-US',
+  stocks: 'valyu/valyu-stocks',
 } as const;
 
 let cachedClient: Valyu | null = null;
@@ -399,4 +400,127 @@ export async function fetchValyuMarketMovers(): Promise<ApiResponse> {
     source_urls: [gainers.url, losers.url],
   };
   return { data: payload as unknown as Record<string, unknown>, url: gainers.url };
+}
+
+/**
+ * Stock OHLCV — historical and snapshot.
+ *
+ * Valyu returns rows in DESCENDING order (newest first); the rest of the
+ * codebase assumes ascending. Always reverse before returning so a
+ * downstream `prices[N-1]` reliably means "latest bar".
+ *
+ * Date format normalisation: Valyu's `datetime` is "YYYY-MM-DD HH:MM:SS"
+ * for daily bars (time is zeroed). Slice to YYYY-MM-DD so the field shape
+ * matches Yahoo's adapter (`time` is a date-only ISO string).
+ *
+ * Currency / exchange are surfaced when available so the agent can cite
+ * the source feed correctly.
+ */
+
+const VALYU_INTERVAL: Record<'day' | 'week' | 'month' | 'year', string> = {
+  day: 'daily',
+  week: 'weekly',
+  month: 'monthly',
+  year: 'monthly',
+};
+
+interface ValyuStockBar {
+  datetime?: string;
+  open?: number;
+  high?: number;
+  low?: number;
+  close?: number;
+  volume?: number;
+}
+
+function toDateOnly(value: unknown): string | undefined {
+  if (!value) return undefined;
+  return String(value).slice(0, 10);
+}
+
+export async function fetchValyuHistoricalPrices(
+  ticker: string,
+  startDate: string,
+  endDate: string,
+  interval: 'day' | 'week' | 'month' | 'year',
+): Promise<ApiResponse> {
+  const granularity = VALYU_INTERVAL[interval] ?? 'daily';
+  const label = `valyu stocks ${ticker} ${startDate}..${endDate}`;
+  // Encode start/end into the NL query — Valyu's stocks dataset honours
+  // explicit date ranges when present and clamps the response accordingly.
+  const query = `${ticker} ${granularity} OHLCV stock price history from ${startDate} to ${endDate}`;
+  const result = await searchSingleSource(query, VALYU_SOURCES.stocks, label);
+  const rawRows = toRowArray(parseContent(result.content, label)) as ValyuStockBar[];
+  if (rawRows.length === 0) {
+    throw new Error(`[Valyu] no price data for ${ticker} ${startDate}..${endDate}`);
+  }
+  // Detect ordering by comparing first vs last datetime. Always emit ascending
+  // (oldest first, newest last) regardless of what Valyu sends — chart code
+  // downstream relies on prices[N-1] being the latest bar.
+  const firstTime = rawRows[0]?.datetime ?? '';
+  const lastTime = rawRows[rawRows.length - 1]?.datetime ?? '';
+  const ordered = firstTime > lastTime ? [...rawRows].reverse() : rawRows;
+
+  const prices = ordered
+    .filter((row) => row.close != null)
+    .map((row) => ({
+      ticker,
+      open: row.open ?? null,
+      close: row.close ?? null,
+      high: row.high ?? null,
+      low: row.low ?? null,
+      volume: row.volume ?? null,
+      time: toDateOnly(row.datetime),
+    }));
+
+  return {
+    data: { ticker, prices },
+    url: result.url,
+  };
+}
+
+export async function fetchValyuPriceSnapshot(ticker: string): Promise<ApiResponse> {
+  const label = `valyu stock snapshot ${ticker}`;
+  // Ask for one recent bar so we get an OHLCV row rather than the scalar
+  // "latest price" Valyu sometimes returns for terse queries.
+  const query = `${ticker} latest daily OHLCV stock price`;
+  const result = await searchSingleSource(query, VALYU_SOURCES.stocks, label);
+  const rows = toRowArray(parseContent(result.content, label)) as ValyuStockBar[];
+  const meta = (result.metadata ?? {}) as Record<string, unknown>;
+  let row: ValyuStockBar | null = null;
+  if (rows.length > 0) {
+    // Newest-first → row[0]; descending-safe even if Valyu flips.
+    const firstTime = rows[0]?.datetime ?? '';
+    const lastTime = rows[rows.length - 1]?.datetime ?? '';
+    row = firstTime >= lastTime ? rows[0] : rows[rows.length - 1];
+  }
+  if (!row) {
+    // Fallback: content might be a scalar number ("latest price") with no OHLCV
+    const scalar = parseContent<unknown>(result.content, label);
+    if (typeof scalar === 'number') {
+      const snapshot = {
+        ticker: ticker.toUpperCase(),
+        price: scalar,
+        close: scalar,
+        time: toDateOnly(meta.timestamp),
+        currency: meta.currency,
+        exchange: meta.exchange,
+      };
+      return { data: { snapshot }, url: result.url };
+    }
+    throw new Error(`[Valyu] no snapshot data for ${ticker}`);
+  }
+  const snapshot = {
+    ticker: ticker.toUpperCase(),
+    open: row.open,
+    high: row.high,
+    low: row.low,
+    close: row.close,
+    price: row.close,
+    volume: row.volume,
+    time: toDateOnly(row.datetime),
+    currency: meta.currency,
+    exchange: meta.exchange,
+  };
+  return { data: { snapshot }, url: result.url };
 }

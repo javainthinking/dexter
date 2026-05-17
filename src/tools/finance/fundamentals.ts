@@ -75,8 +75,8 @@ export const getIncomeStatements = new DynamicStructuredTool({
       `income-statements ${ticker} ${input.period}`,
       [
         { name: 'financial-datasets', run: () => api.get('/financials/income-statements/', params, { cacheable: true, ttlMs: TTL_24H }) },
-        { name: 'yahoo', run: () => fetchYahooIncomeStatements(ticker, input.period, input.limit) },
         { name: 'valyu', run: () => fetchValyuIncomeStatements(ticker, input.limit) },
+        { name: 'yahoo', run: () => fetchYahooIncomeStatements(ticker, input.period, input.limit) },
       ],
     );
     return formatToolResult(
@@ -116,8 +116,8 @@ export const getCashFlowStatements = new DynamicStructuredTool({
       `cash-flow-statements ${ticker} ${input.period}`,
       [
         { name: 'financial-datasets', run: () => api.get('/financials/cash-flow-statements/', params, { cacheable: true, ttlMs: TTL_24H }) },
-        { name: 'yahoo', run: () => fetchYahooCashFlowStatements(ticker, input.period, input.limit) },
         { name: 'valyu', run: () => fetchValyuCashFlowStatements(ticker, input.limit) },
+        { name: 'yahoo', run: () => fetchYahooCashFlowStatements(ticker, input.period, input.limit) },
       ],
     );
     return formatToolResult(
