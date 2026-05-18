@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { usePathname } from 'next/navigation';
-import { Plus, MessageSquare, History, X, Trash2, Check, BrainCircuit, LineChart } from 'lucide-react';
+import { Plus, MessageSquare, History, X, Trash2, Check, BrainCircuit, LineChart, Wallet } from 'lucide-react';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
@@ -140,9 +140,29 @@ function SidebarNav() {
   const isMemoryActive = cleanPath === '/memory' || cleanPath.startsWith('/memory/');
   const isIndicatorsActive =
     cleanPath === '/indicators' || cleanPath.startsWith('/indicators/');
+  const isPortfoliosActive =
+    cleanPath === '/portfolios' || cleanPath.startsWith('/portfolios/');
 
   return (
     <nav className="px-2 py-2 space-y-0.5">
+      <LocalizedLink
+        href="/portfolios"
+        className={cn(
+          'flex items-center gap-2 rounded-md px-2.5 py-2 text-sm transition-colors',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+          isPortfoliosActive
+            ? 'bg-muted text-foreground'
+            : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+        )}
+      >
+        <Wallet
+          className={cn(
+            'size-4',
+            isPortfoliosActive ? 'text-[color:var(--accent)]' : 'text-subtle',
+          )}
+        />
+        <span className="font-medium">{dict.nav?.portfolios ?? 'Portfolios'}</span>
+      </LocalizedLink>
       <LocalizedLink
         href="/indicators"
         className={cn(

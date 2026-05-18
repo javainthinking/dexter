@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, X, Save, Check, Loader2, RefreshCw, Menu, AlertTriangle } from 'lucide-react';
+import { Loader2, RefreshCw, Menu, AlertTriangle, Wallet, ChevronDown } from 'lucide-react';
 import { Sidebar, type SessionSummary } from '../../../components/chat/sidebar';
 import { Button } from '../../../components/ui/button';
 import { ThemeToggle } from '../../../components/theme-toggle';
@@ -12,6 +12,7 @@ import { Logo } from '../../../components/logo';
 import { useDictionary, useLocale } from '../../../components/i18n/dictionary-provider';
 import { getLocalizedPath } from '../../../lib/i18n/paths';
 import { cn } from '../../../lib/utils';
+import { LocalizedLink } from '../../../components/i18n/localized-link';
 import { MacdCard } from '../../../components/indicators/macd-card';
 import { MaCard } from '../../../components/indicators/ma-card';
 import { VolumeCard } from '../../../components/indicators/volume-card';
@@ -19,6 +20,16 @@ import { FlowCard } from '../../../components/indicators/flow-card';
 import { MoversPanel } from '../../../components/indicators/movers-panel';
 
 type Tab = 'macd' | 'ma' | 'volume' | 'flow' | 'movers';
+
+interface PortfolioSummary {
+  id: string;
+  name: string;
+  holdingsCount: number;
+}
+
+interface PortfolioWithHoldings extends PortfolioSummary {
+  holdings: Array<{ ticker: string; displayName: string | null }>;
+}
 
 interface IndicatorTickerEntry {
   ticker: string;
@@ -33,8 +44,6 @@ interface IndicatorTickerEntry {
 interface IndicatorsResponse {
   asOf: string;
   dimension: string;
-  startDate?: string;
-  endDate?: string;
   tickers: IndicatorTickerEntry[];
 }
 
@@ -55,42 +64,72 @@ const TABS: Array<{ id: Tab; needsTickers: boolean }> = [
   { id: 'movers', needsTickers: false },
 ];
 
-export function IndicatorsClient({ initialTickers }: { initialTickers: string[] }) {
+export function IndicatorsClient({
+  initialPortfolios,
+}: {
+  initialPortfolios: PortfolioSummary[];
+}) {
   const dict = useDictionary();
   const locale = useLocale();
+  const router = useRouter();
 
-  // Sidebar — mirror the memory page so the layout stays consistent across
-  // the protected app surface.
+  // Sidebar
   const [sessions, setSessions] = React.useState<SessionSummary[]>([]);
   const [sessionsLoading, setSessionsLoading] = React.useState(true);
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
 
-  const [tickers, setTickers] = React.useState<string[]>(initialTickers);
-  const [hasInteracted, setHasInteracted] = React.useState(false);
+  const [portfolios, setPortfolios] = React.useState<PortfolioSummary[]>(initialPortfolios);
+  const [activeId, setActiveId] = React.useState<string | null>(initialPortfolios[0]?.id ?? null);
+  const [activeDetail, setActiveDetail] = React.useState<PortfolioWithHoldings | null>(null);
   const [tab, setTab] = React.useState<Tab>('macd');
   const [data, setData] = React.useState<IndicatorsResponse | MoversResponse | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const [saved, setSaved] = React.useState(false);
-  const [saving, setSaving] = React.useState(false);
-  const [savedAt, setSavedAt] = React.useState<string | null>(null);
 
+  // ─── sidebar plumbing ──────────────────────────────────────────────
   React.useEffect(() => {
     (async () => {
       try {
-        const res = await fetch(`${getLocalizedPath('/api/sessions', locale)}?size=50`);
+        const res = await fetch('/api/sessions?size=50');
         if (res.ok) {
           const json = (await res.json()) as { sessions?: SessionSummary[] };
           setSessions(json.sessions ?? []);
         }
       } catch {
-        // sessions list is non-critical
+        /* non-critical */
       }
       setSessionsLoading(false);
     })();
-  }, [locale]);
+  }, []);
 
-  // ─── data fetch ─────────────────────────────────────────────────────
+  // Load detail (holdings) for the active portfolio.
+  React.useEffect(() => {
+    if (!activeId) {
+      setActiveDetail(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api/portfolios/${activeId}`);
+        if (!res.ok) return;
+        const json = (await res.json()) as { portfolio: PortfolioWithHoldings };
+        if (!cancelled) setActiveDetail(json.portfolio);
+      } catch {
+        /* swallow */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [activeId]);
+
+  const tickers = React.useMemo(
+    () => (activeDetail?.holdings.map((h) => h.ticker) ?? []),
+    [activeDetail],
+  );
+
+  // ─── indicator fetch ──────────────────────────────────────────────
   const needsTickers = TABS.find((t) => t.id === tab)?.needsTickers ?? false;
 
   const fetchData = React.useCallback(async () => {
@@ -124,54 +163,7 @@ export function IndicatorsClient({ initialTickers }: { initialTickers: string[] 
     fetchData();
   }, [fetchData]);
 
-  // ─── holdings save ──────────────────────────────────────────────────
-  const handleSaveTickers = async () => {
-    setSaving(true);
-    setSaved(false);
-    try {
-      const res = await fetch('/api/holdings', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tickers }),
-      });
-      if (res.ok) {
-        const json = (await res.json()) as { updatedAt?: string };
-        setSaved(true);
-        setSavedAt(json.updatedAt ?? new Date().toISOString());
-        setTimeout(() => setSaved(false), 2500);
-      }
-    } catch {
-      // swallow; UI shows error if needed
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  // ─── ticker manipulation ────────────────────────────────────────────
-  const addTicker = (raw: string) => {
-    setHasInteracted(true);
-    const parts = raw
-      .split(/[\s,]+/)
-      .map((t) => t.trim().toUpperCase())
-      .filter(Boolean);
-    if (parts.length === 0) return;
-    setTickers((prev) => {
-      const out = [...prev];
-      for (const p of parts) if (!out.includes(p)) out.push(p);
-      return out;
-    });
-  };
-  const removeTicker = (t: string) => {
-    setHasInteracted(true);
-    setTickers((prev) => prev.filter((x) => x !== t));
-  };
-
-  const router = useRouter();
-
-  const indicatorsLabel = (k: Tab) =>
-    (dict.indicators?.tabs as Record<string, string> | undefined)?.[k] ?? k;
-
-  // Sidebar interactions — minimal handlers; full edit-flow lives on the chat page
+  // ─── sidebar handlers ─────────────────────────────────────────────
   const onNewConversation = () => router.push(getLocalizedPath('/chat', locale));
   const onSwitchSession = (id: string) =>
     router.push(`${getLocalizedPath('/chat', locale)}?session=${encodeURIComponent(id)}`);
@@ -179,6 +171,9 @@ export function IndicatorsClient({ initialTickers }: { initialTickers: string[] 
     await fetch(`/api/sessions/${encodeURIComponent(id)}`, { method: 'DELETE' }).catch(() => {});
     setSessions((prev) => prev.filter((s) => s.sessionId !== id));
   };
+
+  const indicatorsLabel = (k: Tab) =>
+    (dict.indicators?.tabs as Record<string, string> | undefined)?.[k] ?? k;
 
   return (
     <div className="flex h-svh w-full bg-background text-foreground">
@@ -192,16 +187,9 @@ export function IndicatorsClient({ initialTickers }: { initialTickers: string[] 
       />
 
       <main className="flex min-w-0 flex-1 flex-col">
-        {/* Header */}
         <header className="flex items-center justify-between gap-3 border-b border-border px-4 py-3 lg:px-6">
           <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="lg:hidden"
-              onClick={() => setSidebarOpen(true)}
-              aria-label={dict.chat?.header?.openSidebar ?? 'Open sidebar'}
-            >
+            <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setSidebarOpen(true)}>
               <Menu className="size-5" />
             </Button>
             <Logo />
@@ -210,7 +198,7 @@ export function IndicatorsClient({ initialTickers }: { initialTickers: string[] 
                 {dict.indicators?.title ?? 'Indicators'}
               </span>
               <span className="text-xs text-muted-foreground">
-                {dict.indicators?.subtitle ?? 'Technical signals for your watchlist'}
+                {dict.indicators?.subtitle ?? 'Technical signals across your watchlist'}
               </span>
             </div>
           </div>
@@ -221,21 +209,34 @@ export function IndicatorsClient({ initialTickers }: { initialTickers: string[] 
           </div>
         </header>
 
-        {/* Ticker bar */}
-        {needsTickers && (
-          <TickerBar
-            tickers={tickers}
-            onAdd={addTicker}
-            onRemove={removeTicker}
-            onSave={handleSaveTickers}
-            saving={saving}
-            saved={saved}
-            savedAt={savedAt}
-            dict={dict}
-          />
+        {/* Portfolio selector bar */}
+        {tab !== 'movers' && (
+          <div className="flex flex-wrap items-center gap-3 border-b border-border bg-background px-4 py-3 lg:px-6">
+            <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              {dict.indicators?.portfolio ?? 'Portfolio'}
+            </span>
+            {portfolios.length === 0 ? (
+              <span className="text-sm text-muted-foreground">
+                {dict.indicators?.noPortfolios ?? 'No portfolios — create one first.'}
+              </span>
+            ) : (
+              <PortfolioPicker
+                portfolios={portfolios}
+                value={activeId}
+                onChange={setActiveId}
+              />
+            )}
+            <LocalizedLink
+              href="/portfolios"
+              className="ml-auto text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+            >
+              <Wallet className="size-3.5" />
+              {dict.indicators?.managePortfolios ?? 'Manage portfolios'}
+            </LocalizedLink>
+          </div>
         )}
 
-        {/* Tab strip */}
+        {/* Tabs */}
         <nav className="flex flex-wrap gap-1 border-b border-border bg-muted/30 px-4 py-2 lg:px-6">
           {TABS.map((t) => (
             <button
@@ -254,21 +255,17 @@ export function IndicatorsClient({ initialTickers }: { initialTickers: string[] 
           ))}
         </nav>
 
-        {/* Content */}
         <div className="flex-1 overflow-y-auto px-4 py-4 lg:px-6">
-          {needsTickers && tickers.length === 0 && (
-            <EmptyTickersPrompt dict={dict} onAdd={addTicker} hasInteracted={hasInteracted} />
+          {needsTickers && portfolios.length === 0 && (
+            <EmptyNoPortfolios dict={dict} locale={locale} />
+          )}
+          {needsTickers && portfolios.length > 0 && tickers.length === 0 && (
+            <EmptyEmptyPortfolio dict={dict} locale={locale} activeId={activeId} />
           )}
 
           {needsTickers && tickers.length > 0 && loading && <LoadingPanel dict={dict} />}
           {error && <ErrorPanel message={error} onRetry={fetchData} dict={dict} />}
 
-          {/* Each card receives `entry as any` for the indicator/series field
-              because the API surface is union-typed (one indicator shape per
-              dimension) but the runtime guarantee is "tab === X implies the
-              entries match X's row shape". Re-narrowing would require a
-              per-dimension client component file; the cast is local and the
-              card-side types stay strict. */}
           {!loading && data && tab === 'macd' && 'tickers' in data && (
             <CardGrid>
               {data.tickers.map((e) => (
@@ -308,138 +305,102 @@ export function IndicatorsClient({ initialTickers }: { initialTickers: string[] 
 
 // ─── sub-components ───────────────────────────────────────────────────
 
-function TickerBar({
-  tickers,
-  onAdd,
-  onRemove,
-  onSave,
-  saving,
-  saved,
-  savedAt,
-  dict,
+function PortfolioPicker({
+  portfolios,
+  value,
+  onChange,
 }: {
-  tickers: string[];
-  onAdd: (raw: string) => void;
-  onRemove: (t: string) => void;
-  onSave: () => void;
-  saving: boolean;
-  saved: boolean;
-  savedAt: string | null;
-  dict: any;
+  portfolios: PortfolioSummary[];
+  value: string | null;
+  onChange: (id: string) => void;
 }) {
-  const [input, setInput] = React.useState('');
-  const submit = () => {
-    if (!input.trim()) return;
-    onAdd(input);
-    setInput('');
-  };
+  const [open, setOpen] = React.useState(false);
+  const active = portfolios.find((p) => p.id === value);
+  const ref = React.useRef<HTMLDivElement | null>(null);
+  React.useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
   return (
-    <div className="flex flex-wrap items-center gap-2 border-b border-border bg-background px-4 py-3 lg:px-6">
-      <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-        {dict.indicators?.tickers ?? 'Tickers'}
-      </span>
-      <div className="flex flex-wrap items-center gap-1.5">
-        {tickers.map((t) => (
-          <span
-            key={t}
-            className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-xs font-mono"
-          >
-            {t}
-            <button
-              type="button"
-              onClick={() => onRemove(t)}
-              className="text-muted-foreground hover:text-foreground"
-              aria-label={`Remove ${t}`}
-            >
-              <X className="size-3" />
-            </button>
-          </span>
-        ))}
-      </div>
-      <div className="flex flex-1 items-center gap-1.5 min-w-[140px]">
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              submit();
-            }
-          }}
-          placeholder={dict.indicators?.tickerPlaceholder ?? 'Add ticker (e.g. NVDA, 0700.HK)'}
-          className="flex-1 rounded-md border border-border bg-background px-2 py-1 text-sm focus:border-foreground focus:outline-none"
-        />
-        <Button variant="ghost" size="sm" onClick={submit} disabled={!input.trim()}>
-          <Plus className="size-3.5 mr-1" />
-          {dict.indicators?.addTicker ?? 'Add'}
-        </Button>
-      </div>
-      <Button variant="outline" size="sm" onClick={onSave} disabled={saving || tickers.length === 0}>
-        {saving ? (
-          <Loader2 className="size-3.5 animate-spin mr-1" />
-        ) : saved ? (
-          <Check className="size-3.5 mr-1" />
-        ) : (
-          <Save className="size-3.5 mr-1" />
-        )}
-        {saved
-          ? dict.indicators?.saved ?? 'Saved'
-          : dict.indicators?.saveToMemory ?? 'Save to memory'}
-      </Button>
-      {savedAt && !saved && (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="inline-flex items-center gap-2 rounded-md border border-border bg-background px-3 py-1.5 text-sm hover:bg-muted"
+      >
+        <span className="font-medium">{active?.name ?? '—'}</span>
         <span className="text-xs text-muted-foreground">
-          {dict.indicators?.lastSavedAt ?? 'Last saved'}{' '}
-          {new Date(savedAt).toLocaleString()}
+          {active ? `${active.holdingsCount}` : ''}
         </span>
+        <ChevronDown className="size-3.5 text-muted-foreground" />
+      </button>
+      {open && (
+        <div className="absolute left-0 z-20 mt-1 min-w-[14rem] rounded-md border border-border bg-popover shadow-lg">
+          <ul className="py-1">
+            {portfolios.map((p) => (
+              <li key={p.id}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onChange(p.id);
+                    setOpen(false);
+                  }}
+                  className={cn(
+                    'w-full flex items-center justify-between gap-2 px-3 py-1.5 text-left text-sm hover:bg-muted',
+                    p.id === value && 'bg-muted',
+                  )}
+                >
+                  <span className="font-medium">{p.name}</span>
+                  <span className="text-xs text-muted-foreground">{p.holdingsCount}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );
 }
 
-function EmptyTickersPrompt({
-  dict,
-  onAdd,
-  hasInteracted,
-}: {
-  dict: any;
-  onAdd: (raw: string) => void;
-  hasInteracted: boolean;
-}) {
-  const [input, setInput] = React.useState('');
-  const submit = () => {
-    if (!input.trim()) return;
-    onAdd(input);
-    setInput('');
-  };
+function EmptyNoPortfolios({ dict, locale }: { dict: any; locale: string }) {
   return (
-    <div className="mx-auto mt-12 max-w-xl rounded-lg border border-border bg-muted/20 p-6">
-      <h2 className="text-lg font-semibold">
-        {hasInteracted
-          ? dict.indicators?.emptyAfterClear ?? 'Add at least one ticker to view this indicator.'
-          : dict.indicators?.emptyTitle ?? 'No portfolio found in memory.'}
+    <div className="mx-auto mt-12 max-w-md rounded-lg border border-border bg-muted/10 p-6 text-center">
+      <Wallet className="mx-auto size-8 text-muted-foreground" />
+      <h2 className="mt-3 text-base font-semibold">
+        {dict.indicators?.emptyNoPortfolios ?? 'Create a portfolio first.'}
       </h2>
       <p className="mt-2 text-sm text-muted-foreground">
-        {dict.indicators?.emptyHint ??
-          'Tell Dexter your holdings — e.g. NVDA, TSLA, 0700.HK — and pick "Save to memory" so you only do this once.'}
+        {dict.indicators?.emptyNoPortfoliosHint ?? 'Indicators run against your portfolios. Add one to get started.'}
       </p>
-      <div className="mt-4 flex gap-2">
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              submit();
-            }
-          }}
-          placeholder="NVDA, TSLA, 0700.HK"
-          className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-foreground focus:outline-none"
-        />
-        <Button onClick={submit} disabled={!input.trim()}>
-          <Plus className="size-3.5 mr-1" />
-          {dict.indicators?.confirm ?? 'Confirm'}
-        </Button>
-      </div>
+      <LocalizedLink
+        href="/portfolios"
+        className="mt-4 inline-flex items-center gap-1 rounded-md bg-foreground px-3 py-1.5 text-sm text-background hover:opacity-90"
+      >
+        <Wallet className="size-3.5" />
+        {dict.indicators?.goToPortfolios ?? 'Go to portfolios'}
+      </LocalizedLink>
+    </div>
+  );
+}
+
+function EmptyEmptyPortfolio({ dict, locale, activeId }: { dict: any; locale: string; activeId: string | null }) {
+  return (
+    <div className="mx-auto mt-12 max-w-md rounded-lg border border-border bg-muted/10 p-6 text-center">
+      <h2 className="text-base font-semibold">
+        {dict.indicators?.emptyPortfolio ?? 'This portfolio has no holdings yet.'}
+      </h2>
+      <p className="mt-2 text-sm text-muted-foreground">
+        {dict.indicators?.emptyPortfolioHint ?? 'Add a few tickers to see indicators.'}
+      </p>
+      <LocalizedLink
+        href="/portfolios"
+        className="mt-4 inline-flex items-center gap-1 rounded-md bg-foreground px-3 py-1.5 text-sm text-background hover:opacity-90"
+      >
+        {dict.indicators?.addHoldings ?? 'Add holdings'}
+      </LocalizedLink>
     </div>
   );
 }
