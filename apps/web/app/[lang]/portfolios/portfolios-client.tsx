@@ -633,29 +633,120 @@ function PortfolioDetailView({
         />
       </section>
 
-      <section className="rounded-lg border border-border bg-card overflow-hidden">
-        <div className="border-b border-border bg-muted/20 px-3 py-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          {dict.portfolios?.holdingsTitle ?? 'Holdings'}
-        </div>
-        {portfolio.holdings.length === 0 ? (
-          <p className="px-3 py-6 text-sm text-muted-foreground">
-            {dict.portfolios?.holdingsEmpty ?? 'No holdings yet. Add one above.'}
-          </p>
-        ) : (
-          <ul className="divide-y divide-border">
-            {portfolio.holdings.map((h) => (
-              <HoldingRow
-                key={h.id}
-                holding={h}
-                onRemove={() => onRemoveHolding(h.id)}
-                onEditWeight={(v) => onEditWeight(h.id, v)}
-                dict={dict}
-              />
-            ))}
-          </ul>
-        )}
-      </section>
+      <HoldingsSection
+        portfolio={portfolio}
+        onRemoveHolding={onRemoveHolding}
+        onEditWeight={onEditWeight}
+        dict={dict}
+      />
     </div>
+  );
+}
+
+/**
+ * Local sort state lives in this section component, not the parent —
+ * switching sort doesn't need to round-trip the API; the list is small
+ * (≤ 50 holdings) and re-fetching just to reorder would feel laggy.
+ *
+ * Tri-state cycle:
+ *   default     — add-order (server-returned position ASC).
+ *   weight-desc — largest weight first; null-weight watchlist entries
+ *                 always sort to the bottom regardless of direction.
+ *   weight-asc  — smallest weight first (still > null); null last.
+ */
+type HoldingsSort = 'default' | 'weight-desc' | 'weight-asc';
+
+function HoldingsSection({
+  portfolio,
+  onRemoveHolding,
+  onEditWeight,
+  dict,
+}: {
+  portfolio: PortfolioDetail;
+  onRemoveHolding: (id: string) => void;
+  onEditWeight: (id: string, value: string) => void;
+  dict: any;
+}) {
+  const [sort, setSort] = React.useState<HoldingsSort>('default');
+
+  const sorted = React.useMemo(() => {
+    const items = [...portfolio.holdings];
+    if (sort === 'default') return items;
+    items.sort((a, b) => {
+      // null weights always rank lower than any number — these are
+      // watchlist entries with no position sizing, so the user looking
+      // at "biggest positions first" shouldn't see them mixed in.
+      if (a.weight == null && b.weight == null) return a.position - b.position;
+      if (a.weight == null) return 1;
+      if (b.weight == null) return -1;
+      return sort === 'weight-desc' ? b.weight - a.weight : a.weight - b.weight;
+    });
+    return items;
+  }, [portfolio.holdings, sort]);
+
+  return (
+    <section className="rounded-lg border border-border bg-card overflow-hidden">
+      <div className="flex items-center justify-between border-b border-border bg-muted/20 px-3 py-2">
+        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          {dict.portfolios?.holdingsTitle ?? 'Holdings'}
+        </span>
+        {portfolio.holdings.length > 1 && (
+          <SortToggle sort={sort} onChange={setSort} dict={dict} />
+        )}
+      </div>
+      {sorted.length === 0 ? (
+        <p className="px-3 py-6 text-sm text-muted-foreground">
+          {dict.portfolios?.holdingsEmpty ?? 'No holdings yet. Add one above.'}
+        </p>
+      ) : (
+        <ul className="divide-y divide-border">
+          {sorted.map((h) => (
+            <HoldingRow
+              key={h.id}
+              holding={h}
+              onRemove={() => onRemoveHolding(h.id)}
+              onEditWeight={(v) => onEditWeight(h.id, v)}
+              dict={dict}
+            />
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function SortToggle({
+  sort,
+  onChange,
+  dict,
+}: {
+  sort: HoldingsSort;
+  onChange: (next: HoldingsSort) => void;
+  dict: any;
+}) {
+  const next: Record<HoldingsSort, HoldingsSort> = {
+    default: 'weight-desc',
+    'weight-desc': 'weight-asc',
+    'weight-asc': 'default',
+  };
+  const label =
+    sort === 'weight-desc'
+      ? dict.portfolios?.sortWeightDesc ?? 'Weight ↓'
+      : sort === 'weight-asc'
+      ? dict.portfolios?.sortWeightAsc ?? 'Weight ↑'
+      : dict.portfolios?.sortDefault ?? 'Add order';
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(next[sort])}
+      className="inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground hover:bg-muted hover:text-foreground"
+      title={dict.portfolios?.sortToggleHint ?? 'Click to cycle sort order'}
+    >
+      <span className="opacity-70">
+        {dict.portfolios?.sortBy ?? 'Sort'}:
+      </span>
+      <span>{label}</span>
+    </button>
   );
 }
 
