@@ -156,7 +156,8 @@
     "add": "加入",
     "adding": "加入中…",
     "weight": "佔比",
-    "weightHint": "佔比須為 0 到 999 之間。",
+    "weightHint": "佔比 0–100,不填則作為觀察標的。",
+    "optional": "可選",
     "already": "已加入",
     "searchEmpty": "沒有符合的結果。",
     "searchError": "搜尋失敗。",
@@ -174,7 +175,7 @@
     "errMaxPortfolios": "已達持倉組合數量上限。",
     "errTickerRequired": "請選擇標的。",
     "errTickerExists": "該標的已在持倉中。",
-    "errInvalidWeight": "佔比須為 0 到 999 之間的數字。",
+    "errInvalidWeight": "佔比須為 0 到 100 之間的數字。",
     "errNotFound": "未找到。",
     "errGeneric": "發生錯誤,請重試。"
   },

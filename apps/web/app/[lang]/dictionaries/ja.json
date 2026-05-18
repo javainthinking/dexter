@@ -156,7 +156,8 @@
     "add": "追加",
     "adding": "追加中…",
     "weight": "比率",
-    "weightHint": "比率は 0〜999 の範囲で入力してください。",
+    "weightHint": "比率は 0〜100。空欄ならウォッチリスト扱いです。",
+    "optional": "任意",
     "already": "追加済み",
     "searchEmpty": "該当なし。",
     "searchError": "検索に失敗しました。",
@@ -174,7 +175,7 @@
     "errMaxPortfolios": "ポートフォリオ数の上限に達しました。",
     "errTickerRequired": "ティッカーは必須です。",
     "errTickerExists": "このティッカーは既に追加されています。",
-    "errInvalidWeight": "比率は 0〜999 の数値で入力してください。",
+    "errInvalidWeight": "比率は 0〜100 の数値で入力してください。",
     "errNotFound": "見つかりません。",
     "errGeneric": "エラーが発生しました。"
   },

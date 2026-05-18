@@ -48,14 +48,16 @@ export async function POST(
 }
 
 /**
- * Accept null, undefined, "", or a numeric string. Anything else (e.g.
- * letters) is rejected so the UI gets a clear validation error rather
- * than a NaN silently stored as null.
+ * Accept null, undefined, "", or a numeric string. Empty means
+ * "watchlist only — no position size", which is a first-class state per
+ * the product spec. Range is 0–100 because the field represents a
+ * percentage of the portfolio; anything outside that almost certainly
+ * indicates the user typed the wrong unit (e.g. a dollar amount).
  */
 function parseWeight(v: unknown): number | null | 'invalid' {
   if (v === null || v === undefined || v === '') return null;
   const n = typeof v === 'number' ? v : Number(v);
   if (!Number.isFinite(n)) return 'invalid';
-  if (n < 0 || n > 999.9999) return 'invalid';
+  if (n < 0 || n > 100) return 'invalid';
   return n;
 }

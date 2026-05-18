@@ -41,6 +41,7 @@ export function SymbolSearch({
     cancel: string;
     weight: string;
     weightHint: string;
+    optional: string;
     already: string;
     empty: string;
     error: string;
@@ -132,7 +133,8 @@ export function SymbolSearch({
   async function commitConfirm() {
     if (!confirming) return;
     const w = weight.trim() === '' ? null : Number(weight);
-    if (w !== null && (!Number.isFinite(w) || w < 0 || w > 999)) {
+    // Weight is a percentage; blank is fine and means "watchlist only".
+    if (w !== null && (!Number.isFinite(w) || w < 0 || w > 100)) {
       setError(labels.weightHint);
       return;
     }
@@ -190,6 +192,7 @@ export function SymbolSearch({
           <div className="flex items-center gap-2">
             <label htmlFor="symbol-search-weight" className="text-xs text-muted-foreground whitespace-nowrap">
               {labels.weight}
+              <span className="ml-1 text-[10px] opacity-70">({labels.optional})</span>
             </label>
             <input
               id="symbol-search-weight"

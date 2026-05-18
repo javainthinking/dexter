@@ -156,7 +156,8 @@
     "add": "Ajouter",
     "adding": "Ajout…",
     "weight": "Pondération",
-    "weightHint": "La pondération doit être comprise entre 0 et 999.",
+    "weightHint": "Pondération entre 0 et 100, ou laisse vide pour une simple liste de suivi.",
+    "optional": "optionnel",
     "already": "Ajouté",
     "searchEmpty": "Aucun résultat.",
     "searchError": "Échec de la recherche.",
@@ -174,7 +175,7 @@
     "errMaxPortfolios": "Nombre maximum de portefeuilles atteint.",
     "errTickerRequired": "Un symbole est requis.",
     "errTickerExists": "Ce symbole est déjà dans ce portefeuille.",
-    "errInvalidWeight": "La pondération doit être un nombre entre 0 et 999.",
+    "errInvalidWeight": "La pondération doit être un nombre entre 0 et 100.",
     "errNotFound": "Introuvable.",
     "errGeneric": "Une erreur s'est produite."
   },

@@ -156,7 +156,8 @@
     "add": "添加",
     "adding": "添加中…",
     "weight": "占比",
-    "weightHint": "占比必须在 0 到 999 之间。",
+    "weightHint": "占比 0–100,不填则作为观察标的。",
+    "optional": "可选",
     "already": "已添加",
     "searchEmpty": "没有匹配结果。",
     "searchError": "搜索失败。",
@@ -174,7 +175,7 @@
     "errMaxPortfolios": "已达持仓组合数量上限。",
     "errTickerRequired": "请选择标的。",
     "errTickerExists": "该标的已在持仓中。",
-    "errInvalidWeight": "占比需为 0 到 999 之间的数字。",
+    "errInvalidWeight": "占比需为 0 到 100 之间的数字。",
     "errNotFound": "未找到。",
     "errGeneric": "发生错误,请重试。"
   },

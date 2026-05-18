@@ -156,7 +156,8 @@
     "add": "Add",
     "adding": "Adding…",
     "weight": "Weight",
-    "weightHint": "Weight must be between 0 and 999.",
+    "weightHint": "Weight must be 0–100, or leave blank for a watchlist entry.",
+    "optional": "optional",
     "already": "Added",
     "searchEmpty": "No matches.",
     "searchError": "Search failed.",
@@ -174,7 +175,7 @@
     "errMaxPortfolios": "You've reached the maximum number of portfolios.",
     "errTickerRequired": "Ticker is required.",
     "errTickerExists": "That ticker is already in this portfolio.",
-    "errInvalidWeight": "Weight must be a number between 0 and 999.",
+    "errInvalidWeight": "Weight must be a number between 0 and 100.",
     "errNotFound": "Not found.",
     "errGeneric": "Something went wrong."
   },

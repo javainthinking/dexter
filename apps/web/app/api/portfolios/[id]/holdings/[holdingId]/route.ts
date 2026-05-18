@@ -24,7 +24,9 @@ export async function PATCH(
       patch.weight = null;
     } else {
       const n = Number(body.weight);
-      if (!Number.isFinite(n) || n < 0 || n > 999.9999) {
+      // Weight is a percentage of the portfolio — bounded to [0, 100].
+      // Empty/null means "watchlist only" (no position).
+      if (!Number.isFinite(n) || n < 0 || n > 100) {
         return NextResponse.json({ error: 'invalid_weight' }, { status: 400 });
       }
       patch.weight = n;

@@ -156,7 +156,8 @@
     "add": "Hinzufügen",
     "adding": "Wird hinzugefügt…",
     "weight": "Gewichtung",
-    "weightHint": "Gewichtung muss zwischen 0 und 999 liegen.",
+    "weightHint": "Gewichtung 0–100 oder leer lassen für reine Watchlist-Position.",
+    "optional": "optional",
     "already": "Hinzugefügt",
     "searchEmpty": "Keine Treffer.",
     "searchError": "Suche fehlgeschlagen.",
@@ -174,7 +175,7 @@
     "errMaxPortfolios": "Maximale Anzahl an Portfolios erreicht.",
     "errTickerRequired": "Symbol ist erforderlich.",
     "errTickerExists": "Dieses Symbol ist bereits in diesem Portfolio.",
-    "errInvalidWeight": "Gewichtung muss eine Zahl zwischen 0 und 999 sein.",
+    "errInvalidWeight": "Gewichtung muss eine Zahl zwischen 0 und 100 sein.",
     "errNotFound": "Nicht gefunden.",
     "errGeneric": "Ein Fehler ist aufgetreten."
   },

@@ -156,7 +156,8 @@
     "add": "추가",
     "adding": "추가 중…",
     "weight": "비중",
-    "weightHint": "비중은 0~999 사이여야 합니다.",
+    "weightHint": "비중은 0~100. 비워두면 관심종목으로 추가됩니다.",
+    "optional": "선택",
     "already": "이미 추가됨",
     "searchEmpty": "결과 없음.",
     "searchError": "검색 실패.",
@@ -174,7 +175,7 @@
     "errMaxPortfolios": "포트폴리오 개수 한도에 도달했습니다.",
     "errTickerRequired": "티커가 필요합니다.",
     "errTickerExists": "이 티커는 이미 포트폴리오에 있습니다.",
-    "errInvalidWeight": "비중은 0~999 사이의 숫자여야 합니다.",
+    "errInvalidWeight": "비중은 0~100 사이의 숫자여야 합니다.",
     "errNotFound": "찾을 수 없습니다.",
     "errGeneric": "오류가 발생했습니다."
   },

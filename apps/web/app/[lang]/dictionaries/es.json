@@ -156,7 +156,8 @@
     "add": "Añadir",
     "adding": "Añadiendo…",
     "weight": "Peso",
-    "weightHint": "El peso debe estar entre 0 y 999.",
+    "weightHint": "Peso 0–100, o déjalo en blanco como simple seguimiento.",
+    "optional": "opcional",
     "already": "Añadido",
     "searchEmpty": "Sin resultados.",
     "searchError": "La búsqueda falló.",
@@ -174,7 +175,7 @@
     "errMaxPortfolios": "Has alcanzado el máximo de carteras.",
     "errTickerRequired": "El ticker es obligatorio.",
     "errTickerExists": "Ese ticker ya está en esta cartera.",
-    "errInvalidWeight": "El peso debe ser un número entre 0 y 999.",
+    "errInvalidWeight": "El peso debe ser un número entre 0 y 100.",
     "errNotFound": "No encontrado.",
     "errGeneric": "Ocurrió un error."
   },
