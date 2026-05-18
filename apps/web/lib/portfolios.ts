@@ -33,18 +33,34 @@ export const MAX_PORTFOLIOS_PER_USER = 5;
 /**
  * Drizzle (+ postgres-js) wraps the underlying Postgres error in its own
  * "Failed query" Error; the original error — carrying the SQLSTATE in
- * `.code` — sits on `.cause`. Walk the chain (max one level for
- * postgres-js) so our 23505 / 23503 / etc. checks fire whether the error
- * arrives wrapped or raw.
+ * `.code` — sits on `.cause`. Walk the cause chain (up to 5 levels deep,
+ * defensive against future re-wrapping) so our 23505 / 23503 / etc.
+ * checks fire whether the error arrives raw or nested.
+ *
+ * Message-fallback: when minification or future SDK shenanigans strip the
+ * `.code` field but leave the human-readable message intact, sniff the
+ * SQLSTATE-style code out of `err.message`. The 5-digit `\d\d\d\d\d`
+ * pattern is narrow enough that a coincidental match in user content is
+ * essentially impossible.
  */
 function pgErrorCode(err: unknown): string | undefined {
-  if (!err || typeof err !== 'object') return undefined;
-  const e = err as { code?: unknown; cause?: unknown };
-  if (typeof e.code === 'string') return e.code;
-  if (e.cause && typeof e.cause === 'object') {
-    const cause = e.cause as { code?: unknown };
-    if (typeof cause.code === 'string') return cause.code;
+  let cur: unknown = err;
+  for (let i = 0; i < 5; i++) {
+    if (!cur || typeof cur !== 'object') break;
+    const e = cur as { code?: unknown; cause?: unknown };
+    if (typeof e.code === 'string' && /^\d{5}$/.test(e.code)) return e.code;
+    cur = e.cause;
   }
+  // Final fallback: scan the rendered string. Catches cases where the
+  // SQLSTATE got stringified into the message via util.inspect or
+  // similar (Drizzle's "Failed query" wrapper does this in some paths).
+  const text =
+    err instanceof Error ? `${err.message} ${String((err as { cause?: unknown }).cause ?? '')}` : String(err);
+  const codeMatch = text.match(/code:\s*['"]?(\d{5})['"]?/);
+  if (codeMatch) return codeMatch[1];
+  // Last resort: recognise common readable error phrases.
+  if (/duplicate key.*unique constraint/i.test(text)) return '23505';
+  if (/violates foreign key constraint/i.test(text)) return '23503';
   return undefined;
 }
 const MEMORY_FILE = 'PORTFOLIOS.md';
