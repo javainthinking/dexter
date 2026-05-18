@@ -5,6 +5,10 @@ import { getCurrentUser } from '../../../lib/auth/session';
 import { listPortfolios } from '../../../lib/portfolios';
 import { IndicatorsClient } from './indicators-client';
 
+// Always read portfolios fresh — otherwise edge-cached SSR can serve an
+// empty list to a user who just created portfolios in another tab.
+export const dynamic = 'force-dynamic';
+
 export default async function IndicatorsPage({
   params,
 }: {
@@ -22,6 +26,11 @@ export default async function IndicatorsPage({
     );
   }
 
-  const initialPortfolios = await listPortfolios(user.id).catch(() => []);
+  let initialPortfolios: Awaited<ReturnType<typeof listPortfolios>> = [];
+  try {
+    initialPortfolios = await listPortfolios(user.id);
+  } catch (err) {
+    console.error('indicators SSR list_failed:', err);
+  }
   return <IndicatorsClient initialPortfolios={initialPortfolios} />;
 }

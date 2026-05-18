@@ -5,6 +5,12 @@ import { getCurrentUser } from '../../../lib/auth/session';
 import { listPortfolios, MAX_PORTFOLIOS_PER_USER } from '../../../lib/portfolios';
 import { PortfoliosClient } from './portfolios-client';
 
+// Force a fresh DB read on every request. Without this, edge-cached SSR
+// would happily serve an empty list to a user who created a portfolio
+// on a different device — and the client doesn't auto-refetch on a
+// soft-nav hit.
+export const dynamic = 'force-dynamic';
+
 export default async function PortfoliosPage({
   params,
 }: {
@@ -22,6 +28,14 @@ export default async function PortfoliosPage({
     );
   }
 
-  const initial = await listPortfolios(user.id).catch(() => []);
+  // Log SSR failures rather than silently rendering an empty page —
+  // an unhandled DB error here used to look identical to "no portfolios"
+  // from the user's perspective.
+  let initial: Awaited<ReturnType<typeof listPortfolios>> = [];
+  try {
+    initial = await listPortfolios(user.id);
+  } catch (err) {
+    console.error('portfolios SSR list_failed:', err);
+  }
   return <PortfoliosClient initialPortfolios={initial} maxPortfolios={MAX_PORTFOLIOS_PER_USER} />;
 }

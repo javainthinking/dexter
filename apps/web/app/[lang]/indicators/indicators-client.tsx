@@ -102,6 +102,27 @@ export function IndicatorsClient({
     })();
   }, []);
 
+  // Reconcile portfolios with the API on mount + tab-focus so a user
+  // who created portfolios on another tab/device sees them immediately
+  // without a hard reload.
+  React.useEffect(() => {
+    void refetchOnce();
+    const onFocus = () => void refetchOnce();
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+    async function refetchOnce() {
+      try {
+        const res = await fetch('/api/portfolios', { cache: 'no-store' });
+        if (!res.ok) return;
+        const json = (await res.json()) as { portfolios: PortfolioSummary[] };
+        setPortfolios(json.portfolios);
+        setActiveId((cur) => cur ?? json.portfolios[0]?.id ?? null);
+      } catch {
+        /* swallow */
+      }
+    }
+  }, []);
+
   // Load detail (holdings) for the active portfolio.
   React.useEffect(() => {
     if (!activeId) {

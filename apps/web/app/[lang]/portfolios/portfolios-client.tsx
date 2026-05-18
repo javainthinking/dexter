@@ -114,6 +114,31 @@ export function PortfoliosClient({
       .finally(() => setDetailLoading(false));
   }, [activeId, dict.portfolios?.errorLoad]);
 
+  // Reconcile with the API on mount + on tab-focus. The SSR pass renders
+  // a snapshot of the list at request time; without this, a user who
+  // creates / deletes a portfolio in another tab or device sees stale
+  // state until they hard-reload.
+  React.useEffect(() => {
+    void refetchOnce();
+    const onFocus = () => void refetchOnce();
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+    async function refetchOnce() {
+      try {
+        const res = await fetch('/api/portfolios', { cache: 'no-store' });
+        if (!res.ok) return;
+        const json = (await res.json()) as { portfolios: PortfolioListItem[] };
+        setPortfolios(json.portfolios);
+        // First-visit affordance: if SSR returned empty but the API has
+        // rows now, auto-select the first one so the empty-state stops
+        // showing.
+        setActiveId((cur) => cur ?? json.portfolios[0]?.id ?? null);
+      } catch {
+        /* swallow — server-state will reconcile on next user action */
+      }
+    }
+  }, []);
+
   // ─── actions ──────────────────────────────────────────────────────
 
   const refreshList = React.useCallback(async () => {
