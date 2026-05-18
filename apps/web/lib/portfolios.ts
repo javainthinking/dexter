@@ -546,18 +546,31 @@ function toListItem(row: {
   id: string;
   name: string;
   description: string | null;
-  created_at: Date;
-  updated_at: Date;
-  holdings_count: number;
+  // Drizzle's typed query path (used by getPortfolio) hands us a Date.
+  // The raw-SQL path via db.execute(sql`…`) (used by listPortfolios) gives
+  // a postgres-js timestamp string. Accept either.
+  created_at: Date | string;
+  updated_at: Date | string;
+  holdings_count: number | string;
 }): PortfolioListItem {
   return {
     id: row.id,
     name: row.name,
     description: row.description,
     holdingsCount: Number(row.holdings_count) || 0,
-    createdAt: row.created_at.toISOString(),
-    updatedAt: row.updated_at.toISOString(),
+    createdAt: toIso(row.created_at),
+    updatedAt: toIso(row.updated_at),
   };
+}
+
+function toIso(v: Date | string | null | undefined): string {
+  if (!v) return '';
+  if (v instanceof Date) return v.toISOString();
+  // postgres-js sends timestamptz as a string like "2026-05-18 02:34:11.123+00".
+  // Parsing through Date round-trips it into the canonical ISO form the
+  // client JSON expects.
+  const d = new Date(String(v));
+  return Number.isFinite(d.getTime()) ? d.toISOString() : String(v);
 }
 
 function toHoldingDto(row: PortfolioHolding) {
@@ -568,7 +581,7 @@ function toHoldingDto(row: PortfolioHolding) {
     exchange: row.exchange,
     weight: row.weight == null ? null : Number(row.weight),
     position: row.position,
-    addedAt: row.addedAt.toISOString(),
+    addedAt: toIso(row.addedAt as Date | string),
   };
 }
 
