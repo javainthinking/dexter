@@ -140,6 +140,11 @@
     "newPortfolio": "새 포트폴리오",
     "createPlaceholder": "포트폴리오 이름",
     "create": "생성",
+    "creating": "생성 중…",
+    "next": "다음",
+    "createHeader": "포트폴리오 생성",
+    "firstHoldingSubtitle": "첫 종목을 선택하세요. 포트폴리오에는 최소 1개 종목이 필요합니다.",
+    "pickFirstHoldingHint": "오른쪽 패널에서 첫 종목을 선택하세요 →",
     "cancel": "취소",
     "save": "저장",
     "rename": "이름 변경",
@@ -177,6 +182,8 @@
     "errTickerExists": "이 티커는 이미 포트폴리오에 있습니다.",
     "errInvalidWeight": "비중은 0~100 사이의 숫자여야 합니다.",
     "errNotFound": "찾을 수 없습니다.",
+    "errHoldingRequired": "포트폴리오에는 최소 1개의 종목이 필요합니다. 종목을 선택해 계속 진행하세요.",
+    "errLastHolding": "마지막 종목은 제거할 수 없습니다. 포트폴리오를 삭제하거나 먼저 다른 종목을 추가하세요.",
     "errGeneric": "오류가 발생했습니다."
   },
   "indicators": {

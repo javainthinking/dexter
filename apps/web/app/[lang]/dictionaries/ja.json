@@ -140,6 +140,11 @@
     "newPortfolio": "新規ポートフォリオ",
     "createPlaceholder": "ポートフォリオ名",
     "create": "作成",
+    "creating": "作成中…",
+    "next": "次へ",
+    "createHeader": "ポートフォリオを作成",
+    "firstHoldingSubtitle": "最初の銘柄を選んでください。ポートフォリオには少なくとも 1 銘柄が必要です。",
+    "pickFirstHoldingHint": "右側のパネルで最初の銘柄を選択 →",
     "cancel": "キャンセル",
     "save": "保存",
     "rename": "名前を変更",
@@ -177,6 +182,8 @@
     "errTickerExists": "このティッカーは既に追加されています。",
     "errInvalidWeight": "比率は 0〜100 の数値で入力してください。",
     "errNotFound": "見つかりません。",
+    "errHoldingRequired": "ポートフォリオには少なくとも 1 銘柄必要です。続けるには銘柄を選んでください。",
+    "errLastHolding": "最後の銘柄は外せません。ポートフォリオを削除するか、先に別の銘柄を追加してください。",
     "errGeneric": "エラーが発生しました。"
   },
   "indicators": {

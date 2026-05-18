@@ -68,9 +68,13 @@ export function PortfoliosClient({
   const [detailLoading, setDetailLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
-  // Inline-create state — single text input rather than a modal to stay
-  // light. The "+" button reveals the row.
-  const [creating, setCreating] = React.useState(false);
+  // Two-stage create state:
+  //   stage 'name'    → sidebar shows name input; main pane is hidden.
+  //   stage 'holding' → name is locked in; main pane shows SymbolSearch
+  //                     for the first holding. POST fires on confirm so
+  //                     portfolio + first holding land atomically and
+  //                     the "no empty portfolios" invariant holds.
+  const [createStage, setCreateStage] = React.useState<'idle' | 'name' | 'holding'>('idle');
   const [newName, setNewName] = React.useState('');
 
   // Inline-rename state
@@ -120,26 +124,54 @@ export function PortfoliosClient({
     return json.portfolios;
   }, []);
 
-  async function handleCreate() {
+  function startCreateNaming() {
+    setCreateStage('name');
+    setNewName('');
+    setError(null);
+  }
+  function cancelCreate() {
+    setCreateStage('idle');
+    setNewName('');
+    setError(null);
+  }
+  function advanceToHoldingPick() {
     const name = newName.trim();
     if (!name) return;
+    if (portfolios.some((p) => p.name.trim().toLowerCase() === name.toLowerCase())) {
+      setError(translateError('name_taken', dict));
+      return;
+    }
     setError(null);
+    setCreateStage('holding');
+  }
+
+  async function handleCreateWithHolding(hit: SymbolHit, weight: number | null) {
+    const name = newName.trim();
+    if (!name) {
+      throw new Error(translateError('name_required', dict));
+    }
     const res = await fetch('/api/portfolios', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({
+        name,
+        holding: {
+          ticker: hit.ticker,
+          displayName: hit.name,
+          exchange: hit.exchange,
+          weight,
+        },
+      }),
     });
     if (!res.ok) {
       const body = (await res.json().catch(() => null)) as { error?: string } | null;
-      setError(translateError(body?.error ?? 'server_error', dict));
-      return;
+      throw new Error(translateError(body?.error ?? 'server_error', dict));
     }
     const created = (await res.json()) as { portfolio: { id: string } };
-    setCreating(false);
+    setCreateStage('idle');
     setNewName('');
-    const refreshed = await refreshList();
+    await refreshList();
     setActiveId(created.portfolio.id);
-    void refreshed;
   }
 
   async function handleRename(id: string) {
@@ -209,7 +241,8 @@ export function PortfoliosClient({
       method: 'DELETE',
     });
     if (!res.ok) {
-      setError(dict.portfolios?.errorRemoveHolding ?? 'Could not remove.');
+      const body = (await res.json().catch(() => null)) as { error?: string } | null;
+      setError(translateError(body?.error ?? 'server_error', dict));
       return;
     }
     setDetail((d) => (d ? { ...d, holdings: d.holdings.filter((h) => h.id !== holdingId) } : d));
@@ -298,7 +331,7 @@ export function PortfoliosClient({
             </div>
 
             <div className="flex-1 overflow-y-auto p-2 space-y-1">
-              {portfolios.length === 0 && !creating && (
+              {portfolios.length === 0 && createStage === 'idle' && (
                 <p className="px-2 py-4 text-xs text-muted-foreground">
                   {dict.portfolios?.empty ?? 'No portfolios yet.'}
                 </p>
@@ -307,8 +340,11 @@ export function PortfoliosClient({
                 <PortfolioListRow
                   key={p.id}
                   portfolio={p}
-                  active={p.id === activeId}
-                  onSelect={() => setActiveId(p.id)}
+                  active={p.id === activeId && createStage === 'idle'}
+                  onSelect={() => {
+                    if (createStage !== 'idle') return;
+                    setActiveId(p.id);
+                  }}
                   renaming={renamingId === p.id}
                   renameValue={renameValue}
                   onStartRename={() => {
@@ -326,39 +362,42 @@ export function PortfoliosClient({
                 />
               ))}
 
-              {creating ? (
+              {createStage === 'name' || createStage === 'holding' ? (
                 <div className="rounded-md border border-border bg-background p-2 space-y-2">
                   <input
-                    autoFocus
+                    autoFocus={createStage === 'name'}
                     value={newName}
+                    disabled={createStage === 'holding'}
                     onChange={(e) => setNewName(e.target.value)}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleCreate();
-                      if (e.key === 'Escape') {
-                        setCreating(false);
-                        setNewName('');
-                      }
+                      if (e.key === 'Enter') advanceToHoldingPick();
+                      if (e.key === 'Escape') cancelCreate();
                     }}
                     placeholder={dict.portfolios?.createPlaceholder ?? 'Portfolio name'}
-                    className="w-full rounded border border-border bg-background px-2 py-1 text-sm focus:border-foreground focus:outline-none"
+                    className="w-full rounded border border-border bg-background px-2 py-1 text-sm focus:border-foreground focus:outline-none disabled:opacity-70"
                   />
-                  <div className="flex gap-1 justify-end">
-                    <Button size="sm" variant="ghost" onClick={() => { setCreating(false); setNewName(''); }}>
-                      <X className="size-3 mr-1" />
-                      {dict.portfolios?.cancel ?? 'Cancel'}
-                    </Button>
-                    <Button size="sm" onClick={handleCreate} disabled={!newName.trim()}>
-                      <Check className="size-3 mr-1" />
-                      {dict.portfolios?.create ?? 'Create'}
-                    </Button>
-                  </div>
+                  {createStage === 'name' ? (
+                    <div className="flex gap-1 justify-end">
+                      <Button size="sm" variant="ghost" onClick={cancelCreate}>
+                        <X className="size-3 mr-1" />
+                        {dict.portfolios?.cancel ?? 'Cancel'}
+                      </Button>
+                      <Button size="sm" onClick={advanceToHoldingPick} disabled={!newName.trim()}>
+                        {dict.portfolios?.next ?? 'Next'}
+                      </Button>
+                    </div>
+                  ) : (
+                    <p className="px-1 text-[11px] text-muted-foreground">
+                      {dict.portfolios?.pickFirstHoldingHint ?? 'Pick the first holding in the main panel →'}
+                    </p>
+                  )}
                 </div>
               ) : (
                 <Button
                   variant="ghost"
                   size="sm"
                   className="w-full justify-start"
-                  onClick={() => setCreating(true)}
+                  onClick={startCreateNaming}
                   disabled={atCap}
                   title={atCap ? (dict.portfolios?.atCap ?? `Maximum ${maxPortfolios} portfolios`) : ''}
                 >
@@ -381,8 +420,15 @@ export function PortfoliosClient({
               </div>
             )}
 
-            {!activeId ? (
-              <EmptyDetail dict={dict} onCreate={() => setCreating(true)} atCap={atCap} />
+            {createStage === 'holding' ? (
+              <CreateFirstHoldingPanel
+                name={newName}
+                onCancel={cancelCreate}
+                onAdd={handleCreateWithHolding}
+                dict={dict}
+              />
+            ) : !activeId ? (
+              <EmptyDetail dict={dict} onCreate={startCreateNaming} atCap={atCap} />
             ) : detailLoading ? (
               <div className="flex items-center gap-2 py-12 text-muted-foreground">
                 <Loader2 className="size-4 animate-spin" />
@@ -718,6 +764,73 @@ function translateError(code: string, dict: any): string {
     ticker_already_in_portfolio: dict.portfolios?.errTickerExists,
     invalid_weight: dict.portfolios?.errInvalidWeight,
     not_found: dict.portfolios?.errNotFound,
+    holding_required: dict.portfolios?.errHoldingRequired,
+    last_holding_cannot_remove: dict.portfolios?.errLastHolding,
   };
   return map[code] ?? dict.portfolios?.errGeneric ?? code;
+}
+
+/**
+ * Renders the "pick the first holding for [name]" panel during the
+ * 2-stage create flow. The portfolio itself doesn't exist yet — POST
+ * /api/portfolios fires with { name, holding } when the user confirms
+ * a symbol, and server-side that's a single transaction. Cancel kicks
+ * the user back to the idle list with no DB row written.
+ */
+function CreateFirstHoldingPanel({
+  name,
+  onCancel,
+  onAdd,
+  dict,
+}: {
+  name: string;
+  onCancel: () => void;
+  onAdd: (hit: SymbolHit, weight: number | null) => Promise<void>;
+  dict: any;
+}) {
+  return (
+    <div className="mx-auto max-w-2xl space-y-4">
+      <header className="flex items-baseline justify-between gap-2">
+        <div>
+          <h2 className="text-lg font-semibold">
+            {(dict.portfolios?.createHeader ?? 'Create portfolio')}: {name}
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            {dict.portfolios?.firstHoldingSubtitle ??
+              'Pick the first holding. Portfolios must have at least one ticker.'}
+          </p>
+        </div>
+        <button
+          onClick={onCancel}
+          className="text-xs text-muted-foreground hover:text-foreground"
+        >
+          {dict.portfolios?.cancel ?? 'Cancel'}
+        </button>
+      </header>
+      <section className="rounded-lg border border-border bg-card p-4">
+        <SymbolSearch
+          onAdd={onAdd}
+          existingTickers={[]}
+          placeholder={
+            dict.portfolios?.searchPlaceholder ??
+            'Search ticker or name (English, pinyin, 中文)'
+          }
+          labels={{
+            search: dict.portfolios?.search ?? 'Search',
+            add: dict.portfolios?.create ?? 'Create',
+            cancel: dict.portfolios?.cancel ?? 'Cancel',
+            weight: dict.portfolios?.weight ?? 'Weight',
+            weightHint:
+              dict.portfolios?.weightHint ??
+              'Weight 0–100, or leave blank for a watchlist entry.',
+            optional: dict.portfolios?.optional ?? 'optional',
+            already: dict.portfolios?.already ?? 'Added',
+            empty: dict.portfolios?.searchEmpty ?? 'No matches.',
+            error: dict.portfolios?.searchError ?? 'Search failed.',
+            adding: dict.portfolios?.creating ?? 'Creating…',
+          }}
+        />
+      </section>
+    </div>
+  );
 }

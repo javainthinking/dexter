@@ -69,6 +69,13 @@ const ML_BASE = process.env.MEMORYLAKE_BASE_URL ?? '';
 const ML_PROJECT = process.env.MEMORYLAKE_PROJECT_ID ?? '';
 const ML_KEY = process.env.MEMORYLAKE_API_KEY ?? '';
 
+export interface AddHoldingInput {
+  ticker: string;
+  displayName?: string | null;
+  exchange?: string | null;
+  weight?: number | null;
+}
+
 export interface PortfolioListItem {
   id: string;
   name: string;
@@ -154,11 +161,15 @@ export async function getPortfolio(
 export async function createPortfolio(
   userId: string,
   name: string,
+  initialHolding: AddHoldingInput,
   description?: string | null,
-): Promise<Portfolio> {
+): Promise<{ portfolio: Portfolio; holding: PortfolioHolding }> {
   const cleanName = name.trim();
   if (!cleanName) throw httpError(400, 'name_required');
   if (cleanName.length > 80) throw httpError(400, 'name_too_long');
+
+  const ticker = initialHolding.ticker.trim().toUpperCase();
+  if (!ticker) throw httpError(400, 'holding_required');
 
   const db = getDb();
   // Cap enforcement here, not in the DB, so future per-user overrides
@@ -170,13 +181,32 @@ export async function createPortfolio(
   if (existing.length >= MAX_PORTFOLIOS_PER_USER) {
     throw httpError(409, 'max_portfolios_reached', { max: MAX_PORTFOLIOS_PER_USER });
   }
+
   try {
-    const [row] = await db
-      .insert(portfolios)
-      .values({ userId, name: cleanName, description: description?.trim() || null })
-      .returning();
+    // Atomic: portfolio + first holding go in together. If the holding
+    // insert fails (e.g. weird ticker), the portfolio insert rolls back
+    // so the invariant "no empty portfolios" holds even under crash.
+    const { portfolio, holding } = await db.transaction(async (tx) => {
+      const [pf] = await tx
+        .insert(portfolios)
+        .values({ userId, name: cleanName, description: description?.trim() || null })
+        .returning();
+      const [h] = await tx
+        .insert(portfolioHoldings)
+        .values({
+          portfolioId: pf.id,
+          ticker,
+          displayName: initialHolding.displayName?.trim() || null,
+          exchange: initialHolding.exchange?.trim() || null,
+          weight: initialHolding.weight == null ? null : initialHolding.weight.toFixed(4),
+          position: 0,
+        })
+        .returning();
+      return { portfolio: pf, holding: h };
+    });
+
     await syncMemorySnapshot(userId).catch(() => {});
-    return row;
+    return { portfolio, holding };
   } catch (err) {
     // Unique-name collision surfaces as a Postgres 23505. We translate to
     // a 409 so the UI can render a "name already taken" hint inline
@@ -234,13 +264,6 @@ export async function deletePortfolio(userId: string, portfolioId: string): Prom
 // ---------------------------------------------------------------------------
 // Holdings
 // ---------------------------------------------------------------------------
-
-export interface AddHoldingInput {
-  ticker: string;
-  displayName?: string | null;
-  exchange?: string | null;
-  weight?: number | null;
-}
 
 export async function addHolding(
   userId: string,
@@ -325,6 +348,21 @@ export async function removeHolding(
 ): Promise<void> {
   await assertPortfolioOwned(userId, portfolioId);
   const db = getDb();
+
+  // Invariant: portfolios must always have ≥ 1 holding. Block removal of
+  // the last one and steer the user toward deleting the portfolio
+  // instead — same delete still cascades the row, so this isn't a real
+  // technical limitation, just a UX guardrail that prevents the
+  // "empty portfolio" state from ever appearing in the list.
+  const [countRow] = await db.execute<{ n: number }>(sql`
+    SELECT COUNT(*)::int AS n FROM dexter_portfolio_holdings
+    WHERE portfolio_id = ${portfolioId}
+  `);
+  const remaining = Number(countRow?.n ?? 0);
+  if (remaining <= 1) {
+    throw httpError(409, 'last_holding_cannot_remove');
+  }
+
   const result = await db
     .delete(portfolioHoldings)
     .where(and(eq(portfolioHoldings.id, holdingId), eq(portfolioHoldings.portfolioId, portfolioId)))

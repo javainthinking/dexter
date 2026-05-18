@@ -140,6 +140,11 @@
     "newPortfolio": "Nueva cartera",
     "createPlaceholder": "Nombre de la cartera",
     "create": "Crear",
+    "creating": "Creando…",
+    "next": "Siguiente",
+    "createHeader": "Crear cartera",
+    "firstHoldingSubtitle": "Elige la primera posición. Una cartera necesita al menos un ticker.",
+    "pickFirstHoldingHint": "Elige la primera posición en el panel principal →",
     "cancel": "Cancelar",
     "save": "Guardar",
     "rename": "Renombrar",
@@ -177,6 +182,8 @@
     "errTickerExists": "Ese ticker ya está en esta cartera.",
     "errInvalidWeight": "El peso debe ser un número entre 0 y 100.",
     "errNotFound": "No encontrado.",
+    "errHoldingRequired": "Una cartera necesita al menos una posición — elige un ticker para continuar.",
+    "errLastHolding": "No se puede quitar la última posición. Elimina la cartera o añade primero otro ticker.",
     "errGeneric": "Ocurrió un error."
   },
   "indicators": {

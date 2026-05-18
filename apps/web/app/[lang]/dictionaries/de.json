@@ -140,6 +140,11 @@
     "newPortfolio": "Neues Portfolio",
     "createPlaceholder": "Portfolio-Name",
     "create": "Erstellen",
+    "creating": "Wird erstellt…",
+    "next": "Weiter",
+    "createHeader": "Portfolio erstellen",
+    "firstHoldingSubtitle": "Wähle die erste Position. Ein Portfolio braucht mindestens einen Ticker.",
+    "pickFirstHoldingHint": "Wähle die erste Position im Hauptbereich →",
     "cancel": "Abbrechen",
     "save": "Speichern",
     "rename": "Umbenennen",
@@ -177,6 +182,8 @@
     "errTickerExists": "Dieses Symbol ist bereits in diesem Portfolio.",
     "errInvalidWeight": "Gewichtung muss eine Zahl zwischen 0 und 100 sein.",
     "errNotFound": "Nicht gefunden.",
+    "errHoldingRequired": "Ein Portfolio braucht mindestens eine Position — wähle einen Ticker, um fortzufahren.",
+    "errLastHolding": "Die letzte Position lässt sich nicht entfernen. Lösche das Portfolio oder füge zuerst einen anderen Ticker hinzu.",
     "errGeneric": "Ein Fehler ist aufgetreten."
   },
   "indicators": {

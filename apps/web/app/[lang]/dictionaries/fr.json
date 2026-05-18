@@ -140,6 +140,11 @@
     "newPortfolio": "Nouveau portefeuille",
     "createPlaceholder": "Nom du portefeuille",
     "create": "Créer",
+    "creating": "Création…",
+    "next": "Suivant",
+    "createHeader": "Créer un portefeuille",
+    "firstHoldingSubtitle": "Choisis la première position. Un portefeuille doit contenir au moins un symbole.",
+    "pickFirstHoldingHint": "Choisis la première position dans le panneau principal →",
     "cancel": "Annuler",
     "save": "Enregistrer",
     "rename": "Renommer",
@@ -177,6 +182,8 @@
     "errTickerExists": "Ce symbole est déjà dans ce portefeuille.",
     "errInvalidWeight": "La pondération doit être un nombre entre 0 et 100.",
     "errNotFound": "Introuvable.",
+    "errHoldingRequired": "Un portefeuille doit contenir au moins une position — choisis un symbole pour continuer.",
+    "errLastHolding": "Impossible de retirer la dernière position. Supprime le portefeuille ou ajoute d'abord un autre symbole.",
     "errGeneric": "Une erreur s'est produite."
   },
   "indicators": {

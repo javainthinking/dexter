@@ -140,6 +140,11 @@
     "newPortfolio": "New portfolio",
     "createPlaceholder": "Portfolio name",
     "create": "Create",
+    "creating": "Creating…",
+    "next": "Next",
+    "createHeader": "Create portfolio",
+    "firstHoldingSubtitle": "Pick the first holding. Portfolios must have at least one ticker.",
+    "pickFirstHoldingHint": "Pick the first holding in the main panel →",
     "cancel": "Cancel",
     "save": "Save",
     "rename": "Rename",
@@ -177,6 +182,8 @@
     "errTickerExists": "That ticker is already in this portfolio.",
     "errInvalidWeight": "Weight must be a number between 0 and 100.",
     "errNotFound": "Not found.",
+    "errHoldingRequired": "A portfolio needs at least one holding — pick a ticker to continue.",
+    "errLastHolding": "Can't remove the last holding. Delete the portfolio instead, or add another ticker first.",
     "errGeneric": "Something went wrong."
   },
   "indicators": {
