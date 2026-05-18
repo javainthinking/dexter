@@ -29,6 +29,24 @@ import { isMemoryLakeConfigured } from './memorylake-client';
  */
 
 export const MAX_PORTFOLIOS_PER_USER = 5;
+
+/**
+ * Drizzle (+ postgres-js) wraps the underlying Postgres error in its own
+ * "Failed query" Error; the original error — carrying the SQLSTATE in
+ * `.code` — sits on `.cause`. Walk the chain (max one level for
+ * postgres-js) so our 23505 / 23503 / etc. checks fire whether the error
+ * arrives wrapped or raw.
+ */
+function pgErrorCode(err: unknown): string | undefined {
+  if (!err || typeof err !== 'object') return undefined;
+  const e = err as { code?: unknown; cause?: unknown };
+  if (typeof e.code === 'string') return e.code;
+  if (e.cause && typeof e.cause === 'object') {
+    const cause = e.cause as { code?: unknown };
+    if (typeof cause.code === 'string') return cause.code;
+  }
+  return undefined;
+}
 const MEMORY_FILE = 'PORTFOLIOS.md';
 const MEMORY_KIND = 'portfolios';
 const ML_BASE = process.env.MEMORYLAKE_BASE_URL ?? '';
@@ -147,7 +165,7 @@ export async function createPortfolio(
     // Unique-name collision surfaces as a Postgres 23505. We translate to
     // a 409 so the UI can render a "name already taken" hint inline
     // instead of a generic 500.
-    if ((err as { code?: string }).code === '23505') {
+    if (pgErrorCode(err) === '23505') {
       throw httpError(409, 'name_taken');
     }
     throw err;
@@ -180,7 +198,7 @@ export async function updatePortfolio(
     await syncMemorySnapshot(userId).catch(() => {});
     return row;
   } catch (err) {
-    if ((err as { code?: string }).code === '23505') {
+    if (pgErrorCode(err) === '23505') {
       throw httpError(409, 'name_taken');
     }
     throw err;
@@ -242,7 +260,7 @@ export async function addHolding(
     await syncMemorySnapshot(userId).catch(() => {});
     return row;
   } catch (err) {
-    if ((err as { code?: string }).code === '23505') {
+    if (pgErrorCode(err) === '23505') {
       throw httpError(409, 'ticker_already_in_portfolio');
     }
     throw err;
