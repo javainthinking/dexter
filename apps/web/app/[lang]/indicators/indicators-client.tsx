@@ -150,6 +150,24 @@ export function IndicatorsClient({
     [activeDetail],
   );
 
+  // Ticker → company name lookup so the indicator API's bare-ticker
+  // results can be enriched before they reach the card components.
+  // The API only returns prices + indicator values; names live with the
+  // portfolio holdings (different ownership boundary).
+  const tickerNames = React.useMemo(() => {
+    const m = new Map<string, string>();
+    for (const h of activeDetail?.holdings ?? []) {
+      if (h.displayName) m.set(h.ticker, h.displayName);
+    }
+    return m;
+  }, [activeDetail]);
+
+  const enrichedEntries = React.useCallback(
+    (entries: IndicatorTickerEntry[]) =>
+      entries.map((e) => ({ ...e, displayName: tickerNames.get(e.ticker) ?? null })),
+    [tickerNames],
+  );
+
   // ─── indicator fetch ──────────────────────────────────────────────
   const needsTickers = TABS.find((t) => t.id === tab)?.needsTickers ?? false;
 
@@ -289,28 +307,28 @@ export function IndicatorsClient({
 
           {!loading && data && tab === 'macd' && 'tickers' in data && (
             <CardGrid>
-              {data.tickers.map((e) => (
+              {enrichedEntries(data.tickers).map((e) => (
                 <MacdCard key={e.ticker} entry={e as never} dict={dict} />
               ))}
             </CardGrid>
           )}
           {!loading && data && tab === 'ma' && 'tickers' in data && (
             <CardGrid>
-              {data.tickers.map((e) => (
+              {enrichedEntries(data.tickers).map((e) => (
                 <MaCard key={e.ticker} entry={e as never} dict={dict} />
               ))}
             </CardGrid>
           )}
           {!loading && data && tab === 'volume' && 'tickers' in data && (
             <CardGrid>
-              {data.tickers.map((e) => (
+              {enrichedEntries(data.tickers).map((e) => (
                 <VolumeCard key={e.ticker} entry={e as never} dict={dict} />
               ))}
             </CardGrid>
           )}
           {!loading && data && tab === 'flow' && 'tickers' in data && (
             <CardGrid>
-              {data.tickers.map((e) => (
+              {enrichedEntries(data.tickers).map((e) => (
                 <FlowCard key={e.ticker} entry={e as never} dict={dict} />
               ))}
             </CardGrid>

@@ -13,6 +13,7 @@ const BUCKET_COLOR: Record<Bucket, string> = {
 
 export function CardShell({
   ticker,
+  displayName,
   bucket,
   bucketLabel,
   asOf,
@@ -20,6 +21,12 @@ export function CardShell({
   metrics,
 }: {
   ticker: string;
+  /**
+   * Human-readable company name shown beside the ticker so users don't have
+   * to mentally translate "0700.HK" or "002594.SZ". Optional — falls back to
+   * showing the ticker alone when the holdings store didn't capture a name.
+   */
+  displayName?: string | null;
   bucket?: Bucket;
   bucketLabel?: string;
   asOf?: string | null;
@@ -29,14 +36,19 @@ export function CardShell({
   return (
     <article className="rounded-lg border border-border bg-card overflow-hidden">
       <header className="flex items-center justify-between gap-2 border-b border-border px-3 py-2">
-        <div className="flex items-baseline gap-2 min-w-0">
-          <span className="font-mono text-sm font-semibold truncate">{ticker}</span>
-          {asOf && <span className="text-xs text-muted-foreground">{asOf}</span>}
+        <div className="flex min-w-0 flex-col">
+          <div className="flex items-baseline gap-2 min-w-0">
+            <span className="font-mono text-sm font-semibold truncate">{ticker}</span>
+            {asOf && <span className="text-xs text-muted-foreground">{asOf}</span>}
+          </div>
+          {displayName && (
+            <span className="truncate text-xs text-muted-foreground">{displayName}</span>
+          )}
         </div>
         {bucket && bucketLabel && (
           <span
             className={cn(
-              'inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide',
+              'inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide shrink-0',
               BUCKET_COLOR[bucket],
             )}
           >
@@ -75,10 +87,21 @@ export function MetricCell({
   );
 }
 
-export function ErrorCard({ ticker, message }: { ticker: string; message: string }) {
+export function ErrorCard({
+  ticker,
+  displayName,
+  message,
+}: {
+  ticker: string;
+  displayName?: string | null;
+  message: string;
+}) {
   return (
     <article className="rounded-lg border border-destructive/40 bg-destructive/5 p-3">
       <div className="font-mono text-sm font-semibold">{ticker}</div>
+      {displayName && (
+        <div className="text-xs text-muted-foreground">{displayName}</div>
+      )}
       <div className="mt-1 text-xs text-muted-foreground">{message}</div>
     </article>
   );

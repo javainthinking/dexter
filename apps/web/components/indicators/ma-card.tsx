@@ -20,6 +20,7 @@ interface MaRow {
 
 interface MaEntry {
   ticker: string;
+  displayName?: string | null;
   prices?: Array<{ time: string; close: number | null }>;
   indicator?: MaRow[];
   bucket?: Bucket;
@@ -35,7 +36,7 @@ const BUCKET_LABELS = {
 
 export function MaCard({ entry, dict }: { entry: MaEntry; dict: any }) {
   if (entry.error || !entry.prices || !entry.indicator) {
-    return <ErrorCard ticker={entry.ticker} message={entry.error ?? 'no data'} />;
+    return <ErrorCard ticker={entry.ticker} displayName={entry.displayName} message={entry.error ?? 'no data'} />;
   }
   const isZh = dict.indicators?._localeHint === 'zh';
   const closes = entry.prices.map((p) => p.close);
@@ -61,6 +62,7 @@ export function MaCard({ entry, dict }: { entry: MaEntry; dict: any }) {
   return (
     <CardShell
       ticker={entry.ticker}
+      displayName={entry.displayName}
       asOf={asOf}
       bucket={bucket}
       bucketLabel={bucketLabel}
