@@ -1,7 +1,7 @@
 {
   "common": {
     "appName": "PickSkill",
-    "openGraphTitle": "PickSkill — 당신의 포트폴리오 리서치 데스크",
+    "openGraphTitle": "PickSkill — 당신의 포트폴리오 리서치 에이전트",
     "openGraphDescription": "실시간 시세, 기술적 시그널, 그리고 당신의 투자 논제를 기억하는 AI 애널리스트 — 미국·홍콩·A주까지."
   },
   "landing": {
@@ -10,7 +10,7 @@
     "hero": {
       "title": "깊이 있는 금융 리서치,",
       "titleEmphasis": "필요할 때 바로.",
-      "subtitle": "PickSkill은 당신의 워치리스트를 그대로 리서치 데스크로 만듭니다. 미국·홍콩·A주 보유 종목을 실시간으로 추적하고, 포트폴리오 전체에 대해 MACD·이동평균·거래량·자금 흐름 시그널을 한 번에 스캔하며, 당신의 투자 논제를 세션 사이에도 기억하는 AI 애널리스트와 대화하세요.",
+      "subtitle": "PickSkill은 당신의 포트폴리오 리서치 에이전트입니다. 미국·홍콩·A주 보유 종목을 실시간으로 추적하고, 포트폴리오 전체에 대해 MACD·이동평균·거래량·자금 흐름 시그널을 한 번에 스캔하며, 당신의 투자 논제를 세션 사이에도 기억하는 AI 애널리스트와 대화하세요.",
       "primaryCta": "워크벤치 열기",
       "secondaryCta": "GitHub에서 보기",
       "tagline": "실시간 · 스트리밍 · 메모리 연동"
@@ -60,7 +60,7 @@
       "newlineHint": "줄바꿈",
       "stop": "중지",
       "send": "보내기",
-      "footer": "DEXTER · 리서치 목적 전용 — 투자 자문이 아닙니다."
+      "footer": "PICKSKILL · 리서치 목적 전용 — 투자 자문이 아닙니다."
     },
     "sidebar": {
       "close": "사이드바 닫기",

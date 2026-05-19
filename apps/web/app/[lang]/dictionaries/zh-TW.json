@@ -1,7 +1,7 @@
 {
   "common": {
     "appName": "PickSkill",
-    "openGraphTitle": "PickSkill — 你的持倉研究台",
+    "openGraphTitle": "PickSkill — 你的持倉研究智能體",
     "openGraphDescription": "即時行情、技術訊號,以及一位會記住你投資邏輯的 AI 分析師 — 涵蓋美股、港股、A 股。"
   },
   "landing": {
@@ -10,7 +10,7 @@
     "hero": {
       "title": "深度金融研究,",
       "titleEmphasis": "隨取隨用。",
-      "subtitle": "PickSkill 把你的關注列表變成研究工作台。即時追蹤美股、港股、A 股持倉,依 MACD、均線、量價、資金流量等維度一鍵掃描整組標的,並有一位會記住你投資邏輯的 AI 分析師對話深挖。",
+      "subtitle": "PickSkill 是你的持倉研究智能體。即時追蹤美股、港股、A 股持倉,依 MACD、均線、量價、資金流量等維度一鍵掃描整組標的,並有一位會記住你投資邏輯的 AI 分析師對話深挖。",
       "primaryCta": "進入工作台",
       "secondaryCta": "在 GitHub 檢視",
       "tagline": "即時 · 串流 · 具長期記憶"
@@ -60,7 +60,7 @@
       "newlineHint": "換行",
       "stop": "停止",
       "send": "送出",
-      "footer": "DEXTER · 僅供研究 — 不構成投資建議。"
+      "footer": "PICKSKILL · 僅供研究 — 不構成投資建議。"
     },
     "sidebar": {
       "close": "關閉側邊欄",

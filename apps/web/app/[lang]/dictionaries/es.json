@@ -1,7 +1,7 @@
 {
   "common": {
     "appName": "PickSkill",
-    "openGraphTitle": "PickSkill — tu mesa de investigación de cartera",
+    "openGraphTitle": "PickSkill — tu agente de investigación de cartera",
     "openGraphDescription": "Cotizaciones en vivo, señales técnicas y un analista IA que recuerda tu tesis — mercados US, HK y A-shares."
   },
   "landing": {
@@ -10,7 +10,7 @@
     "hero": {
       "title": "Investigación financiera profunda,",
       "titleEmphasis": "cuando la necesites.",
-      "subtitle": "PickSkill convierte tu watchlist en una mesa de investigación. Sigue en vivo posiciones de US, HK y A-shares, escanea MACD, medias móviles, volumen y flujo de capital sobre toda la cartera, y conversa con un analista IA que recuerda tu tesis entre sesiones.",
+      "subtitle": "PickSkill es tu agente de investigación de cartera. Sigue en vivo posiciones de US, HK y A-shares, escanea MACD, medias móviles, volumen y flujo de capital sobre toda la cartera, y conversa con un analista IA que recuerda tu tesis entre sesiones.",
       "primaryCta": "Abrir el escritorio",
       "secondaryCta": "Ver en GitHub",
       "tagline": "En vivo · Streaming · Con memoria"
@@ -60,7 +60,7 @@
       "newlineHint": "salto de línea",
       "stop": "Detener",
       "send": "Enviar",
-      "footer": "DEXTER · Solo para investigación — no constituye asesoramiento de inversión."
+      "footer": "PICKSKILL · Solo para investigación — no constituye asesoramiento de inversión."
     },
     "sidebar": {
       "close": "Cerrar barra lateral",

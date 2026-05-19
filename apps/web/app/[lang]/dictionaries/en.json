@@ -1,7 +1,7 @@
 {
   "common": {
     "appName": "PickSkill",
-    "openGraphTitle": "PickSkill — your portfolio research desk",
+    "openGraphTitle": "PickSkill — your portfolio research agent",
     "openGraphDescription": "Live quotes, technical signals, and an AI analyst that remembers your thesis — across US, HK, and A-share markets."
   },
   "landing": {
@@ -10,7 +10,7 @@
     "hero": {
       "title": "Deep financial research,",
       "titleEmphasis": "on demand.",
-      "subtitle": "PickSkill turns your watchlist into a research desk. Track US, HK, and A-share holdings in real time, scan MACD, moving averages, volume, and capital-flow signals across your whole portfolio, and chat with an AI analyst that remembers your thesis between sessions.",
+      "subtitle": "PickSkill is your portfolio research agent. Track US, HK, and A-share holdings in real time, scan MACD, moving averages, volume, and capital-flow signals across your whole portfolio, and chat with an AI analyst that remembers your thesis between sessions.",
       "primaryCta": "Open the workbench",
       "secondaryCta": "View on GitHub",
       "tagline": "Live · Streaming · Memory-grounded"
@@ -60,7 +60,7 @@
       "newlineHint": "newline",
       "stop": "Stop",
       "send": "Send",
-      "footer": "DEXTER · For research only — not investment advice."
+      "footer": "PICKSKILL · For research only — not investment advice."
     },
     "sidebar": {
       "close": "Close sidebar",

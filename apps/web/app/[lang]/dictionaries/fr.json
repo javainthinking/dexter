@@ -1,7 +1,7 @@
 {
   "common": {
     "appName": "PickSkill",
-    "openGraphTitle": "PickSkill — votre bureau de recherche de portefeuille",
+    "openGraphTitle": "PickSkill — votre agent de recherche de portefeuille",
     "openGraphDescription": "Cours en direct, signaux techniques, et un analyste IA qui se souvient de votre thèse — marchés US, HK et A-shares."
   },
   "landing": {
@@ -10,7 +10,7 @@
     "hero": {
       "title": "Recherche financière approfondie,",
       "titleEmphasis": "à la demande.",
-      "subtitle": "PickSkill transforme votre watchlist en bureau de recherche. Suivez en direct vos positions US, HK et A-shares, scannez MACD, moyennes mobiles, volume et flux de capitaux sur tout le portefeuille, et discutez avec un analyste IA qui se souvient de votre thèse d'une session à l'autre.",
+      "subtitle": "PickSkill, c'est votre agent de recherche de portefeuille. Suivez en direct vos positions US, HK et A-shares, scannez MACD, moyennes mobiles, volume et flux de capitaux sur tout le portefeuille, et discutez avec un analyste IA qui se souvient de votre thèse d'une session à l'autre.",
       "primaryCta": "Ouvrir le poste de travail",
       "secondaryCta": "Voir sur GitHub",
       "tagline": "Temps réel · Streaming · Mémoire intégrée"
@@ -60,7 +60,7 @@
       "newlineHint": "saut de ligne",
       "stop": "Stop",
       "send": "Envoyer",
-      "footer": "DEXTER · Pour la recherche uniquement — ne constitue pas un conseil en investissement."
+      "footer": "PICKSKILL · Pour la recherche uniquement — ne constitue pas un conseil en investissement."
     },
     "sidebar": {
       "close": "Fermer la barre latérale",
