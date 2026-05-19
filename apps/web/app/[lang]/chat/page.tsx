@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Menu, RotateCcw } from 'lucide-react';
 import { Sidebar, type SessionSummary } from '../../../components/chat/sidebar';
 import { Composer } from '../../../components/chat/composer';
@@ -35,11 +35,16 @@ export default function ChatRoute() {
 }
 
 function ChatPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const dict = useDictionary();
   const _locale = useLocale();
-  const promptFromUrl = searchParams.get('prompt') ?? '';
+  // Capture the deep-link prompt once on mount via a ref. We DON'T want
+  // this to be reactive: after we strip ?prompt= from the URL,
+  // useSearchParams() will re-render with an empty value, which used to
+  // re-trigger the hydration effect and clobber the optimistic
+  // streaming turn that send() just added.
+  const initialPromptRef = useRef(searchParams.get('prompt') ?? '');
+  const hasDeepLinkPrompt = initialPromptRef.current !== '';
 
   const [sessions, setSessions] = useState<SessionSummary[]>([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
@@ -94,12 +99,14 @@ function ChatPage() {
   // dexter_session cookie. Without this, refreshing /chat would always
   // show an empty thread even though the conversation lives in Postgres.
   //
-  // Skip when ?prompt= is present — the prompt-consume effect below mints
-  // a fresh session for the deep-link topic, so loading the old session
-  // here would (a) flash old content and (b) append the new prompt to
-  // the wrong thread once /api/agent sees the current cookie.
+  // Skip when ?prompt= was present in the initial URL. The deep-link
+  // consume effect below kicks off send() immediately and we don't want
+  // hydration loading the previous session to (a) flash old content
+  // briefly or (b) overwrite the optimistic streaming turn.
+  // hasDeepLinkPrompt is a ref-derived boolean — it's stable across
+  // renders, so this effect only runs once.
   useEffect(() => {
-    if (promptFromUrl) return;
+    if (hasDeepLinkPrompt) return;
     let cancelled = false;
     (async () => {
       try {
@@ -116,7 +123,7 @@ function ChatPage() {
     return () => {
       cancelled = true;
     };
-  }, [hydrateFromRecord, promptFromUrl]);
+  }, [hydrateFromRecord, hasDeepLinkPrompt]);
 
   useEffect(() => {
     threadRef.current?.scrollTo({
@@ -219,34 +226,22 @@ function ChatPage() {
   const consumed = useRef(false);
   useEffect(() => {
     if (consumed.current) return;
-    if (!promptFromUrl) return;
+    if (!hasDeepLinkPrompt) return;
     consumed.current = true;
-    setInput('');
-    // Strip ?prompt off the URL via raw history API, NOT router.replace.
-    // The page is rendered inside <Suspense> and useSearchParams() is
-    // reactive — a router.replace would bail Suspense out to the fallback
-    // mid-stream, blanking the thread until the stream finishes. Plain
-    // history.replaceState updates the address bar without disturbing
-    // React routing.
+    // Mirror the in-chat empty-state click exactly: it just calls
+    // send(p). No forced session creation, no awaited network round-
+    // trip before sending. The optimistic turn renders immediately so
+    // the user sees their question + the "thinking" status without a
+    // blank period.
+    //
+    // URL is stripped via plain history.replaceState — NOT router.replace
+    // — to avoid Suspense re-suspending the page while the stream runs.
     if (typeof window !== 'undefined') {
       window.history.replaceState(null, '', window.location.pathname);
     }
-    // Deep-link from the landing page is a "start a new conversation about
-    // this topic" gesture. Always mint a fresh session before sending so
-    // the prompt doesn't get appended to whatever the user was doing
-    // before they bounced off the landing CTA. POST /api/sessions sets a
-    // new dexter_session cookie; the subsequent send() reads it.
-    void (async () => {
-      try {
-        await fetch('/api/sessions', { method: 'POST' });
-      } catch {
-        /* If session creation fails, send still proceeds against the
-         * stale cookie — degraded but not silent. */
-      }
-      setTurns([]);
-      await send(promptFromUrl);
-    })();
-  }, [promptFromUrl, router, send]);
+    setInput('');
+    void send(initialPromptRef.current);
+  }, [hasDeepLinkPrompt, send]);
 
   const stop = useCallback(() => {
     abortRef.current?.abort();
