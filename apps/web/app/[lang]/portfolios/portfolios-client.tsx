@@ -892,7 +892,12 @@ function HoldingRow({
           {holding.exchange ? ` · ${holding.exchange}` : ''}
         </div>
       </div>
-      <div className="hidden flex-col items-end gap-1 leading-tight sm:flex">
+      {/* Price + day-change column. Fixed w-20 (5rem) so all rows align
+          on the right edge regardless of how many digits a ticker
+          quotes — NVDA at 225.32 sits at the same x as a sub-$10
+          A-share. tabular-nums keeps digits monospaced within the
+          variable-width inter font. */}
+      <div className="hidden w-20 shrink-0 flex-col items-end gap-1 leading-tight sm:flex">
         {hasQuote ? (
           <>
             <span className="font-mono text-sm tabular-nums">{quote.close!.toFixed(2)}</span>
@@ -914,7 +919,11 @@ function HoldingRow({
           </>
         )}
       </div>
-      <div className="flex items-center gap-1">
+      {/* Weight column — fixed width (w-20) so "—", "5%", and "33.33%"
+          all hit the same right edge across rows. The editing input
+          and the display button share the same w-20 so the column
+          doesn't reflow when the user clicks to edit. */}
+      <div className="flex w-20 shrink-0 items-center justify-end gap-1">
         {editing ? (
           <>
             <input
@@ -933,9 +942,8 @@ function HoldingRow({
               }}
               inputMode="decimal"
               placeholder="—"
-              className="w-16 rounded border border-border bg-background px-2 py-1 text-right text-sm font-mono focus:border-foreground focus:outline-none"
+              className="w-14 rounded border border-border bg-background px-2 py-1 text-right text-sm font-mono tabular-nums focus:border-foreground focus:outline-none"
             />
-            <span className="text-xs text-muted-foreground">%</span>
             <button
               onClick={() => {
                 onEditWeight(value);
@@ -949,7 +957,7 @@ function HoldingRow({
         ) : (
           <button
             onClick={() => setEditing(true)}
-            className="rounded px-2 py-1 text-sm font-mono hover:bg-muted"
+            className="w-full rounded px-2 py-1 text-right text-sm font-mono tabular-nums hover:bg-muted"
             title={dict.portfolios?.editWeight ?? 'Edit weight'}
           >
             {holding.weight == null ? '—' : `${holding.weight}%`}
