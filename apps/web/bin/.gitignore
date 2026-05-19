@@ -1,6 +1,9 @@
-# OfficeCLI binaries are downloaded by scripts/install-officecli.ts at
-# build time (and on demand for local dev). They're ~31 MB each and
-# bloating git with them per upstream release isn't worth it.
+# OfficeCLI binaries + style library are downloaded by
+# scripts/install-officecli.ts at build time (and on demand for local
+# dev). Binaries are ~31 MB each and the style library is ~250 KB
+# across 51 presets; bloating git with them per upstream release isn't
+# worth it.
 officecli
 officecli-*
 SHA256SUMS
+styles/

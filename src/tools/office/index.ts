@@ -19,8 +19,10 @@
 
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
 import { formatToolResult } from '../types.js';
-import { runOfficeCli, OfficeCliError } from './spawn.js';
+import { runOfficeCli, OfficeCliError, findOfficeCliBinary } from './spawn.js';
 
 const READ_SUBCOMMANDS = [
   'view',
@@ -35,6 +37,13 @@ const READ_SUBCOMMANDS = [
   // is supposed to call this before authoring anything beyond the
   // hard-coded recipes so it picks the right property names.
   'help',
+  // Style preset library — synthetic verbs that DON'T shell out to
+  // OfficeCLI. They read the bundled docs at apps/web/bin/styles/.
+  // styles-list returns INDEX.md (topic → preset map); style returns
+  // the style.md philosophy doc (palette + typography + structure)
+  // for a single preset by directory name.
+  'styles-list',
+  'style',
 ] as const;
 const EDIT_SUBCOMMANDS = [
   'create',
@@ -57,7 +66,7 @@ const EDIT_SUBCOMMANDS = [
 
 const READ_INPUT = z.object({
   subcommand: z.enum(READ_SUBCOMMANDS).describe(
-    'Which read-only OfficeCLI subcommand to run. See the office skill for which to pick: view (outline/text/stats/issues/html/screenshot), get (node by path), query (CSS-like selector), raw (raw XML of a part), validate (schema check), dump (round-trippable JSON), get-marks (listing), help (schema discovery — args=[<format>, <element>] returns the property vocabulary).',
+    'Which read-only verb to run. OfficeCLI-backed: view (outline/text/stats/issues/html/screenshot), get (node by path), query (CSS-like selector), raw (raw XML of a part), validate (schema check), dump (round-trippable JSON), get-marks (listing), help (schema discovery — file=<format>, args=[<element>] returns the property vocabulary). Style-library (local file reads, no binary call): styles-list (returns INDEX.md, the topic → preset map), style (file=<preset-directory>, returns the style.md philosophy doc for that preset).',
   ),
   file: z.string().describe('Absolute path to the .docx / .xlsx / .pptx file.'),
   args: z
@@ -111,6 +120,73 @@ function buildArgv(subcommand: string, file: string, args: string[], options?: R
   return argv;
 }
 
+/**
+ * Style preset library is co-located with the OfficeCLI binary at
+ * `<bin-dir>/styles/`. Path resolution walks up from
+ * findOfficeCliBinary() so the same code works on Vercel (bundled
+ * function) and local CLI (downloaded into apps/web/bin/).
+ */
+function stylesRoot(): string | null {
+  const bin = findOfficeCliBinary();
+  if (!bin) return null;
+  const dir = join(dirname(bin), 'styles');
+  return existsSync(dir) ? dir : null;
+}
+
+function readStylesIndex(): string {
+  const root = stylesRoot();
+  if (!root) {
+    return JSON.stringify({
+      error: 'styles_not_installed',
+      hint: 'Run scripts/install-officecli.ts to fetch the styles library.',
+    });
+  }
+  const indexPath = join(root, 'INDEX.md');
+  if (!existsSync(indexPath)) {
+    // List the directories anyway so the agent has a fallback.
+    const dirs = readdirSync(root, { withFileTypes: true })
+      .filter((d) => d.isDirectory())
+      .map((d) => d.name);
+    return JSON.stringify({
+      error: 'index_md_missing',
+      availablePresets: dirs,
+    });
+  }
+  return readFileSync(indexPath, 'utf-8');
+}
+
+function readStyleDoc(directory: string): string {
+  const root = stylesRoot();
+  if (!root) {
+    return JSON.stringify({
+      error: 'styles_not_installed',
+      hint: 'Run scripts/install-officecli.ts to fetch the styles library.',
+    });
+  }
+  // Don't allow path traversal — only direct child directories.
+  if (directory.includes('/') || directory.includes('..') || directory.includes('\\')) {
+    return JSON.stringify({
+      error: 'invalid_directory',
+      hint: 'Pass only the preset folder name (e.g. "dark--investor-pitch"), no slashes.',
+    });
+  }
+  const candidate = resolve(root, directory, 'style.md');
+  if (!candidate.startsWith(root)) {
+    return JSON.stringify({ error: 'invalid_directory' });
+  }
+  if (!existsSync(candidate)) {
+    const available = readdirSync(root, { withFileTypes: true })
+      .filter((d) => d.isDirectory())
+      .map((d) => d.name);
+    return JSON.stringify({
+      error: 'preset_not_found',
+      requested: directory,
+      availablePresets: available,
+    });
+  }
+  return readFileSync(candidate, 'utf-8');
+}
+
 async function invoke(
   subcommand: string,
   file: string,
@@ -118,6 +194,22 @@ async function invoke(
   options?: Record<string, string | number | boolean>,
   stdin?: string,
 ): Promise<string> {
+  // Synthetic style-library subcommands short-circuit the spawn path —
+  // they're pure local file reads. Returning the markdown content as
+  // the result's `data` field keeps the response shape consistent
+  // with what OfficeCLI itself would produce.
+  if (subcommand === 'styles-list') {
+    return formatToolResult({ source: 'styles-index', markdown: readStylesIndex() });
+  }
+  if (subcommand === 'style') {
+    const directory = file; // For `style`, `file` carries the preset folder name.
+    return formatToolResult({
+      source: 'style-doc',
+      preset: directory,
+      markdown: readStyleDoc(directory),
+    });
+  }
+
   try {
     const result = await runOfficeCli({
       argv: buildArgv(subcommand, file, args, options),

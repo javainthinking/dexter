@@ -98,6 +98,70 @@ async function downloadAsset(asset: Asset, expectedHash: string | undefined, des
   console.log(`ok (${(bytes.length / (1024 * 1024)).toFixed(1)} MB)`);
 }
 
+/**
+ * Pull the upstream design-style library (51 curated presets, each
+ * with a style.md philosophy doc). build.sh + template.pptx are
+ * skipped — upstream itself says they're "for reference only" and the
+ * agent doesn't read binary .pptx. ~150 KB total instead of ~30 MB.
+ *
+ * Source-of-truth: https://github.com/iOfficeAI/OfficeCLI/tree/main/styles
+ */
+const STYLES_REPO_API = 'https://api.github.com/repos/iOfficeAI/OfficeCLI/contents/styles';
+const STYLES_RAW_BASE = 'https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/main/styles';
+
+async function fetchJson<T>(url: string): Promise<T> {
+  const res = await fetch(url, {
+    headers: {
+      Accept: 'application/vnd.github+json',
+      // Public-API anonymous limit is fine for the ~52 calls we make.
+      'User-Agent': 'dexter-install-officecli',
+    },
+    redirect: 'follow',
+  });
+  if (!res.ok) throw new Error(`fetch ${url} → ${res.status} ${res.statusText}`);
+  return (await res.json()) as T;
+}
+
+async function fetchText(url: string): Promise<string> {
+  const res = await fetch(url, { redirect: 'follow' });
+  if (!res.ok) throw new Error(`fetch ${url} → ${res.status} ${res.statusText}`);
+  return await res.text();
+}
+
+interface GhContent {
+  name: string;
+  type: 'dir' | 'file';
+  sha: string;
+  download_url: string | null;
+}
+
+async function syncStyles(stylesDir: string): Promise<number> {
+  if (!existsSync(stylesDir)) mkdirSync(stylesDir, { recursive: true });
+
+  // 1. INDEX.md is the agent's entry point — the topic→preset table.
+  const indexText = await fetchText(`${STYLES_RAW_BASE}/INDEX.md`);
+  writeFileSync(join(stylesDir, 'INDEX.md'), indexText);
+
+  // 2. List the 51 preset directories and pull style.md from each.
+  const root = await fetchJson<GhContent[]>(STYLES_REPO_API);
+  const dirs = root.filter((r) => r.type === 'dir');
+  let written = 0;
+  for (const dir of dirs) {
+    const localDir = join(stylesDir, dir.name);
+    if (!existsSync(localDir)) mkdirSync(localDir, { recursive: true });
+    const styleUrl = `${STYLES_RAW_BASE}/${encodeURIComponent(dir.name)}/style.md`;
+    try {
+      const styleText = await fetchText(styleUrl);
+      writeFileSync(join(localDir, 'style.md'), styleText);
+      written += 1;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.warn(`  ⚠ ${dir.name}/style.md skipped: ${message}`);
+    }
+  }
+  return written;
+}
+
 async function main(): Promise<void> {
   if (!existsSync(BIN_DIR)) {
     mkdirSync(BIN_DIR, { recursive: true });
@@ -141,6 +205,20 @@ async function main(): Promise<void> {
     } catch {
       /* non-critical */
     }
+  }
+
+  // Pull the style preset library — gives the agent 51 curated designs
+  // to pick from when authoring decks. Failure here is non-fatal: the
+  // generic design fallback in SKILL.md still applies if INDEX or any
+  // individual style.md can't be fetched.
+  try {
+    const stylesDir = join(BIN_DIR, 'styles');
+    process.stdout.write(`  ↓ styles/ … `);
+    const count = await syncStyles(stylesDir);
+    console.log(`ok (INDEX.md + ${count} style.md presets)`);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn(`  ⚠ styles/ skipped: ${message}`);
   }
 
   console.log('done.');

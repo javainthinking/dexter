@@ -31,26 +31,53 @@ is judged on layout, typography, colour, and visual hierarchy — not on
 which strings appear on which slides. Before authoring anything beyond
 a one-off scratch file, follow this loop:
 
-1. **Discover the property vocabulary** for the element you're about to
-   create via `office_read help`. Example: before adding a slide, run
-   `office_read subcommand=help file=pptx args=["slide"]` to see every
-   slide property (background, layout, transition, etc.). For a chart:
-   `office_read subcommand=help file=pptx args=["chart"]`.
-2. **Pick a theme** before you pick content. Set heading + body fonts
-   on `/theme` and apply scheme colours throughout (see the design
-   system below).
-3. **Pick the right layout per slide** — `Title Slide`, `Title and
+1. **Pick a style preset.** Dexter bundles upstream OfficeCLI's
+   curated style library — 51 designs spanning dark / light / warm /
+   vivid / bw / mixed palettes, with named topics (investor pitch,
+   research deck, corporate report, brand book, sci-fi, luxury,
+   wellness, finance, etc.). Always start here:
+   - `office_read subcommand=styles-list file=""` — returns INDEX.md,
+     a topic → preset map. Pick the directory name that best fits
+     the user's request.
+   - `office_read subcommand=style file="<preset-directory>"` —
+     returns that preset's `style.md` doc with the **colour palette
+     (hex + roles)**, **typography**, **design techniques**, and
+     **slide-by-slide structure**. Treat this as the source of
+     truth for the deck's look.
+   The preset is *guidance, not a template* — you author the deck
+   with your own `officecli` calls; you do NOT copy coordinates or
+   shapes verbatim. The preset tells you what palette to apply and
+   what structure to follow.
+
+2. **Discover the property vocabulary** for any element you're not
+   sure about via `office_read help`. Example: before adding a slide,
+   run `office_read subcommand=help file=pptx args=["slide"]` to see
+   every slide property (background, layout, transition, etc.). For
+   a chart: `office_read subcommand=help file=pptx args=["chart"]`.
+
+3. **Apply the picked theme.** Set heading + body fonts on `/theme`
+   and apply the preset's hex colours throughout (via `background`,
+   `areafill`, table header `background`, chart series colours).
+
+4. **Pick the right layout per slide** — `Title Slide`, `Title and
    Content`, `Two Content`, `Section Header`, `Comparison`, `Blank`.
-   Set `--prop layout="Title Slide"` on add.
-4. **Position and size**. Slide elements take `anchor=x,y,w,h` (cm-
+   Set `--prop layout="Title Slide"` on add. The preset's
+   slide-by-slide structure tells you which layout per slide.
+
+5. **Position and size.** Slide elements take `anchor=x,y,w,h` (cm-
    based) or `anchor=<named token>`. Chart axes, table widths, image
    sizes all benefit from explicit dimensions.
-5. **Use charts/tables/sparklines for numbers**, not paragraphs. Excel
-   has 150+ formulas, pivot tables, conditional formatting, databars,
-   colorscales, iconsets, and sparklines — reach for them.
-6. **Run the design pass** before declaring done: `office_read view
-   issues` (catches overflow + missing alt text + formula errors) +
-   `office_read validate` (schema check).
+
+6. **Use charts/tables/sparklines for numbers**, not paragraphs.
+   Excel has 150+ formulas, pivot tables, conditional formatting,
+   databars, colorscales, iconsets, and sparklines — reach for them.
+
+7. **Run the design pass** before declaring done:
+   - `office_read view issues` — catches overflow + missing alt text
+     + formula errors.
+   - `office_read validate` — schema check.
+   - `office_read view screenshot` — render to PNG and verify the
+     result matches the picked preset's mood.
 
 ## Where to put files
 
@@ -90,11 +117,14 @@ a one-off scratch file, follow this loop:
 | `batch` | — | Pipe a JSON array of `{command, args, options}` on stdin; one open/save cycle. |
 | `merge` | `[output-file]` | Template fill: `file` is the template with `{{key}}` placeholders; `args[0]` is the output; pipe JSON data on stdin. |
 
-## Default design system
+## Design fallback (when no preset fits)
 
-Use these defaults unless the user asks for something specific. They
-match the financial-research aesthetic and read well in both light
-projection and dark screen viewing.
+The 51-preset library above should cover almost every common topic.
+Only fall back to these generic defaults when the user explicitly
+rejects every preset, or when the request is for a non-presentation
+artifact (e.g. plain Word memo, raw Excel data dump). They match the
+financial-research aesthetic and read in both light projection and
+dark screen viewing.
 
 ### Typography
 - **Heading**: `headingFont="Inter Display"` or `"Source Serif 4"` for
@@ -159,18 +189,24 @@ For charts comparing performance vs benchmark:
 Use `batch` for any deck with > 3 slides — much faster than chained
 `add` calls. Outline:
 
-1. Create blank: `office_edit subcommand=create file=/tmp/<topic>.pptx`
-2. Set theme (one shot via `set` on `/theme`):
+1. **Pick a preset.** Read `office_read styles-list` first; for a
+   typical equity research deck, `dark--investor-pitch` or
+   `light--minimal-corporate` are common picks. Then read
+   `office_read style file=<preset-dir>` to grab the colour palette
+   and typography you'll apply below.
+2. Create blank: `office_edit subcommand=create file=/tmp/<topic>.pptx`
+3. Set theme using the preset's fonts (one shot via `set` on `/theme`):
    ```
    office_edit subcommand=set file=/tmp/<topic>.pptx args=["/theme"]
      options={
-       headingFont: "Source Serif 4",
-       bodyFont: "Inter",
+       headingFont: "<preset's headline typeface>",
+       bodyFont: "<preset's body typeface>",
        "headingFont.ea": "Noto Sans CJK SC",
        "bodyFont.ea": "Noto Sans CJK SC"
      }
    ```
-3. Add slides via `batch` with the layout per slide:
+4. Add slides via `batch` with the layout per slide, applying the
+   preset's hex colours to backgrounds + accents:
    ```json
    [
      { "command": "add", "args": ["/"], "options": {
