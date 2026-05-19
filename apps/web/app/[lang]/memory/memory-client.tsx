@@ -8,6 +8,8 @@ import { Button } from '../../../components/ui/button';
 import { ThemeToggle } from '../../../components/theme-toggle';
 import { LanguageSwitcher } from '../../../components/i18n/language-switcher';
 import { UserMenu } from '../../../components/auth/user-menu';
+import { AppNav } from '../../../components/nav/app-nav';
+import { Separator } from '../../../components/ui/separator';
 import { Logo } from '../../../components/logo';
 import {
   useDictionary,
@@ -232,6 +234,8 @@ export function MemoryClient() {
             <Logo size="sm" />
           </div>
           <div className="flex items-center gap-1">
+            <AppNav />
+            <Separator orientation="vertical" className="h-6" />
             <LanguageSwitcher />
             <ThemeToggle />
             <UserMenu />
@@ -246,7 +250,11 @@ export function MemoryClient() {
               {dict.nav.memory}
             </span>
           </div>
-          <LanguageSwitcher />
+          <div className="flex items-center gap-2">
+            <AppNav />
+            <Separator orientation="vertical" className="h-4" />
+            <LanguageSwitcher />
+          </div>
         </header>
 
         {/* Main content */}

@@ -8,6 +8,8 @@ import { Button } from '../../../components/ui/button';
 import { ThemeToggle } from '../../../components/theme-toggle';
 import { LanguageSwitcher } from '../../../components/i18n/language-switcher';
 import { UserMenu } from '../../../components/auth/user-menu';
+import { AppNav } from '../../../components/nav/app-nav';
+import { Separator } from '../../../components/ui/separator';
 import { Logo } from '../../../components/logo';
 import { useDictionary, useLocale } from '../../../components/i18n/dictionary-provider';
 import { getLocalizedPath } from '../../../lib/i18n/paths';
@@ -242,6 +244,8 @@ export function IndicatorsClient({
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <AppNav />
+            <Separator orientation="vertical" className="h-6" />
             <LanguageSwitcher />
             <ThemeToggle />
             <UserMenu variant="compact" />

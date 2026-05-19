@@ -19,6 +19,7 @@ import { ThemeToggle } from '../../../components/theme-toggle';
 import { Logo } from '../../../components/logo';
 import { LanguageSwitcher } from '../../../components/i18n/language-switcher';
 import { UserMenu } from '../../../components/auth/user-menu';
+import { AppNav } from '../../../components/nav/app-nav';
 import {
   useDictionary,
   useLocale,
@@ -371,6 +372,8 @@ function ChatPage() {
             >
               <RotateCcw className="size-4" />
             </Button>
+            <AppNav />
+            <Separator orientation="vertical" className="h-6" />
             <LanguageSwitcher />
             <ThemeToggle />
             <UserMenu />
@@ -386,6 +389,8 @@ function ChatPage() {
             <span className="text-sm text-muted-foreground">{turnCountLabel}</span>
           </div>
           <div className="flex items-center gap-2">
+            <AppNav />
+            <Separator orientation="vertical" className="h-4" />
             <LanguageSwitcher />
             <Button variant="ghost" size="sm" onClick={newConversation}>
               <RotateCcw className="size-3.5" />
