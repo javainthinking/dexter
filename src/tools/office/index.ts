@@ -22,7 +22,20 @@ import { z } from 'zod';
 import { formatToolResult } from '../types.js';
 import { runOfficeCli, OfficeCliError } from './spawn.js';
 
-const READ_SUBCOMMANDS = ['view', 'get', 'query', 'raw', 'validate', 'dump', 'get-marks'] as const;
+const READ_SUBCOMMANDS = [
+  'view',
+  'get',
+  'query',
+  'raw',
+  'validate',
+  'dump',
+  'get-marks',
+  // Schema discovery — `help <format> [element]` returns the full property
+  // catalogue for elements (slide, chart, table, theme, etc.). The agent
+  // is supposed to call this before authoring anything beyond the
+  // hard-coded recipes so it picks the right property names.
+  'help',
+] as const;
 const EDIT_SUBCOMMANDS = [
   'create',
   'new',
@@ -36,11 +49,15 @@ const EDIT_SUBCOMMANDS = [
   'import',
   'refresh',
   'batch',
+  // Template fill: take a .docx/.xlsx/.pptx with {{key}} placeholders and a
+  // JSON data file, produce a populated output. Major lever for getting
+  // designed output without the agent having to hand-place every shape.
+  'merge',
 ] as const;
 
 const READ_INPUT = z.object({
   subcommand: z.enum(READ_SUBCOMMANDS).describe(
-    'Which read-only OfficeCLI subcommand to run. See the office skill for which to pick: view (outline/text/stats/issues/html/screenshot), get (node by path), query (CSS-like selector), raw (raw XML of a part), validate (schema check), dump (round-trippable JSON), get-marks (listing).',
+    'Which read-only OfficeCLI subcommand to run. See the office skill for which to pick: view (outline/text/stats/issues/html/screenshot), get (node by path), query (CSS-like selector), raw (raw XML of a part), validate (schema check), dump (round-trippable JSON), get-marks (listing), help (schema discovery — args=[<format>, <element>] returns the property vocabulary).',
   ),
   file: z.string().describe('Absolute path to the .docx / .xlsx / .pptx file.'),
   args: z
@@ -59,7 +76,7 @@ const READ_INPUT = z.object({
 
 const EDIT_INPUT = z.object({
   subcommand: z.enum(EDIT_SUBCOMMANDS).describe(
-    'Which mutating OfficeCLI subcommand to run. See the office skill for the full vocabulary: create/new (blank doc), add (insert element under parent path), set (modify properties at path), remove (delete at path), move (relocate), swap (exchange two paths), raw-set (direct XML edit), add-part (new document part), import (CSV/TSV → sheet), refresh (recalc TOC etc.), batch (JSON array of ops in one open/save cycle).',
+    'Which mutating OfficeCLI subcommand to run. See the office skill for the full vocabulary: create/new (blank doc), add (insert element under parent path), set (modify properties at path), remove (delete at path), move (relocate), swap (exchange two paths), raw-set (direct XML edit), add-part (new document part), import (CSV/TSV → sheet), refresh (recalc TOC etc.), batch (JSON array of ops in one open/save cycle), merge (template fill: args=[<template-file>, <output-file>], JSON data piped on stdin).',
   ),
   file: z.string().describe('Absolute path to the .docx / .xlsx / .pptx file. Will be created when subcommand is create/new.'),
   args: z
