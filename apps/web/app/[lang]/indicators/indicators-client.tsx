@@ -11,7 +11,6 @@ import { UserMenu } from '../../../components/auth/user-menu';
 import { AppNav } from '../../../components/nav/app-nav';
 import { Separator } from '../../../components/ui/separator';
 import { Skeleton } from '../../../components/ui/skeleton';
-import { Logo } from '../../../components/logo';
 import { useDictionary, useLocale } from '../../../components/i18n/dictionary-provider';
 import { getLocalizedPath } from '../../../lib/i18n/paths';
 import { cn } from '../../../lib/utils';
@@ -234,12 +233,16 @@ export function IndicatorsClient({
             <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setSidebarOpen(true)}>
               <Menu className="size-5" />
             </Button>
-            <Logo />
-            <div className="ml-2 hidden flex-col sm:flex">
+            {/* Logo removed on app-internal pages — the sidebar + tab
+                already orient the user, and the top-right AppNav now
+                carries the global navigation. Keeps this header lean
+                so the page title + ticker selector get the visual
+                weight. */}
+            <div className="flex flex-col">
               <span className="text-sm font-semibold">
                 {dict.indicators?.title ?? 'Indicators'}
               </span>
-              <span className="text-xs text-muted-foreground">
+              <span className="hidden text-xs text-muted-foreground sm:inline">
                 {dict.indicators?.subtitle ?? 'Technical signals across your watchlist'}
               </span>
             </div>
