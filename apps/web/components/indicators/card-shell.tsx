@@ -11,6 +11,18 @@ const BUCKET_COLOR: Record<Bucket, string> = {
   neutral: 'bg-muted text-muted-foreground border-border',
 };
 
+/**
+ * Solid status dot rendered inside the bucket badge. Sits at the
+ * stronger end of the color scale so the call is readable at a glance
+ * even when the muted card chrome surrounds it. Red-up / green-down
+ * per the China-market convention used elsewhere in the app.
+ */
+const BUCKET_DOT_COLOR: Record<Bucket, string> = {
+  bullish: 'bg-rose-500',
+  bearish: 'bg-emerald-500',
+  neutral: 'bg-muted-foreground',
+};
+
 export function CardShell({
   ticker,
   displayName,
@@ -46,12 +58,18 @@ export function CardShell({
           )}
         </div>
         {bucket && bucketLabel && (
+          // Bigger, more prominent status pill — the bucket label is the
+          // headline call (bullish / bearish / neutral + the reason) and
+          // needs to read at a glance. Solid status dot + text-xs
+          // semibold; uppercase dropped so Chinese reads as designed and
+          // English still feels like a chip.
           <span
             className={cn(
-              'inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide shrink-0',
+              'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold shrink-0',
               BUCKET_COLOR[bucket],
             )}
           >
+            <span className={cn('size-2 rounded-full shrink-0', BUCKET_DOT_COLOR[bucket])} aria-hidden="true" />
             {bucketLabel}
           </span>
         )}
