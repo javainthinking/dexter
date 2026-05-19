@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <!--
+    PickSkill favicon. Mirrors the Mark component in components/logo.tsx
+    so the browser tab matches the in-app wordmark.
+
+    Standalone-friendly variant:
+    - rounded-square background filled directly here (rx=5 matches the
+      ~rounded-md the logo component uses), so the icon doesn't need
+      surrounding context to read.
+    - chart up-trend strokes in white. The secondary arrow-head path
+      keeps its 0.85 opacity for visual hierarchy at small sizes.
+
+    Next.js App Router auto-emits <link rel="icon" type="image/svg+xml">
+    when this file lives at app/icon.svg — no metadata config needed.
+  -->
+  <rect width="24" height="24" rx="5" fill="#0a0a0a" />
+  <path
+    d="M4 16 L9 11 L13 14 L20 6"
+    stroke="#fafafa"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M15 6 L20 6 L20 11"
+    stroke="#fafafa"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    opacity="0.85"
+  />
+</svg>
