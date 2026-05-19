@@ -318,6 +318,12 @@ export function PortfoliosClient({
       const json = (await r.json()) as { portfolio: PortfolioDetail };
       setDetail(json.portfolio);
     }
+    // Refresh quotes so the new row paints with a real price + change
+    // instead of sitting on the skeleton until the user hits refresh.
+    // Fired in parallel with refreshList — they touch different state
+    // (sidebar list vs holding-row prices) and shouldn't block each
+    // other.
+    void refreshQuotes(activeId);
     await refreshList();
   }
 
