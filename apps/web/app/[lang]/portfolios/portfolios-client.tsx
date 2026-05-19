@@ -12,6 +12,7 @@ import {
   Edit2,
   AlertTriangle,
   Wallet,
+  RefreshCw,
 } from 'lucide-react';
 import { Sidebar, type SessionSummary } from '../../../components/chat/sidebar';
 import { Button } from '../../../components/ui/button';
@@ -20,6 +21,7 @@ import { LanguageSwitcher } from '../../../components/i18n/language-switcher';
 import { UserMenu } from '../../../components/auth/user-menu';
 import { AppNav } from '../../../components/nav/app-nav';
 import { Separator } from '../../../components/ui/separator';
+import { Skeleton } from '../../../components/ui/skeleton';
 import { Logo } from '../../../components/logo';
 import { useDictionary, useLocale } from '../../../components/i18n/dictionary-provider';
 import { getLocalizedPath } from '../../../lib/i18n/paths';
@@ -132,36 +134,46 @@ export function PortfoliosClient({
   }, [activeId, dict.portfolios?.errorLoad]);
 
   // Pull latest close + day change for the active portfolio. Runs in
-  // parallel with the detail fetch; rows render "—" until the quote
-  // lands. Cancelled on activeId change so a slow chain (e.g. Yahoo
-  // fallback for a thin ticker) on a previous portfolio doesn't paint
-  // stale numbers after the user has moved on.
-  React.useEffect(() => {
-    if (!activeId) {
-      setQuotes({});
-      return;
-    }
-    let cancelled = false;
-    setQuotesLoading(true);
-    (async () => {
+  // parallel with the detail fetch; rows render skeleton bars until the
+  // quote lands. Refresh button uses the same fetcher, so manual reload
+  // and auto-fetch share the in-flight / cancellation logic.
+  const refreshQuotes = React.useCallback(
+    async (portfolioId: string, signal?: AbortSignal) => {
+      setQuotesLoading(true);
       try {
-        const res = await fetch(`/api/portfolios/${activeId}/quotes`, { cache: 'no-store' });
-        if (!res.ok || cancelled) return;
+        const res = await fetch(`/api/portfolios/${portfolioId}/quotes`, {
+          cache: 'no-store',
+          signal,
+        });
+        if (!res.ok || signal?.aborted) return;
         const json = (await res.json()) as { quotes?: HoldingQuote[] };
-        if (cancelled) return;
+        if (signal?.aborted) return;
         const map: Record<string, HoldingQuote> = {};
         for (const q of json.quotes ?? []) map[q.ticker] = q;
         setQuotes(map);
       } catch {
         /* leave existing quotes; row simply shows "—" */
       } finally {
-        if (!cancelled) setQuotesLoading(false);
+        if (!signal?.aborted) setQuotesLoading(false);
       }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [activeId]);
+    },
+    [],
+  );
+
+  React.useEffect(() => {
+    if (!activeId) {
+      setQuotes({});
+      return;
+    }
+    const controller = new AbortController();
+    void refreshQuotes(activeId, controller.signal);
+    return () => controller.abort();
+  }, [activeId, refreshQuotes]);
+
+  const handleRefreshQuotes = React.useCallback(() => {
+    if (!activeId) return;
+    void refreshQuotes(activeId);
+  }, [activeId, refreshQuotes]);
 
   // Reconcile with the API on mount + on tab-focus. The SSR pass renders
   // a snapshot of the list at request time; without this, a user who
@@ -518,6 +530,7 @@ export function PortfoliosClient({
                 onAddHolding={handleAddHolding}
                 onRemoveHolding={handleRemoveHolding}
                 onEditWeight={handleEditWeight}
+                onRefreshQuotes={handleRefreshQuotes}
                 dict={dict}
               />
             ) : null}
@@ -644,6 +657,7 @@ function PortfolioDetailView({
   onAddHolding,
   onRemoveHolding,
   onEditWeight,
+  onRefreshQuotes,
   dict,
 }: {
   portfolio: PortfolioDetail;
@@ -652,6 +666,7 @@ function PortfolioDetailView({
   onAddHolding: (hit: SymbolHit, weight: number | null) => Promise<void>;
   onRemoveHolding: (id: string) => void;
   onEditWeight: (id: string, value: string) => void;
+  onRefreshQuotes: () => void;
   dict: any;
 }) {
   const existing = portfolio.holdings.map((h) => h.ticker);
@@ -696,6 +711,7 @@ function PortfolioDetailView({
         quotesLoading={quotesLoading}
         onRemoveHolding={onRemoveHolding}
         onEditWeight={onEditWeight}
+        onRefreshQuotes={onRefreshQuotes}
         dict={dict}
       />
     </div>
@@ -721,6 +737,7 @@ function HoldingsSection({
   quotesLoading,
   onRemoveHolding,
   onEditWeight,
+  onRefreshQuotes,
   dict,
 }: {
   portfolio: PortfolioDetail;
@@ -728,6 +745,7 @@ function HoldingsSection({
   quotesLoading: boolean;
   onRemoveHolding: (id: string) => void;
   onEditWeight: (id: string, value: string) => void;
+  onRefreshQuotes: () => void;
   dict: any;
 }) {
   const [sort, setSort] = React.useState<HoldingsSort>('default');
@@ -749,13 +767,25 @@ function HoldingsSection({
 
   return (
     <section className="rounded-lg border border-border bg-card overflow-hidden">
-      <div className="flex items-center justify-between border-b border-border bg-muted/20 px-3 py-2">
+      <div className="flex items-center justify-between gap-2 border-b border-border bg-muted/20 px-3 py-2">
         <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
           {dict.portfolios?.holdingsTitle ?? 'Holdings'}
         </span>
-        {portfolio.holdings.length > 1 && (
-          <SortToggle sort={sort} onChange={setSort} dict={dict} />
-        )}
+        <div className="flex items-center gap-1.5">
+          {portfolio.holdings.length > 1 && (
+            <SortToggle sort={sort} onChange={setSort} dict={dict} />
+          )}
+          <button
+            type="button"
+            onClick={onRefreshQuotes}
+            disabled={quotesLoading}
+            title={dict.portfolios?.refreshQuotes ?? 'Refresh quotes'}
+            aria-label={dict.portfolios?.refreshQuotes ?? 'Refresh quotes'}
+            className="inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
+          >
+            <RefreshCw className={cn('size-3.5', quotesLoading && 'animate-spin')} />
+          </button>
+        </div>
       </div>
       {sorted.length === 0 ? (
         <p className="px-3 py-6 text-sm text-muted-foreground">
@@ -855,21 +885,27 @@ function HoldingRow({
           {holding.exchange ? ` · ${holding.exchange}` : ''}
         </div>
       </div>
-      <div className="hidden flex-col items-end leading-tight sm:flex">
-        <span className="font-mono text-sm tabular-nums">
-          {hasQuote
-            ? quote.close!.toFixed(2)
-            : quotesLoading
-            ? <span className="text-muted-foreground">…</span>
-            : <span className="text-muted-foreground">—</span>}
-        </span>
-        <span className={cn('font-mono text-[11px] tabular-nums', tone)}>
-          {pct != null
-            ? `${pct > 0 ? '+' : ''}${pct.toFixed(2)}%`
-            : hasQuote
-            ? ''
-            : ' '}
-        </span>
+      <div className="hidden flex-col items-end gap-1 leading-tight sm:flex">
+        {hasQuote ? (
+          <>
+            <span className="font-mono text-sm tabular-nums">{quote.close!.toFixed(2)}</span>
+            <span className={cn('font-mono text-[11px] tabular-nums', tone)}>
+              {pct != null ? `${pct > 0 ? '+' : ''}${pct.toFixed(2)}%` : ''}
+            </span>
+          </>
+        ) : quotesLoading ? (
+          // Skeleton bars sized to mirror the final cells so the row
+          // doesn't jump width when the quote lands.
+          <>
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-3 w-12" />
+          </>
+        ) : (
+          <>
+            <span className="font-mono text-sm text-muted-foreground">—</span>
+            <span className="font-mono text-[11px] text-muted-foreground">&nbsp;</span>
+          </>
+        )}
       </div>
       <div className="flex items-center gap-1">
         {editing ? (

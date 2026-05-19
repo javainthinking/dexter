@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, RefreshCw, Menu, AlertTriangle, Wallet, ChevronDown } from 'lucide-react';
+import { RefreshCw, Menu, AlertTriangle, Wallet, ChevronDown } from 'lucide-react';
 import { Sidebar, type SessionSummary } from '../../../components/chat/sidebar';
 import { Button } from '../../../components/ui/button';
 import { ThemeToggle } from '../../../components/theme-toggle';
@@ -10,6 +10,7 @@ import { LanguageSwitcher } from '../../../components/i18n/language-switcher';
 import { UserMenu } from '../../../components/auth/user-menu';
 import { AppNav } from '../../../components/nav/app-nav';
 import { Separator } from '../../../components/ui/separator';
+import { Skeleton } from '../../../components/ui/skeleton';
 import { Logo } from '../../../components/logo';
 import { useDictionary, useLocale } from '../../../components/i18n/dictionary-provider';
 import { getLocalizedPath } from '../../../lib/i18n/paths';
@@ -269,9 +270,20 @@ export function IndicatorsClient({
                 onChange={setActiveId}
               />
             )}
+            <button
+              type="button"
+              onClick={fetchData}
+              disabled={loading || (needsTickers && tickers.length === 0)}
+              className="ml-auto inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
+              title={dict.indicators?.refresh ?? 'Refresh'}
+              aria-label={dict.indicators?.refresh ?? 'Refresh'}
+            >
+              <RefreshCw className={cn('size-3.5', loading && 'animate-spin')} />
+              <span className="hidden md:inline">{dict.indicators?.refresh ?? 'Refresh'}</span>
+            </button>
             <LocalizedLink
               href="/portfolios"
-              className="ml-auto text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+              className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
             >
               <Wallet className="size-3.5" />
               {dict.indicators?.managePortfolios ?? 'Manage portfolios'}
@@ -280,7 +292,7 @@ export function IndicatorsClient({
         )}
 
         {/* Tabs */}
-        <nav className="flex flex-wrap gap-1 border-b border-border bg-muted/30 px-4 py-2 lg:px-6">
+        <nav className="flex flex-wrap items-center gap-1 border-b border-border bg-muted/30 px-4 py-2 lg:px-6">
           {TABS.map((t) => (
             <button
               key={t.id}
@@ -296,6 +308,21 @@ export function IndicatorsClient({
               {indicatorsLabel(t.id)}
             </button>
           ))}
+          {/* Refresh shortcut for the movers tab, which doesn't appear
+              in the portfolio selector bar above. */}
+          {tab === 'movers' && (
+            <button
+              type="button"
+              onClick={fetchData}
+              disabled={loading}
+              className="ml-auto inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
+              title={dict.indicators?.refresh ?? 'Refresh'}
+              aria-label={dict.indicators?.refresh ?? 'Refresh'}
+            >
+              <RefreshCw className={cn('size-3.5', loading && 'animate-spin')} />
+              <span className="hidden md:inline">{dict.indicators?.refresh ?? 'Refresh'}</span>
+            </button>
+          )}
         </nav>
 
         <div className="flex-1 overflow-y-auto px-4 py-4 lg:px-6">
@@ -306,7 +333,10 @@ export function IndicatorsClient({
             <EmptyEmptyPortfolio dict={dict} locale={locale} activeId={activeId} />
           )}
 
-          {needsTickers && tickers.length > 0 && loading && <LoadingPanel dict={dict} />}
+          {needsTickers && tickers.length > 0 && loading && (
+            <SkeletonCardGrid count={tickers.length} />
+          )}
+          {tab === 'movers' && loading && <SkeletonMoversPanel />}
           {error && <ErrorPanel message={error} onRetry={fetchData} dict={dict} />}
 
           {!loading && data && tab === 'macd' && 'tickers' in data && (
@@ -448,11 +478,84 @@ function EmptyEmptyPortfolio({ dict, locale, activeId }: { dict: any; locale: st
   );
 }
 
-function LoadingPanel({ dict }: { dict: any }) {
+/**
+ * Skeleton placeholder for a single indicator card. Mirrors the real
+ * card's vertical rhythm — header row with ticker + bucket badge,
+ * chart area roughly the same height as the SVG, then the four-cell
+ * metrics row — so the layout doesn't jump when real data arrives.
+ *
+ * Used in a grid (SkeletonCardGrid) sized to `count` to match the
+ * number of holdings being loaded; that way the user can see "I have
+ * 11 cards coming" rather than a single generic spinner.
+ */
+function SkeletonCard() {
   return (
-    <div className="flex items-center justify-center gap-2 py-16 text-muted-foreground">
-      <Loader2 className="size-4 animate-spin" />
-      <span className="text-sm">{dict.indicators?.loading ?? 'Computing indicators…'}</span>
+    <article className="rounded-lg border border-border bg-card overflow-hidden">
+      <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2">
+        <div className="flex flex-col gap-1.5">
+          <Skeleton className="h-4 w-16" />
+          <Skeleton className="h-3 w-24" />
+        </div>
+        <Skeleton className="h-4 w-20" />
+      </div>
+      <div className="px-3 pt-3">
+        <Skeleton className="h-[220px] w-full" />
+      </div>
+      <div className="grid grid-cols-4 gap-2 px-3 py-3">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="space-y-1">
+            <Skeleton className="h-2 w-8" />
+            <Skeleton className="h-3 w-12" />
+          </div>
+        ))}
+      </div>
+    </article>
+  );
+}
+
+function SkeletonCardGrid({ count }: { count: number }) {
+  // Cap visible skeletons so a huge portfolio doesn't paint a wall of
+  // pulsing blocks. The real cards then fill in as they arrive.
+  const n = Math.min(Math.max(count, 1), 6);
+  return (
+    <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(420px,1fr))]">
+      {Array.from({ length: n }).map((_, i) => (
+        <SkeletonCard key={i} />
+      ))}
+    </div>
+  );
+}
+
+function SkeletonMoversPanel() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-6 w-48" />
+      <div className="grid gap-4 lg:grid-cols-2">
+        {Array.from({ length: 2 }).map((_, col) => (
+          <section
+            key={col}
+            className="rounded-lg border border-border bg-card overflow-hidden"
+          >
+            <div className="border-b border-border px-3 py-2">
+              <Skeleton className="h-4 w-28" />
+            </div>
+            <ul className="divide-y divide-border">
+              {Array.from({ length: 8 }).map((_, row) => (
+                <li key={row} className="flex items-center justify-between gap-2 px-3 py-2">
+                  <div className="space-y-1">
+                    <Skeleton className="h-3 w-12" />
+                    <Skeleton className="h-2 w-24" />
+                  </div>
+                  <div className="space-y-1 text-right">
+                    <Skeleton className="h-3 w-14" />
+                    <Skeleton className="h-2 w-10" />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
     </div>
   );
 }
