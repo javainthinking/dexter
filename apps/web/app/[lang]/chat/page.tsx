@@ -93,7 +93,13 @@ function ChatPage() {
   // On first mount, hydrate the thread from the session referenced by the
   // dexter_session cookie. Without this, refreshing /chat would always
   // show an empty thread even though the conversation lives in Postgres.
+  //
+  // Skip when ?prompt= is present — the prompt-consume effect below mints
+  // a fresh session for the deep-link topic, so loading the old session
+  // here would (a) flash old content and (b) append the new prompt to
+  // the wrong thread once /api/agent sees the current cookie.
   useEffect(() => {
+    if (promptFromUrl) return;
     let cancelled = false;
     (async () => {
       try {
@@ -110,7 +116,7 @@ function ChatPage() {
     return () => {
       cancelled = true;
     };
-  }, [hydrateFromRecord]);
+  }, [hydrateFromRecord, promptFromUrl]);
 
   useEffect(() => {
     threadRef.current?.scrollTo({
@@ -216,7 +222,21 @@ function ChatPage() {
     if (!promptFromUrl) return;
     consumed.current = true;
     setInput('');
-    void send(promptFromUrl);
+    // Deep-link from the landing page is a "start a new conversation about
+    // this topic" gesture. Always mint a fresh session before sending so
+    // the prompt doesn't get appended to whatever the user was doing
+    // before they bounced off the landing CTA. POST /api/sessions sets a
+    // new dexter_session cookie; the subsequent send() reads it.
+    void (async () => {
+      try {
+        await fetch('/api/sessions', { method: 'POST' });
+      } catch {
+        /* If session creation fails, send still proceeds against the
+         * stale cookie — degraded but not silent. */
+      }
+      setTurns([]);
+      await send(promptFromUrl);
+    })();
     // strip ?prompt off so refresh doesn't resend
     router.replace(window.location.pathname);
   }, [promptFromUrl, router, send]);
