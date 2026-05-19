@@ -5,6 +5,7 @@
   "description": "PickSkill web app — portfolio research desk for US / HK / A-share markets (Vercel-hosted).",
   "scripts": {
     "dev": "next dev --webpack",
+    "prebuild": "bun run ../../scripts/install-officecli.ts",
     "build": "next build --webpack",
     "start": "next start",
     "typecheck": "tsc --noEmit"

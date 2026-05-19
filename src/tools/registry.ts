@@ -1,5 +1,7 @@
 import { StructuredToolInterface } from '@langchain/core/tools';
 import { createGetFinancials, createGetMarketData, createReadFilings, createScreenStocks } from './finance/index.js';
+import { officeReadTool, officeEditTool, OFFICE_READ_DESCRIPTION, OFFICE_EDIT_DESCRIPTION } from './office/index.js';
+import { findOfficeCliBinary } from './office/spawn.js';
 import { exaSearch, perplexitySearch, tavilySearch, langSearch, WEB_SEARCH_DESCRIPTION, xSearchTool, X_SEARCH_DESCRIPTION } from './search/index.js';
 import { createWebSearchTool, type WebSearchProvider } from './search/web-search.js';
 import { getSetting } from '../utils/config.js';
@@ -195,6 +197,30 @@ export function getToolRegistry(model: string): RegisteredTool[] {
       tool: skillTool,
       description: SKILL_TOOL_DESCRIPTION,
       compactDescription: 'Invoke a specialized skill workflow (e.g., DCF valuation).',
+      concurrencySafe: false,
+    });
+  }
+
+  // OfficeCLI tools — only register when the binary is actually
+  // reachable. On Vercel the binary ships with the function bundle
+  // (next.config.ts outputFileTracingIncludes); on local CLI it's
+  // either run via scripts/install-officecli.ts or installed by the
+  // user via OfficeCLI's own install.sh.
+  if (findOfficeCliBinary()) {
+    tools.push({
+      name: 'office_read',
+      tool: officeReadTool,
+      description: OFFICE_READ_DESCRIPTION,
+      compactDescription:
+        'Inspect a .docx / .xlsx / .pptx file via OfficeCLI: outlines, text, stats, queries, validation, raw XML. Read-only.',
+      concurrencySafe: true,
+    });
+    tools.push({
+      name: 'office_edit',
+      tool: officeEditTool,
+      description: OFFICE_EDIT_DESCRIPTION,
+      compactDescription:
+        'Create or modify a .docx / .xlsx / .pptx file via OfficeCLI: create, add/move/remove/set/swap elements, import CSV, refresh, batch.',
       concurrencySafe: false,
     });
   }

@@ -1,0 +1,6 @@
+# OfficeCLI binaries are downloaded by scripts/install-officecli.ts at
+# build time (and on demand for local dev). They're ~31 MB each and
+# bloating git with them per upstream release isn't worth it.
+officecli
+officecli-*
+SHA256SUMS

@@ -6,6 +6,16 @@ const nextConfig: NextConfig = {
   // Allow the workspace root package (dexter-ts) to be resolved from
   // outside apps/web. Needed for monorepo source-tree imports.
   outputFileTracingRoot: resolve(__dirname, '../../'),
+  // Ship the OfficeCLI binary in the function bundle. Tracing only
+  // includes files Next can statically follow from server code; the
+  // binary is loaded at runtime via child_process.spawn, so we have to
+  // tell it explicitly. Only the linux-x64 binary is needed in the
+  // bundle — Vercel runs on Linux x86_64. The local-platform binaries
+  // stay outside the bundle and are picked up via PATH when a user
+  // runs `bun run dev` on a Mac.
+  outputFileTracingIncludes: {
+    '/api/**/*': ['./bin/officecli-linux-x64'],
+  },
   // The agent core uses native node modules. Keep them as externals so
   // the bundler doesn't try to inline them on the server.
   serverExternalPackages: ['better-sqlite3', 'playwright'],
