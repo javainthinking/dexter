@@ -1,8 +1,8 @@
 {
   "common": {
-    "appName": "Dexter",
-    "openGraphTitle": "Dexter — autonomous AI agent for financial research",
-    "openGraphDescription": "Dexter decomposes complex questions, fetches live market data, validates its own work, and produces citation-backed answers."
+    "appName": "PickSkill",
+    "openGraphTitle": "PickSkill — your portfolio research desk",
+    "openGraphDescription": "Live quotes, technical signals, and an AI analyst that remembers your thesis — across US, HK, and A-share markets."
   },
   "landing": {
     "badge": "Autonomous research agent",
@@ -10,7 +10,7 @@
     "hero": {
       "title": "Deep financial research,",
       "titleEmphasis": "on demand.",
-      "subtitle": "Dexter decomposes complex questions, fetches live market data, validates its own work, and produces citation-backed answers. The same agent core powers the terminal CLI, WhatsApp, and the web — wherever you do research.",
+      "subtitle": "PickSkill turns your watchlist into a research desk. Track US, HK, and A-share holdings in real time, scan MACD, moving averages, volume, and capital-flow signals across your whole portfolio, and chat with an AI analyst that remembers your thesis between sessions.",
       "primaryCta": "Open the workbench",
       "secondaryCta": "View on GitHub",
       "tagline": "Live · Streaming · Memory-grounded"
@@ -19,7 +19,7 @@
       "reasoning": {
         "eyebrow": "01 — Reasoning loop",
         "title": "Plans, executes, self-validates",
-        "body": "Dexter breaks down a question into a research plan, runs tools concurrently, and revisits its own answer until it is grounded in real data."
+        "body": "PickSkill breaks down a question into a research plan, runs tools concurrently, and revisits its own answer until it is grounded in real data."
       },
       "liveData": {
         "eyebrow": "02 — Live data",
@@ -29,7 +29,7 @@
       "memory": {
         "eyebrow": "03 — Persistent memory",
         "title": "Remembers your thesis",
-        "body": "Long-term memory is held in MemoryLake. Dexter recalls your prior positions, preferences, and rules every turn so the analysis stays personal."
+        "body": "Long-term memory is held in MemoryLake. PickSkill recalls your prior positions, preferences, and rules every turn so the analysis stays personal."
       }
     },
     "samples": {
@@ -55,7 +55,7 @@
       "newConversation": "New conversation"
     },
     "composer": {
-      "placeholder": "Ask Dexter…",
+      "placeholder": "Ask PickSkill…",
       "sendHint": "send",
       "newlineHint": "newline",
       "stop": "Stop",
@@ -79,7 +79,7 @@
     "empty": {
       "eyebrow": "Workbench · Ready",
       "title": "What would you like to research?",
-      "subtitle": "Ask anything you would hand to a junior analyst. Dexter plans, fetches live data, and shows its work.",
+      "subtitle": "Ask anything you would hand to a junior analyst. PickSkill plans, fetches live data, and shows its work.",
       "prompts": {
         "quickDcf": {
           "label": "Quick DCF",
@@ -101,7 +101,7 @@
     },
     "message": {
       "you": "You",
-      "dexter": "Dexter",
+      "dexter": "PickSkill",
       "status": {
         "thinking": "thinking",
         "writingAnswer": "writing answer",
@@ -207,7 +207,7 @@
     "error": "Failed to load indicators.",
     "retry": "Retry",
     "emptyTitle": "No portfolio found in memory.",
-    "emptyHint": "Tell Dexter your holdings — e.g. NVDA, TSLA, 0700.HK — and pick \"Save to memory\" so you only do this once.",
+    "emptyHint": "Tell PickSkill your holdings — e.g. NVDA, TSLA, 0700.HK — and pick \"Save to memory\" so you only do this once.",
     "emptyAfterClear": "Add at least one ticker to view this indicator.",
     "portfolio": "Portfolio",
     "noPortfolios": "No portfolios — create one first.",
@@ -233,10 +233,10 @@
   },
   "memory": {
     "title": "Memory",
-    "subtitle": "What Dexter remembers about you. Forget anything you'd rather it not keep.",
+    "subtitle": "What PickSkill remembers about you. Forget anything you'd rather it not keep.",
     "searchPlaceholder": "Search memories…",
     "clearSearch": "Clear search",
-    "empty": "No memories yet. Dexter will save things here as you research.",
+    "empty": "No memories yet. PickSkill will save things here as you research.",
     "emptySearch": "No memories match \"{query}\".",
     "loading": "Loading memories…",
     "totalCountOne": "1 memory",
@@ -251,7 +251,7 @@
     "errorLoading": "Could not load memories. Please try again."
   },
   "auth": {
-    "signInTitle": "Sign in to Dexter",
+    "signInTitle": "Sign in to PickSkill",
     "signInSubtitle": "Pick up your research where you left off.",
     "emailLabel": "Email address",
     "emailPlaceholder": "you@firm.com",
@@ -268,7 +268,7 @@
     "resendIn": "Resend in {seconds}s",
     "loading": "Sending…",
     "verifying": "Verifying…",
-    "terms": "By continuing you agree to use Dexter for research only. Not investment advice.",
+    "terms": "By continuing you agree to use PickSkill for research only. Not investment advice.",
     "devCodeBanner": "SMTP not configured — code shown for testing:",
     "signOut": "Sign out",
     "signedInAs": "Signed in as",

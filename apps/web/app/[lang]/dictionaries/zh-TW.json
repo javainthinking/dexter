@@ -1,8 +1,8 @@
 {
   "common": {
-    "appName": "Dexter",
-    "openGraphTitle": "Dexter — 面向金融研究的自主 AI 代理",
-    "openGraphDescription": "Dexter 拆解複雜問題、抓取即時市場資料、自我驗證,產出帶引用的答案。"
+    "appName": "PickSkill",
+    "openGraphTitle": "PickSkill — 你的持倉研究台",
+    "openGraphDescription": "即時行情、技術訊號,以及一位會記住你投資邏輯的 AI 分析師 — 涵蓋美股、港股、A 股。"
   },
   "landing": {
     "badge": "自主研究代理",
@@ -10,7 +10,7 @@
     "hero": {
       "title": "深度金融研究,",
       "titleEmphasis": "隨取隨用。",
-      "subtitle": "Dexter 將複雜問題拆解為研究計畫,即時調取市場資料,反覆驗證自己的結論,產出帶引用的答案。同一套代理核心同時驅動終端 CLI、WhatsApp 與網頁 — 你在哪裡做研究,它就在哪裡。",
+      "subtitle": "PickSkill 把你的關注列表變成研究工作台。即時追蹤美股、港股、A 股持倉,依 MACD、均線、量價、資金流量等維度一鍵掃描整組標的,並有一位會記住你投資邏輯的 AI 分析師對話深挖。",
       "primaryCta": "進入工作台",
       "secondaryCta": "在 GitHub 檢視",
       "tagline": "即時 · 串流 · 具長期記憶"
@@ -19,7 +19,7 @@
       "reasoning": {
         "eyebrow": "01 — 推理迴圈",
         "title": "規劃、執行、自我驗證",
-        "body": "Dexter 將問題拆解為研究計畫,並行呼叫多項工具,反覆修正自己的答案,直到結論由真實資料支撐。"
+        "body": "PickSkill 將問題拆解為研究計畫,並行呼叫多項工具,反覆修正自己的答案,直到結論由真實資料支撐。"
       },
       "liveData": {
         "eyebrow": "02 — 即時資料",
@@ -29,7 +29,7 @@
       "memory": {
         "eyebrow": "03 — 持久記憶",
         "title": "記得你的投資邏輯",
-        "body": "長期記憶存放在 MemoryLake。Dexter 每一輪都會調取你過往的部位、偏好與規則,讓分析始終貼合你本人。"
+        "body": "長期記憶存放在 MemoryLake。PickSkill 每一輪都會調取你過往的部位、偏好與規則,讓分析始終貼合你本人。"
       }
     },
     "samples": {
@@ -55,7 +55,7 @@
       "newConversation": "新增對話"
     },
     "composer": {
-      "placeholder": "向 Dexter 提問…",
+      "placeholder": "向 PickSkill 提問…",
       "sendHint": "送出",
       "newlineHint": "換行",
       "stop": "停止",
@@ -79,7 +79,7 @@
     "empty": {
       "eyebrow": "工作台 · 就緒",
       "title": "今天想研究什麼?",
-      "subtitle": "你交給初階分析師的活兒,Dexter 都能接 — 它會先規劃、再調取即時資料,整個過程都會展示給你看。",
+      "subtitle": "你交給初階分析師的活兒,PickSkill 都能接 — 它會先規劃、再調取即時資料,整個過程都會展示給你看。",
       "prompts": {
         "quickDcf": {
           "label": "快速 DCF",
@@ -101,7 +101,7 @@
     },
     "message": {
       "you": "你",
-      "dexter": "Dexter",
+      "dexter": "PickSkill",
       "status": {
         "thinking": "思考中",
         "writingAnswer": "撰寫答案",
@@ -207,7 +207,7 @@
     "error": "指標載入失敗。",
     "retry": "重試",
     "emptyTitle": "記憶中暫無持倉。",
-    "emptyHint": "告訴 Dexter 你的持倉 — 例如 NVDA、TSLA、0700.HK — 然後點擊「儲存到記憶」,這樣以後不用再輸入。",
+    "emptyHint": "告訴 PickSkill 你的持倉 — 例如 NVDA、TSLA、0700.HK — 然後點擊「儲存到記憶」,這樣以後不用再輸入。",
     "emptyAfterClear": "至少新增一檔標的才能查看該指標。",
     "portfolio": "持倉",
     "noPortfolios": "尚未建立持倉 — 請先新增一個。",
@@ -233,10 +233,10 @@
   },
   "memory": {
     "title": "記憶",
-    "subtitle": "Dexter 對你的記憶。任何你不想保留的,都可以讓它忘記。",
+    "subtitle": "PickSkill 對你的記憶。任何你不想保留的,都可以讓它忘記。",
     "searchPlaceholder": "搜尋記憶…",
     "clearSearch": "清除搜尋",
-    "empty": "尚無記憶。在你研究的過程中,Dexter 會在這裡留下紀錄。",
+    "empty": "尚無記憶。在你研究的過程中,PickSkill 會在這裡留下紀錄。",
     "emptySearch": "沒有符合「{query}」的記憶。",
     "loading": "正在載入記憶…",
     "totalCountOne": "1 條",
@@ -251,7 +251,7 @@
     "errorLoading": "無法載入記憶,請再試一次。"
   },
   "auth": {
-    "signInTitle": "登入 Dexter",
+    "signInTitle": "登入 PickSkill",
     "signInSubtitle": "從上次中斷處繼續你的研究。",
     "emailLabel": "電子郵件地址",
     "emailPlaceholder": "you@firm.com",
@@ -268,7 +268,7 @@
     "resendIn": "{seconds} 秒後可重寄",
     "loading": "傳送中…",
     "verifying": "驗證中…",
-    "terms": "繼續即代表同意僅將 Dexter 用於研究。不構成投資建議。",
+    "terms": "繼續即代表同意僅將 PickSkill 用於研究。不構成投資建議。",
     "devCodeBanner": "SMTP 尚未設定 — 測試用驗證碼:",
     "signOut": "登出",
     "signedInAs": "已登入帳號",

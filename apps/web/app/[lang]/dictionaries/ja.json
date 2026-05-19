@@ -1,8 +1,8 @@
 {
   "common": {
-    "appName": "Dexter",
-    "openGraphTitle": "Dexter — 金融リサーチのための自律型AIエージェント",
-    "openGraphDescription": "Dexterは複雑な質問を分解し、ライブの市場データを取得し、自らの作業を検証して、出典付きの回答を生成します。"
+    "appName": "PickSkill",
+    "openGraphTitle": "PickSkill — あなたのポートフォリオ・リサーチ デスク",
+    "openGraphDescription": "リアルタイム株価、テクニカルシグナル、そしてあなたの投資テーマを覚えてくれる AI アナリスト — 米国・香港・中国 A 株まで。"
   },
   "landing": {
     "badge": "自律型リサーチエージェント",
@@ -10,7 +10,7 @@
     "hero": {
       "title": "深いファイナンス・リサーチを、",
       "titleEmphasis": "必要なときに。",
-      "subtitle": "Dexterは複雑な問いを分解し、リアルタイムの市場データを参照し、自らの結論を検証して、出典付きの回答を返します。同じエージェントコアがターミナルCLI、WhatsApp、そしてWebを支えます — 調査するすべての場所で。",
+      "subtitle": "PickSkill はウォッチリストをそのままリサーチデスクにします。米国・香港・中国 A 株の保有銘柄をリアルタイムで追跡し、ポートフォリオ全体に対して MACD・移動平均・出来高・資金フローのシグナルを一括スキャン、さらにあなたの投資テーマを覚えてくれる AI アナリストと対話できます。",
       "primaryCta": "ワークベンチを開く",
       "secondaryCta": "GitHubで見る",
       "tagline": "ライブ · ストリーミング · メモリ連携"
@@ -19,7 +19,7 @@
       "reasoning": {
         "eyebrow": "01 — 推論ループ",
         "title": "計画・実行・自己検証",
-        "body": "Dexterは質問をリサーチプランに分解し、ツールを並行実行しながら、実データに裏付けられるまで自らの回答を見直します。"
+        "body": "PickSkillは質問をリサーチプランに分解し、ツールを並行実行しながら、実データに裏付けられるまで自らの回答を見直します。"
       },
       "liveData": {
         "eyebrow": "02 — ライブデータ",
@@ -29,7 +29,7 @@
       "memory": {
         "eyebrow": "03 — 永続メモリ",
         "title": "あなたのテーゼを記憶",
-        "body": "長期メモリはMemoryLakeに保持されます。Dexterは過去のポジション・選好・ルールを毎ターン呼び戻し、分析をあなた仕様に保ちます。"
+        "body": "長期メモリはMemoryLakeに保持されます。PickSkillは過去のポジション・選好・ルールを毎ターン呼び戻し、分析をあなた仕様に保ちます。"
       }
     },
     "samples": {
@@ -55,7 +55,7 @@
       "newConversation": "新しい会話"
     },
     "composer": {
-      "placeholder": "Dexterに質問…",
+      "placeholder": "PickSkillに質問…",
       "sendHint": "送信",
       "newlineHint": "改行",
       "stop": "停止",
@@ -79,7 +79,7 @@
     "empty": {
       "eyebrow": "ワークベンチ · 準備完了",
       "title": "今日は何を調べますか?",
-      "subtitle": "ジュニアアナリストに頼むつもりで何でも聞いてください。Dexterは計画を立て、ライブデータを取りに行き、手の内も見せます。",
+      "subtitle": "ジュニアアナリストに頼むつもりで何でも聞いてください。PickSkillは計画を立て、ライブデータを取りに行き、手の内も見せます。",
       "prompts": {
         "quickDcf": {
           "label": "簡易DCF",
@@ -101,7 +101,7 @@
     },
     "message": {
       "you": "あなた",
-      "dexter": "Dexter",
+      "dexter": "PickSkill",
       "status": {
         "thinking": "思考中",
         "writingAnswer": "回答を作成中",
@@ -207,7 +207,7 @@
     "error": "指標を読み込めませんでした。",
     "retry": "再試行",
     "emptyTitle": "メモリにポートフォリオがありません。",
-    "emptyHint": "保有銘柄を Dexter に教えてください — 例: NVDA、TSLA、0700.HK — そして「メモリに保存」を選べば、次回からは入力不要です。",
+    "emptyHint": "保有銘柄を PickSkill に教えてください — 例: NVDA、TSLA、0700.HK — そして「メモリに保存」を選べば、次回からは入力不要です。",
     "emptyAfterClear": "この指標を表示するには少なくとも 1 つのティッカーを追加してください。",
     "portfolio": "ポートフォリオ",
     "noPortfolios": "ポートフォリオがありません — まず作成してください。",
@@ -233,10 +233,10 @@
   },
   "memory": {
     "title": "メモリ",
-    "subtitle": "Dexter があなたについて覚えていること。残したくないものは「忘れる」で削除できます。",
+    "subtitle": "PickSkill があなたについて覚えていること。残したくないものは「忘れる」で削除できます。",
     "searchPlaceholder": "メモリを検索…",
     "clearSearch": "検索をクリア",
-    "empty": "まだメモリはありません。リサーチを進めると Dexter がここに記憶を残します。",
+    "empty": "まだメモリはありません。リサーチを進めると PickSkill がここに記憶を残します。",
     "emptySearch": "「{query}」に一致するメモリはありません。",
     "loading": "メモリを読み込み中…",
     "totalCountOne": "1 件",
@@ -251,7 +251,7 @@
     "errorLoading": "メモリを読み込めませんでした。再度お試しください。"
   },
   "auth": {
-    "signInTitle": "Dexter にサインイン",
+    "signInTitle": "PickSkill にサインイン",
     "signInSubtitle": "前回の続きから、リサーチを再開しましょう。",
     "emailLabel": "メールアドレス",
     "emailPlaceholder": "you@firm.com",
@@ -268,7 +268,7 @@
     "resendIn": "{seconds}秒後に再送可能",
     "loading": "送信中…",
     "verifying": "確認中…",
-    "terms": "続行することで、Dexter をリサーチ目的のみに使用することに同意したものとみなします。投資助言ではありません。",
+    "terms": "続行することで、PickSkill をリサーチ目的のみに使用することに同意したものとみなします。投資助言ではありません。",
     "devCodeBanner": "SMTP 未設定 — テスト用にコードを表示:",
     "signOut": "サインアウト",
     "signedInAs": "サインイン中",

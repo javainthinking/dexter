@@ -1,8 +1,8 @@
 import { cn } from '../lib/utils';
 
 /**
- * Dexter mark — a clean lock-up combining a small serif-style monogram
- * with the wordmark, tuned for both compact and headline use.
+ * PickSkill mark — a clean lock-up combining a small serif-style
+ * monogram with the wordmark, tuned for both compact and headline use.
  */
 export function Logo({
   className,
@@ -25,7 +25,7 @@ export function Logo({
             text,
           )}
         >
-          Dexter
+          PickSkill
         </span>
       )}
     </span>

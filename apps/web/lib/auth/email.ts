@@ -9,7 +9,7 @@ import nodemailer, { type Transporter } from 'nodemailer';
  */
 
 const SMTP_USER = process.env.SMTP_USER ?? 'noreply@dexter.app';
-const APP_NAME = 'Dexter';
+const APP_NAME = 'PickSkill';
 
 export const FROM = process.env.MAIL_FROM ?? `${APP_NAME} <${SMTP_USER}>`;
 
@@ -70,7 +70,7 @@ export async function sendSignInCodeEmail(
             </tr>
             <tr>
               <td style="padding-top:8px;font-size:15px;line-height:1.6;color:#52525b;">
-                Enter this code in your Dexter sign-in window. It expires in ${minutes} minutes.
+                Enter this code in your PickSkill sign-in window. It expires in ${minutes} minutes.
               </td>
             </tr>
             <tr>
@@ -87,7 +87,7 @@ export async function sendSignInCodeEmail(
             </tr>
           </table>
           <p style="margin-top:18px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#a1a1aa;">
-            Dexter · For research only · Not investment advice
+            PickSkill · For research only · Not investment advice
           </p>
         </td>
       </tr>
@@ -95,12 +95,12 @@ export async function sendSignInCodeEmail(
   </body>
 </html>`;
 
-  const text = `Your Dexter sign-in code is ${input.code}\n\nIt expires in ${minutes} minutes. If you didn't request this code you can safely ignore this email.`;
+  const text = `Your PickSkill sign-in code is ${input.code}\n\nIt expires in ${minutes} minutes. If you didn't request this code you can safely ignore this email.`;
 
   const info = await transporter.sendMail({
     from: FROM,
     to: input.to,
-    subject: `Your Dexter sign-in code: ${input.code}`,
+    subject: `Your PickSkill sign-in code: ${input.code}`,
     text,
     html,
   });

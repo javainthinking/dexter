@@ -2,7 +2,7 @@
   "name": "@dexter/web",
   "version": "0.1.0",
   "private": true,
-  "description": "Dexter SaaS web app (Vercel-hosted).",
+  "description": "PickSkill web app — portfolio research desk for US / HK / A-share markets (Vercel-hosted).",
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build --webpack",

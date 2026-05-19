@@ -1,8 +1,8 @@
 {
   "common": {
-    "appName": "Dexter",
-    "openGraphTitle": "Dexter — 面向金融研究的自主 AI 代理",
-    "openGraphDescription": "Dexter 拆解复杂问题、抓取实时市场数据、自我验证,产出带引用的答案。"
+    "appName": "PickSkill",
+    "openGraphTitle": "PickSkill — 你的持仓研究台",
+    "openGraphDescription": "实时行情、技术信号,以及一位会记住你投资逻辑的 AI 分析师 — 覆盖美股、港股、A 股。"
   },
   "landing": {
     "badge": "自主研究代理",
@@ -10,7 +10,7 @@
     "hero": {
       "title": "深度金融研究,",
       "titleEmphasis": "随取随用。",
-      "subtitle": "Dexter 把复杂问题拆解成研究计划,实时调取市场数据,反复验证自己的结论,产出带引用的答案。同一套代理内核同时驱动终端 CLI、WhatsApp 和网页 — 你在哪里做研究,它就在哪里。",
+      "subtitle": "PickSkill 把你的关注列表变成研究工作台。实时跟踪美股、港股、A 股持仓,按 MACD、均线、量价、资金流量等维度一键扫描整组标的,再用一位会记住你投资逻辑的 AI 分析师对话深挖。",
       "primaryCta": "进入工作台",
       "secondaryCta": "在 GitHub 查看",
       "tagline": "实时 · 流式 · 带长期记忆"
@@ -19,7 +19,7 @@
       "reasoning": {
         "eyebrow": "01 — 推理循环",
         "title": "规划、执行、自我验证",
-        "body": "Dexter 把问题拆解成研究计划,并行调用多个工具,反复修正自己的答案,直到结论由真实数据支撑。"
+        "body": "PickSkill 把问题拆解成研究计划,并行调用多个工具,反复修正自己的答案,直到结论由真实数据支撑。"
       },
       "liveData": {
         "eyebrow": "02 — 实时数据",
@@ -29,7 +29,7 @@
       "memory": {
         "eyebrow": "03 — 持久记忆",
         "title": "记得你的投资逻辑",
-        "body": "长期记忆存放在 MemoryLake。Dexter 每一轮都会调取你过往的持仓、偏好与规则,让分析始终贴合你本人。"
+        "body": "长期记忆存放在 MemoryLake。PickSkill 每一轮都会调取你过往的持仓、偏好与规则,让分析始终贴合你本人。"
       }
     },
     "samples": {
@@ -55,7 +55,7 @@
       "newConversation": "新建会话"
     },
     "composer": {
-      "placeholder": "向 Dexter 提问…",
+      "placeholder": "向 PickSkill 提问…",
       "sendHint": "发送",
       "newlineHint": "换行",
       "stop": "停止",
@@ -79,7 +79,7 @@
     "empty": {
       "eyebrow": "工作台 · 就绪",
       "title": "今天想研究点什么?",
-      "subtitle": "你交给初级分析师的活儿,Dexter 都能接 — 它会先规划、再调取实时数据,过程全部展示给你看。",
+      "subtitle": "你交给初级分析师的活儿,PickSkill 都能接 — 它会先规划、再调取实时数据,过程全部展示给你看。",
       "prompts": {
         "quickDcf": {
           "label": "快速 DCF",
@@ -101,7 +101,7 @@
     },
     "message": {
       "you": "你",
-      "dexter": "Dexter",
+      "dexter": "PickSkill",
       "status": {
         "thinking": "思考中",
         "writingAnswer": "撰写答案",
@@ -207,7 +207,7 @@
     "error": "指标加载失败。",
     "retry": "重试",
     "emptyTitle": "记忆中暂无持仓。",
-    "emptyHint": "告诉 Dexter 你的持仓 — 例如 NVDA、TSLA、0700.HK — 然后点击「保存到记忆」,这样以后不用再输。",
+    "emptyHint": "告诉 PickSkill 你的持仓 — 例如 NVDA、TSLA、0700.HK — 然后点击「保存到记忆」,这样以后不用再输。",
     "emptyAfterClear": "至少添加一只标的才能查看该指标。",
     "portfolio": "持仓",
     "noPortfolios": "还没有持仓 — 先创建一个。",
@@ -233,10 +233,10 @@
   },
   "memory": {
     "title": "记忆",
-    "subtitle": "Dexter 关于你的记忆。任何你不想保留的,都可以让它忘记。",
+    "subtitle": "PickSkill 关于你的记忆。任何你不想保留的,都可以让它忘记。",
     "searchPlaceholder": "搜索记忆…",
     "clearSearch": "清除搜索",
-    "empty": "暂无记忆。研究过程中,Dexter 会在这里留下记录。",
+    "empty": "暂无记忆。研究过程中,PickSkill 会在这里留下记录。",
     "emptySearch": "没有匹配「{query}」的记忆。",
     "loading": "正在加载记忆…",
     "totalCountOne": "1 条",
@@ -251,7 +251,7 @@
     "errorLoading": "无法加载记忆,请重试。"
   },
   "auth": {
-    "signInTitle": "登录 Dexter",
+    "signInTitle": "登录 PickSkill",
     "signInSubtitle": "继续上次未完成的研究。",
     "emailLabel": "邮箱地址",
     "emailPlaceholder": "you@firm.com",
@@ -268,7 +268,7 @@
     "resendIn": "{seconds} 秒后可重发",
     "loading": "正在发送…",
     "verifying": "正在验证…",
-    "terms": "继续即表示同意仅将 Dexter 用于研究。不构成投资建议。",
+    "terms": "继续即表示同意仅将 PickSkill 用于研究。不构成投资建议。",
     "devCodeBanner": "SMTP 未配置 — 测试用验证码:",
     "signOut": "退出登录",
     "signedInAs": "已登录账号",
