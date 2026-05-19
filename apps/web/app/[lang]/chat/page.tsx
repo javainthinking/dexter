@@ -222,6 +222,15 @@ function ChatPage() {
     if (!promptFromUrl) return;
     consumed.current = true;
     setInput('');
+    // Strip ?prompt off the URL via raw history API, NOT router.replace.
+    // The page is rendered inside <Suspense> and useSearchParams() is
+    // reactive — a router.replace would bail Suspense out to the fallback
+    // mid-stream, blanking the thread until the stream finishes. Plain
+    // history.replaceState updates the address bar without disturbing
+    // React routing.
+    if (typeof window !== 'undefined') {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
     // Deep-link from the landing page is a "start a new conversation about
     // this topic" gesture. Always mint a fresh session before sending so
     // the prompt doesn't get appended to whatever the user was doing
@@ -237,8 +246,6 @@ function ChatPage() {
       setTurns([]);
       await send(promptFromUrl);
     })();
-    // strip ?prompt off so refresh doesn't resend
-    router.replace(window.location.pathname);
   }, [promptFromUrl, router, send]);
 
   const stop = useCallback(() => {
