@@ -45,6 +45,16 @@ interface Holding {
   addedAt: string;
 }
 
+interface HoldingQuote {
+  ticker: string;
+  asOf?: string;
+  close?: number | null;
+  prevClose?: number | null;
+  change?: number | null;
+  changePct?: number | null;
+  error?: string;
+}
+
 interface PortfolioDetail extends PortfolioListItem {
   holdings: Holding[];
 }
@@ -69,6 +79,11 @@ export function PortfoliosClient({
   const [detail, setDetail] = React.useState<PortfolioDetail | null>(null);
   const [detailLoading, setDetailLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  // Latest-close + day-change for each ticker in the active portfolio,
+  // keyed by ticker. Loaded lazily so opening the portfolios page stays
+  // snappy; the row renders "—" until the quote lands.
+  const [quotes, setQuotes] = React.useState<Record<string, HoldingQuote>>({});
+  const [quotesLoading, setQuotesLoading] = React.useState(false);
 
   // Two-stage create state:
   //   stage 'name'    → sidebar shows name input; main pane is hidden.
@@ -115,6 +130,38 @@ export function PortfoliosClient({
       .catch(() => setError(dict.portfolios?.errorLoad ?? 'Failed to load portfolio.'))
       .finally(() => setDetailLoading(false));
   }, [activeId, dict.portfolios?.errorLoad]);
+
+  // Pull latest close + day change for the active portfolio. Runs in
+  // parallel with the detail fetch; rows render "—" until the quote
+  // lands. Cancelled on activeId change so a slow chain (e.g. Yahoo
+  // fallback for a thin ticker) on a previous portfolio doesn't paint
+  // stale numbers after the user has moved on.
+  React.useEffect(() => {
+    if (!activeId) {
+      setQuotes({});
+      return;
+    }
+    let cancelled = false;
+    setQuotesLoading(true);
+    (async () => {
+      try {
+        const res = await fetch(`/api/portfolios/${activeId}/quotes`, { cache: 'no-store' });
+        if (!res.ok || cancelled) return;
+        const json = (await res.json()) as { quotes?: HoldingQuote[] };
+        if (cancelled) return;
+        const map: Record<string, HoldingQuote> = {};
+        for (const q of json.quotes ?? []) map[q.ticker] = q;
+        setQuotes(map);
+      } catch {
+        /* leave existing quotes; row simply shows "—" */
+      } finally {
+        if (!cancelled) setQuotesLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [activeId]);
 
   // Reconcile with the API on mount + on tab-focus. The SSR pass renders
   // a snapshot of the list at request time; without this, a user who
@@ -466,6 +513,8 @@ export function PortfoliosClient({
             ) : detail ? (
               <PortfolioDetailView
                 portfolio={detail}
+                quotes={quotes}
+                quotesLoading={quotesLoading}
                 onAddHolding={handleAddHolding}
                 onRemoveHolding={handleRemoveHolding}
                 onEditWeight={handleEditWeight}
@@ -590,12 +639,16 @@ function PortfolioListRow({
 
 function PortfolioDetailView({
   portfolio,
+  quotes,
+  quotesLoading,
   onAddHolding,
   onRemoveHolding,
   onEditWeight,
   dict,
 }: {
   portfolio: PortfolioDetail;
+  quotes: Record<string, HoldingQuote>;
+  quotesLoading: boolean;
   onAddHolding: (hit: SymbolHit, weight: number | null) => Promise<void>;
   onRemoveHolding: (id: string) => void;
   onEditWeight: (id: string, value: string) => void;
@@ -639,6 +692,8 @@ function PortfolioDetailView({
 
       <HoldingsSection
         portfolio={portfolio}
+        quotes={quotes}
+        quotesLoading={quotesLoading}
         onRemoveHolding={onRemoveHolding}
         onEditWeight={onEditWeight}
         dict={dict}
@@ -662,11 +717,15 @@ type HoldingsSort = 'default' | 'weight-desc' | 'weight-asc';
 
 function HoldingsSection({
   portfolio,
+  quotes,
+  quotesLoading,
   onRemoveHolding,
   onEditWeight,
   dict,
 }: {
   portfolio: PortfolioDetail;
+  quotes: Record<string, HoldingQuote>;
+  quotesLoading: boolean;
   onRemoveHolding: (id: string) => void;
   onEditWeight: (id: string, value: string) => void;
   dict: any;
@@ -708,6 +767,8 @@ function HoldingsSection({
             <HoldingRow
               key={h.id}
               holding={h}
+              quote={quotes[h.ticker]}
+              quotesLoading={quotesLoading}
               onRemove={() => onRemoveHolding(h.id)}
               onEditWeight={(v) => onEditWeight(h.id, v)}
               dict={dict}
@@ -756,11 +817,15 @@ function SortToggle({
 
 function HoldingRow({
   holding,
+  quote,
+  quotesLoading,
   onRemove,
   onEditWeight,
   dict,
 }: {
   holding: Holding;
+  quote?: HoldingQuote;
+  quotesLoading: boolean;
   onRemove: () => void;
   onEditWeight: (v: string) => void;
   dict: any;
@@ -773,6 +838,14 @@ function HoldingRow({
     setValue(holding.weight == null ? '' : String(holding.weight));
   }, [holding.weight]);
 
+  // Red-up / green-down per the China-market convention the rest of the
+  // app uses (same as the indicator cards). Watchlist-only rows where
+  // the chain returned an error fall back to "—".
+  const hasQuote = quote && quote.error == null && quote.close != null;
+  const pct = hasQuote ? quote.changePct : null;
+  const tone =
+    pct == null ? '' : pct > 0 ? 'text-rose-500' : pct < 0 ? 'text-emerald-500' : 'text-muted-foreground';
+
   return (
     <li className="flex items-center gap-3 px-3 py-2">
       <div className="min-w-0 flex-1">
@@ -781,6 +854,22 @@ function HoldingRow({
           {holding.displayName ?? '—'}
           {holding.exchange ? ` · ${holding.exchange}` : ''}
         </div>
+      </div>
+      <div className="hidden flex-col items-end leading-tight sm:flex">
+        <span className="font-mono text-sm tabular-nums">
+          {hasQuote
+            ? quote.close!.toFixed(2)
+            : quotesLoading
+            ? <span className="text-muted-foreground">…</span>
+            : <span className="text-muted-foreground">—</span>}
+        </span>
+        <span className={cn('font-mono text-[11px] tabular-nums', tone)}>
+          {pct != null
+            ? `${pct > 0 ? '+' : ''}${pct.toFixed(2)}%`
+            : hasQuote
+            ? ''
+            : ' '}
+        </span>
       </div>
       <div className="flex items-center gap-1">
         {editing ? (
