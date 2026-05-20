@@ -545,6 +545,60 @@ async function invokeInner(
     );
   } catch (err) {
     if (err instanceof OfficeCliError) {
+      // Special handling for `batch` — OfficeCLI exits 1 when ANY op
+      // in the batch fails, even if the other 11 succeeded and the
+      // file was modified. The default catch-block treatment would
+      // throw away those 11 successes: no recordOfficeTouch fires,
+      // drain finds nothing, the user gets no download even though
+      // the file has real content. Detect partial success in
+      // partialStdout and treat the call as content-producing.
+      if (
+        subcommand === 'batch' &&
+        (EDIT_SUBCOMMANDS as readonly string[]).includes(subcommand)
+      ) {
+        const partial = parseBatchPartialSuccess(err.result.stdout);
+        if (partial && partial.succeeded > 0 && existsSync(file)) {
+          recordOfficeTouch(file);
+          const stat = (() => {
+            try {
+              return statSync(file).size;
+            } catch {
+              return -1;
+            }
+          })();
+          const ext = file.toLowerCase().split('.').pop() ?? '';
+          const floor = EMPTY_FLOORS_BY_EXT[ext];
+          const isEmpty = floor !== undefined && stat <= floor;
+          console.log(
+            `[office-edit] batch ${file} partial-success succeeded=${partial.succeeded}/${partial.total} bytes=${stat}`,
+          );
+          return formatToolResult(
+            {
+              data: {
+                partialSuccess: true,
+                summary: partial.summary,
+                results: partial.results,
+                fileBytes: stat,
+                fileIsEmpty: isEmpty,
+              },
+              command: err.command,
+            },
+            partial.failed > 0
+              ? {
+                  mandatoryInstructions: {
+                    status: `BATCH PARTIAL SUCCESS — ${partial.succeeded} of ${partial.total} ops landed; ${partial.failed} failed. The file IS modified and will be uploaded at end-of-run, but the failed ops need to be addressed if their content is essential.`,
+                    failedOps: partial.results.filter((r) => !r.success).slice(0, 5),
+                    nextSteps: [
+                      'For each failed op, read the `error` field — common docx issues: `/theme` does not exist as a path (docx themes are not addressable via the same path syntax as pptx); paragraph styles like `Title` / `Heading 1` are valid but `style` may need to be `--prop styleId=Title` instead.',
+                      'Issue a new `office_edit` with the same op in a corrected form, OR accept the loss if the failed op was non-essential (e.g. theme font choice).',
+                      'When the failures are content-bearing (paragraphs / tables / cells with text), DO NOT declare the artefact ready — your next action must produce them via another office_edit.',
+                    ],
+                  },
+                }
+              : undefined,
+          );
+        }
+      }
       // Embed the parsed-or-raw stdout for context, plus the stderr message
       // OfficeCLI emitted, so the agent has enough signal to retry with a
       // different argument shape.
@@ -558,6 +612,44 @@ async function invokeInner(
     }
     const message = err instanceof Error ? err.message : String(err);
     return formatToolResult({ error: message });
+  }
+}
+
+interface BatchOpResult {
+  index: number;
+  success: boolean;
+  error?: string;
+  output?: string;
+  item?: unknown;
+}
+
+interface BatchPartialSuccess {
+  total: number;
+  succeeded: number;
+  failed: number;
+  summary: Record<string, unknown>;
+  results: BatchOpResult[];
+}
+
+/**
+ * Parse OfficeCLI's batch envelope when it exited non-zero but the
+ * partial stdout shows some ops landed. Shape:
+ *   { success: false, data: { results: [{index, success, ...}], summary: {...} } }
+ */
+function parseBatchPartialSuccess(stdout: string): BatchPartialSuccess | null {
+  try {
+    const parsed = JSON.parse(stdout) as {
+      data?: { results?: BatchOpResult[]; summary?: { succeeded?: number; failed?: number; total?: number } };
+    };
+    const results = parsed?.data?.results;
+    const summary = parsed?.data?.summary;
+    if (!Array.isArray(results) || !summary) return null;
+    const succeeded = typeof summary.succeeded === 'number' ? summary.succeeded : 0;
+    const failed = typeof summary.failed === 'number' ? summary.failed : 0;
+    const total = typeof summary.total === 'number' ? summary.total : results.length;
+    return { total, succeeded, failed, summary: summary as Record<string, unknown>, results };
+  } catch {
+    return null;
   }
 }
 
