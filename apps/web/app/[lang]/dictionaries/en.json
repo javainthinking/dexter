@@ -118,6 +118,12 @@
       "arguments": "arguments",
       "result": "result",
       "errorLabel": "error"
+    },
+    "delivery": {
+      "title": "Generated files",
+      "download": "Download",
+      "expiresAt": "Link expires {date}",
+      "sizeKb": "{kb} KB"
     }
   },
   "theme": {

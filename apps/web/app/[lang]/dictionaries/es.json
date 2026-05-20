@@ -118,6 +118,12 @@
       "arguments": "argumentos",
       "result": "resultado",
       "errorLabel": "error"
+    },
+    "delivery": {
+      "title": "Archivos generados",
+      "download": "Descargar",
+      "expiresAt": "El enlace caduca el {date}",
+      "sizeKb": "{kb} KB"
     }
   },
   "theme": {

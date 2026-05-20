@@ -11,6 +11,7 @@ import type { DisplayEvent, StreamMode } from '../agent/types.js';
 import type { HistoryItem, HistoryItemStatus, WorkingState } from '../types.js';
 import type { CorePorts, EventSink } from '../ports/index.js';
 import { withMemory } from '../runtime/memory-context.js';
+import { withOfficeRun, drainOfficeRun } from '../runtime/office-run.js';
 
 export interface TurnStats {
   turnStartMs: number;
@@ -156,10 +157,19 @@ export class AgentRunnerController {
     // pick up the injected port (MemoryLake for cloud Web, LocalMemoryAdapter
     // for CLI). When no Memory port is injected (legacy callers) the scope
     // is skipped and tools fall back to the local default.
-    if (this.ports.memory) {
-      return withMemory(this.ports.memory, () => this.runQueryInner(query));
-    }
-    return this.runQueryInner(query);
+    // Outer scope is the office-run touch tracker. The Agent's office
+    // tool calls record file mutations into this scope; when the agent
+    // emits its 'done' event we drain the set, upload to R2, and attach
+    // the resulting download URLs to the event before forwarding it.
+    // Nested under withMemory because both scopes must be active for the
+    // duration of any tool that reads either.
+    const wrapped = () => {
+      if (this.ports.memory) {
+        return withMemory(this.ports.memory, () => this.runQueryInner(query));
+      }
+      return this.runQueryInner(query);
+    };
+    return withOfficeRun(wrapped);
   }
 
   private async runQueryInner(query: string): Promise<RunQueryResult | undefined> {
@@ -196,8 +206,23 @@ export class AgentRunnerController {
       for await (const event of stream) {
         if (event.type === 'done') {
           finalAnswer = (event as DoneEvent).answer;
+          // Drain the office-run touch set: upload every non-empty file
+          // the agent touched to R2 in one batch and attach the
+          // resulting deliverables to the event. drainOfficeRun is a
+          // no-op when no scope is active or no files were touched, so
+          // this stays safe for non-office runs.
+          let deliverables: DoneEvent['deliverables'] = [];
+          try {
+            deliverables = await drainOfficeRun();
+          } catch {
+            // Best-effort delivery — if uploads fail, the answer still
+            // ships without download chips. drainOfficeRun already
+            // logged the individual failures.
+          }
+          await this.handleEvent({ ...event, deliverables } as DoneEvent);
+        } else {
+          await this.handleEvent(event);
         }
-        await this.handleEvent(event);
       }
 
       // Post-run: if messages arrived after the agent's last drain, start a new turn

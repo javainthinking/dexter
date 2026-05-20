@@ -249,6 +249,20 @@ export interface CompactionEvent {
 }
 
 /**
+ * One artefact the agent produced this run. Populated by the office
+ * tool's end-of-run drainer (src/runtime/office-run.ts) and attached
+ * to the DoneEvent so the UI can render a download chip alongside the
+ * final answer.
+ */
+export interface Deliverable {
+  filename: string;
+  downloadUrl: string;
+  expiresAt: string;
+  byteLength: number;
+  key: string;
+}
+
+/**
  * Agent completed with final result
  */
 export interface DoneEvent {
@@ -259,6 +273,13 @@ export interface DoneEvent {
   totalTime: number;
   tokenUsage?: TokenUsage;
   tokensPerSecond?: number;
+  /**
+   * Files the agent produced and uploaded to storage during this run.
+   * Present (possibly empty) when the run reached natural completion;
+   * the agent loop drains them before emitting this event. The UI
+   * renders these as download chips on the assistant message.
+   */
+  deliverables?: Deliverable[];
 }
 
 /**

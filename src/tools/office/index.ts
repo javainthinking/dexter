@@ -19,10 +19,11 @@
 
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { formatToolResult } from '../types.js';
 import { runOfficeCli, OfficeCliError, findOfficeCliBinary } from './spawn.js';
+import { recordOfficeTouch } from '../../runtime/office-run.js';
 
 const READ_SUBCOMMANDS = [
   'view',
@@ -194,6 +195,48 @@ function readStyleDoc(directory: string): string {
  * agent can override by reading a different preset and supplying its
  * own theme set; the auto-pick is a starting point, not a lock.
  */
+/**
+ * Hard floors for "this file has had no real content added to it yet".
+ * Measured against OfficeCLI v1.0.94 on darwin-arm64; tested with
+ * `create` on each extension. Adding a small margin so renames and
+ * single tiny edits don't false-positive.
+ *
+ *   docx blank:  4,394 bytes  → floor 5,500
+ *   pptx blank:  8,391 bytes  → floor 9,500
+ *   xlsx blank:  2,624 bytes  → floor 3,500
+ *
+ * The point of these floors is to catch the canonical agent failure:
+ * agent calls a no-op edit (e.g. set on a non-existent path, or
+ * add of an empty sheet) that succeeds, claims it added content,
+ * and presents an empty file as the deliverable. By refusing to
+ * upload below the floor, we force the F3 loop nudge to fire.
+ */
+const EMPTY_FLOORS_BY_EXT: Record<string, number> = {
+  docx: 5500,
+  pptx: 9500,
+  xlsx: 3500,
+};
+
+interface EmptinessCheck {
+  empty: boolean;
+  bytes: number;
+  floor: number;
+  ext: string;
+}
+
+function checkFileEmptiness(filePath: string): EmptinessCheck | null {
+  const ext = filePath.toLowerCase().split('.').pop() ?? '';
+  const floor = EMPTY_FLOORS_BY_EXT[ext];
+  if (floor === undefined) return null;
+  let bytes = 0;
+  try {
+    bytes = statSync(filePath).size;
+  } catch {
+    return null;
+  }
+  return { empty: bytes <= floor, bytes, floor, ext };
+}
+
 function defaultPresetForFile(file: string): string | null {
   const ext = file.toLowerCase().split('.').pop();
   if (ext === 'pptx') return 'dark--investor-pitch';
@@ -226,11 +269,23 @@ async function invoke(
     });
   }
 
+  // Snapshot file size *before* the edit so we can detect no-op edits
+  // (commands that exit 0 but don't actually grow the file). This is
+  // the in-loop signal that's far sharper than the end-of-call empty-
+  // floor heuristic: an `add type=p` that grows a docx by 3 bytes is
+  // almost certainly hitting the wrong path / missing required options
+  // / silently dropping the option payload.
+  const preEditBytes = (() => {
+    try {
+      return statSync(file).size;
+    } catch {
+      return -1; // File doesn't exist yet — expected for create/new.
+    }
+  })();
+
   try {
-    const result = await runOfficeCli({
-      argv: buildArgv(subcommand, file, args, options),
-      stdin,
-    });
+    const argv = buildArgv(subcommand, file, args, options);
+    const result = await runOfficeCli({ argv, stdin });
     // OfficeCLI's --json envelope is `{ success, data }` or `{ success: false, error }`.
     // Surface the whole envelope so the agent can see both shape + content.
     let payload: unknown = result.data ?? { stdout: result.stdout };
@@ -254,6 +309,7 @@ async function invoke(
     // inline for a sharp brief that (1) routes to the specialized
     // SKILL the agent should load, and (2) embeds the load-bearing
     // rules verbatim so they apply even when the agent skips loading.
+    let mandatoryInstructions: Record<string, unknown> | null = null;
     if ((subcommand === 'create' || subcommand === 'new') && payload && typeof payload === 'object') {
       const presetName = defaultPresetForFile(file);
       const ext = file.toLowerCase().split('.').pop();
@@ -265,9 +321,7 @@ async function invoke(
           : ext === 'xlsx'
           ? 'officecli-xlsx'
           : null;
-      payload = {
-        ...(payload as Record<string, unknown>),
-        _required: {
+      mandatoryInstructions = {
           status:
             'BLANK FILE CREATED — work is NOT complete. The default placeholders are not the deliverable.',
           step1_loadSpecializedSkill: specializedSkill
@@ -305,10 +359,125 @@ async function invoke(
             'office_read view args=["screenshot"] — render to PNG and verify mood matches preset',
             "Fix-verify loop up to 3 times. Only after all four pass is the file deliverable.",
           ],
-        },
+          step5_deliverToUser:
+            "Download delivery happens automatically at the END of your agent run — the system uploads each non-empty file you've touched to R2 and surfaces a download chip in chat. You do NOT call any explicit publish step. Every successful office_edit response includes `fileBytes` and `fileIsEmpty`; if `fileIsEmpty: true` after your edits, the artefact will NOT be delivered. Do not write a final answer claiming the file is ready while `fileIsEmpty` is still true. Once `fileIsEmpty` flips to false and the delivery gate passes, write a short user-facing reply describing what's inside (slide titles / sheet names) — the download chip is rendered for you.",
       };
     }
-    return formatToolResult(payload);
+    // Auto-upload to R2 after every successful CONTENT-PRODUCING edit.
+    // We deliberately skip `create` and `new` because they produce a
+    // blank OOXML scaffold (8 KB pptx with "Click to add first slide");
+    // delivering that as a download URL just tricks the user into
+    // grabbing an empty file when the agent stops early. Letting the
+    // chat panel stay empty until real content lands is honest signal:
+    // "no deliverable produced yet". `refresh` and `add-part` also
+    // don't guarantee user-visible content but typically come after
+    // other edits, so we keep uploading on those.
+    // On CLI we skip unless DEXTER_OFFICE_AUTO_UPLOAD=1 — `shouldAutoUpload`
+    // gates both. Upload failures are logged but never throw: the edit
+    // itself succeeded, so we still return the tool result.
+    // Post-edit bookkeeping for content-producing subcommands.
+    // We no longer upload to R2 here — the agent loop drains all
+    // touched files at end-of-run for a single canonical delivery
+    // (see src/runtime/office-run.ts). The tool now just:
+    //   1. Records the file path in the run-scoped touch set so the
+    //      drainer knows to upload it later.
+    //   2. Measures emptiness inline and attaches `fileBytes` /
+    //      `fileIsEmpty`. F6 in the agent loop watches `fileIsEmpty`
+    //      to decide whether the agent is allowed to declare done.
+    //   3. On empty files, sets a `_required` directive — same UX as
+    //      before, the difference is only that no R2 PUT happens.
+    const isContentProducing =
+      (EDIT_SUBCOMMANDS as readonly string[]).includes(subcommand) &&
+      subcommand !== 'create' &&
+      subcommand !== 'new';
+    // Subcommands that meaningfully *should* grow the file when they
+    // succeed. `set`/`remove`/`move`/`swap`/`refresh`/`raw-set` may
+    // legitimately produce small (or no) growth — exclude them from
+    // the no-op detector to avoid false positives.
+    const expectsByteGrowth =
+      subcommand === 'add' ||
+      subcommand === 'add-part' ||
+      subcommand === 'import' ||
+      subcommand === 'batch' ||
+      subcommand === 'merge';
+    const NO_OP_BYTE_THRESHOLD = 50;
+
+    if (isContentProducing && existsSync(file)) {
+      recordOfficeTouch(file);
+      const postEditBytes = statSync(file).size;
+      const delta = preEditBytes < 0 ? postEditBytes : postEditBytes - preEditBytes;
+
+      // Diagnostic line — printed to dev server stdout so we can see
+      // exactly what each office_edit invocation looked like and how
+      // much (or little) it grew the file. Pair with [office-run]
+      // touch lines to diagnose "agent claimed it added content but
+      // the file is empty".
+      console.log(
+        `[office-edit] ${subcommand} ${file} args=${JSON.stringify(args)} ` +
+          `bytes ${preEditBytes < 0 ? '(new)' : preEditBytes} → ${postEditBytes} (Δ${delta})`,
+      );
+
+      if (expectsByteGrowth && delta >= 0 && delta <= NO_OP_BYTE_THRESHOLD) {
+        // Loud signal: this edit didn't actually add bytes. Almost
+        // always means the option payload was dropped or the parent
+        // path doesn't exist. The agent gets a `_required` directive
+        // with the exact argv + delta so it can self-correct.
+        mandatoryInstructions = {
+          status: 'NO-OP EDIT — your last office_edit succeeded per OfficeCLI exit code but added essentially no bytes to the file. The command did not insert real content.',
+          subcommand,
+          file,
+          argv,
+          preEditBytes,
+          postEditBytes,
+          deltaBytes: delta,
+          likelyCauses: [
+            'You used a relative file path. Always use absolute paths (e.g. `/tmp/<name>.docx`); a relative path can resolve to the wrong cwd and a fresh blank doc gets created.',
+            'The `--type` option was missing or mistyped. For docx use `--prop type=p|h1|h2|table|list`; for pptx use `--prop type=slide|shape|chart|table`; for xlsx use `--prop type=row|cell|column`.',
+            'The `--text` / `--values` payload was empty or escaped wrong, so the element was added but with no visible content.',
+            'The parent path you used does not exist. Call `office_read subcommand=view file=<absolute-path> args=["outline"]` to see the real element tree before guessing paths like `/body/p[3]` that may not exist yet.',
+          ],
+          recoverySteps: [
+            'Run `office_read subcommand=view file=<ABSOLUTE-PATH> args=["outline"]` to confirm the parent path.',
+            'Re-issue the office_edit with an ABSOLUTE path AND `--prop type=<element-kind>` AND a non-empty `--prop text=<content>` (or `--prop values=[...]` for rows).',
+            'After the next edit, the response will include `fileBytes` and `deltaBytes`. Only treat it as success when `deltaBytes` > ~200 (real content adds at minimum a few hundred bytes).',
+          ],
+        };
+      }
+
+      const emptiness = checkFileEmptiness(file);
+      if (emptiness) {
+        if (emptiness.empty && !mandatoryInstructions) {
+          mandatoryInstructions = {
+            status:
+              'FILE STILL EMPTY — the edit succeeded but the artefact has no user-visible content yet. Naming sheets / setting a layout / declaring a part is not adding content.',
+            measuredBytes: emptiness.bytes,
+            emptyFloor: emptiness.floor,
+            nextSteps: [
+              emptiness.ext === 'xlsx'
+                ? 'Import data with `office_edit subcommand=import file=<path> args=[<sheet-path>, <csv-tsv-path>]` OR add rows/cells via `office_edit subcommand=add file=<path> args=[<sheet>] options={ type: "row", values: [...] }`. Renaming a sheet only changes its label — it does not insert data.'
+                : emptiness.ext === 'pptx'
+                ? 'Add slides with actual content via `office_edit subcommand=batch file=<path>` piping a JSON array of slide ops on stdin. Each slide needs a title + body text + (per skill rules) layered shapes. Adding a slide without setting `title`/`text`/shapes leaves it blank.'
+                : 'Add paragraphs / headings / tables under /body via `office_edit subcommand=add file=<path> args=["/body"] options={ type: "p"|"h1"|"table", text: "...", ... }`. Setting layout properties alone produces no visible content.',
+              'After adding content, do NOT declare done. Call `office_read view stats file=<path>` and confirm the cell/slide/paragraph count is non-trivial. THEN run the delivery gate (`view issues`, `validate`, `view screenshot`).',
+            ],
+            downloadSuppressed:
+              'The chat UI will NOT surface a download link for this artefact until it contains real content. The user-facing answer must NOT claim the file is ready.',
+          };
+        }
+        if (payload && typeof payload === 'object') {
+          payload = {
+            ...(payload as Record<string, unknown>),
+            fileBytes: emptiness.bytes,
+            fileIsEmpty: emptiness.empty,
+            deltaBytes: delta,
+          };
+        }
+      }
+    }
+    return formatToolResult(
+      payload,
+      mandatoryInstructions ? { mandatoryInstructions } : undefined,
+    );
   } catch (err) {
     if (err instanceof OfficeCliError) {
       // Embed the parsed-or-raw stdout for context, plus the stderr message

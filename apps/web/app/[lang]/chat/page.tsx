@@ -544,7 +544,25 @@ function reduceEvent(
     }
     case 'done': {
       const answer = (payload.answer as string) ?? '';
-      return { ...turn, answer, status: 'done', statusLabel: undefined };
+      // Pick up R2 download URLs the agent loop uploaded at end-of-run.
+      // Shape mirrors src/agent/types.ts#Deliverable; we filter for the
+      // minimum fields the UI needs to render a download chip so a
+      // mis-shaped payload doesn't crash the turn.
+      const raw = Array.isArray(payload.deliverables) ? payload.deliverables : [];
+      const deliverables = raw
+        .map((d) => {
+          if (!d || typeof d !== 'object') return null;
+          const o = d as Record<string, unknown>;
+          const filename = typeof o.filename === 'string' ? o.filename : '';
+          const downloadUrl = typeof o.downloadUrl === 'string' ? o.downloadUrl : '';
+          const expiresAt = typeof o.expiresAt === 'string' ? o.expiresAt : '';
+          const key = typeof o.key === 'string' ? o.key : '';
+          const byteLength = typeof o.byteLength === 'number' ? o.byteLength : 0;
+          if (!filename || !downloadUrl) return null;
+          return { filename, downloadUrl, expiresAt, byteLength, key };
+        })
+        .filter((d): d is NonNullable<typeof d> => d !== null);
+      return { ...turn, answer, status: 'done', statusLabel: undefined, deliverables };
     }
     case 'error': {
       const message = (payload.message as string) ?? 'Unknown error';

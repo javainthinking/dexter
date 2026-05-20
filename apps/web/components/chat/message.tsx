@@ -2,12 +2,21 @@
 
 import * as React from 'react';
 import { useSession } from 'next-auth/react';
+import { Download } from 'lucide-react';
 import { Markdown } from './markdown';
 import { ToolCard, type ToolCardEvent } from './tool-card';
 import { Logo } from '../logo';
-import { useDictionary } from '../i18n/dictionary-provider';
+import { useDictionary, format } from '../i18n/dictionary-provider';
 import { cn } from '../../lib/utils';
 import { Badge } from '../ui/badge';
+
+export interface TurnDeliverable {
+  filename: string;
+  downloadUrl: string;
+  expiresAt: string;
+  byteLength: number;
+  key: string;
+}
 
 export interface ChatTurn {
   id: string;
@@ -17,6 +26,14 @@ export interface ChatTurn {
   statusLabel?: string;        // e.g. 'planning', 'calling tool', 'writing answer'
   tools: ToolCardEvent[];
   errorMessage?: string;
+  /**
+   * Files produced by the agent in this turn, populated from the
+   * `deliverables` field on the agent's done event. Each item is a
+   * presigned download URL the chat renders as a download chip.
+   * Optional because legacy turns hydrated from the database have no
+   * deliverables.
+   */
+  deliverables?: TurnDeliverable[];
 }
 
 export function UserMessage({ text }: { text: string }) {
@@ -60,6 +77,57 @@ function UserAvatar({ image, fallback }: { image: string | null; fallback: strin
   );
 }
 
+function TurnDeliveries({ turn }: { turn: ChatTurn }) {
+  const dict = useDictionary();
+  const deliveries = turn.deliverables ?? [];
+  if (deliveries.length === 0) return null;
+  return (
+    <div className="mb-3 rounded-lg border border-border bg-card p-3">
+      <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.16em] text-subtle">
+        {dict.chat.delivery.title}
+      </p>
+      <ul className="space-y-1.5">
+        {deliveries.map((d) => (
+          // R2 object keys include a timestamp + per-call random
+          // component, so they're guaranteed unique across siblings
+          // even when two deliverables share a basename. Using
+          // filename as the key produced duplicate-key warnings when
+          // path-normalisation in the touch set was incomplete.
+          <li key={d.key || d.downloadUrl}>
+            <a
+              href={d.downloadUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              download={d.filename}
+              className="inline-flex items-center gap-2 rounded-md border border-border bg-background/60 px-2.5 py-1.5 text-xs text-foreground hover:border-border-strong hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <Download className="size-3.5 text-muted-foreground" />
+              <span className="truncate font-mono">{d.filename}</span>
+              {d.byteLength > 0 && (
+                <span className="font-mono text-[10px] text-subtle">
+                  {format(dict.chat.delivery.sizeKb, {
+                    kb: Math.max(1, Math.round(d.byteLength / 1024)),
+                  })}
+                </span>
+              )}
+              <span className="ml-1 font-mono text-[10px] text-subtle">
+                {dict.chat.delivery.download}
+              </span>
+            </a>
+            {d.expiresAt && (
+              <span className="ml-2 font-mono text-[10px] text-subtle">
+                {format(dict.chat.delivery.expiresAt, {
+                  date: new Date(d.expiresAt).toLocaleDateString(),
+                })}
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function initialsFor(user: { name?: string | null; email?: string | null } | undefined): string | null {
   const raw = user?.name?.trim() || user?.email?.split('@')[0];
   if (!raw) return null;
@@ -84,12 +152,10 @@ export function AssistantMessage({ turn }: { turn: ChatTurn }) {
           <span className="font-serif text-sm font-semibold text-foreground">
             {dict.chat.message.dexter}
           </span>
-          {turn.status === 'streaming' && (
-            <Badge variant="info" size="sm">
-              <span className="size-1.5 rounded-full bg-[color:var(--info)] animate-pulse-soft" />
-              {turn.statusLabel ?? dict.chat.message.status.thinking}
-            </Badge>
-          )}
+          {/* Terminal-state badges stay in the header (one-shot signals
+              that the turn ended in a non-success state). The streaming
+              progress indicator moves to the bottom of the message,
+              under the latest content. */}
           {turn.status === 'interrupted' && (
             <Badge variant="warning" size="sm">
               {dict.chat.message.status.stopped}
@@ -110,6 +176,8 @@ export function AssistantMessage({ turn }: { turn: ChatTurn }) {
           </div>
         )}
 
+        <TurnDeliveries turn={turn} />
+
         {showAnswer && (
           <div
             className={cn(
@@ -121,8 +189,16 @@ export function AssistantMessage({ turn }: { turn: ChatTurn }) {
           </div>
         )}
 
-        {!showAnswer && turn.status === 'streaming' && turn.tools.length === 0 && (
-          <div className="flex items-center gap-2 pt-1 text-sm text-muted-foreground">
+        {/*
+          Streaming progress lives at the bottom of the message, under
+          whatever was most recently rendered (tool cards, deliveries,
+          or the partial answer). Showing it here instead of in the
+          header keeps the user's eye anchored where the latest update
+          will appear, so a long-running turn still feels alive without
+          having to scroll back up to read a stale status badge.
+        */}
+        {turn.status === 'streaming' && (
+          <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
             <span className="inline-flex gap-1">
               <span className="size-1 rounded-full bg-foreground animate-pulse-soft" />
               <span className="size-1 rounded-full bg-foreground animate-pulse-soft [animation-delay:120ms]" />

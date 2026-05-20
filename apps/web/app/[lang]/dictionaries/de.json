@@ -118,6 +118,12 @@
       "arguments": "Argumente",
       "result": "Ergebnis",
       "errorLabel": "Fehler"
+    },
+    "delivery": {
+      "title": "Erzeugte Dateien",
+      "download": "Herunterladen",
+      "expiresAt": "Link gültig bis {date}",
+      "sizeKb": "{kb} KB"
     }
   },
   "theme": {

@@ -118,6 +118,12 @@
       "arguments": "引数",
       "result": "結果",
       "errorLabel": "エラー"
+    },
+    "delivery": {
+      "title": "生成されたファイル",
+      "download": "ダウンロード",
+      "expiresAt": "リンクの有効期限：{date}",
+      "sizeKb": "{kb} KB"
     }
   },
   "theme": {

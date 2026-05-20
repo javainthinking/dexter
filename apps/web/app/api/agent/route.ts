@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { AgentRunnerController } from '@dexter/core/controllers/agent-runner';
 import { composeWebPorts } from '@dexter/core/entrypoints/web/compose';
 import { SseEventSink } from '@dexter/core/adapters/eventsink/sse';
+import { withUser } from '@dexter/core/runtime/user-context';
 
 import { resolveSession } from '../../../lib/session';
 import { getCurrentUser } from '../../../lib/auth/session';
@@ -89,8 +90,9 @@ export async function POST(request: NextRequest): Promise<Response> {
 
   // Kick off the agent run asynchronously. The sink is what streams events
   // out to the client; runQuery() flushes the sink in its own `finally`.
-  void controller
-    .runQuery(query)
+  // The withUser scope makes user.id readable from tools (e.g. the office
+  // R2 uploader) without threading it through every tool call site.
+  void withUser({ userId: user.id, email: user.email ?? undefined }, () => controller.runQuery(query))
     .catch((err) => {
       const message = err instanceof Error ? err.message : String(err);
       console.error(

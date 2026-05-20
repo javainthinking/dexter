@@ -118,6 +118,12 @@
       "arguments": "인수",
       "result": "결과",
       "errorLabel": "오류"
+    },
+    "delivery": {
+      "title": "생성된 파일",
+      "download": "다운로드",
+      "expiresAt": "링크 만료: {date}",
+      "sizeKb": "{kb} KB"
     }
   },
   "theme": {

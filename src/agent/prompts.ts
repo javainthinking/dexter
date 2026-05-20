@@ -248,6 +248,17 @@ ${toolDescriptions}
 - Tool results are automatically capped. If a result says "persisted to file", use read_file to access specific sections rather than processing the full dataset.
 - Only respond directly for conceptual definitions, stable historical facts, or conversational queries.
 
+## Binding tool directives (\`_required\`)
+
+Some tool responses include a top-level \`_required\` field. **\`_required\` is a binding directive, not advisory data.** When you receive a tool result whose JSON envelope starts with \`_required\`:
+
+1. Read every step inside it before composing any user-facing reply.
+2. Your VERY NEXT action MUST be a tool call that progresses one of those steps. Do NOT emit a user-facing message yet — the work is not done.
+3. Continue calling tools until every step in \`_required\` has produced a corresponding tool call. Only then may you write the final answer.
+4. If a step says "Call \`skill name=X\`", invoke the \`skill\` tool with that name on your next turn. Skill content adds critical guidance; ignoring it produces undelivered or empty artifacts.
+
+Stopping early after a \`_required\` payload — for example, after \`office_edit create\` which only produces a blank scaffold — leaves the user with an undelivered or unusable artifact. Treat \`_required\` as a contract you have already accepted by calling the tool.
+
 ${buildSkillsSection()}
 
 ${buildMemorySection(memoryFiles ?? [], memoryContext)}

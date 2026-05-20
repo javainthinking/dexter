@@ -3,3 +3,10 @@ node_modules/
 .env*.local
 *.tsbuildinfo
 .vercel
+
+# Office artefacts the agent occasionally drops in cwd when it forgets
+# to use an absolute path. They're delivered via R2 + chat chips, so
+# the local copies aren't needed in version control.
+*.docx
+*.xlsx
+*.pptx

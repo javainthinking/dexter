@@ -17,6 +17,14 @@ export interface RunContext {
    * anchor token estimates on real data.
    */
   lastApiInputTokens: number;
+  /**
+   * Number of times the agent loop has refused to exit because the most
+   * recent tool result still carried a `_required` directive. Capped at
+   * MAX_REQUIRED_NUDGES (currently 2) so a genuinely-done workflow
+   * can't loop forever if the model insists on stopping. See
+   * `agent.ts` for the enforcement.
+   */
+  requiredNudges: number;
 }
 
 export function createRunContext(query: string): RunContext {
@@ -27,5 +35,6 @@ export function createRunContext(query: string): RunContext {
     startTime: Date.now(),
     iteration: 0,
     lastApiInputTokens: 0,
+    requiredNudges: 0,
   };
 }

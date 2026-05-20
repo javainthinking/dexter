@@ -31,6 +31,102 @@ const DEFAULT_MODEL = 'gpt-5.5';
 const DEFAULT_MAX_ITERATIONS = 30;
 const MAX_OVERFLOW_RETRIES = 2;
 const OVERFLOW_KEEP_ROUNDS = 3;
+/**
+ * How many times we'll refuse to exit the loop because the agent
+ * hasn't produced a deliverable yet. Bumped from 2 → 4 after observing
+ * cases where the model takes 3+ tries to stop renaming sheets and
+ * actually insert data. Beyond 4 the loop exits so a genuinely stuck
+ * workflow can't burn the whole 30-iteration budget.
+ */
+const MAX_REQUIRED_NUDGES = 4;
+
+/**
+ * Scan a tool message for an unsatisfied `_required` directive. Tolerates
+ * both the new top-level shape (`{ _required: {...}, data: {...} }`) and
+ * the legacy nested shape (`{ data: { _required: {...} } }`).
+ */
+function toolMessageHasRequired(m: ToolMessage): boolean {
+  const content = typeof m.content === 'string' ? m.content : JSON.stringify(m.content);
+  if (!content.includes('"_required"')) return false;
+  try {
+    const parsed = JSON.parse(content);
+    if (parsed && typeof parsed === 'object') {
+      if ('_required' in parsed) return true;
+      const data = (parsed as { data?: unknown }).data;
+      if (data && typeof data === 'object' && '_required' in data) return true;
+    }
+  } catch {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * The decisive "agent must keep going" check.
+ *
+ * Invariant: if any `office_edit` call ran, the MOST RECENT `office_edit`
+ * tool result must NOT be marked `fileIsEmpty: true` and must not carry
+ * an unsatisfied `_required` directive. The office tool attaches
+ * `fileIsEmpty` to every successful content-producing edit by measuring
+ * file size against a per-extension floor; an empty file means the agent
+ * has not actually added content yet.
+ *
+ * R2 uploads now happen ONCE at end-of-run (see runtime/office-run.ts),
+ * so a `delivery.downloadUrl` won't be visible inline anymore — we use
+ * `fileIsEmpty` as the in-loop proxy for "real artefact exists".
+ *
+ * Returns true when a nudge is warranted.
+ */
+function needsContinuation(messages: BaseMessage[]): boolean {
+  let lastEdit: ToolMessage | null = null;
+  for (const m of messages) {
+    if (m instanceof ToolMessage && m.name === 'office_edit') {
+      lastEdit = m;
+    }
+  }
+  if (!lastEdit) return false;
+  const content = typeof lastEdit.content === 'string' ? lastEdit.content : JSON.stringify(lastEdit.content);
+  // A bona-fide tool failure (binary missing, bad argv) shouldn't loop
+  // forever — the agent needs to be allowed to surrender.
+  if (/"error"\s*:/.test(content) && !content.includes('"_required"')) return false;
+  // Strong signal: tool explicitly marked the file empty after the edit.
+  if (/"fileIsEmpty"\s*:\s*true/.test(content)) return true;
+  // Or the tool returned a _required directive (covers create/new too).
+  if (toolMessageHasRequired(lastEdit)) return true;
+  // Last office_edit had content-bearing result (fileIsEmpty:false or no
+  // emptiness check ran) AND no unfinished directive — agent may exit.
+  return false;
+}
+
+function buildNudgePrompt(nudgeNumber: number): string {
+  if (nudgeNumber === 1) {
+    return (
+      'STOP — do not respond to the user yet. The work is not complete. ' +
+      'Either (a) your most recent tool result includes a `_required` directive ' +
+      'whose steps are not yet finished, OR (b) you called `office_edit` but the ' +
+      'response was marked `fileIsEmpty: true` — meaning no real content was added. ' +
+      'Re-read the last `office_edit` result now and your next action MUST be a tool ' +
+      'call that adds real content (e.g. `office_edit subcommand=batch` with slide ops, ' +
+      '`office_edit subcommand=add` with `type=row` + `values=[...]`, or ' +
+      '`office_edit subcommand=import` for CSV/TSV data). Renaming sheets, setting ' +
+      'layouts, or running read calls is NOT adding content. Only when the next ' +
+      '`office_edit` returns `fileIsEmpty: false` may you write a final answer.'
+    );
+  }
+  // Escalated message — model has already ignored the first nudge.
+  return (
+    'CRITICAL — you are about to lie to the user. You have failed to add real content ' +
+    `to the file ${nudgeNumber} time(s) in a row, yet you keep trying to declare the ` +
+    'task done. The chat UI WILL NOT show the user any download link because R2 ' +
+    'upload only runs at end-of-run for files with real content — your "file is ready" ' +
+    'message would be a falsehood. Your next action MUST be either: (1) an ' +
+    '`office_edit` call that inserts actual data (cells, rows, slides with text, ' +
+    'paragraphs) and produces `fileIsEmpty: false` in the response, OR (2) an honest ' +
+    'user-facing message admitting you could not produce the artefact and explaining ' +
+    'why (e.g. missing source data, ambiguous request). DO NOT pretend the file ' +
+    'exists with content when it does not.'
+  );
+}
 
 /**
  * The core agent class that handles the agent loop and tool execution.
@@ -195,8 +291,23 @@ export class Agent {
         yield { type: 'thinking', message: trimmedText };
       }
 
-      // No tool calls = final answer
+      // No tool calls = final answer — unless the agent edited a file
+      // but never produced a download URL. That's the canonical case:
+      // office_edit create succeeded but slides were never added, or
+      // the agent renamed sheets without inserting data. Either way the
+      // chat UI has no chip to render and the agent's confident "file
+      // is ready" reply would be a lie. Nudge until either a delivery
+      // URL appears or the cap is hit.
       if (!hasToolCalls(response)) {
+        if (
+          ctx.requiredNudges < MAX_REQUIRED_NUDGES &&
+          needsContinuation(messages)
+        ) {
+          ctx.requiredNudges++;
+          messages.push(response);
+          messages.push(new HumanMessage(buildNudgePrompt(ctx.requiredNudges)));
+          continue;
+        }
         yield* this.handleDirectResponse(responseText ?? '', ctx);
         return;
       }

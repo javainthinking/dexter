@@ -118,6 +118,12 @@
       "arguments": "arguments",
       "result": "résultat",
       "errorLabel": "erreur"
+    },
+    "delivery": {
+      "title": "Fichiers générés",
+      "download": "Télécharger",
+      "expiresAt": "Lien valable jusqu'au {date}",
+      "sizeKb": "{kb} Ko"
     }
   },
   "theme": {

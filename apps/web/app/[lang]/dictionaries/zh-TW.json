@@ -118,6 +118,12 @@
       "arguments": "參數",
       "result": "結果",
       "errorLabel": "錯誤"
+    },
+    "delivery": {
+      "title": "已產生的檔案",
+      "download": "下載",
+      "expiresAt": "連結將於 {date} 失效",
+      "sizeKb": "{kb} KB"
     }
   },
   "theme": {
