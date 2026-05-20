@@ -1,9 +1,12 @@
 /**
  * Source of a skill definition.
- * - builtin: Shipped with Dexter (src/skills/builtin/)
+ * - builtin: Shipped with Dexter (src/skills/)
  * - project: Project-level skills (.dexter/skills/)
+ * - upstream: Specialized SKILL.md files pulled from third-party
+ *   upstream projects (e.g. OfficeCLI's skills/officecli-pptx) at
+ *   build time. Treated as read-only design-bible content.
  */
-export type SkillSource = 'builtin' | 'user' | 'project';
+export type SkillSource = 'builtin' | 'user' | 'project' | 'upstream';
 
 /**
  * Skill metadata - lightweight info loaded at startup for system prompt injection.

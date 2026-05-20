@@ -18,6 +18,13 @@ const nextConfig: NextConfig = {
       './bin/officecli-linux-x64',
       './bin/styles/INDEX.md',
       './bin/styles/**/style.md',
+      // Specialized SKILL.md design bibles from upstream OfficeCLI
+      // (officecli-pptx, officecli-pitch-deck, morph-ppt, etc.) plus
+      // the morph-ppt reference tree (pptx-design.md, decision-rules.md).
+      // Without these the agent only sees CLI grammar, not the
+      // visual-design rules INDEX.md says it MUST follow.
+      './bin/upstream-skills/**/SKILL.md',
+      './bin/upstream-skills/**/reference/**',
     ],
   },
   // The agent core uses native node modules. Keep them as externals so

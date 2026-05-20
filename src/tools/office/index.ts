@@ -203,16 +203,6 @@ function defaultPresetForFile(file: string): string | null {
   return null;
 }
 
-/** Safe read of a preset's style.md without the error-envelope wrapping
- * that readStyleDoc emits — used when we want raw markdown to inline. */
-function loadStyleMd(directory: string): string | null {
-  const root = stylesRoot();
-  if (!root) return null;
-  const candidate = resolve(root, directory, 'style.md');
-  if (!candidate.startsWith(root) || !existsSync(candidate)) return null;
-  return readFileSync(candidate, 'utf-8');
-}
-
 async function invoke(
   subcommand: string,
   file: string,
@@ -252,39 +242,69 @@ async function invoke(
     // mandatory next-step list into the create response. The agent has
     // the design vocabulary in front of it from this point on; the
     // _required field name signals it's not optional.
+    // Earlier versions inlined the full preset style.md + INDEX (~16 KB)
+    // here. That gave palette + typography but output still looked
+    // generic. Per the audit of github.com/iOfficeAI/OfficeCLI, the
+    // load-bearing design rules live in skills/officecli-pptx/SKILL.md
+    // and skills/morph-ppt/reference/pptx-design.md (NOT in style.md).
+    // The single biggest visible quality gap is SHAPE DENSITY: upstream
+    // builds use 50+ shapes per slide with text composed as TWO shapes
+    // (filled bg + text shape with fill=none). Default agents emit
+    // 4-8 shapes with text inside default placeholders. Swap the long
+    // inline for a sharp brief that (1) routes to the specialized
+    // SKILL the agent should load, and (2) embeds the load-bearing
+    // rules verbatim so they apply even when the agent skips loading.
     if ((subcommand === 'create' || subcommand === 'new') && payload && typeof payload === 'object') {
       const presetName = defaultPresetForFile(file);
-      const presetMarkdown = presetName ? loadStyleMd(presetName) : null;
-      const stylesIndex = presetMarkdown ? readStylesIndex() : null;
+      const ext = file.toLowerCase().split('.').pop();
+      const specializedSkill =
+        ext === 'pptx'
+          ? 'officecli-pptx'
+          : ext === 'docx'
+          ? 'officecli-docx'
+          : ext === 'xlsx'
+          ? 'officecli-xlsx'
+          : null;
       payload = {
         ...(payload as Record<string, unknown>),
         _required: {
           status:
-            'BLANK FILE CREATED — work is NOT complete. A placeholder slide / empty body is not a deliverable.',
-          mandatorySteps: [
-            `1. Apply a design preset's palette + typography. Default for this extension: ${presetName ?? '(no design preset; raw data file)'}.`,
-            '2. office_edit set /theme — apply the preset\'s heading + body fonts.',
-            '3. office_edit batch — pipe a JSON array of slide/element adds on stdin (much faster than chained adds). Use the preset\'s hex colours for slide backgrounds and chart fills.',
-            '4. office_read view file=<path> args=["issues"] — catches overflow, missing alt text, formula errors.',
-            '5. office_read validate file=<path> — OpenXML schema check.',
-            '6. office_read view file=<path> args=["screenshot"] — render to PNG and verify the result matches the preset\'s mood.',
-            'Only after steps 1-6 pass is the file deliverable.',
+            'BLANK FILE CREATED — work is NOT complete. The default placeholders are not the deliverable.',
+          step1_loadSpecializedSkill: specializedSkill
+            ? `Call \`skill name=${specializedSkill}\` next. It returns the 40 KB design bible (type hierarchy, palette canon, motif commitment, Delivery Gate). Do this BEFORE adding any element. For fundraising / Series A-C / investor decks also load \`skill name=officecli-pitch-deck\`. For cross-slide animation also load \`skill name=morph-ppt\`.`
+            : 'No specialized design bible for this file type; proceed with raw schema + presets.',
+          step2_pickPreset: presetName
+            ? `Default preset for this extension is \`${presetName}\`. Read it with \`office_read style file=${presetName}\` for hex codes + fonts, or browse alternatives with \`office_read styles-list\` and pick a different folder if the user asked for a different mood.`
+            : null,
+          step3_designRules_VISIBLE_QUALITY_GAP: {
+            principle:
+              'The largest gap between default-agent output and upstream-quality output is SHAPE DENSITY. A real designed slide has 30-50+ shapes, not 4-8. Default agents emit text-in-placeholder; designed decks compose every label as TWO shapes layered.',
+            rules: [
+              'Compose every text label as TWO shapes: (1) `office_edit add /slide[N] --type shape --prop preset=rect|roundRect --prop fill=<bg-hex>` for the background, then (2) `office_edit add /slide[N] --type shape --prop text="..." --prop fill=none --prop color=<fg-hex> --prop size=<pt> --prop bold=true` overlaid at the SAME x/y/width/height. The `fill=none` on the text shape is what makes colour read on the card behind it.',
+              'Plan for 30+ shapes per content slide; 50+ on the cover. Most are decoration: 0.08-0.25cm thin colored bars, looped ellipse/dot clusters (`for i in 1..15`), filled rects at 0.2-0.5 opacity behind content, side-stripe bands on cards.',
+              'Commit to ONE motif and carry it across every slide (numbered circles / single-side border band / diagonal accent strip / corner triangle / rounded image frames). Declare it before authoring: "## Motif: numbered circles in brand color". Without a motif the deck reads as templated.',
+              'Type hierarchy floor: title ≥ 36pt bold; body ≥ 18pt; title ≥ 2× body. Min shape height ≈ font_pt × 0.05cm (18pt body needs ≥ 0.9cm; 60pt hero needs ≥ 3cm). Default placeholders violate this routinely.',
+              'KPI fit math (big-number callouts like "$2.4B"): max font ≈ card_width_cm × denom, denom = 10 for 1-2 chars, 7 for 3-4 chars, 5 for 5+ chars.',
+              'Grid math, never hand-picked x: for N cards across 33.87cm canvas with margin m + gap g, col_width = (33.87 - 2m - (N-1)g) / N. Margins ≥ 1.27cm, gaps ≥ 0.76cm, ≥ 20% negative space.',
+              'Use `batch` (JSON array of ops on stdin) for any deck > 3 slides. Chain adds are 10× slower.',
+            ],
+            antiSlopChecklist: [
+              'NEVER place a decorative line under slide titles — #1 AI-slide tell.',
+              "Don't repeat the same layout across consecutive slides.",
+              'Never center body text — left-align all paragraphs.',
+              "Don't default to corporate blue. Stay on the preset's palette.",
+              "Don't ship text-only slides — every slide carries a non-text visual.",
+              "Don't style one slide and leave the rest plain — consistency-check before declaring done.",
+            ],
+            chosenPreset: presetName,
+          },
+          step4_deliveryGate: [
+            'office_read view args=["issues"]   — overflow + alt text + formula errors',
+            'office_read view args=["outline"]  — sanity-check every slide has content',
+            'office_read validate                — OpenXML schema check',
+            'office_read view args=["screenshot"] — render to PNG and verify mood matches preset',
+            "Fix-verify loop up to 3 times. Only after all four pass is the file deliverable.",
           ],
-          chosenPreset: presetName,
-          ...(presetMarkdown
-            ? {
-                presetStyleMd: presetMarkdown,
-                presetUsageNote:
-                  'The presetStyleMd above contains the colour palette table (hex codes + roles) and typography table you must apply. Read it before adding slides. To pick a different preset, browse the stylesIndex below.',
-              }
-            : {}),
-          ...(stylesIndex
-            ? {
-                stylesIndex,
-                stylesIndexNote:
-                  'Topic → preset directory map from upstream OfficeCLI. Pick a different directory only if the user explicitly asked for a different mood (e.g. light corporate instead of dark investor).',
-              }
-            : {}),
         },
       };
     }

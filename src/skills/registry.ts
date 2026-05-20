@@ -1,5 +1,5 @@
 import { existsSync, readdirSync } from 'fs';
-import { join, dirname } from 'path';
+import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import type { SkillMetadata, Skill, SkillSource } from './types.js';
 import { extractSkillMetadata, loadSkillFromPath } from './loader.js';
@@ -10,10 +10,30 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 /**
+ * Locate the upstream-skills directory installed by
+ * scripts/install-officecli.ts. Sits alongside the bundled officecli
+ * binary at apps/web/bin/upstream-skills/. The path is resolved
+ * relative to the project root inferred from this file's location
+ * (src/skills/registry.ts → ../../apps/web/bin/upstream-skills) so it
+ * works the same on local CLI and inside a Vercel function bundle
+ * (where Next's outputFileTracingRoot keeps the relative layout).
+ */
+function upstreamSkillsDir(): string {
+  return resolve(__dirname, '..', '..', 'apps', 'web', 'bin', 'upstream-skills');
+}
+
+/**
  * Skill directories in order of precedence (later overrides earlier).
+ *
+ * Upstream specialized SKILL.md files (OfficeCLI's officecli-pptx /
+ * pitch-deck / morph-ppt / etc.) are scanned in the same way as
+ * built-ins — they expose themselves as `skill name=officecli-pptx`,
+ * `skill name=officecli-pitch-deck`, etc., and the agent loads them
+ * on-demand via the existing skill tool.
  */
 const SKILL_DIRECTORIES: { path: string; source: SkillSource }[] = [
   { path: __dirname, source: 'builtin' },
+  { path: upstreamSkillsDir(), source: 'upstream' },
   { path: join(process.cwd(), dexterPath('skills')), source: 'project' },
 ];
 

@@ -108,6 +108,41 @@ async function downloadAsset(asset: Asset, expectedHash: string | undefined, des
  */
 const STYLES_REPO_API = 'https://api.github.com/repos/iOfficeAI/OfficeCLI/contents/styles';
 const STYLES_RAW_BASE = 'https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/main/styles';
+const REPO_RAW_BASE = 'https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/main';
+
+/**
+ * Upstream's `skills/` directory holds the actual design bibles —
+ * specialized SKILL.md files the root SKILL.md routes to. Without
+ * these the agent only sees CLI grammar, not the design rules
+ * (type hierarchy, palette, motif commitment, two-shape text
+ * composition, anti-AI-slop list, etc.). styles/INDEX.md explicitly
+ * tells the agent "follow the design principles in pptx-design.md" —
+ * that file lives inside skills/morph-ppt/reference/ and is
+ * otherwise unreachable.
+ *
+ * We pull all 10 specialized SKILL.md files plus the morph-ppt
+ * reference tree. Total bundle ~470 KB.
+ */
+const UPSTREAM_SKILLS = [
+  'officecli-pptx',
+  'officecli-pitch-deck',
+  'officecli-docx',
+  'officecli-xlsx',
+  'officecli-financial-model',
+  'officecli-data-dashboard',
+  'officecli-academic-paper',
+  'officecli-word-form',
+  'morph-ppt',
+  'morph-ppt-3d',
+] as const;
+
+const MORPH_REFERENCE_FILES = [
+  'reference/pptx-design.md',
+  'reference/decision-rules.md',
+  'reference/morph-helpers.sh',
+  'reference/morph-helpers.py',
+  'reference/styles/INDEX.md',
+] as const;
 
 async function fetchJson<T>(url: string): Promise<T> {
   const res = await fetch(url, {
@@ -133,6 +168,44 @@ interface GhContent {
   type: 'dir' | 'file';
   sha: string;
   download_url: string | null;
+}
+
+async function syncUpstreamSkills(rootDir: string): Promise<{ skills: number; refs: number }> {
+  if (!existsSync(rootDir)) mkdirSync(rootDir, { recursive: true });
+  let skills = 0;
+  let refs = 0;
+  for (const name of UPSTREAM_SKILLS) {
+    const localDir = join(rootDir, name);
+    if (!existsSync(localDir)) mkdirSync(localDir, { recursive: true });
+    const url = `${REPO_RAW_BASE}/skills/${name}/SKILL.md`;
+    try {
+      const text = await fetchText(url);
+      writeFileSync(join(localDir, 'SKILL.md'), text);
+      skills += 1;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.warn(`  ⚠ skills/${name}/SKILL.md skipped: ${message}`);
+    }
+  }
+  // Morph reference tree — agents are explicitly told by styles/INDEX.md
+  // to follow these rules; this is the file the audit said is most
+  // load-bearing and otherwise unreachable.
+  const morphRefRoot = join(rootDir, 'morph-ppt', 'reference');
+  for (const rel of MORPH_REFERENCE_FILES) {
+    const url = `${REPO_RAW_BASE}/skills/morph-ppt/${rel}`;
+    const dest = join(morphRefRoot, rel.replace(/^reference\//, ''));
+    const destDir = dirname(dest);
+    if (!existsSync(destDir)) mkdirSync(destDir, { recursive: true });
+    try {
+      const text = await fetchText(url);
+      writeFileSync(dest, text);
+      refs += 1;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.warn(`  ⚠ morph-ppt/${rel} skipped: ${message}`);
+    }
+  }
+  return { skills, refs };
 }
 
 async function syncStyles(stylesDir: string): Promise<number> {
@@ -219,6 +292,19 @@ async function main(): Promise<void> {
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.warn(`  ⚠ styles/ skipped: ${message}`);
+  }
+
+  // Pull the specialized skill bibles — the actual design rules the
+  // root SKILL.md routes to. Without these the agent only sees CLI
+  // grammar, not the visual-design floor.
+  try {
+    const upstreamSkillsDir = join(BIN_DIR, 'upstream-skills');
+    process.stdout.write(`  ↓ upstream-skills/ … `);
+    const { skills, refs } = await syncUpstreamSkills(upstreamSkillsDir);
+    console.log(`ok (${skills} specialized SKILL.md + ${refs} reference files)`);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn(`  ⚠ upstream-skills/ skipped: ${message}`);
   }
 
   console.log('done.');
