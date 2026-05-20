@@ -227,7 +227,13 @@ export async function runCli() {
   const cliPorts = await composeCliPorts();
 
   agentRunner = new AgentRunnerController(
-    { model: modelSelection.model, modelProvider: modelSelection.provider, maxIterations: 10 },
+    // 30 iterations because the office-authoring workflow alone uses
+    // 6-10 (create → theme → batch slides → validate → issues → screenshot),
+    // and that's before any upstream research / portfolio / memory calls.
+    // 10 was tight for any tool chain with > 2 phases; 30 gives headroom
+    // without enabling unbounded loops (the executor still halts on
+    // duplicate tool args + the model halts when it has an answer).
+    { model: modelSelection.model, modelProvider: modelSelection.provider, maxIterations: 30 },
     modelSelection.inMemoryChatHistory,
     () => {
       // Incremental history update — only render new events

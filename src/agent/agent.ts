@@ -21,7 +21,14 @@ import { resolveProvider } from '../providers.js';
 
 
 const DEFAULT_MODEL = 'gpt-5.5';
-const DEFAULT_MAX_ITERATIONS = 10;
+// 30 because multi-phase tool chains (e.g. OfficeCLI authoring a
+// designed deck: create → set /theme → batch slides → view issues →
+// validate → screenshot) already consume 6-10 before any upstream
+// research / portfolio / memory calls. The previous 10 cap was tight
+// enough to truncate otherwise-correct workflows. The executor's
+// no-progress halt + the model's own answer-signalling still bound
+// runaway loops well below this cap.
+const DEFAULT_MAX_ITERATIONS = 30;
 const MAX_OVERFLOW_RETRIES = 2;
 const OVERFLOW_KEEP_ROUNDS = 3;
 
