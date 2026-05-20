@@ -155,8 +155,25 @@ export async function runOfficeCli(opts: OfficeCliOptions): Promise<OfficeCliRes
   const cwd = opts.cwd ?? (process.platform === 'linux' && process.env.VERCEL ? '/tmp' : process.cwd());
   const timeoutMs = opts.timeoutMs ?? 30_000;
 
+  // OfficeCLI is a self-contained .NET 10 binary. Its runtime requires
+  // libicu for globalization — Vercel's function base image doesn't
+  // ship it, and the agent surfaces the failure as
+  //   "Couldn't find a valid ICU package installed on the system".
+  // .NET supports running without ICU by enabling invariant mode via
+  // an env var, at the cost of some culture-specific formatting. For
+  // OfficeCLI's authoring use case the trade-off is benign — OOXML
+  // numeric/date formats are explicit in the file, not derived from
+  // host culture.
+  // We default to invariant=true everywhere (harmless on macOS/Linux
+  // dev too) and let the caller override via env if they need
+  // culture-aware behaviour.
+  const childEnv = {
+    ...process.env,
+    DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: process.env.DOTNET_SYSTEM_GLOBALIZATION_INVARIANT ?? '1',
+  };
+
   return new Promise<OfficeCliResult>((resolvePromise, rejectPromise) => {
-    const child = spawn(bin, argv, { cwd, env: process.env });
+    const child = spawn(bin, argv, { cwd, env: childEnv });
     let stdoutBuf = '';
     let stderrBuf = '';
     let timedOut = false;
