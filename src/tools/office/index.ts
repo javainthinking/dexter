@@ -217,7 +217,23 @@ async function invoke(
     });
     // OfficeCLI's --json envelope is `{ success, data }` or `{ success: false, error }`.
     // Surface the whole envelope so the agent can see both shape + content.
-    return formatToolResult(result.data ?? { stdout: result.stdout });
+    let payload: unknown = result.data ?? { stdout: result.stdout };
+    // Post-create hint: a blank pptx/docx/xlsx ships with a placeholder
+    // slide / empty body. If the agent stops here it'll hand the user
+    // an empty file. Inject a next-step nudge that points at the skill
+    // (in case it wasn't loaded) so the design loop continues.
+    if ((subcommand === 'create' || subcommand === 'new') && payload && typeof payload === 'object') {
+      payload = {
+        ...(payload as Record<string, unknown>),
+        _nextStep:
+          'Blank file created. The work is NOT done — a placeholder slide is not a deliverable. ' +
+          "Next steps: (1) if you haven't already, call `skill name=office` to load the design playbook; " +
+          '(2) `office_read styles-list` to pick a preset; (3) `office_read style file=<preset>` to grab palette + typography; ' +
+          '(4) `office_edit set /theme` to apply fonts; (5) `office_edit batch` with a JSON array of slide/element adds; ' +
+          "(6) `office_read view file=… args=['issues']` + `validate` + `screenshot` before declaring done.",
+      };
+    }
+    return formatToolResult(payload);
   } catch (err) {
     if (err instanceof OfficeCliError) {
       // Embed the parsed-or-raw stdout for context, plus the stderr message
@@ -239,7 +255,7 @@ async function invoke(
 export const officeReadTool = new DynamicStructuredTool({
   name: 'office_read',
   description:
-    'Read or inspect a Word/Excel/PowerPoint file via OfficeCLI. Returns structured JSON. Use for: extracting outlines/text/stats, querying elements by CSS-like selector, fetching a node by path, viewing raw XML, running a schema validation, or dumping a round-trippable batch script. Read-only — does not modify the file.',
+    'Read or inspect a Word/Excel/PowerPoint file via OfficeCLI. Read-only. Verbs: view, get, query, raw, validate, dump, get-marks, help (schema discovery), styles-list (returns the 51-preset design index), style (returns a specific preset\'s style.md). Returns structured JSON.',
   schema: READ_INPUT,
   func: async (input) => {
     return invoke(input.subcommand, input.file, input.args ?? [], input.options);
@@ -249,7 +265,7 @@ export const officeReadTool = new DynamicStructuredTool({
 export const officeEditTool = new DynamicStructuredTool({
   name: 'office_edit',
   description:
-    'Create or modify a Word/Excel/PowerPoint file via OfficeCLI. Returns structured JSON describing what changed. Use for: creating a blank file, adding/removing/moving elements at a path, setting properties, swapping two elements, importing CSV/TSV into a sheet, refreshing derived fields (TOC, page numbers), or batching many ops in one open/save cycle. Mutates the file on disk.',
+    "Create or modify a Word/Excel/PowerPoint file via OfficeCLI. Mutates the file on disk. IMPORTANT: When authoring a NEW file from scratch (deck / report / model), call `skill name=office` FIRST to load the design playbook — it walks you through picking a preset, setting the theme, batching slides, and the design-pass validation. Skipping the skill and calling `create` alone produces an empty placeholder deck. Verbs: create/new, add, set, remove, move, swap, raw-set, add-part, import, refresh, batch, merge.",
   schema: EDIT_INPUT,
   func: async (input) => {
     return invoke(input.subcommand, input.file, input.args ?? [], input.options, input.stdin);

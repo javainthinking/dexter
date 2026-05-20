@@ -1,6 +1,6 @@
 ---
 name: office
-description: Author and edit Microsoft Office files (.docx / .xlsx / .pptx) — slide decks, financial reports, Excel models — with real visual design (themes, fonts, charts, tables, conditional formatting) via the OfficeCLI binary. Use when the user asks to create a research deck, draft a report, build a model, summarise an existing Office file, or run any element-level edit. Not for PDF or Google Workspace formats.
+description: REQUIRED playbook for authoring or editing .docx / .xlsx / .pptx files (decks, reports, models). Invoke this skill BEFORE the first office_edit call whenever the user asks for a slide deck, research report, pitch deck, financial model, or any Office artifact. The skill picks a curated design preset from 51 options, sets the theme, sequences slides via batch, and runs the design-pass validation. Skipping it produces empty-template output (default placeholders only). Not for PDF or Google Workspace.
 ---
 
 # OfficeCLI Skill
