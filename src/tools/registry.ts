@@ -206,7 +206,9 @@ export function getToolRegistry(model: string): RegisteredTool[] {
   // (next.config.ts outputFileTracingIncludes); on local CLI it's
   // either run via scripts/install-officecli.ts or installed by the
   // user via OfficeCLI's own install.sh.
-  if (findOfficeCliBinary()) {
+  const officeBin = findOfficeCliBinary();
+  console.log(`[office-tools] findOfficeCliBinary() → ${officeBin ?? '(null — tools will NOT be registered)'}`);
+  if (officeBin) {
     tools.push({
       name: 'office_read',
       tool: officeReadTool,

@@ -55,22 +55,51 @@ function findOnPath(name: string): string | null {
 /**
  * Return the absolute path to a usable officecli binary, or null if
  * none is reachable. Cached after the first call.
+ *
+ * Resolution candidates (in order):
+ *   1. OFFICECLI_PATH env override
+ *   2. <cwd>/apps/web/bin/officecli-<platform>-<arch>
+ *   3. <cwd>/apps/web/bin/officecli (alias the install script makes)
+ *   4. <__dirname-walk>/apps/web/bin/... (works for tsx/bun source-tree runs)
+ *   5. `which officecli` on $PATH
+ *
+ * Why cwd-rooted before __dirname-rooted: in a Next.js server bundle
+ * on Vercel, __dirname is the path of the compiled chunk
+ * (.next/server/chunks/…), not the original source file. Resolving
+ * relative paths from there walks into .next/, where bin/ doesn't
+ * exist. Vercel functions run with cwd = deploy root, and our
+ * outputFileTracingIncludes places the binary at
+ * apps/web/bin/officecli-linux-x64 relative to that root.
  */
 export function findOfficeCliBinary(): string | null {
   if (cachedBinaryPath !== undefined) return cachedBinaryPath;
   const candidates: string[] = [];
   const env = process.env.OFFICECLI_PATH;
   if (env) candidates.push(env);
+  const platformName = platformBinaryName();
+  const cwd = process.cwd();
+  candidates.push(join(cwd, 'apps', 'web', 'bin', platformName));
+  candidates.push(join(cwd, 'apps', 'web', 'bin', 'officecli'));
+  // Also try cwd-relative bin/ — Vercel functions sometimes run with
+  // cwd already inside the app directory.
+  candidates.push(join(cwd, 'bin', platformName));
+  candidates.push(join(cwd, 'bin', 'officecli'));
   const root = projectRoot();
-  candidates.push(join(root, 'apps', 'web', 'bin', platformBinaryName()));
+  candidates.push(join(root, 'apps', 'web', 'bin', platformName));
   candidates.push(join(root, 'apps', 'web', 'bin', 'officecli'));
+  console.log(
+    `[office-bin] resolving binary; cwd=${cwd} __dirname=${__dirname} platform=${platformName}`,
+  );
   for (const c of candidates) {
-    if (existsSync(c)) {
+    const exists = existsSync(c);
+    console.log(`[office-bin]   candidate ${c} → ${exists ? 'FOUND' : 'not found'}`);
+    if (exists) {
       cachedBinaryPath = c;
       return c;
     }
   }
   const onPath = findOnPath('officecli');
+  console.log(`[office-bin]   $PATH search → ${onPath ?? 'not found'}`);
   cachedBinaryPath = onPath;
   return onPath;
 }

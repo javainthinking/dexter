@@ -253,6 +253,26 @@ async function invoke(
   options?: Record<string, string | number | boolean>,
   stdin?: string,
 ): Promise<string> {
+  const invokeStart = Date.now();
+  console.log(`[office-tool] ENTER subcommand=${subcommand} file=${file} args=${JSON.stringify(args)}`);
+  try {
+    const result = await invokeInner(subcommand, file, args, options, stdin);
+    console.log(`[office-tool] EXIT  subcommand=${subcommand} after ${Date.now() - invokeStart}ms`);
+    return result;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.log(`[office-tool] THROW subcommand=${subcommand} after ${Date.now() - invokeStart}ms: ${message}`);
+    throw err;
+  }
+}
+
+async function invokeInner(
+  subcommand: string,
+  file: string,
+  args: string[],
+  options?: Record<string, string | number | boolean>,
+  stdin?: string,
+): Promise<string> {
   // Synthetic style-library subcommands short-circuit the spawn path —
   // they're pure local file reads. Returning the markdown content as
   // the result's `data` field keeps the response shape consistent
