@@ -187,6 +187,32 @@ function readStyleDoc(directory: string): string {
   return readFileSync(candidate, 'utf-8');
 }
 
+/**
+ * Default style preset per file extension. The preset's style.md is
+ * inlined into the create/new response so the agent gets the palette
+ * + typography without needing a separate styles-list/style call. The
+ * agent can override by reading a different preset and supplying its
+ * own theme set; the auto-pick is a starting point, not a lock.
+ */
+function defaultPresetForFile(file: string): string | null {
+  const ext = file.toLowerCase().split('.').pop();
+  if (ext === 'pptx') return 'dark--investor-pitch';
+  if (ext === 'docx') return 'light--minimal-corporate';
+  // xlsx and the rest aren't typically design-led artifacts; leave the
+  // agent on the generic data-table defaults.
+  return null;
+}
+
+/** Safe read of a preset's style.md without the error-envelope wrapping
+ * that readStyleDoc emits — used when we want raw markdown to inline. */
+function loadStyleMd(directory: string): string | null {
+  const root = stylesRoot();
+  if (!root) return null;
+  const candidate = resolve(root, directory, 'style.md');
+  if (!candidate.startsWith(root) || !existsSync(candidate)) return null;
+  return readFileSync(candidate, 'utf-8');
+}
+
 async function invoke(
   subcommand: string,
   file: string,
@@ -218,19 +244,48 @@ async function invoke(
     // OfficeCLI's --json envelope is `{ success, data }` or `{ success: false, error }`.
     // Surface the whole envelope so the agent can see both shape + content.
     let payload: unknown = result.data ?? { stdout: result.stdout };
-    // Post-create hint: a blank pptx/docx/xlsx ships with a placeholder
-    // slide / empty body. If the agent stops here it'll hand the user
-    // an empty file. Inject a next-step nudge that points at the skill
-    // (in case it wasn't loaded) so the design loop continues.
+    // Post-create design brief: a blank pptx/docx ships with default
+    // placeholders. If the agent stops at create OR adds plain-text
+    // content without picking a preset, the deliverable looks generic.
+    // Instead of relying on the agent to follow the design loop, we
+    // inline the relevant preset's style.md AND the styles index AND a
+    // mandatory next-step list into the create response. The agent has
+    // the design vocabulary in front of it from this point on; the
+    // _required field name signals it's not optional.
     if ((subcommand === 'create' || subcommand === 'new') && payload && typeof payload === 'object') {
+      const presetName = defaultPresetForFile(file);
+      const presetMarkdown = presetName ? loadStyleMd(presetName) : null;
+      const stylesIndex = presetMarkdown ? readStylesIndex() : null;
       payload = {
         ...(payload as Record<string, unknown>),
-        _nextStep:
-          'Blank file created. The work is NOT done — a placeholder slide is not a deliverable. ' +
-          "Next steps: (1) if you haven't already, call `skill name=office` to load the design playbook; " +
-          '(2) `office_read styles-list` to pick a preset; (3) `office_read style file=<preset>` to grab palette + typography; ' +
-          '(4) `office_edit set /theme` to apply fonts; (5) `office_edit batch` with a JSON array of slide/element adds; ' +
-          "(6) `office_read view file=… args=['issues']` + `validate` + `screenshot` before declaring done.",
+        _required: {
+          status:
+            'BLANK FILE CREATED — work is NOT complete. A placeholder slide / empty body is not a deliverable.',
+          mandatorySteps: [
+            `1. Apply a design preset's palette + typography. Default for this extension: ${presetName ?? '(no design preset; raw data file)'}.`,
+            '2. office_edit set /theme — apply the preset\'s heading + body fonts.',
+            '3. office_edit batch — pipe a JSON array of slide/element adds on stdin (much faster than chained adds). Use the preset\'s hex colours for slide backgrounds and chart fills.',
+            '4. office_read view file=<path> args=["issues"] — catches overflow, missing alt text, formula errors.',
+            '5. office_read validate file=<path> — OpenXML schema check.',
+            '6. office_read view file=<path> args=["screenshot"] — render to PNG and verify the result matches the preset\'s mood.',
+            'Only after steps 1-6 pass is the file deliverable.',
+          ],
+          chosenPreset: presetName,
+          ...(presetMarkdown
+            ? {
+                presetStyleMd: presetMarkdown,
+                presetUsageNote:
+                  'The presetStyleMd above contains the colour palette table (hex codes + roles) and typography table you must apply. Read it before adding slides. To pick a different preset, browse the stylesIndex below.',
+              }
+            : {}),
+          ...(stylesIndex
+            ? {
+                stylesIndex,
+                stylesIndexNote:
+                  'Topic → preset directory map from upstream OfficeCLI. Pick a different directory only if the user explicitly asked for a different mood (e.g. light corporate instead of dark investor).',
+              }
+            : {}),
+        },
       };
     }
     return formatToolResult(payload);
@@ -265,7 +320,9 @@ export const officeReadTool = new DynamicStructuredTool({
 export const officeEditTool = new DynamicStructuredTool({
   name: 'office_edit',
   description:
-    "Create or modify a Word/Excel/PowerPoint file via OfficeCLI. Mutates the file on disk. IMPORTANT: When authoring a NEW file from scratch (deck / report / model), call `skill name=office` FIRST to load the design playbook — it walks you through picking a preset, setting the theme, batching slides, and the design-pass validation. Skipping the skill and calling `create` alone produces an empty placeholder deck. Verbs: create/new, add, set, remove, move, swap, raw-set, add-part, import, refresh, batch, merge.",
+    "Create or modify a Word/Excel/PowerPoint file via OfficeCLI. Mutates disk. " +
+    "When you call `create`/`new`, the response will include a `_required` block with the auto-picked design preset's palette + typography, the full styles index, and a 7-step mandatory checklist. READ THAT BLOCK before any further calls — applying the preset's colours and fonts is the difference between a designed deliverable and an empty placeholder file. " +
+    "Verbs: create/new (start), add, set (use for /theme + element properties), remove, move, swap, raw-set, add-part, import (CSV/TSV → sheet), refresh (TOC etc.), batch (JSON array on stdin — strongly preferred for multi-slide authoring), merge (template fill).",
   schema: EDIT_INPUT,
   func: async (input) => {
     return invoke(input.subcommand, input.file, input.args ?? [], input.options, input.stdin);
