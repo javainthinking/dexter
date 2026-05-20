@@ -25,6 +25,13 @@ const nextConfig: NextConfig = {
       // visual-design rules INDEX.md says it MUST follow.
       './bin/upstream-skills/**/SKILL.md',
       './bin/upstream-skills/**/reference/**',
+      // Builtin Dexter skills (src/skills/<name>/SKILL.md). The install
+      // script mirrors them into apps/web/bin/builtin-skills/ so they
+      // sit inside the project dir, since Next.js outputFileTracingIncludes
+      // silently ignores paths outside the project. The mirror is
+      // regenerated on every install run, so src/skills/ stays the
+      // canonical source.
+      './bin/builtin-skills/**/*',
     ],
   },
   // The agent core uses native node modules. Keep them as externals so

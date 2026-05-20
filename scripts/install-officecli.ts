@@ -19,7 +19,7 @@
  *
  * Run via: `bun run scripts/install-officecli.ts`
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync, chmodSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync, chmodSync, readdirSync, statSync, cpSync, rmSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -307,7 +307,63 @@ async function main(): Promise<void> {
     console.warn(`  ⚠ upstream-skills/ skipped: ${message}`);
   }
 
+  // Stage the repo's own builtin skills (src/skills/<name>/SKILL.md)
+  // into apps/web/bin/builtin-skills/ so Next.js can trace them into
+  // the function bundle. Next's outputFileTracingIncludes only honors
+  // paths inside the project dir (apps/web/), so a `../src/skills/...`
+  // glob is silently ignored. Mirroring the SKILL.md files under bin/
+  // side-steps that constraint without forcing the rest of the
+  // codebase to relocate. The original src/skills/ tree remains the
+  // canonical source — this step copies (refreshes) the bundle-side
+  // mirror.
+  try {
+    const builtinSrc = join(__dirname, '..', 'src', 'skills');
+    const builtinDst = join(BIN_DIR, 'builtin-skills');
+    process.stdout.write(`  ↓ builtin-skills/ … `);
+    const count = syncBuiltinSkills(builtinSrc, builtinDst);
+    console.log(`ok (${count} SKILL.md mirrored from src/skills/)`);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn(`  ⚠ builtin-skills/ skipped: ${message}`);
+  }
+
   console.log('done.');
+}
+
+/**
+ * Mirror every SKILL.md (and adjacent assets like reference/ subdirs,
+ * if any exist) from the source-tree skill directory into apps/web/bin/
+ * for Next.js function bundling. Only directories that contain a
+ * SKILL.md at their root are mirrored.
+ */
+function syncBuiltinSkills(srcRoot: string, dstRoot: string): number {
+  if (!existsSync(srcRoot)) return 0;
+  // Clean-slate: delete the prior mirror so a renamed/removed skill in
+  // src/skills doesn't linger in the bundle.
+  if (existsSync(dstRoot)) rmSync(dstRoot, { recursive: true, force: true });
+  mkdirSync(dstRoot, { recursive: true });
+  let count = 0;
+  for (const entry of readdirSync(srcRoot, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue;
+    const skillSrc = join(srcRoot, entry.name);
+    const skillMd = join(skillSrc, 'SKILL.md');
+    if (!existsSync(skillMd)) continue;
+    const skillDst = join(dstRoot, entry.name);
+    // Copy the whole skill directory — the SKILL.md plus anything its
+    // frontmatter or body references (e.g. reference/, prompts/).
+    cpSync(skillSrc, skillDst, {
+      recursive: true,
+      filter: (src) => {
+        // Skip transient files like .DS_Store, *.bak.
+        const base = src.split('/').pop() ?? '';
+        if (base.startsWith('.')) return false;
+        if (base.endsWith('.bak')) return false;
+        return true;
+      },
+    });
+    count++;
+  }
+  return count;
 }
 
 main().catch((err) => {

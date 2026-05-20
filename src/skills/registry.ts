@@ -10,32 +10,69 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 /**
- * Locate the upstream-skills directory installed by
- * scripts/install-officecli.ts. Sits alongside the bundled officecli
- * binary at apps/web/bin/upstream-skills/. The path is resolved
- * relative to the project root inferred from this file's location
- * (src/skills/registry.ts → ../../apps/web/bin/upstream-skills) so it
- * works the same on local CLI and inside a Vercel function bundle
- * (where Next's outputFileTracingRoot keeps the relative layout).
+ * Find the first existing directory among `candidates`. Used to resolve
+ * skill directories that may live at different absolute paths in
+ * different runtimes (source-tree CLI vs Vercel function bundle).
+ *
+ * Why this matters: in a Next.js webpack server bundle, `__dirname`
+ * is the compiled chunk's path inside `.next/server/chunks/`, NOT the
+ * source file's directory. Walking relative paths from there will not
+ * find `src/skills/` or `apps/web/bin/upstream-skills/`. We have to
+ * also probe `process.cwd()`-rooted candidates (cwd on Vercel is the
+ * function root, typically `/var/task/apps/web/`).
  */
-function upstreamSkillsDir(): string {
-  return resolve(__dirname, '..', '..', 'apps', 'web', 'bin', 'upstream-skills');
+function firstExisting(label: string, candidates: string[]): string | null {
+  for (const c of candidates) {
+    if (existsSync(c)) {
+      console.log(`[skills] ${label} resolved → ${c}`);
+      return c;
+    }
+  }
+  console.log(`[skills] ${label} NOT FOUND. Probed: ${candidates.join(' | ')}`);
+  return null;
+}
+
+/**
+ * Locate the directory holding builtin SKILL.md files (src/skills/
+ * in the repo). On Vercel these are pulled into the function bundle
+ * via outputFileTracingIncludes (`../src/skills/**\/SKILL.md`) and
+ * land at `<deploy>/src/skills/`; `process.cwd()` is the function
+ * root, so going up one level catches the bundled tree.
+ */
+function builtinSkillsDir(): string | null {
+  const cwd = process.cwd();
+  return firstExisting('builtin', [
+    // Vercel + apps/web local: install script mirrored src/skills/ here.
+    join(cwd, 'bin', 'builtin-skills'),
+    join(cwd, 'apps', 'web', 'bin', 'builtin-skills'),
+    // CLI / source-tree fallbacks — read directly from src/skills.
+    join(cwd, 'src', 'skills'),
+    __dirname,
+  ]);
+}
+
+/**
+ * Locate the upstream-skills directory installed by
+ * scripts/install-officecli.ts. Bundled at `apps/web/bin/upstream-skills/`.
+ */
+function upstreamSkillsDir(): string | null {
+  const cwd = process.cwd();
+  return firstExisting('upstream', [
+    join(cwd, 'bin', 'upstream-skills'),                              // cwd=apps/web (Vercel)
+    join(cwd, 'apps', 'web', 'bin', 'upstream-skills'),               // cwd=workspace root
+    resolve(__dirname, '..', '..', 'apps', 'web', 'bin', 'upstream-skills'), // source-tree
+  ]);
 }
 
 /**
  * Skill directories in order of precedence (later overrides earlier).
- *
- * Upstream specialized SKILL.md files (OfficeCLI's officecli-pptx /
- * pitch-deck / morph-ppt / etc.) are scanned in the same way as
- * built-ins — they expose themselves as `skill name=officecli-pptx`,
- * `skill name=officecli-pitch-deck`, etc., and the agent loads them
- * on-demand via the existing skill tool.
+ * Resolved at module load — null entries (missing dirs) are filtered.
  */
 const SKILL_DIRECTORIES: { path: string; source: SkillSource }[] = [
-  { path: __dirname, source: 'builtin' },
+  { path: builtinSkillsDir(), source: 'builtin' },
   { path: upstreamSkillsDir(), source: 'upstream' },
   { path: join(process.cwd(), dexterPath('skills')), source: 'project' },
-];
+].filter((d): d is { path: string; source: SkillSource } => d.path !== null);
 
 // Cache for discovered skills (metadata only)
 let skillMetadataCache: Map<string, SkillMetadata> | null = null;
