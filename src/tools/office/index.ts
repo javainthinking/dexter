@@ -254,15 +254,60 @@ async function invoke(
   stdin?: string,
 ): Promise<string> {
   const invokeStart = Date.now();
-  console.log(`[office-tool] ENTER subcommand=${subcommand} file=${file} args=${JSON.stringify(args)}`);
+  const stdinNote = stdin ? ` stdin=${stdin.length}B` : '';
+  console.log(
+    `[office-tool] ENTER subcommand=${subcommand} file=${file} args=${JSON.stringify(args)}${stdinNote}`,
+  );
   try {
     const result = await invokeInner(subcommand, file, args, options, stdin);
-    console.log(`[office-tool] EXIT  subcommand=${subcommand} after ${Date.now() - invokeStart}ms`);
+    // The result is a stringified JSON envelope. Parse the high-level
+    // shape so we can log the outcome in one line: did the tool return
+    // success data, an OfficeCLI error, or a _required directive? This
+    // is the missing diagnostic that makes "batch ran but no touch
+    // recorded" cases legible.
+    const outcome = describeResult(result);
+    console.log(
+      `[office-tool] EXIT  subcommand=${subcommand} after ${Date.now() - invokeStart}ms — ${outcome}`,
+    );
     return result;
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.log(`[office-tool] THROW subcommand=${subcommand} after ${Date.now() - invokeStart}ms: ${message}`);
     throw err;
+  }
+}
+
+/**
+ * One-line summary of a tool result for diagnostic logging. Surfaces:
+ *   - "error: <message>"  — when payload.data.error is set (OfficeCLI
+ *     exit non-zero or our catch block returned a synthetic error).
+ *   - "required: <status>" — when the response carries a `_required`
+ *     directive (create/new design brief, fileIsEmpty, no-op delta).
+ *   - "ok bytes=<N> empty=<bool>" — successful content-producing edit.
+ *   - "ok" — generic success.
+ * Caps the error message at 200 chars so a megabyte .NET stack trace
+ * doesn't dominate the log line.
+ */
+function describeResult(serialized: string): string {
+  try {
+    const parsed = JSON.parse(serialized) as Record<string, unknown>;
+    const required = parsed._required as Record<string, unknown> | undefined;
+    if (required && typeof required.status === 'string') {
+      return `required: ${String(required.status).slice(0, 200)}`;
+    }
+    const data = parsed.data as Record<string, unknown> | undefined;
+    const errMsg =
+      (data && typeof data.error === 'string' && data.error) ||
+      (typeof (parsed as { error?: unknown }).error === 'string' &&
+        (parsed as { error: string }).error) ||
+      null;
+    if (errMsg) return `error: ${String(errMsg).slice(0, 200)}`;
+    if (data && typeof data === 'object' && 'fileBytes' in data) {
+      return `ok bytes=${(data as { fileBytes?: number }).fileBytes} empty=${(data as { fileIsEmpty?: boolean }).fileIsEmpty}`;
+    }
+    return 'ok';
+  } catch {
+    return 'ok (non-JSON result)';
   }
 }
 
