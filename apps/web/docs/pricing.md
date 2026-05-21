@@ -101,7 +101,6 @@ single lever.
 | Portfolios | 1 | 3 | 10 | unlimited |
 | Holdings per portfolio | 10 | 25 | 50 | 100 |
 | Quote refresh | manual only | manual + on-demand button | auto every 15 min during market hours | auto every 5 min + on-demand real-time |
-| Historical data window | 1 month | 6 months | 2 years | 5 years |
 | Watchlists (no holdings) | — | 1 (≤20 symbols) | 5 (≤50 symbols each) | unlimited |
 | **Indicators dashboard** | | | | |
 | Dimensions available | 1 (price) | 3 (price, fundamentals, sentiment) | all 8 (incl. capital flow, divergence, KDJ, MACD, support/resistance, golden-cross) | all + custom dimension builder |

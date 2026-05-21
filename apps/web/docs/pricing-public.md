@@ -49,7 +49,6 @@ Annual plans save 20%. Cancel anytime.
 | Number of portfolios | 1 | 3 | 10 | Unlimited |
 | Holdings per portfolio | 10 | 25 | 50 | 100 |
 | Quote refresh | Manual | Manual + on-demand | Auto every 15 min during market hours | Auto every 5 min + real-time on demand |
-| Historical data window | 1 month | 6 months | 2 years | 5 years |
 | Watchlists *(symbols you track without owning)* | — | 1 list, up to 20 symbols | 5 lists, up to 50 symbols each | Unlimited |
 | **Indicators dashboard** | | | | |
 | Technical & analytical dimensions | 1 *(price)* | 3 *(price, fundamentals, sentiment)* | All 8 *(adds capital flow, divergence, KDJ, MACD, support/resistance, golden-cross)* | All 8 + custom dimension builder |
