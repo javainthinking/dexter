@@ -1,6 +1,6 @@
 'use client';
 
-import { Wallet, LineChart, BrainCircuit, type LucideIcon } from 'lucide-react';
+import { Wallet, LineChart, BrainCircuit, MessageSquare, type LucideIcon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { LocalizedLink } from '../i18n/localized-link';
 import { useDictionary } from '../i18n/dictionary-provider';
@@ -59,6 +59,13 @@ export function AppNav() {
       icon: BrainCircuit,
       label: dict.nav?.memory ?? 'Memory',
       active: cleanPath === '/memory' || cleanPath.startsWith('/memory/'),
+    },
+    {
+      key: 'feedback',
+      href: '/feedback',
+      icon: MessageSquare,
+      label: dict.nav?.feedback ?? 'Feedback',
+      active: cleanPath === '/feedback' || cleanPath.startsWith('/feedback/'),
     },
   ];
 

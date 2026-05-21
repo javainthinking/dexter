@@ -159,7 +159,8 @@
   "nav": {
     "memory": "메모리",
     "indicators": "지표",
-    "portfolios": "포트폴리오"
+    "portfolios": "포트폴리오",
+    "feedback": "피드백"
   },
   "portfolios": {
     "title": "포트폴리오",
@@ -336,10 +337,12 @@
     },
     "submit": "피드백 보내기",
     "submitting": "보내는 중…",
+    "backToChat": "채팅으로 돌아가기",
     "success": {
       "title": "감사합니다 — 잘 받았습니다.",
       "body": "참조 번호: {id}. 추가 정보가 필요하면 따로 연락드리겠습니다.",
-      "again": "다시 보내기"
+      "again": "다시 보내기",
+      "backToChat": "채팅으로 돌아가기"
     },
     "errors": {
       "messageRequired": "내용을 먼저 입력해 주세요.",

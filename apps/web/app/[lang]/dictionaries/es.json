@@ -159,7 +159,8 @@
   "nav": {
     "memory": "Memoria",
     "indicators": "Indicadores",
-    "portfolios": "Carteras"
+    "portfolios": "Carteras",
+    "feedback": "Comentarios"
   },
   "portfolios": {
     "title": "Carteras",
@@ -336,10 +337,12 @@
     },
     "submit": "Enviar comentarios",
     "submitting": "Enviando…",
+    "backToChat": "Volver al chat",
     "success": {
       "title": "Gracias — lo hemos recibido.",
       "body": "Referencia: {id}. Te contactaremos si necesitamos más detalles.",
-      "again": "Enviar otro"
+      "again": "Enviar otro",
+      "backToChat": "Volver al chat"
     },
     "errors": {
       "messageRequired": "Escribe un mensaje antes de enviar.",

@@ -159,7 +159,8 @@
   "nav": {
     "memory": "记忆",
     "indicators": "指标",
-    "portfolios": "持仓"
+    "portfolios": "持仓",
+    "feedback": "反馈"
   },
   "portfolios": {
     "title": "持仓",
@@ -336,10 +337,12 @@
     },
     "submit": "提交反馈",
     "submitting": "正在提交…",
+    "backToChat": "返回对话",
     "success": {
       "title": "已收到 — 谢谢你的反馈!",
       "body": "编号:{id}。如果需要更多信息,我们会与你联系。",
-      "again": "再提交一条"
+      "again": "再提交一条",
+      "backToChat": "返回对话"
     },
     "errors": {
       "messageRequired": "请先填写反馈内容。",

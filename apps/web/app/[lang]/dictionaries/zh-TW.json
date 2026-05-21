@@ -159,7 +159,8 @@
   "nav": {
     "memory": "記憶",
     "indicators": "指標",
-    "portfolios": "持倉"
+    "portfolios": "持倉",
+    "feedback": "回饋"
   },
   "portfolios": {
     "title": "持倉",
@@ -336,10 +337,12 @@
     },
     "submit": "送出回饋",
     "submitting": "正在送出…",
+    "backToChat": "返回對話",
     "success": {
       "title": "已收到 — 感謝你的回饋!",
       "body": "編號:{id}。若需要更多資訊,我們會與你聯絡。",
-      "again": "再送一則"
+      "again": "再送一則",
+      "backToChat": "返回對話"
     },
     "errors": {
       "messageRequired": "請先填寫回饋內容。",

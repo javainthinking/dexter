@@ -159,7 +159,8 @@
   "nav": {
     "memory": "メモリ",
     "indicators": "テクニカル指標",
-    "portfolios": "ポートフォリオ"
+    "portfolios": "ポートフォリオ",
+    "feedback": "フィードバック"
   },
   "portfolios": {
     "title": "ポートフォリオ",
@@ -336,10 +337,12 @@
     },
     "submit": "フィードバックを送信",
     "submitting": "送信中…",
+    "backToChat": "チャットに戻る",
     "success": {
       "title": "受け付けました — ありがとうございます。",
       "body": "受付番号:{id}。詳細が必要な場合はこちらからご連絡します。",
-      "again": "別の内容を送る"
+      "again": "別の内容を送る",
+      "backToChat": "チャットに戻る"
     },
     "errors": {
       "messageRequired": "本文を入力してください。",

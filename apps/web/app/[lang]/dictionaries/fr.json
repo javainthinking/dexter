@@ -159,7 +159,8 @@
   "nav": {
     "memory": "Mémoire",
     "indicators": "Indicateurs",
-    "portfolios": "Portefeuilles"
+    "portfolios": "Portefeuilles",
+    "feedback": "Retours"
   },
   "portfolios": {
     "title": "Portefeuilles",
@@ -336,10 +337,12 @@
     },
     "submit": "Envoyer le retour",
     "submitting": "Envoi en cours…",
+    "backToChat": "Retour au chat",
     "success": {
       "title": "Merci — nous avons reçu votre message.",
       "body": "Référence : {id}. Nous reviendrons vers vous si besoin.",
-      "again": "Envoyer un autre"
+      "again": "Envoyer un autre",
+      "backToChat": "Retour au chat"
     },
     "errors": {
       "messageRequired": "Veuillez saisir un message avant d'envoyer.",

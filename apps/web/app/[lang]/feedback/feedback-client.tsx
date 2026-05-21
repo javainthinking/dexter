@@ -1,9 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { Bug, ImagePlus, Lightbulb, Loader2, MessageSquare, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Bug, ImagePlus, Lightbulb, Loader2, MessageSquare, X } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { TopBar } from '../../../components/nav/top-bar';
+import { LocalizedLink } from '../../../components/i18n/localized-link';
 import { useDictionary, format } from '../../../components/i18n/dictionary-provider';
 import { cn } from '../../../lib/utils';
 
@@ -271,17 +272,41 @@ export function FeedbackClient() {
           <p className="mt-1 text-muted-foreground">
             {format(dict.feedback.success.body, { id: successId })}
           </p>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setSuccessId(null)}
-            className="mt-3"
-          >
-            {dict.feedback.success.again}
-          </Button>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {/* Primary CTA after a successful submission — get the user
+                back to the main app surface. "Send another" stays as
+                a secondary action for users who came specifically to
+                report multiple things. */}
+            <Button asChild size="sm">
+              <LocalizedLink href="/chat">
+                {dict.feedback.success.backToChat}
+                <ArrowRight className="size-3.5" />
+              </LocalizedLink>
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setSuccessId(null)}
+            >
+              {dict.feedback.success.again}
+            </Button>
+          </div>
         </div>
-      ) : null}
+      ) : (
+        <div className="mb-6">
+          {/* Subtle link for users who landed here by mistake or
+              changed their mind. Keeps the navigation reversible
+              without making the form feel like a dead-end. */}
+          <LocalizedLink
+            href="/chat"
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="size-3" />
+            {dict.feedback.backToChat}
+          </LocalizedLink>
+        </div>
+      )}
 
       <form onSubmit={onSubmit} className="space-y-6">
         <div>

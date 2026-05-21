@@ -159,7 +159,8 @@
   "nav": {
     "memory": "Gedächtnis",
     "indicators": "Indikatoren",
-    "portfolios": "Portfolios"
+    "portfolios": "Portfolios",
+    "feedback": "Feedback"
   },
   "portfolios": {
     "title": "Portfolios",
@@ -336,10 +337,12 @@
     },
     "submit": "Feedback senden",
     "submitting": "Wird gesendet…",
+    "backToChat": "Zurück zum Chat",
     "success": {
       "title": "Danke — wir haben es erhalten.",
       "body": "Referenz: {id}. Wir melden uns, wenn wir mehr Details brauchen.",
-      "again": "Weiteres senden"
+      "again": "Weiteres senden",
+      "backToChat": "Zurück zum Chat"
     },
     "errors": {
       "messageRequired": "Bitte schreiben Sie eine Nachricht, bevor Sie senden.",
