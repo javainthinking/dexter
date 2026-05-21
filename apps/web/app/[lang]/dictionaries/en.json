@@ -40,7 +40,7 @@
       "macro": "What does the latest CPI print mean for the 10Y?",
       "thesis": "Summarize the bull and bear thesis for TSMC right now.",
       "pitchDeck": "Build an investor pitch deck for TSMC — thesis, foundry pricing power, AI revenue mix, and a 3-year revenue forecast.",
-      "researchNote": "Write a 2-page equity research note on Apple — thesis, key drivers, risks, valuation, recommendation.",
+      "researchNote": "Write a 2-page equity research note on Apple as a Word document — thesis, key drivers, risks, valuation, recommendation.",
       "dcfModel": "Build a DCF model for NVDA in Excel — assumptions sheet, 5-year FCF projection, WACC + sensitivity, valuation summary."
     },
     "footer": {
@@ -114,7 +114,7 @@
         },
         "researchNote": {
           "label": "Research note",
-          "prompt": "Write a 2-page equity research note on Apple — thesis, key drivers, risks, valuation, recommendation."
+          "prompt": "Write a 2-page equity research note on Apple as a Word document — thesis, key drivers, risks, valuation, recommendation."
         },
         "dcfModel": {
           "label": "DCF model",

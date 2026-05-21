@@ -40,7 +40,7 @@
       "macro": "Was bedeutet die aktuelle CPI-Veröffentlichung für die 10-jährigen Renditen?",
       "thesis": "Fasse die aktuelle Bullen- und Bären-These zu TSMC zusammen.",
       "pitchDeck": "Erstelle ein Investoren-Pitchdeck zu TSMC — Thesis, Pricing-Macht in der Foundry, KI-Umsatzmix und eine 3-Jahres-Umsatzprognose.",
-      "researchNote": "Verfasse eine 2-seitige Equity-Research-Note zu Apple — Thesis, wichtigste Treiber, Risiken, Bewertung, Empfehlung.",
+      "researchNote": "Verfasse eine 2-seitige Equity-Research-Note zu Apple und gib sie als Word-Dokument aus — Thesis, wichtigste Treiber, Risiken, Bewertung, Empfehlung.",
       "dcfModel": "Erstelle ein DCF-Modell für NVDA in Excel — Annahmenblatt, 5-Jahres-FCF-Prognose, WACC + Sensitivität, Bewertungsübersicht."
     },
     "footer": {
@@ -114,7 +114,7 @@
         },
         "researchNote": {
           "label": "Equity-Research-Note",
-          "prompt": "Verfasse eine 2-seitige Equity-Research-Note zu Apple — Thesis, wichtigste Treiber, Risiken, Bewertung, Empfehlung."
+          "prompt": "Verfasse eine 2-seitige Equity-Research-Note zu Apple und gib sie als Word-Dokument aus — Thesis, wichtigste Treiber, Risiken, Bewertung, Empfehlung."
         },
         "dcfModel": {
           "label": "DCF-Modell",

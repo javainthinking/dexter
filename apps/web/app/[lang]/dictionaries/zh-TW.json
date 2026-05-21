@@ -40,7 +40,7 @@
       "macro": "最新一期 CPI 對 10 年期美債殖利率代表什麼?",
       "thesis": "整理當前 TSMC 的看多與看空邏輯。",
       "pitchDeck": "做一份 TSMC 投資路演 PPT — 投資邏輯、晶圓代工定價權、AI 營收結構,以及未來 3 年營收預測。",
-      "researchNote": "寫一份 2 頁的 Apple 公司研究報告 — 投資邏輯、關鍵驅動、風險、估值與評級。",
+      "researchNote": "寫一份 2 頁的 Apple 公司研究報告,並輸出到 Word 文件中 — 投資邏輯、關鍵驅動、風險、估值與評級。",
       "dcfModel": "在 Excel 裡搭一個 NVDA 的 DCF 估值模型 — 假設條件頁、5 年自由現金流預測、WACC 與敏感性分析、估值彙總。"
     },
     "footer": {
@@ -114,7 +114,7 @@
         },
         "researchNote": {
           "label": "公司研究報告",
-          "prompt": "寫一份 2 頁的 Apple 公司研究報告 — 投資邏輯、關鍵驅動、風險、估值與評級。"
+          "prompt": "寫一份 2 頁的 Apple 公司研究報告,並輸出到 Word 文件中 — 投資邏輯、關鍵驅動、風險、估值與評級。"
         },
         "dcfModel": {
           "label": "DCF 估值模型",

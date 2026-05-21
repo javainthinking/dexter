@@ -40,7 +40,7 @@
       "macro": "最新一期 CPI 对 10 年期美债收益率意味着什么?",
       "thesis": "总结当前 TSMC 的看多和看空逻辑。",
       "pitchDeck": "做一份 TSMC 投资路演 PPT — 投资逻辑、晶圆代工定价权、AI 收入结构,以及未来 3 年营收预测。",
-      "researchNote": "写一份 2 页的 Apple 公司研究报告 — 投资逻辑、关键驱动、风险、估值和评级。",
+      "researchNote": "写一份 2 页的 Apple 公司研究报告,并输出到 Word 文档中 — 投资逻辑、关键驱动、风险、估值和评级。",
       "dcfModel": "在 Excel 里搭一个 NVDA 的 DCF 估值模型 — 假设条件页、5 年自由现金流预测、WACC 及敏感性分析、估值汇总。"
     },
     "footer": {
@@ -114,7 +114,7 @@
         },
         "researchNote": {
           "label": "公司研究报告",
-          "prompt": "写一份 2 页的 Apple 公司研究报告 — 投资逻辑、关键驱动、风险、估值和评级。"
+          "prompt": "写一份 2 页的 Apple 公司研究报告,并输出到 Word 文档中 — 投资逻辑、关键驱动、风险、估值和评级。"
         },
         "dcfModel": {
           "label": "DCF 估值模型",

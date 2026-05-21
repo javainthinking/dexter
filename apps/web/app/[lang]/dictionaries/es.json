@@ -40,7 +40,7 @@
       "macro": "¿Qué implica la última publicación del CPI para el bono a 10 años?",
       "thesis": "Resume la tesis alcista y bajista actual sobre TSMC.",
       "pitchDeck": "Crea un pitch deck para inversores sobre TSMC — tesis, poder de fijación de precios en fundición, mix de ingresos de IA y una previsión de ingresos a 3 años.",
-      "researchNote": "Redacta una nota de equity research de 2 páginas sobre Apple — tesis, drivers clave, riesgos, valoración y recomendación.",
+      "researchNote": "Redacta una nota de equity research de 2 páginas sobre Apple y guárdala como documento de Word — tesis, drivers clave, riesgos, valoración y recomendación.",
       "dcfModel": "Construye un modelo DCF de NVDA en Excel — hoja de supuestos, proyección de FCF a 5 años, WACC + sensibilidad, resumen de valoración."
     },
     "footer": {
@@ -114,7 +114,7 @@
         },
         "researchNote": {
           "label": "Nota de equity",
-          "prompt": "Redacta una nota de equity research de 2 páginas sobre Apple — tesis, drivers clave, riesgos, valoración y recomendación."
+          "prompt": "Redacta una nota de equity research de 2 páginas sobre Apple y guárdala como documento de Word — tesis, drivers clave, riesgos, valoración y recomendación."
         },
         "dcfModel": {
           "label": "Modelo DCF",
