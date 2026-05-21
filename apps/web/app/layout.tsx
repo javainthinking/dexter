@@ -1,8 +1,18 @@
 import type { Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { Inter, JetBrains_Mono, Source_Serif_4 } from 'next/font/google';
+import Script from 'next/script';
 import { Providers } from './providers';
 import './globals.css';
+
+// Google Analytics 4 measurement ID. Env-overrideable so a separate
+// preview / staging deploy can point at its own GA property without a
+// code change; otherwise falls back to the production property.
+// NEXT_PUBLIC_-prefixed env vars are inlined at build time and visible
+// in client bundles — that's fine here since GA Measurement IDs are
+// public by design (they appear in the gtag.js URL anyway).
+const GA_MEASUREMENT_ID =
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? 'G-C64LE343DY';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -49,6 +59,29 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={`${inter.variable} ${jetbrainsMono.variable} ${serifDisplay.variable}`}
     >
       <body>
+        {/*
+          Google Analytics tag. `next/script` with strategy="afterInteractive"
+          injects this immediately after page interactivity instead of
+          blocking the initial paint — equivalent to the
+          "place after <head>" guidance in GA's docs but Next.js-native.
+          Empty GA_MEASUREMENT_ID short-circuits the render so disabled
+          environments (e.g. unsetting NEXT_PUBLIC_GA_MEASUREMENT_ID to ''
+          in a preview deploy) skip GA entirely.
+        */}
+        {GA_MEASUREMENT_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga-init" strategy="afterInteractive">
+              {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_MEASUREMENT_ID}');`}
+            </Script>
+          </>
+        )}
         <Providers>{children}</Providers>
       </body>
     </html>
