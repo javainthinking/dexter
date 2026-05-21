@@ -382,5 +382,21 @@
       "storageNotConfigured": "目前無法上傳圖片 — 請直接以文字送出回饋。",
       "generic": "發生錯誤,請稍後再試。"
     }
+  },
+  "footer": {
+    "tagline": "面向個人投資者的 AI 分析師。用日常語言完成研究、估值與投資組合分析。",
+    "product": {
+      "heading": "產品",
+      "chat": "對話",
+      "portfolios": "持倉",
+      "indicators": "指標"
+    },
+    "resources": {
+      "heading": "資源",
+      "blog": "部落格",
+      "feedback": "意見回饋"
+    },
+    "copyright": "© {year} PickSkill",
+    "disclaimer": "不構成投資建議,僅供研究和學習使用。"
   }
 }

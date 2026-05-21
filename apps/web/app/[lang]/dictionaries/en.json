@@ -382,5 +382,21 @@
       "storageNotConfigured": "Image uploads aren't available right now — please send your message without screenshots.",
       "generic": "Something went wrong. Please try again."
     }
+  },
+  "footer": {
+    "tagline": "AI analyst for retail investors. Research, valuation, and portfolio work in plain English.",
+    "product": {
+      "heading": "Product",
+      "chat": "Chat",
+      "portfolios": "Portfolios",
+      "indicators": "Indicators"
+    },
+    "resources": {
+      "heading": "Resources",
+      "blog": "Blog",
+      "feedback": "Feedback"
+    },
+    "copyright": "© {year} PickSkill",
+    "disclaimer": "Not investment advice. For research and education only."
   }
 }

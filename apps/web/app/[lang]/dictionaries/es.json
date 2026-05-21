@@ -382,5 +382,21 @@
       "storageNotConfigured": "Las subidas de imágenes no están disponibles ahora mismo — envía tu mensaje sin capturas.",
       "generic": "Algo salió mal. Inténtalo de nuevo."
     }
+  },
+  "footer": {
+    "tagline": "Analista IA para inversores particulares. Investigación, valoración y trabajo de cartera en lenguaje claro.",
+    "product": {
+      "heading": "Producto",
+      "chat": "Chat",
+      "portfolios": "Carteras",
+      "indicators": "Indicadores"
+    },
+    "resources": {
+      "heading": "Recursos",
+      "blog": "Blog",
+      "feedback": "Comentarios"
+    },
+    "copyright": "© {year} PickSkill",
+    "disclaimer": "No constituye asesoramiento de inversión. Solo con fines de investigación y educación."
   }
 }

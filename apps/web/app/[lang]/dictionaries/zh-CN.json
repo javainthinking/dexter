@@ -382,5 +382,21 @@
       "storageNotConfigured": "当前不支持上传图片 — 请直接以文字提交反馈。",
       "generic": "出现错误,请稍后重试。"
     }
+  },
+  "footer": {
+    "tagline": "面向个人投资者的 AI 分析师。用通俗的语言完成研究、估值与组合分析。",
+    "product": {
+      "heading": "产品",
+      "chat": "对话",
+      "portfolios": "持仓",
+      "indicators": "指标"
+    },
+    "resources": {
+      "heading": "资源",
+      "blog": "博客",
+      "feedback": "反馈"
+    },
+    "copyright": "© {year} PickSkill",
+    "disclaimer": "不构成投资建议,仅供研究和学习使用。"
   }
 }

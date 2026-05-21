@@ -1,14 +1,12 @@
 import { ArrowRight, LineChart, BrainCircuit, Activity } from 'lucide-react';
 import { notFound } from 'next/navigation';
-import { isLocale } from '../../lib/i18n/locales';
+import { isLocale, type Locale } from '../../lib/i18n/locales';
 import { getLocalizedPath } from '../../lib/i18n/paths';
 import { getDictionary, type Dictionary } from './dictionaries';
 import { Button } from '../../components/ui/button';
-import { Logo } from '../../components/logo';
-import { ThemeToggle } from '../../components/theme-toggle';
 import { Badge } from '../../components/ui/badge';
-import { LanguageSwitcher } from '../../components/i18n/language-switcher';
-import { UserMenu } from '../../components/auth/user-menu';
+import { SiteHeader } from '../../components/marketing/site-header';
+import { SiteFooter } from '../../components/marketing/site-footer';
 import Link from 'next/link';
 
 export default async function HomePage({
@@ -23,27 +21,12 @@ export default async function HomePage({
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header dict={dict} />
+      <SiteHeader lang={lang as Locale} />
       <Hero dict={dict} chatHref={chatHref} />
       <Features dict={dict} />
       <SampleQuestions dict={dict} chatHref={chatHref} />
-      <Footer dict={dict} />
+      <SiteFooter lang={lang as Locale} dict={dict} />
     </div>
-  );
-}
-
-function Header({ dict }: { dict: Dictionary }) {
-  return (
-    <header className="border-b border-border bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-30">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5 lg:px-8">
-        <Logo />
-        <div className="flex items-center gap-1">
-          <LanguageSwitcher />
-          <ThemeToggle />
-          <UserMenu />
-        </div>
-      </div>
-    </header>
   );
 }
 
@@ -148,15 +131,3 @@ function SampleQuestions({ dict, chatHref }: { dict: Dictionary; chatHref: strin
   );
 }
 
-function Footer({ dict }: { dict: Dictionary }) {
-  return (
-    <footer className="mx-auto max-w-6xl px-5 py-10 lg:px-8">
-      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-        <Logo size="sm" />
-        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-subtle">
-          {dict.landing.footer.disclaimer}
-        </p>
-      </div>
-    </footer>
-  );
-}

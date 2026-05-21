@@ -382,5 +382,21 @@
       "storageNotConfigured": "Bild-Uploads sind derzeit nicht verfügbar — bitte senden Sie Ihre Nachricht ohne Screenshots.",
       "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
     }
+  },
+  "footer": {
+    "tagline": "AI-Analyst für Privatanleger. Recherche, Bewertung und Portfolioarbeit in klarer Sprache.",
+    "product": {
+      "heading": "Produkt",
+      "chat": "Chat",
+      "portfolios": "Portfolios",
+      "indicators": "Indikatoren"
+    },
+    "resources": {
+      "heading": "Ressourcen",
+      "blog": "Blog",
+      "feedback": "Feedback"
+    },
+    "copyright": "© {year} PickSkill",
+    "disclaimer": "Keine Anlageberatung. Nur zu Recherche- und Bildungszwecken."
   }
 }

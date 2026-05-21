@@ -382,5 +382,21 @@
       "storageNotConfigured": "L'envoi d'images n'est pas disponible pour le moment — envoyez votre message sans captures.",
       "generic": "Une erreur est survenue. Veuillez réessayer."
     }
+  },
+  "footer": {
+    "tagline": "Analyste IA pour les investisseurs particuliers. Recherche, valorisation et gestion de portefeuille en langage clair.",
+    "product": {
+      "heading": "Produit",
+      "chat": "Chat",
+      "portfolios": "Portefeuilles",
+      "indicators": "Indicateurs"
+    },
+    "resources": {
+      "heading": "Ressources",
+      "blog": "Blog",
+      "feedback": "Retours"
+    },
+    "copyright": "© {year} PickSkill",
+    "disclaimer": "Ne constitue pas un conseil en investissement. À des fins de recherche et d'éducation uniquement."
   }
 }

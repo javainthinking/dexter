@@ -382,5 +382,21 @@
       "storageNotConfigured": "現在画像のアップロードはご利用いただけません — テキストのみで送信してください。",
       "generic": "問題が発生しました。もう一度お試しください。"
     }
+  },
+  "footer": {
+    "tagline": "個人投資家のための AI アナリスト。リサーチ、バリュエーション、ポートフォリオ業務を平易な言葉で。",
+    "product": {
+      "heading": "プロダクト",
+      "chat": "チャット",
+      "portfolios": "ポートフォリオ",
+      "indicators": "インジケーター"
+    },
+    "resources": {
+      "heading": "リソース",
+      "blog": "ブログ",
+      "feedback": "フィードバック"
+    },
+    "copyright": "© {year} PickSkill",
+    "disclaimer": "投資助言ではありません。リサーチおよび学習目的のみ。"
   }
 }
