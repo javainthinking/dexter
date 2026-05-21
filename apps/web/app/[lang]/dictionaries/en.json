@@ -62,6 +62,14 @@
       "send": "Send",
       "footer": "PICKSKILL · For research only — not investment advice."
     },
+    "quickPrompts": {
+      "pptLabel": "Make a slide deck",
+      "wordLabel": "Make a Word doc",
+      "excelLabel": "Make an Excel sheet",
+      "pptPrompt": "Organize the conversation above into a well-designed PowerPoint deck with a clear narrative, headline slides, and supporting visuals.",
+      "wordPrompt": "Compile the conversation above into a polished Word document — structured headings, clean paragraphs, and any relevant tables or lists.",
+      "excelPrompt": "Extract the key data from the conversation above into an Excel workbook — one sheet per logical grouping, with proper number formatting and a summary view."
+    },
     "sidebar": {
       "close": "Close sidebar",
       "newConversation": "New conversation",

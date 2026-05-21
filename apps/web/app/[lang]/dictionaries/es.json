@@ -62,6 +62,14 @@
       "send": "Enviar",
       "footer": "PICKSKILL · Solo para investigación — no constituye asesoramiento de inversión."
     },
+    "quickPrompts": {
+      "pptLabel": "Generar PPT",
+      "wordLabel": "Generar Word",
+      "excelLabel": "Generar Excel",
+      "pptPrompt": "Organiza la conversación anterior en una presentación de PowerPoint bien diseñada, con una narrativa clara, diapositivas de título destacadas y elementos visuales pertinentes.",
+      "wordPrompt": "Compila la conversación anterior en un documento de Word con buen formato — encabezados estructurados, párrafos limpios y las tablas o listas que correspondan.",
+      "excelPrompt": "Extrae los datos clave de la conversación anterior en un libro de Excel — una hoja por agrupación lógica, con formato numérico apropiado y una vista resumen."
+    },
     "sidebar": {
       "close": "Cerrar barra lateral",
       "newConversation": "Nueva conversación",

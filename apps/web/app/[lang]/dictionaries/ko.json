@@ -62,6 +62,14 @@
       "send": "보내기",
       "footer": "PICKSKILL · 리서치 목적 전용 — 투자 자문이 아닙니다."
     },
+    "quickPrompts": {
+      "pptLabel": "PPT 생성",
+      "wordLabel": "Word 생성",
+      "excelLabel": "Excel 생성",
+      "pptPrompt": "위 대화 내용을 정리하여, 명확한 내러티브 구조와 임팩트 있는 타이틀 슬라이드, 적절한 비주얼이 어우러진 디자인이 잘된 PowerPoint 자료를 만들어 주세요.",
+      "wordPrompt": "위 대화 내용을 깔끔하게 정리된 Word 문서로 만들어 주세요 — 명확한 소제목과 깔끔한 단락, 필요한 표나 목록을 포함하여 작성해 주세요.",
+      "excelPrompt": "위 대화 내용에서 핵심 데이터를 추출하여 Excel 통합 문서로 정리해 주세요 — 논리적 그룹별로 시트를 나누고, 적절한 숫자 형식과 요약 뷰를 함께 제공해 주세요."
+    },
     "sidebar": {
       "close": "사이드바 닫기",
       "newConversation": "새 대화",

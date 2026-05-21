@@ -62,6 +62,14 @@
       "send": "Envoyer",
       "footer": "PICKSKILL · Pour la recherche uniquement — ne constitue pas un conseil en investissement."
     },
+    "quickPrompts": {
+      "pptLabel": "Générer un PPT",
+      "wordLabel": "Générer un Word",
+      "excelLabel": "Générer un Excel",
+      "pptPrompt": "Organise la conversation ci-dessus en une présentation PowerPoint soignée avec une trame narrative claire, des diapositives de titre marquantes et des visuels pertinents.",
+      "wordPrompt": "Compile la conversation ci-dessus en un document Word bien mis en forme — titres structurés, paragraphes nets, ainsi que tableaux ou listes pertinents.",
+      "excelPrompt": "Extrais les données clés de la conversation ci-dessus dans un classeur Excel — un onglet par regroupement logique, formats numériques appropriés et une vue de synthèse."
+    },
     "sidebar": {
       "close": "Fermer la barre latérale",
       "newConversation": "Nouvelle conversation",

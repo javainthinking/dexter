@@ -62,6 +62,14 @@
       "send": "送出",
       "footer": "PICKSKILL · 僅供研究 — 不構成投資建議。"
     },
+    "quickPrompts": {
+      "pptLabel": "產生 PPT",
+      "wordLabel": "產生 Word",
+      "excelLabel": "產生 Excel",
+      "pptPrompt": "把上述對話內容整理成一份設計精美的 PPT,要求有清晰的敘事結構、突出的標題頁和合適的圖文搭配。",
+      "wordPrompt": "把上述對話內容整理成一份排版規範的 Word 文件,使用清晰的小標題、整潔的段落,以及必要的表格或清單。",
+      "excelPrompt": "從上述對話內容中擷取關鍵資料,整理成一份 Excel 表格 — 按邏輯分多個工作表,設定適當的數字格式,並提供彙總檢視。"
+    },
     "sidebar": {
       "close": "關閉側邊欄",
       "newConversation": "新增對話",

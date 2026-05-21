@@ -62,6 +62,14 @@
       "send": "Senden",
       "footer": "PICKSKILL · Nur zu Recherchezwecken — keine Anlageberatung."
     },
+    "quickPrompts": {
+      "pptLabel": "PPT erzeugen",
+      "wordLabel": "Word erzeugen",
+      "excelLabel": "Excel erzeugen",
+      "pptPrompt": "Erstelle aus dem obigen Gespräch eine ansprechend gestaltete PowerPoint-Präsentation mit klarer Erzählstruktur, prägnanten Titelfolien und passenden Visuals.",
+      "wordPrompt": "Fasse das obige Gespräch in einem sauber formatierten Word-Dokument zusammen — strukturierte Überschriften, klare Absätze sowie relevante Tabellen oder Listen.",
+      "excelPrompt": "Extrahiere die wichtigsten Daten aus dem obigen Gespräch in eine Excel-Arbeitsmappe — pro logischer Gruppierung ein Blatt, mit passender Zahlenformatierung und einer Übersichtsansicht."
+    },
     "sidebar": {
       "close": "Seitenleiste schließen",
       "newConversation": "Neue Unterhaltung",

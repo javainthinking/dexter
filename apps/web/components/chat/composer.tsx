@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { ArrowUp, Square } from 'lucide-react';
+import { ArrowUp, FileSpreadsheet, FileText, Presentation, Square } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Kbd } from '../ui/kbd';
 import { useDictionary } from '../i18n/dictionary-provider';
@@ -49,6 +49,53 @@ export function Composer({
 
   const canSend = !pending && value.trim().length > 0 && !disabled;
 
+  // Loading a quick-prompt populates the input and refocuses the
+  // textarea — the user reviews / edits, then presses ↩. We deliberately
+  // do NOT auto-submit per the spec ("点击按钮就把对应的prompt加载到聊天框中,
+  // 等待用户发送").
+  const loadPrompt = React.useCallback(
+    (text: string) => {
+      if (pending || disabled) return;
+      onChange(text);
+      // Defer focus to the next frame so the value update commits first
+      // (otherwise the cursor lands before the new text).
+      requestAnimationFrame(() => {
+        const el = textareaRef.current;
+        if (!el) return;
+        el.focus();
+        // Cursor at end for easy appending / editing.
+        el.setSelectionRange(text.length, text.length);
+      });
+    },
+    [onChange, pending, disabled],
+  );
+
+  const quickActions: Array<{
+    key: 'ppt' | 'word' | 'excel';
+    icon: React.ReactNode;
+    label: string;
+    prompt: string;
+  }> = [
+    {
+      key: 'ppt',
+      icon: <Presentation className="size-3.5" />,
+      label: dict.chat.quickPrompts.pptLabel,
+      prompt: dict.chat.quickPrompts.pptPrompt,
+    },
+    {
+      key: 'word',
+      icon: <FileText className="size-3.5" />,
+      label: dict.chat.quickPrompts.wordLabel,
+      prompt: dict.chat.quickPrompts.wordPrompt,
+    },
+    {
+      key: 'excel',
+      icon: <FileSpreadsheet className="size-3.5" />,
+      label: dict.chat.quickPrompts.excelLabel,
+      prompt: dict.chat.quickPrompts.excelPrompt,
+    },
+  ];
+
   return (
     <form
       onSubmit={(e) => {
@@ -76,8 +123,30 @@ export function Composer({
           'min-h-[58px]',
         )}
       />
-      <div className="flex items-center justify-between gap-2 px-2 pb-2 pt-1">
-        <p className="hidden items-center gap-1.5 px-2 text-[11px] text-subtle sm:flex">
+      <div className="flex flex-wrap items-center gap-1.5 px-2 pb-2 pt-1">
+        {/* Quick-prompt buttons: each loads a localized prompt into
+            the textarea (does NOT auto-submit). Sit on the left of the
+            toolbar so they're visible on every viewport; the keyboard
+            hints + send group flow right via ml-auto. */}
+        <div className="flex items-center gap-1">
+          {quickActions.map((a) => (
+            <Button
+              key={a.key}
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => loadPrompt(a.prompt)}
+              disabled={pending || disabled}
+              title={a.label}
+              aria-label={a.label}
+              className="h-7 gap-1 px-2 text-[11px] text-muted-foreground hover:text-foreground"
+            >
+              {a.icon}
+              <span className="hidden sm:inline">{a.label}</span>
+            </Button>
+          ))}
+        </div>
+        <p className="hidden items-center gap-1.5 px-2 text-[11px] text-subtle md:flex">
           <Kbd>↩</Kbd>
           <span>{dict.chat.composer.sendHint}</span>
           <span className="mx-1 text-border-strong">·</span>
