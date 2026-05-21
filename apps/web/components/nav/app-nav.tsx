@@ -1,6 +1,6 @@
 'use client';
 
-import { Wallet, LineChart, BrainCircuit, MessageSquare, type LucideIcon } from 'lucide-react';
+import { Wallet, LineChart, MessageSquare, type LucideIcon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { LocalizedLink } from '../i18n/localized-link';
 import { useDictionary } from '../i18n/dictionary-provider';
@@ -53,13 +53,9 @@ export function AppNav() {
       label: dict.nav?.indicators ?? 'Indicators',
       active: cleanPath === '/indicators' || cleanPath.startsWith('/indicators/'),
     },
-    {
-      key: 'memory',
-      href: '/memory',
-      icon: BrainCircuit,
-      label: dict.nav?.memory ?? 'Memory',
-      active: cleanPath === '/memory' || cleanPath.startsWith('/memory/'),
-    },
+    // Memory entry intentionally absent — it's surfaced inside the
+    // UserMenu dropdown (a personal-account surface), not as a
+    // top-level section. See components/auth/user-menu.tsx.
     {
       key: 'feedback',
       href: '/feedback',

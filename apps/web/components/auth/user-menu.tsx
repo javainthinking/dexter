@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useSession, signOut } from 'next-auth/react';
-import { LogOut, User as UserIcon } from 'lucide-react';
+import { BrainCircuit, LogOut, User as UserIcon } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
+import { LocalizedLink } from '../i18n/localized-link';
 import { useDictionary, useLocale } from '../i18n/dictionary-provider';
 import { getLocalizedPath } from '../../lib/i18n/paths';
 import { cn } from '../../lib/utils';
@@ -83,6 +84,18 @@ export function UserMenu({ variant = 'compact', className }: UserMenuProps) {
             <p className="truncate font-mono text-[11px] text-subtle">{user.email}</p>
           )}
         </div>
+        <DropdownMenuSeparator />
+        {/* Memory lives in the user menu rather than the top-bar nav
+            cluster — it's a personal-account surface ('what does
+            PickSkill remember about me'), not a section like
+            Portfolios or Indicators. The dropdown grouping fits the
+            mental model and keeps the global nav lean. */}
+        <DropdownMenuItem asChild>
+          <LocalizedLink href="/memory">
+            <BrainCircuit className="size-4" />
+            {dict.nav.memory}
+          </LocalizedLink>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => void signOut({ callbackUrl: getLocalizedPath('/', locale) })}
