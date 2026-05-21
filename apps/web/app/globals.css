@@ -53,40 +53,42 @@
 }
 
 .dark {
-  /* Softened neutral with the faintest cool undertone — was L=0.16
-     (near-black), users found it too heavy. Lifted to L=0.19 to match
-     the gentler dark-mode register used by Manus / Linear / Vercel.
-     Each layer above bg moves up ~0.03 L so the depth ladder reads:
-       bg 0.19  →  card/surface 0.225  →  muted/popover 0.25  →
-       secondary 0.28  →  border 0.30  →  border-strong 0.38.
-     Foreground stays at 0.96 — high contrast carries the readability
-     even on the lifted background. */
-  --background: oklch(0.19 0.006 240);
+  /* Warm-tone dark register, anchored to two reference hex values:
+       --background = #14120b  (deep warm near-black, oklch ~0.135 L)
+       --card       = #1b1913  (lifted one step,       oklch ~0.170 L)
+     Rest of the depth ladder follows the same hue 80 (warm
+     yellow-brown) with ~0.035 L deltas, preserving the previous
+     contrast relationships:
+       bg 0.135  →  card/surface 0.170  →  muted/popover 0.205  →
+       secondary 0.235  →  border 0.265  →  border-strong 0.345.
+     Foreground stays at 0.96 — high contrast carries readability on
+     the deeper warm bg. */
+  --background: #14120b;
   --foreground: oklch(0.96 0 0);
-  --surface: oklch(0.225 0.006 240);
+  --surface: #1b1913;
   --surface-foreground: oklch(0.96 0 0);
-  --muted: oklch(0.25 0.006 240);
-  --muted-foreground: oklch(0.72 0.006 240);
-  --subtle: oklch(0.55 0.006 240);
+  --muted: oklch(0.205 0.010 80);
+  --muted-foreground: oklch(0.72 0.008 80);
+  --subtle: oklch(0.55 0.008 80);
 
-  --card: oklch(0.225 0.006 240);
+  --card: #1b1913;
   --card-foreground: oklch(0.96 0 0);
-  --popover: oklch(0.25 0.006 240);
+  --popover: oklch(0.205 0.010 80);
   --popover-foreground: oklch(0.96 0 0);
 
-  --border: oklch(0.30 0.006 240);
-  --border-strong: oklch(0.38 0.007 240);
-  --input: oklch(0.30 0.006 240);
+  --border: oklch(0.265 0.010 80);
+  --border-strong: oklch(0.345 0.012 80);
+  --input: oklch(0.265 0.010 80);
   --ring: oklch(0.7 0.13 165);
 
   --primary: oklch(0.96 0 0);
-  --primary-foreground: oklch(0.19 0.006 240);
-  --secondary: oklch(0.28 0.006 240);
+  --primary-foreground: #14120b;
+  --secondary: oklch(0.235 0.010 80);
   --secondary-foreground: oklch(0.96 0 0);
   --accent: oklch(0.72 0.13 165);
-  --accent-foreground: oklch(0.19 0.006 240);
+  --accent-foreground: #14120b;
   --destructive: oklch(0.66 0.19 25);
-  --destructive-foreground: oklch(0.19 0.006 240);
+  --destructive-foreground: #14120b;
 
   --positive: oklch(0.74 0.14 152);
   --negative: oklch(0.66 0.19 25);

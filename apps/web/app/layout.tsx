@@ -36,10 +36,9 @@ const serifDisplay = Source_Serif_4({
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#fafafa' },
-    // Matches the lifted dark-mode --background (oklch 0.19 0.006 240
-    // ≈ #1f2126). Mobile browser chrome and PWA shell now tone-match
-    // the in-page surface instead of biasing darker.
-    { media: '(prefers-color-scheme: dark)', color: '#1f2126' },
+    // Matches the warm-tone dark --background (#14120b). Mobile
+    // browser chrome and PWA shell now tone-match the in-page surface.
+    { media: '(prefers-color-scheme: dark)', color: '#14120b' },
   ],
   width: 'device-width',
   initialScale: 1,
