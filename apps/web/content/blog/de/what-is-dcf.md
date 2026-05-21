@@ -4,9 +4,9 @@ description: Praxisleitfaden zum DCF — die Formel, die vier Annahmen, die wirk
 publishedAt: 2026-05-21
 updatedAt: 2026-05-21
 author:
-  name: Julian Zhou
-  url: https://www.linkedin.com/in/julianzhou
-  bio: Gründer von PickSkill. Zuvor Equity Research bei einem Long-only-Fonds mit Schwerpunkt Halbleiter.
+  name: PickSkill Team
+  url: https://pickskill.com
+  bio: Das PickSkill-Research-Team — wir bauen einen AI-Analysten für Privatanleger.
 pillar: explainer
 tags:
   - valuation

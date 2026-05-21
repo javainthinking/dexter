@@ -31,7 +31,7 @@ const SITE_NAME = 'PickSkill';
  * MDX is a separate refactor — the frontmatter shape stays the same.
  *
  * SEO + GEO checklist (matches blog-strategy.md §4):
- *   - Article + BreadcrumbList + Person JSON-LD ✓
+ *   - Article + BreadcrumbList + Person/Organization JSON-LD ✓
  *   - Author byline at top ✓
  *   - Hero image + alt text ✓
  *   - "Last updated" surfaced visually + in schema ✓
@@ -166,7 +166,7 @@ export default async function BlogPostPage({
     wordCount: post.body.split(/\s+/).filter(Boolean).length,
     timeRequired: `PT${post.readingMinutes}M`,
     author: {
-      '@type': 'Person',
+      '@type': /team|group|staff|editors?/i.test(post.author.name) ? 'Organization' : 'Person',
       name: post.author.name,
       ...(post.author.url && { url: post.author.url }),
       ...(post.author.bio && { description: post.author.bio }),

@@ -4,9 +4,9 @@ description: A practical 2026 guide to DCF — the formula, four assumptions tha
 publishedAt: 2026-05-21
 updatedAt: 2026-05-21
 author:
-  name: Julian Zhou
-  url: https://www.linkedin.com/in/julianzhou
-  bio: Founder of PickSkill. Previously equity research at a long-only fund covering semiconductors.
+  name: PickSkill Team
+  url: https://pickskill.com
+  bio: The PickSkill research team — building an AI analyst for retail investors.
 pillar: explainer
 tags:
   - valuation

@@ -4,9 +4,9 @@ description: Una guía práctica del DCF — la fórmula, las cuatro hipótesis 
 publishedAt: 2026-05-21
 updatedAt: 2026-05-21
 author:
-  name: Julian Zhou
-  url: https://www.linkedin.com/in/julianzhou
-  bio: Fundador de PickSkill. Antes, equity research en un fondo long-only cubriendo semiconductores.
+  name: PickSkill Team
+  url: https://pickskill.com
+  bio: El equipo de investigación de PickSkill — construyendo un analista IA para inversores particulares.
 pillar: explainer
 tags:
   - valuation
