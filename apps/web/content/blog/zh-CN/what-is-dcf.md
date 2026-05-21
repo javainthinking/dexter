@@ -5,7 +5,7 @@ publishedAt: 2026-05-21
 updatedAt: 2026-05-21
 author:
   name: PickSkill Team
-  url: https://pickskill.com
+  url: https://pickskill.ai
   bio: PickSkill 研究团队 — 为个人投资者打造 AI 分析师。
 pillar: explainer
 tags:

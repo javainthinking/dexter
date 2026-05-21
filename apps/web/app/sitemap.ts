@@ -17,7 +17,7 @@ import { locales, defaultLocale } from '../lib/i18n/locales';
  * translations even when content is English-only today.
  */
 
-const SITE_URL = 'https://pickskill.com';
+const SITE_URL = 'https://pickskill.ai';
 
 function path(p: string, locale: string): string {
   if (locale === defaultLocale) return p === '/' ? '' : p;

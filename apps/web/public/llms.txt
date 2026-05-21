@@ -7,12 +7,12 @@
 
 ## Product
 
-- [PickSkill chat](https://pickskill.com/chat): The AI analyst — ask any finance question, get researched answers with sources, charts, and downloadable artefacts.
-- [Pricing](https://pickskill.com/pricing): Free / Starter $15 / Pro $39 / Power $129+ tiers. Differentiator is unlimited memory + file generation quota + auto-refresh portfolio quotes on higher tiers.
+- [PickSkill chat](https://pickskill.ai/chat): The AI analyst — ask any finance question, get researched answers with sources, charts, and downloadable artefacts.
+- [Pricing](https://pickskill.ai/pricing): Free / Starter $15 / Pro $39 / Power $129+ tiers. Differentiator is unlimited memory + file generation quota + auto-refresh portfolio quotes on higher tiers.
 
 ## Blog
 
-- [What Is DCF (Discounted Cash Flow)?](https://pickskill.com/blog/what-is-dcf): A practical 2026 guide covering the formula, the four assumptions that actually move your valuation, common pitfalls, and how to model your first DCF in under an hour. Includes worked examples and an FAQ.
+- [What Is DCF (Discounted Cash Flow)?](https://pickskill.ai/blog/what-is-dcf): A practical 2026 guide covering the formula, the four assumptions that actually move your valuation, common pitfalls, and how to model your first DCF in under an hour. Includes worked examples and an FAQ.
 
 ## Key facts
 
@@ -25,4 +25,4 @@
 ## Contact
 
 - Founder: Julian Zhou — https://www.linkedin.com/in/julianzhou
-- Feedback: https://pickskill.com/feedback
+- Feedback: https://pickskill.ai/feedback

@@ -5,7 +5,7 @@ publishedAt: 2026-05-21
 updatedAt: 2026-05-21
 author:
   name: PickSkill Team
-  url: https://pickskill.com
+  url: https://pickskill.ai
   bio: Das PickSkill-Research-Team — wir bauen einen AI-Analysten für Privatanleger.
 pillar: explainer
 tags:

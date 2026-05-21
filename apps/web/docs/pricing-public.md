@@ -192,4 +192,4 @@ never get surprised.
 - **Try free** — 30 conversations / month, no card required
 - **Start with Starter** — $15/mo or $144/year, cancel anytime
 - **Go Pro** — best for daily analyst work
-- **Talk to us about Power or Team** — drop a line at hello@pickskill.com
+- **Talk to us about Power or Team** — drop a line at hello@pickskill.ai

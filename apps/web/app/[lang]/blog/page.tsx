@@ -14,7 +14,7 @@ import { getAllPosts } from '../../../lib/blog';
 import { LocalizedLink } from '../../../components/i18n/localized-link';
 import { getDictionary } from '../dictionaries';
 
-const SITE_URL = 'https://pickskill.com';
+const SITE_URL = 'https://pickskill.ai';
 const SITE_NAME = 'PickSkill';
 
 /**

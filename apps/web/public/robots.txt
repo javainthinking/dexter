@@ -64,4 +64,4 @@ Disallow: /portfolios
 Disallow: /indicators
 Disallow: /feedback
 
-Sitemap: https://pickskill.com/sitemap.xml
+Sitemap: https://pickskill.ai/sitemap.xml

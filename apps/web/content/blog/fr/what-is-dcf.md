@@ -5,7 +5,7 @@ publishedAt: 2026-05-21
 updatedAt: 2026-05-21
 author:
   name: PickSkill Team
-  url: https://pickskill.com
+  url: https://pickskill.ai
   bio: L'équipe de recherche PickSkill — un analyste IA pour les investisseurs particuliers.
 pillar: explainer
 tags:
