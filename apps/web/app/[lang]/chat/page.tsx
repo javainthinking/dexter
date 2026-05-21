@@ -16,6 +16,8 @@ import type { ToolCardEvent, ToolStatus } from '../../../components/chat/tool-ca
 import { Button } from '../../../components/ui/button';
 import { Separator } from '../../../components/ui/separator';
 import { LanguageSwitcher } from '../../../components/i18n/language-switcher';
+import { ThemeToggle } from '../../../components/theme-toggle';
+import { UserMenu } from '../../../components/auth/user-menu';
 import { AppNav } from '../../../components/nav/app-nav';
 import { TopBar } from '../../../components/nav/top-bar';
 import {
@@ -381,13 +383,15 @@ function ChatPage() {
             <span className="text-sm text-muted-foreground">{turnCountLabel}</span>
           </div>
           <div className="flex items-center gap-2">
-            <AppNav />
-            <Separator orientation="vertical" className="h-4" />
-            <LanguageSwitcher />
             <Button variant="ghost" size="sm" onClick={newConversation}>
               <RotateCcw className="size-3.5" />
               {dict.chat.header.reset}
             </Button>
+            <AppNav />
+            <Separator orientation="vertical" className="h-4" />
+            <LanguageSwitcher />
+            <ThemeToggle />
+            <UserMenu />
           </div>
         </header>
 
