@@ -208,15 +208,26 @@ export default async function BlogPostPage({
 
       {post.heroImage && (
         <figure className="mb-8 overflow-hidden rounded-lg border border-border">
-          {/* Hero. Using a plain <img> for SVG/PNG mix; next/image
-              would need configured loaders for SVG. Alt text is the
-              AI-crawler signal — never leave it blank. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          {/* Hero via next/image — Next serves AVIF/WebP automatically
+              based on the request's Accept header, generates
+              responsive srcset for high-DPI screens, and lazy-loads
+              everything below the fold. Heroes are produced at
+              1200×630; we provide the same explicit dimensions so the
+              optimizer doesn't have to fetch the source to measure.
+              SVG sources are passed through unoptimized — Next's
+              optimizer refuses SVGs by default (security: SVG can
+              contain scripts) and there's no compression upside.
+              Priority load (no lazy) since the hero is the LCP
+              element on a post page. */}
+          <Image
             src={post.heroImage}
             alt={post.heroAlt ?? post.title}
+            width={1200}
+            height={630}
+            priority
+            unoptimized={post.heroImage.endsWith('.svg')}
             className="w-full"
-            loading="eager"
+            sizes="(max-width: 768px) 100vw, 768px"
           />
         </figure>
       )}
@@ -280,7 +291,3 @@ function formatDate(iso: string): string {
   });
 }
 
-// Suppress next/image not used warning — using <img> for SVG hero
-// support without configuring image loaders. Phase 2 will swap to
-// next/image when posts use PNG heroes exclusively.
-void Image;

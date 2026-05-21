@@ -37,6 +37,18 @@ const nextConfig: NextConfig = {
   // The agent core uses native node modules. Keep them as externals so
   // the bundler doesn't try to inline them on the server.
   serverExternalPackages: ['better-sqlite3', 'playwright'],
+  // Image optimization: serve AVIF where supported (~93% of traffic,
+  // smallest format), fall back to WebP (~97% support), then the
+  // original PNG/JPEG as last resort. Next.js picks per request based
+  // on the browser's `Accept` header. Saves 30–70% on image bytes
+  // across the blog without any change to source assets.
+  // The OG-card paths in blog metadata stay as PNG because social
+  // platforms (Twitter/LinkedIn/Slack/Discord) don't reliably preview
+  // WebP — only the in-page <Image> rendering goes through the
+  // optimizer.
+  images: {
+    formats: ['image/avif', 'image/webp'],
+  },
   experimental: {
     // Lets us import from outside the app dir (workspace root).
     externalDir: true,
