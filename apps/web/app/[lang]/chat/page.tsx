@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { RotateCcw } from 'lucide-react';
 import { Sidebar, type SessionSummary } from '../../../components/chat/sidebar';
 import { Composer } from '../../../components/chat/composer';
 import { EmptyState } from '../../../components/chat/empty-state';
@@ -13,7 +12,6 @@ import {
   type ChatTurn,
 } from '../../../components/chat/message';
 import type { ToolCardEvent, ToolStatus } from '../../../components/chat/tool-card';
-import { Button } from '../../../components/ui/button';
 import { Separator } from '../../../components/ui/separator';
 import { LanguageSwitcher } from '../../../components/i18n/language-switcher';
 import { ThemeToggle } from '../../../components/theme-toggle';
@@ -362,16 +360,6 @@ function ChatPage() {
           className="md:hidden"
           onOpenSidebar={() => setSidebarOpen(true)}
           showLogo
-          extraAction={
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={newConversation}
-              aria-label={dict.chat.header.newConversation}
-            >
-              <RotateCcw className="size-4" />
-            </Button>
-          }
         />
 
         <header className="hidden h-14 shrink-0 items-center justify-between border-b border-border px-5 md:flex">
@@ -383,10 +371,6 @@ function ChatPage() {
             <span className="text-sm text-muted-foreground">{turnCountLabel}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={newConversation}>
-              <RotateCcw className="size-3.5" />
-              {dict.chat.header.reset}
-            </Button>
             <AppNav />
             <Separator orientation="vertical" className="h-4" />
             <LanguageSwitcher />
