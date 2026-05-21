@@ -51,7 +51,7 @@ Annual plans save 20%. Cancel anytime.
 | Quote refresh | Manual | Manual + on-demand | Auto every 15 min during market hours | Auto every 5 min + real-time on demand |
 | Watchlists *(symbols you track without owning)* | — | 1 list, up to 20 symbols | 5 lists, up to 50 symbols each | Unlimited |
 | **Indicators dashboard** | | | | |
-| Technical & analytical dimensions | 1 *(price)* | 3 *(price, fundamentals, sentiment)* | All 8 *(adds capital flow, divergence, KDJ, MACD, support/resistance, golden-cross)* | All 8 + custom dimension builder |
+| Technical & analytical dimensions | All 8 *(plus any new ones we add)* | All 8 *(plus any new ones we add)* | All 8 *(plus any new ones we add)* | All 8 + custom dimension builder |
 | Drill-down per stock | Basic | Basic | Full | Full + side-by-side compare |
 | Export dashboard to a deck | — | — | ✓ *(uses your file-gen quota)* | ✓ Unlimited |
 | **Other** | | | | |
@@ -127,8 +127,9 @@ answering a different question:
 7. **MACD** — trend strength and reversal signals
 8. **Support / resistance** — key technical price levels
 
-Free shows only price. Starter unlocks the first three. Pro and Power
-get all eight.
+**All 8 are available on every plan**, and any new dimensions we add
+will be included for everyone. The Power plan additionally unlocks a
+**custom dimension builder** for defining your own indicators.
 
 ### How does quote refresh differ between plans?
 

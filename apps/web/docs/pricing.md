@@ -103,7 +103,7 @@ single lever.
 | Quote refresh | manual only | manual + on-demand button | auto every 15 min during market hours | auto every 5 min + on-demand real-time |
 | Watchlists (no holdings) | — | 1 (≤20 symbols) | 5 (≤50 symbols each) | unlimited |
 | **Indicators dashboard** | | | | |
-| Dimensions available | 1 (price) | 3 (price, fundamentals, sentiment) | all 8 (incl. capital flow, divergence, KDJ, MACD, support/resistance, golden-cross) | all + custom dimension builder |
+| Dimensions available | all (currently 8, future additions included) | all (currently 8, future additions included) | all (currently 8, future additions included) | all + custom dimension builder |
 | Drill-down per stock | basic | basic | full | full + side-by-side compare |
 | Export dashboard to deck | — | — | ✓ (consumes file-gen quota) | ✓ unlimited |
 | **Automation** | | | | |
@@ -195,15 +195,24 @@ on Power, comfortably absorbed by the $129 anchor.
 
 ### 4.4 Indicators dimensions
 
-The 8 dashboard dimensions (capital flow, divergence, KDJ, MACD,
+All 8 dashboard dimensions (capital flow, divergence, KDJ, MACD,
 support/resistance, golden-cross, etc., per the dashboards we've
-already generated) have varying compute + data cost. Limiting access
-per tier:
+already generated) are available on every tier, and any new
+dimensions we add will be included for everyone.
 
-- Caps Financial Datasets historical-bar calls (the expensive ones)
-- Creates upgrade pressure for the analyst persona
-- Aligns access with willingness to pay — casual investors don't
-  understand divergence; analysts do
+Rationale for not gating:
+- Each access is a small, bounded cost (a few historical-bar calls
+  against Yahoo Finance free + cached results) — gating by tier
+  produces minimal COGS relief
+- The "you only get N indicators on the cheap plan" message creates
+  a worse impression than the relief is worth
+- Cost control here lives in the data layer (Yahoo-primary,
+  server-side quote cache, batched fetches), not in feature gating
+
+The **custom dimension builder** stays as a Power-only feature — it
+lets users define their own indicator formulas, which is a real
+power-user surface and represents genuine compute (custom SQL /
+expressions). That distinction earns its keep.
 
 ### 4.5 Automation gates (cron + WhatsApp)
 
