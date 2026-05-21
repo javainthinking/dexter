@@ -110,7 +110,6 @@ single lever.
 | WhatsApp bot integration | — | — | — | ✓ |
 | Email digest | — | weekly | daily | daily + custom schedule |
 | **Other** | | | | |
-| Priority compute queue | — | — | — | ✓ |
 | Support | community | email (48h) | email (24h) | shared Slack channel |
 | Annual discount | — | –20% | –20% | –20% |
 
