@@ -1,7 +1,7 @@
 # PickSkill Blog — Strategy & Editorial System
 
-**Status:** planning + initial implementation
-**Last updated:** 2026-05-21
+**Status:** infrastructure shipped · content pipeline active
+**Last updated:** 2026-05-22
 **Owner:** Julian
 
 This document defines what we write, why we write it, how each post is
@@ -451,11 +451,34 @@ links when relevant + asked.
 
 ### Phase 2 — Content engine (next 2 weeks)
 
-- [ ] 3 explainer posts (P3 pillar): DCF, MACD, 10-K reading
-- [ ] 1 thesis post (P1): NVDA deep-dive
-- [ ] 1 how-to (P2): "Run a DCF in 60 seconds with PickSkill"
+**Foundation cluster — shipped 2026-05-21/22**
+
+- [x] `what-is-dcf` — Discounted Cash Flow explainer (P3, ~1,500 words, 8 locales)
+- [x] `what-is-wacc` — WACC explainer with four-input framework (P3, ~1,500 words, 8 locales)
+- [x] `what-is-fcf` — Free Cash Flow explainer with FCFF/FCFE split (P3, ~1,500 words, 8 locales)
+
+These three internally cross-link (DCF ↔ WACC ↔ FCF) so the
+foundation cluster pushes ranking signals between explainers
+covering the same DCF mental model. They also share the
+`/chat` and `/indicators` product link conventions.
+
+**Next batch — ship in week 2**
+
+- [ ] `how-to-read-10k` — concept-to-action explainer (P3/P2 hybrid;
+      bridges definition → "PickSkill summarises a 10-K in 60 seconds")
+- [ ] `dcf-vs-comparable-company-analysis` — comparison explainer (P3;
+      "X vs Y" structure is high-leverage on GEO citations)
+- [ ] `what-is-pe-ratio` — explainer (P3; highest-volume finance
+      search term; bedrock GEO content)
+- [ ] `nvda-bull-case-2026` — first thesis post (P1; NVDA is the
+      most-searched ticker in retail finance)
+- [ ] `how-to-build-dcf-in-excel-with-template` — how-to (P2; mid-funnel,
+      "PickSkill does this in one prompt" framing)
+
+**Editorial infrastructure**
+
 - [ ] Author bio page at `/blog/authors/<slug>` with credentials +
-      sameAs links to LinkedIn/Twitter/Wikipedia
+      sameAs links (deferred — currently the team byline is honest)
 - [ ] FAQ schema block component (`<FaqBlock />` MDX shortcode)
 - [ ] Internal linking convention (one product link per post,
       auto-injected by helper)

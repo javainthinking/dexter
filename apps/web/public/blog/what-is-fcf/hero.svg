@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Placeholder hero for `what-is-fcf` — brand-aligned SVG.
+  Composition: a stylised "cash funnel" where revenue (top) is
+  progressively narrowed by deductions (operating costs, capex), and
+  the remainder pools into a bright emerald reservoir at the bottom —
+  the FCF that's actually available to investors. Replace with the
+  GPT Image 2 render produced from _image-prompt.md when ready.
+-->
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+    <linearGradient id="fillFlow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4FCBA8" stop-opacity="0.15"/>
+      <stop offset="65%" stop-color="#4FCBA8" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#4FCBA8" stop-opacity="0.9"/>
+    </linearGradient>
+    <radialGradient id="pool" cx="0.5" cy="0.5" r="0.55">
+      <stop offset="0%" stop-color="#4FCBA8" stop-opacity="1"/>
+      <stop offset="60%" stop-color="#4FCBA8" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#4FCBA8" stop-opacity="0.05"/>
+    </radialGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Left-aligned funnel: revenue → OCF → FCF, with deductions on the side -->
+  <g transform="translate(320,80)">
+    <!-- Revenue bar (top, wide) -->
+    <rect x="0" y="0" width="320" height="44" rx="6" fill="#4FCBA8" opacity="0.85"/>
+    <!-- Operating costs deduction (chip on right) -->
+    <g transform="translate(360,0)">
+      <rect x="0" y="0" width="170" height="44" rx="6" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.4"/>
+      <rect x="14" y="16" width="84" height="6" rx="3" fill="#F4F4F5" opacity="0.65"/>
+      <rect x="14" y="28" width="60" height="5" rx="2.5" fill="#F4F4F5" opacity="0.35"/>
+      <line x1="-30" y1="22" x2="-2" y2="22" stroke="#4FCBA8" stroke-opacity="0.45" stroke-width="2" stroke-dasharray="4 4"/>
+    </g>
+
+    <!-- OCF bar (narrower) -->
+    <rect x="32" y="100" width="256" height="44" rx="6" fill="#4FCBA8" opacity="0.7"/>
+    <!-- Capex deduction chip -->
+    <g transform="translate(360,100)">
+      <rect x="0" y="0" width="170" height="44" rx="6" fill="#1b1913" stroke="#2D7E6E" stroke-opacity="0.55"/>
+      <rect x="14" y="16" width="68" height="6" rx="3" fill="#F4F4F5" opacity="0.65"/>
+      <rect x="14" y="28" width="50" height="5" rx="2.5" fill="#F4F4F5" opacity="0.35"/>
+      <line x1="-72" y1="22" x2="-2" y2="22" stroke="#2D7E6E" stroke-opacity="0.5" stroke-width="2" stroke-dasharray="4 4"/>
+    </g>
+
+    <!-- Connecting flow shape (funnels narrowing) -->
+    <path d="M 0 44 L 320 44 L 288 100 L 32 100 Z"
+          fill="url(#fillFlow)" opacity="0.35"/>
+    <path d="M 32 144 L 288 144 L 232 200 L 88 200 Z"
+          fill="url(#fillFlow)" opacity="0.55"/>
+
+    <!-- FCF bar (narrowest, brightest) -->
+    <rect x="88" y="200" width="144" height="48" rx="8" fill="#4FCBA8" filter="url(#glow)"/>
+
+    <!-- Funnel droplets falling into reservoir -->
+    <circle cx="160" cy="285" r="4" fill="#4FCBA8"/>
+    <circle cx="170" cy="305" r="3" fill="#4FCBA8" opacity="0.75"/>
+    <circle cx="150" cy="325" r="3" fill="#4FCBA8" opacity="0.55"/>
+  </g>
+
+  <!-- Reservoir pool — the FCF that ends up in investors' hands -->
+  <g transform="translate(480,490)">
+    <ellipse cx="0" cy="0" rx="190" ry="42" fill="url(#pool)" filter="url(#glow)"/>
+    <ellipse cx="0" cy="0" rx="180" ry="36" fill="none" stroke="#4FCBA8" stroke-opacity="0.55" stroke-width="1.5"/>
+  </g>
+
+  <!-- Subtle baseline rule -->
+  <line x1="120" y1="560" x2="1080" y2="560" stroke="#4FCBA8" stroke-opacity="0.12"/>
+</svg>
