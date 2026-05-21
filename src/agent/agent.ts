@@ -263,8 +263,16 @@ export class Agent {
   /**
    * Run the agent from a fresh query. Builds the initial message array
    * (system prompt + history + user query) and hands off to `runLoop`.
+   *
+   * `chunkOpts` is supplied by the chunked-agent controller (web only)
+   * so the time-budget gate inside `runLoop` is active from chunk 0.
+   * CLI calls leave it undefined and the loop runs uninterrupted.
    */
-  async *run(query: string, inMemoryHistory?: InMemoryChatHistory): AsyncGenerator<AgentEvent> {
+  async *run(
+    query: string,
+    inMemoryHistory?: InMemoryChatHistory,
+    chunkOpts?: { jobId?: string; chunkIndex?: number },
+  ): AsyncGenerator<AgentEvent> {
     const startTime = Date.now();
 
     if (this.tools.length === 0) {
@@ -283,7 +291,14 @@ export class Agent {
       new HumanMessage(query),
     ];
 
-    yield* this.runLoop({ messages, ctx, memoryFlushState, query });
+    yield* this.runLoop({
+      messages,
+      ctx,
+      memoryFlushState,
+      query,
+      jobId: chunkOpts?.jobId,
+      chunkIndex: chunkOpts?.chunkIndex,
+    });
   }
 
   /**

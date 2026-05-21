@@ -271,7 +271,10 @@ export class AgentRunnerController {
             originalStartTime: chunkOpts.resume.originalStartTime,
             chunkIndex: chunkOpts.chunkIndex ?? 0,
           })
-        : agent.run(query, this.inMemoryChatHistory);
+        : agent.run(query, this.inMemoryChatHistory, {
+            jobId: chunkOpts?.jobId,
+            chunkIndex: chunkOpts?.chunkIndex,
+          });
       for await (const event of stream) {
         if (event.type === 'continuation_required') {
           // Snapshot agent state + office-run touches and hand them off
