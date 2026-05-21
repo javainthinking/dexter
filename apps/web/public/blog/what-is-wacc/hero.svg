@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Placeholder hero for `what-is-wacc` — brand-aligned SVG built to the
+  same visual system as what-is-dcf/hero.svg (warm dark background,
+  emerald accents). Composition: a weighted-average "dial" expressed as
+  two overlapping arcs whose lengths represent the equity and debt
+  weights, intersecting under a single highlighted node.
+  Replace with GPT Image 2 render produced from _image-prompt.md.
+-->
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+    <linearGradient id="ringEq" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#4FCBA8" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#4FCBA8" stop-opacity="0.35"/>
+    </linearGradient>
+    <linearGradient id="ringDb" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2D7E6E" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#2D7E6E" stop-opacity="0.25"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Two concentric weighted arcs: outer = equity (longer), inner = debt -->
+  <g transform="translate(420,315)" filter="url(#glow)">
+    <!-- Equity arc (E/V ≈ 70%) — sweeps about 250° -->
+    <path d="M 0 -210 A 210 210 0 1 1 -181.86 105"
+          stroke="url(#ringEq)" stroke-width="20" stroke-linecap="round" fill="none"/>
+    <!-- Debt arc (D/V ≈ 30%) — sweeps the remaining 110°, inner radius -->
+    <path d="M -157.05 90.7 A 180 180 0 0 1 0 -180"
+          stroke="url(#ringDb)" stroke-width="14" stroke-linecap="round" fill="none" opacity="0.85"/>
+    <!-- WACC center node -->
+    <circle cx="0" cy="0" r="10" fill="#4FCBA8"/>
+    <circle cx="0" cy="0" r="22" fill="none" stroke="#4FCBA8" stroke-opacity="0.35" stroke-width="1.5"/>
+  </g>
+
+  <!-- Right-side legend chips — abstract, no text -->
+  <g transform="translate(820,200)">
+    <!-- Re chip -->
+    <rect x="0" y="0" width="240" height="62" rx="10" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.5"/>
+    <circle cx="32" cy="31" r="10" fill="#4FCBA8"/>
+    <rect x="60" y="22" width="150" height="6" rx="3" fill="#F4F4F5" opacity="0.75"/>
+    <rect x="60" y="36" width="100" height="6" rx="3" fill="#F4F4F5" opacity="0.4"/>
+
+    <!-- Rd chip -->
+    <rect x="0" y="82" width="240" height="62" rx="10" fill="#1b1913" stroke="#2D7E6E" stroke-opacity="0.55"/>
+    <circle cx="32" cy="113" r="10" fill="#2D7E6E"/>
+    <rect x="60" y="104" width="120" height="6" rx="3" fill="#F4F4F5" opacity="0.7"/>
+    <rect x="60" y="118" width="90" height="6" rx="3" fill="#F4F4F5" opacity="0.4"/>
+
+    <!-- Tax-shield indicator -->
+    <rect x="0" y="164" width="240" height="62" rx="10" fill="#1b1913" stroke="#F4F4F5" stroke-opacity="0.18"/>
+    <path d="M22 195 L34 207 L52 184" stroke="#4FCBA8" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="68" y="187" width="140" height="6" rx="3" fill="#F4F4F5" opacity="0.7"/>
+    <rect x="68" y="201" width="90" height="6" rx="3" fill="#F4F4F5" opacity="0.4"/>
+  </g>
+
+  <!-- Subtle baseline rule -->
+  <line x1="120" y1="540" x2="1080" y2="540" stroke="#4FCBA8" stroke-opacity="0.12"/>
+</svg>

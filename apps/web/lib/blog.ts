@@ -72,6 +72,22 @@ export interface FaqEntry {
 const isMarkdown = (filename: string) =>
   filename.endsWith('.md') || filename.endsWith('.mdx');
 
+/**
+ * Normalize a frontmatter date value to an ISO yyyy-mm-dd string.
+ *
+ * YAML's unquoted date syntax (`publishedAt: 2026-05-22`) is parsed by
+ * gray-matter as a JS Date object. `String(date)` produces the
+ * day-name-first form ("Fri May 22 2026 ..."), which sorts
+ * lexicographically by day name — silently breaking the
+ * publishedAt-descending order on the /blog index. Convert to ISO
+ * eagerly so the rest of the code can treat publishedAt as a sortable
+ * string regardless of whether the author quoted the value or not.
+ */
+function normalizeDate(value: unknown): string {
+  if (value instanceof Date) return value.toISOString().slice(0, 10);
+  return value == null ? '' : String(value);
+}
+
 function parseFile(slug: string, raw: string, inLanguage: Locale): Post {
   const { data, content } = matter(raw);
   const wordCount = content.split(/\s+/).filter(Boolean).length;
@@ -82,8 +98,8 @@ function parseFile(slug: string, raw: string, inLanguage: Locale): Post {
     slug,
     title: String(data.title ?? slug),
     description: String(data.description ?? ''),
-    publishedAt: String(data.publishedAt ?? ''),
-    updatedAt: data.updatedAt ? String(data.updatedAt) : undefined,
+    publishedAt: normalizeDate(data.publishedAt),
+    updatedAt: data.updatedAt ? normalizeDate(data.updatedAt) : undefined,
     author: (data.author as PostAuthor) ?? { name: 'PickSkill' },
     pillar: (data.pillar as Pillar) ?? 'explainer',
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
