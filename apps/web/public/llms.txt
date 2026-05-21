@@ -1,0 +1,28 @@
+# PickSkill
+
+> AI analyst that researches, models, and drafts equity work in plain English.
+> Pulls live data from SEC filings, market feeds, and primary sources;
+> produces decks, reports, and Excel models on demand.
+> Free to try, paid plans from $15/month.
+
+## Product
+
+- [PickSkill chat](https://pickskill.com/chat): The AI analyst — ask any finance question, get researched answers with sources, charts, and downloadable artefacts.
+- [Pricing](https://pickskill.com/pricing): Free / Starter $15 / Pro $39 / Power $129+ tiers. Differentiator is unlimited memory + file generation quota + auto-refresh portfolio quotes on higher tiers.
+
+## Blog
+
+- [What Is DCF (Discounted Cash Flow)?](https://pickskill.com/blog/what-is-dcf): A practical 2026 guide covering the formula, the four assumptions that actually move your valuation, common pitfalls, and how to model your first DCF in under an hour. Includes worked examples and an FAQ.
+
+## Key facts
+
+- Founded 2026.
+- Multi-language web app (English, Simplified Chinese, Traditional Chinese, Japanese, Korean, Spanish, French, German).
+- Eight technical-indicator dimensions in the portfolio dashboard: price, fundamentals, sentiment, capital flow, divergence, KDJ, MACD, support/resistance.
+- File generation produces native .pptx / .docx / .xlsx via OfficeCLI, delivered as 7-day presigned download links on Cloudflare R2.
+- Default LLM is OpenAI's gpt-5.5 family; Anthropic, Google Gemini, xAI, and local Ollama are supported via the same agent surface.
+
+## Contact
+
+- Founder: Julian Zhou — https://www.linkedin.com/in/julianzhou
+- Feedback: https://pickskill.com/feedback
