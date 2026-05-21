@@ -52,7 +52,6 @@ Annual plans save 20%. Cancel anytime.
 | Watchlists *(symbols you track without owning)* | — | 1 list, up to 20 symbols | 5 lists, up to 50 symbols each | Unlimited |
 | **Indicators dashboard** | | | | |
 | Technical & analytical dimensions | All 8 *(plus any new ones we add)* | All 8 *(plus any new ones we add)* | All 8 *(plus any new ones we add)* | All 8 *(plus any new ones we add)* |
-| Drill-down per stock | Basic | Basic | Full | Full + side-by-side compare |
 | Export dashboard to a deck | — | — | ✓ *(uses your file-gen quota)* | ✓ Unlimited |
 | **Other** | | | | |
 | Priority compute queue | — | — | — | ✓ |

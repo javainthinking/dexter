@@ -104,7 +104,6 @@ single lever.
 | Watchlists (no holdings) | — | 1 (≤20 symbols) | 5 (≤50 symbols each) | unlimited |
 | **Indicators dashboard** | | | | |
 | Dimensions available | all (currently 8, future additions included) | all (currently 8, future additions included) | all (currently 8, future additions included) | all (currently 8, future additions included) |
-| Drill-down per stock | basic | basic | full | full + side-by-side compare |
 | Export dashboard to deck | — | — | ✓ (consumes file-gen quota) | ✓ unlimited |
 | **Automation** | | | | |
 | Scheduled jobs (`cron` tool) | — | — | 3 active | 20 active |
