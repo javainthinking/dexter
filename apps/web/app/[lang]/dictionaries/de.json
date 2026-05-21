@@ -312,6 +312,30 @@
       "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
     }
   },
+  "blog": {
+    "meta": {
+      "indexTitle": "Blog — PickSkill",
+      "indexDescription": "Aktien-Investmentthesen, Bewertungs-Erklärer und Analyst-How-tos vom Team hinter PickSkill — dem KI-Analysten, der Recherche, Modellierung und Equity-Texte in klarer Sprache liefert."
+    },
+    "index": {
+      "eyebrow": "PickSkill · Blog",
+      "heading": "Notizen vom Schreibtisch eines KI-Analysten.",
+      "subtitle": "Aktien-Investmentthesen, Bewertungs-Erklärer und Analyst-How-tos vom Team hinter PickSkill. Kein Füllstoff, keine recycelten Pressemitteilungen.",
+      "empty": "Noch keine Beiträge. Bald geht's los.",
+      "readPost": "Beitrag lesen",
+      "minRead": "{count} Min"
+    },
+    "post": {
+      "backToBlog": "Zurück zum Blog",
+      "minRead": "{count} Min Lesezeit",
+      "updated": "Aktualisiert am {date}",
+      "cta": {
+        "title": "Soll PickSkill das für Sie bauen?",
+        "body": "Chat öffnen und beauftragen. Die KI holt sich Echtzeitdaten, rechnet durch und liefert das Ergebnis als herunterladbares PPT, Word oder Excel.",
+        "button": "Kostenlosen Chat ausprobieren"
+      }
+    }
+  },
   "feedback": {
     "title": "Feedback senden",
     "subtitle": "Bug-Reports, Feature-Wünsche oder Sonstiges — wir lesen jede Nachricht.",

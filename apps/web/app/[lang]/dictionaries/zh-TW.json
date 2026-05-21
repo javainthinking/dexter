@@ -312,6 +312,30 @@
       "generic": "發生錯誤,請稍後再試。"
     }
   },
+  "blog": {
+    "meta": {
+      "indexTitle": "部落格 — PickSkill",
+      "indexDescription": "來自 PickSkill 團隊的股票投資邏輯分析、估值方法講解與分析師工作流指南 — PickSkill 是用大白話幫你做研究、建模、起草股權分析報告的 AI 分析師。"
+    },
+    "index": {
+      "eyebrow": "PickSkill · 部落格",
+      "heading": "來自 AI 分析師案頭的筆記。",
+      "subtitle": "來自 PickSkill 團隊的股票投資邏輯分析、估值方法講解與分析師工作流指南。不灌水,不二次加工新聞稿。",
+      "empty": "目前還沒有文章,敬請期待。",
+      "readPost": "閱讀全文",
+      "minRead": "{count} 分鐘"
+    },
+    "post": {
+      "backToBlog": "返回部落格",
+      "minRead": "閱讀約 {count} 分鐘",
+      "updated": "更新於 {date}",
+      "cta": {
+        "title": "想讓 PickSkill 幫你完成這件事?",
+        "body": "打開對話框直接告訴它。AI 會自動擷取即時資料、跑出計算結果,並把成品輸出為可下載的 PPT、Word 或 Excel 檔案。",
+        "button": "免費試用對話"
+      }
+    }
+  },
   "feedback": {
     "title": "提交回饋",
     "subtitle": "Bug、功能建議或其他任何想法 — 我們會認真閱讀每一則留言。",

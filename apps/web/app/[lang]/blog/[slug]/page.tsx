@@ -17,6 +17,7 @@ import { getLocalizedPath } from '../../../../lib/i18n/paths';
 import { generateAlternatesMetadata } from '../../../../lib/i18n/seo';
 import { extractFaq, getAllSlugs, getPostBySlug } from '../../../../lib/blog';
 import { LocalizedLink } from '../../../../components/i18n/localized-link';
+import { getDictionary } from '../../dictionaries';
 
 const SITE_URL = 'https://pickskill.com';
 const SITE_NAME = 'PickSkill';
@@ -138,6 +139,7 @@ export default async function BlogPostPage({
   if (!isLocale(lang)) notFound();
   const post = getPostBySlug(slug, lang as Locale);
   if (!post) notFound();
+  const dict = await getDictionary(lang);
 
   const postUrl = `${SITE_URL}${getLocalizedPath(`/blog/${post.slug}`, lang as Locale)}`;
   const blogUrl = `${SITE_URL}${getLocalizedPath('/blog', lang as Locale)}`;
@@ -255,7 +257,7 @@ export default async function BlogPostPage({
           href="/blog"
           className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
         >
-          <ArrowLeft className="size-3" /> Back to blog
+          <ArrowLeft className="size-3" /> {dict.blog.post.backToBlog}
         </LocalizedLink>
       </nav>
 
@@ -265,7 +267,8 @@ export default async function BlogPostPage({
             {post.pillar}
           </span>
           <span className="font-mono text-[10px] text-subtle">
-            {formatDate(post.publishedAt)} · {post.readingMinutes} min read
+            {formatDate(post.publishedAt, lang)} ·{' '}
+            {dict.blog.post.minRead.replace('{count}', String(post.readingMinutes))}
           </span>
         </div>
         <h1 className="mt-4 font-serif text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
@@ -347,18 +350,16 @@ export default async function BlogPostPage({
             trial. Subtle, not over-aggressive. */}
         <div className="rounded-lg border border-border bg-card p-6">
           <p className="font-serif text-xl font-semibold leading-snug text-foreground">
-            Want PickSkill to build this for you?
+            {dict.blog.post.cta.title}
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
-            Open a chat and ask. The AI pulls live data, runs the
-            calculation, and drops the result into a deck, doc, or
-            spreadsheet you can download.
+            {dict.blog.post.cta.body}
           </p>
           <LocalizedLink
             href="/chat"
             className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-foreground px-3 py-2 text-xs font-medium text-background hover:opacity-90"
           >
-            Try a free chat
+            {dict.blog.post.cta.button}
             <ArrowRight className="size-3.5" />
           </LocalizedLink>
         </div>
@@ -376,7 +377,12 @@ export default async function BlogPostPage({
             ))}
           </div>
           {post.updatedAt && post.updatedAt !== post.publishedAt && (
-            <span>Updated {formatDate(post.updatedAt)}</span>
+            <span>
+              {dict.blog.post.updated.replace(
+                '{date}',
+                formatDate(post.updatedAt, lang),
+              )}
+            </span>
           )}
         </div>
       </footer>
@@ -384,8 +390,8 @@ export default async function BlogPostPage({
   );
 }
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', {
+function formatDate(iso: string, locale: string): string {
+  return new Date(iso).toLocaleDateString(locale, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',

@@ -312,6 +312,30 @@
       "generic": "문제가 발생했습니다. 다시 시도해 주세요."
     }
   },
+  "blog": {
+    "meta": {
+      "indexTitle": "블로그 — PickSkill",
+      "indexDescription": "PickSkill 팀이 작성하는 종목 투자 논거, 밸류에이션 해설, 애널리스트용 워크플로 가이드 — PickSkill 은 평이한 표현으로 리서치·모델링·에쿼티 리서치 초안을 작성해 주는 AI 애널리스트입니다."
+    },
+    "index": {
+      "eyebrow": "PickSkill · 블로그",
+      "heading": "AI 애널리스트 책상 위의 메모.",
+      "subtitle": "PickSkill 팀이 작성하는 종목 투자 논거, 밸류에이션 해설, 애널리스트용 워크플로 가이드. 군더더기 없이, 보도자료 재탕도 없습니다.",
+      "empty": "아직 게시된 글이 없습니다. 곧 만나요.",
+      "readPost": "글 읽기",
+      "minRead": "약 {count} 분"
+    },
+    "post": {
+      "backToBlog": "블로그로 돌아가기",
+      "minRead": "읽는 데 약 {count} 분",
+      "updated": "{date} 업데이트",
+      "cta": {
+        "title": "PickSkill 이 대신 만들어 드릴까요?",
+        "body": "채팅을 열고 요청만 하세요. AI 가 실시간 데이터를 가져와 계산을 수행하고, 결과를 다운로드 가능한 PPT, Word, Excel 로 출력해 드립니다.",
+        "button": "무료로 채팅 사용해 보기"
+      }
+    }
+  },
   "feedback": {
     "title": "피드백 보내기",
     "subtitle": "버그 제보, 기능 요청, 그 외 무엇이든 — 모든 메시지를 확인합니다.",

@@ -312,6 +312,30 @@
       "generic": "問題が発生しました。もう一度お試しください。"
     }
   },
+  "blog": {
+    "meta": {
+      "indexTitle": "ブログ — PickSkill",
+      "indexDescription": "PickSkill チームによる銘柄の投資ロジック、バリュエーション解説、アナリスト向けハウツーガイド — PickSkill は、調査・モデリング・エクイティリサーチの草案作成を平易な言葉でこなす AI アナリストです。"
+    },
+    "index": {
+      "eyebrow": "PickSkill · ブログ",
+      "heading": "AI アナリストの机上ノート。",
+      "subtitle": "PickSkill チームによる銘柄の投資ロジック、バリュエーション解説、アナリスト向けハウツー。中身のない一般論やプレスリリースの焼き直しはありません。",
+      "empty": "まだ記事はありません。近日公開予定です。",
+      "readPost": "記事を読む",
+      "minRead": "約 {count} 分"
+    },
+    "post": {
+      "backToBlog": "ブログに戻る",
+      "minRead": "約 {count} 分で読めます",
+      "updated": "{date} 更新",
+      "cta": {
+        "title": "PickSkill にやらせてみませんか?",
+        "body": "チャットを開いて依頼するだけ。AI がライブデータを取得し、計算を実行し、結果をダウンロード可能な PPT、Word、Excel ファイルとして出力します。",
+        "button": "無料でチャットを試す"
+      }
+    }
+  },
   "feedback": {
     "title": "フィードバックを送る",
     "subtitle": "バグ報告・機能要望・その他なんでも — すべての投稿に目を通します。",

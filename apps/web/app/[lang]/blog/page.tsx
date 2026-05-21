@@ -12,6 +12,7 @@ import { getLocalizedPath } from '../../../lib/i18n/paths';
 import { generateAlternatesMetadata } from '../../../lib/i18n/seo';
 import { getAllPosts } from '../../../lib/blog';
 import { LocalizedLink } from '../../../components/i18n/localized-link';
+import { getDictionary } from '../dictionaries';
 
 const SITE_URL = 'https://pickskill.com';
 const SITE_NAME = 'PickSkill';
@@ -36,9 +37,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang } = await params;
   if (!isLocale(lang)) return {};
-  const title = 'Blog — PickSkill';
-  const description =
-    'Stock theses, valuation explainers, and analyst how-tos from the team building PickSkill — the AI analyst that researches, models, and drafts equity work in plain English.';
+  const dict = await getDictionary(lang);
+  const title = dict.blog.meta.indexTitle;
+  const description = dict.blog.meta.indexDescription;
   return {
     title,
     description,
@@ -77,6 +78,7 @@ export default async function BlogIndexPage({
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
 
+  const dict = await getDictionary(lang);
   const posts = getAllPosts();
 
   // Blog JSON-LD: a single Blog entity wrapping the list. Article
@@ -104,20 +106,19 @@ export default async function BlogIndexPage({
       />
       <header className="mb-10 border-b border-border pb-8">
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
-          PickSkill · Blog
+          {dict.blog.index.eyebrow}
         </p>
         <h1 className="mt-3 font-serif text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-          Notes from the desk of an AI analyst.
+          {dict.blog.index.heading}
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-          Stock theses, valuation explainers, and analyst how-tos from the
-          team building PickSkill. No fluff, no recycled press releases.
+          {dict.blog.index.subtitle}
         </p>
       </header>
 
       {posts.length === 0 ? (
         <p className="py-12 text-center text-sm text-muted-foreground">
-          No posts yet. Check back soon.
+          {dict.blog.index.empty}
         </p>
       ) : (
         <ul className="space-y-8">
@@ -132,7 +133,8 @@ export default async function BlogIndexPage({
                     {p.pillar}
                   </span>
                   <span className="font-mono text-[10px] text-subtle">
-                    {formatDate(p.publishedAt)} · {p.readingMinutes} min
+                    {formatDate(p.publishedAt, lang)} ·{' '}
+                    {dict.blog.index.minRead.replace('{count}', String(p.readingMinutes))}
                   </span>
                 </div>
                 <h2 className="mt-3 font-serif text-xl font-semibold leading-snug text-foreground sm:text-2xl">
@@ -142,7 +144,7 @@ export default async function BlogIndexPage({
                   {p.description}
                 </p>
                 <span className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-[color:var(--accent)] transition-transform group-hover:translate-x-0.5">
-                  Read post <ArrowRight className="size-3" />
+                  {dict.blog.index.readPost} <ArrowRight className="size-3" />
                 </span>
               </LocalizedLink>
             </li>
@@ -153,10 +155,10 @@ export default async function BlogIndexPage({
   );
 }
 
-function formatDate(iso: string): string {
-  // Render in en-US format on the server to avoid locale flicker; we
-  // can re-localise later when content is translated.
-  return new Date(iso).toLocaleDateString('en-US', {
+function formatDate(iso: string, locale: string): string {
+  // Use the BCP-47 locale tag directly — Intl.DateTimeFormat resolves
+  // zh-CN, ja, ko, etc. natively. Server-rendered so no client flicker.
+  return new Date(iso).toLocaleDateString(locale, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',

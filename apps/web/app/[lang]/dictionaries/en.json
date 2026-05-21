@@ -312,6 +312,30 @@
       "generic": "Something went wrong. Please try again."
     }
   },
+  "blog": {
+    "meta": {
+      "indexTitle": "Blog — PickSkill",
+      "indexDescription": "Stock theses, valuation explainers, and analyst how-tos from the team building PickSkill — the AI analyst that researches, models, and drafts equity work in plain English."
+    },
+    "index": {
+      "eyebrow": "PickSkill · Blog",
+      "heading": "Notes from the desk of an AI analyst.",
+      "subtitle": "Stock theses, valuation explainers, and analyst how-tos from the team building PickSkill. No fluff, no recycled press releases.",
+      "empty": "No posts yet. Check back soon.",
+      "readPost": "Read post",
+      "minRead": "{count} min"
+    },
+    "post": {
+      "backToBlog": "Back to blog",
+      "minRead": "{count} min read",
+      "updated": "Updated {date}",
+      "cta": {
+        "title": "Want PickSkill to build this for you?",
+        "body": "Open a chat and ask. The AI pulls live data, runs the calculation, and drops the result into a deck, doc, or spreadsheet you can download.",
+        "button": "Try a free chat"
+      }
+    }
+  },
   "feedback": {
     "title": "Send us feedback",
     "subtitle": "Bug reports, feature requests, anything else — we read every message.",

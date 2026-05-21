@@ -312,6 +312,30 @@
       "generic": "出错了,请稍后重试。"
     }
   },
+  "blog": {
+    "meta": {
+      "indexTitle": "博客 — PickSkill",
+      "indexDescription": "来自 PickSkill 团队的股票投资逻辑分析、估值方法讲解和分析师工作流指南 — PickSkill 是用大白话帮你做研究、建模、起草股权分析报告的 AI 分析师。"
+    },
+    "index": {
+      "eyebrow": "PickSkill · 博客",
+      "heading": "来自 AI 分析师案头的笔记。",
+      "subtitle": "来自 PickSkill 团队的股票投资逻辑分析、估值方法讲解和分析师工作流指南。不灌水,不二次加工新闻稿。",
+      "empty": "暂无文章,敬请期待。",
+      "readPost": "阅读全文",
+      "minRead": "{count} 分钟"
+    },
+    "post": {
+      "backToBlog": "返回博客",
+      "minRead": "阅读约 {count} 分钟",
+      "updated": "更新于 {date}",
+      "cta": {
+        "title": "想让 PickSkill 帮你完成这件事?",
+        "body": "打开对话框直接告诉它。AI 会自动拉取实时数据、跑出计算结果,并把成品输出为可下载的 PPT、Word 或 Excel 文件。",
+        "button": "免费试用对话"
+      }
+    }
+  },
   "feedback": {
     "title": "提交反馈",
     "subtitle": "Bug、功能建议或其他任何想法 — 我们会认真阅读每一条留言。",

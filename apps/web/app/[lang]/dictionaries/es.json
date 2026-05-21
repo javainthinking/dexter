@@ -312,6 +312,30 @@
       "generic": "Algo salió mal. Inténtalo de nuevo."
     }
   },
+  "blog": {
+    "meta": {
+      "indexTitle": "Blog — PickSkill",
+      "indexDescription": "Tesis de inversión en acciones, explicaciones de valoración y guías prácticas para analistas, del equipo que construye PickSkill — el analista de IA que investiga, modela y redacta el trabajo de equity en lenguaje claro."
+    },
+    "index": {
+      "eyebrow": "PickSkill · Blog",
+      "heading": "Notas del escritorio de un analista de IA.",
+      "subtitle": "Tesis de inversión, explicaciones de valoración y guías prácticas del equipo que construye PickSkill. Sin relleno, sin reciclar notas de prensa.",
+      "empty": "Todavía no hay artículos. Vuelve pronto.",
+      "readPost": "Leer artículo",
+      "minRead": "{count} min"
+    },
+    "post": {
+      "backToBlog": "Volver al blog",
+      "minRead": "{count} min de lectura",
+      "updated": "Actualizado el {date}",
+      "cta": {
+        "title": "¿Quieres que PickSkill lo construya por ti?",
+        "body": "Abre un chat y pídelo. La IA obtiene datos en vivo, hace los cálculos y entrega el resultado en un PPT, Word o Excel que puedes descargar.",
+        "button": "Probar un chat gratis"
+      }
+    }
+  },
   "feedback": {
     "title": "Envíanos tus comentarios",
     "subtitle": "Reportes de bugs, peticiones de funciones o cualquier otra cosa — leemos cada mensaje.",
