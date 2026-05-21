@@ -99,7 +99,7 @@ single lever.
 | Multi-skill workflows (DCF, x-research, etc.) | — | basic | all | all + custom skills |
 | **Portfolios** | | | | |
 | Portfolios | 1 | 3 | 10 | unlimited |
-| Holdings per portfolio | 10 | 30 | 100 | 500 |
+| Holdings per portfolio | 10 | 25 | 50 | 100 |
 | Quote refresh | manual only | manual + on-demand button | auto every 15 min during market hours | auto every 5 min + on-demand real-time |
 | Historical data window | 1 month | 6 months | 2 years | 5 years |
 | Watchlists (no holdings) | — | 1 (≤20 symbols) | 5 (≤50 symbols each) | unlimited |
@@ -178,13 +178,15 @@ a $39 plan. The cap is what makes the price defensible.
 The second-biggest cost driver after LLM tokens for any tier with
 auto-refresh.
 
-- 100 holdings × 15-min refresh × 6.5 market hours = ~2,600 quote
+- Pro: 50 holdings × 15-min refresh × 6.5 market hours = ~1,300 quote
   fetches/user/day
-- 500 holdings × 5-min refresh = ~78,000 fetches/user/day
+- Power: 100 holdings × 5-min refresh = ~7,800 fetches/user/day
 
 Yahoo Finance is free but rate-limited (~2000/hour per IP). FinDatasets
-is paid (~$0.001/call). At the Power-tier auto-refresh load, a single
-user can rack up $30+/month on FinDatasets alone if we don't gate.
+is paid (~$0.001/call). With holdings capped at 100 max even on the
+Power tier, quote-refresh COGS stays modest — Yahoo-primary keeps it
+near zero, and the FinDatasets-fallback worst case is ~$8/user/month
+on Power, comfortably absorbed by the $129 anchor.
 
 **Strategy:**
 - Free + Starter: manual refresh only (user clicks button)
@@ -347,13 +349,16 @@ minimum viable purchase path. Everything else can ship in the second wave.
 
 ### 8.3 Quote-refresh load on auto-refresh tiers
 
-- **Risk:** A Power user with 500 holdings × 5-min refresh hits
-  ~120K fetches/day per user. If FinDatasets bills $0.001/call this is
-  ~$120/month per user, blowing the $129 margin.
+- **Risk:** With holdings capped at 100/portfolio even on Power, a
+  single user's max load is ~7,800 fetches/day at 5-min refresh.
+  Multiplied across hundreds of users on Power, this approaches
+  Yahoo's rate limits (~2000/hour per IP). FinDatasets fallback
+  would be ~$8/user/month at this load — affordable but not zero.
 - **Mitigation:** strongly prefer Yahoo Finance (free) as primary;
   FinDatasets only on fallback. Add per-user fetch ceiling.
   Consider batched fetches (one call returns N tickers) where
-  Yahoo's API supports it.
+  Yahoo's API supports it. Cache quotes for 30–60s server-side so
+  two users watching the same ticker share the fetch.
 
 ### 8.4 Mini-class model quality on financial reasoning
 
