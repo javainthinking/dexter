@@ -68,7 +68,6 @@ export function PortfoliosClient({
 
   const [sessions, setSessions] = React.useState<SessionSummary[]>([]);
   const [sessionsLoading, setSessionsLoading] = React.useState(true);
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
 
   const [portfolios, setPortfolios] = React.useState<PortfolioListItem[]>(initialPortfolios);
   const [activeId, setActiveId] = React.useState<string | null>(initialPortfolios[0]?.id ?? null);
@@ -378,12 +377,10 @@ export function PortfoliosClient({
         onNew={onNewConversation}
         onSwitch={onSwitchSession}
         onDelete={onDeleteSession}
-        onClose={() => setSidebarOpen(false)}
       />
 
       <main className="flex min-w-0 flex-1 flex-col">
         <TopBar
-          onOpenSidebar={() => setSidebarOpen(true)}
           title={dict.portfolios?.title ?? 'Portfolios'}
           subtitle={dict.portfolios?.subtitle ?? 'Manage your watchlists.'}
         />

@@ -74,7 +74,6 @@ export function IndicatorsClient({
   // Sidebar
   const [sessions, setSessions] = React.useState<SessionSummary[]>([]);
   const [sessionsLoading, setSessionsLoading] = React.useState(true);
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
 
   const [portfolios, setPortfolios] = React.useState<PortfolioSummary[]>(initialPortfolios);
   const [activeId, setActiveId] = React.useState<string | null>(initialPortfolios[0]?.id ?? null);
@@ -220,12 +219,10 @@ export function IndicatorsClient({
         onNew={onNewConversation}
         onSwitch={onSwitchSession}
         onDelete={onDeleteSession}
-        onClose={() => setSidebarOpen(false)}
       />
 
       <main className="flex min-w-0 flex-1 flex-col">
         <TopBar
-          onOpenSidebar={() => setSidebarOpen(true)}
           title={dict.indicators?.title ?? 'Indicators'}
           subtitle={dict.indicators?.subtitle ?? 'Technical signals across your watchlist'}
         />
