@@ -1,10 +1,20 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
-import { isLocale, locales, defaultLocale } from '../../../lib/i18n/locales';
+import {
+  isLocale,
+  locales,
+  localeBcp47,
+  localeOg,
+  type Locale,
+} from '../../../lib/i18n/locales';
 import { getLocalizedPath } from '../../../lib/i18n/paths';
+import { generateAlternatesMetadata } from '../../../lib/i18n/seo';
 import { getAllPosts } from '../../../lib/blog';
 import { LocalizedLink } from '../../../components/i18n/localized-link';
+
+const SITE_URL = 'https://pickskill.com';
+const SITE_NAME = 'PickSkill';
 
 /**
  * /[lang]/blog — index of every published post, newest first.
@@ -32,16 +42,29 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: {
-      canonical: `/${lang === defaultLocale ? '' : lang + '/'}blog`,
-      languages: Object.fromEntries(
-        locales.map((l) => [l, `/${l === defaultLocale ? '' : l + '/'}blog`]),
-      ),
+    alternates: generateAlternatesMetadata({ path: '/blog', locale: lang as Locale }),
+    robots: {
+      index: true,
+      follow: true,
+      'max-snippet': -1,
+      'max-image-preview': 'large',
     },
     openGraph: {
       title,
       description,
+      siteName: SITE_NAME,
+      url: `${SITE_URL}${getLocalizedPath('/blog', lang as Locale)}`,
+      locale: localeOg[lang as Locale],
+      alternateLocale: locales
+        .filter((l) => l !== lang)
+        .map((l) => localeOg[l]),
       type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      site: '@pickskill',
     },
   };
 }
@@ -62,11 +85,12 @@ export default async function BlogIndexPage({
     '@context': 'https://schema.org',
     '@type': 'Blog',
     name: 'PickSkill Blog',
-    url: `https://pickskill.com${getLocalizedPath('/blog', lang)}`,
+    url: `${SITE_URL}${getLocalizedPath('/blog', lang as Locale)}`,
+    inLanguage: localeBcp47[lang as Locale],
     blogPost: posts.map((p) => ({
       '@type': 'BlogPosting',
       headline: p.title,
-      url: `https://pickskill.com${getLocalizedPath(`/blog/${p.slug}`, lang)}`,
+      url: `${SITE_URL}${getLocalizedPath(`/blog/${p.slug}`, lang as Locale)}`,
       datePublished: p.publishedAt,
       ...(p.updatedAt && { dateModified: p.updatedAt }),
     })),

@@ -5,10 +5,21 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
-import { isLocale, locales, defaultLocale } from '../../../../lib/i18n/locales';
+import {
+  isLocale,
+  locales,
+  defaultLocale,
+  localeBcp47,
+  localeOg,
+  type Locale,
+} from '../../../../lib/i18n/locales';
 import { getLocalizedPath } from '../../../../lib/i18n/paths';
-import { getAllSlugs, getPostBySlug } from '../../../../lib/blog';
+import { generateAlternatesMetadata } from '../../../../lib/i18n/seo';
+import { extractFaq, getAllSlugs, getPostBySlug } from '../../../../lib/blog';
 import { LocalizedLink } from '../../../../components/i18n/localized-link';
+
+const SITE_URL = 'https://pickskill.com';
+const SITE_NAME = 'PickSkill';
 
 /**
  * /[lang]/blog/[slug] — single post.
@@ -44,37 +55,76 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang, slug } = await params;
   if (!isLocale(lang)) return {};
-  const post = getPostBySlug(slug);
+  const post = getPostBySlug(slug, lang as Locale);
   if (!post) return {};
-  const canonical = `/${lang === defaultLocale ? '' : lang + '/'}blog/${post.slug}`;
+
+  // Canonical + hreflang via the shared helper — same logic the rest
+  // of the app uses for chat / portfolios / etc. The helper emits
+  // BCP-47 keys (e.g. "zh-CN", "x-default") that Google + Bing expect.
+  const alternates = generateAlternatesMetadata({
+    path: `/blog/${post.slug}`,
+    locale: lang as Locale,
+  });
+  // OG card image: the PNG path (post.heroImage). Twitter/LinkedIn/
+  // Slack/Discord OG renderers don't reliably support WebP/AVIF/SVG,
+  // so we deliberately use the source PNG here. Inline rendering on
+  // the page goes through next/image for AVIF/WebP — see the
+  // <figure> in the body.
+  const ogImage = post.heroImage
+    ? [
+        {
+          url: `${SITE_URL}${post.heroImage}`,
+          width: 1200,
+          height: 630,
+          alt: post.heroAlt ?? post.title,
+        },
+      ]
+    : undefined;
+
   return {
     title: `${post.title} — PickSkill`,
     description: post.description,
-    alternates: {
-      canonical,
-      languages: Object.fromEntries(
-        locales.map((l) => [
-          l,
-          `/${l === defaultLocale ? '' : l + '/'}blog/${post.slug}`,
-        ]),
-      ),
+    alternates,
+    // Tell crawlers explicitly: index, follow, and give us the wide
+    // preview treatment that AI overviews + Google Discover prefer.
+    // Defaults are conservative; spelling them out unlocks richer
+    // SERP cards.
+    robots: {
+      index: true,
+      follow: true,
+      'max-snippet': -1,
+      'max-image-preview': 'large',
+      'max-video-preview': -1,
     },
     openGraph: {
       title: post.title,
       description: post.description,
+      siteName: SITE_NAME,
+      url: `${SITE_URL}${getLocalizedPath(`/blog/${post.slug}`, lang as Locale)}`,
+      // OG locale is the underscore form (en_US, zh_CN) — different
+      // from BCP-47 used in hreflang. localeOg map handles the
+      // translation. alternateLocale lists every OTHER locale the
+      // same URL is available in, so Facebook crawlers know to fetch
+      // the localized variants when sharing a post from a different
+      // language.
+      locale: localeOg[lang as Locale],
+      alternateLocale: locales
+        .filter((l) => l !== lang)
+        .map((l) => localeOg[l]),
       type: 'article',
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt ?? post.publishedAt,
       authors: [post.author.name],
-      ...(post.heroImage && {
-        images: [{ url: post.heroImage, alt: post.heroAlt ?? post.title }],
-      }),
+      tags: post.tags,
+      ...(ogImage && { images: ogImage }),
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.description,
-      ...(post.heroImage && { images: [post.heroImage] }),
+      ...(post.author.twitter && { creator: `@${post.author.twitter}` }),
+      site: '@pickskill',
+      ...(ogImage && { images: ogImage.map((i) => i.url) }),
     },
   };
 }
@@ -86,24 +136,33 @@ export default async function BlogPostPage({
 }) {
   const { lang, slug } = await params;
   if (!isLocale(lang)) notFound();
-  const post = getPostBySlug(slug);
+  const post = getPostBySlug(slug, lang as Locale);
   if (!post) notFound();
 
-  const siteUrl = 'https://pickskill.com';
-  const postUrl = `${siteUrl}${getLocalizedPath(`/blog/${post.slug}`, lang)}`;
-  const blogUrl = `${siteUrl}${getLocalizedPath('/blog', lang)}`;
-  const homeUrl = `${siteUrl}${getLocalizedPath('/', lang)}`;
+  const postUrl = `${SITE_URL}${getLocalizedPath(`/blog/${post.slug}`, lang as Locale)}`;
+  const blogUrl = `${SITE_URL}${getLocalizedPath('/blog', lang as Locale)}`;
+  const homeUrl = `${SITE_URL}${getLocalizedPath('/', lang as Locale)}`;
 
-  // Article schema — the load-bearing GEO signal. Includes Person,
-  // headline, dates, image, mainEntityOfPage so AI overviews and
-  // Google rich results can both parse it.
-  const articleSchema = {
+  // BlogPosting JSON-LD — the load-bearing GEO signal. Includes:
+  //   - inLanguage: BCP-47 tag of the body's actual language. Critical
+  //     for multilingual sites — tells AI crawlers which language to
+  //     index this version under, separately from the URL's /lang/
+  //     prefix.
+  //   - publisher.logo with explicit dimensions (Google's Article rich
+  //     result schema validator expects an ImageObject, not a string).
+  //   - wordCount + timeRequired so AI overviews can show "5 min read"
+  //     style annotations.
+  //   - image with width/height — also a Google rich-result requirement.
+  const articleSchema: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.description,
+    inLanguage: localeBcp47[post.inLanguage],
     datePublished: post.publishedAt,
     dateModified: post.updatedAt ?? post.publishedAt,
+    wordCount: post.body.split(/\s+/).filter(Boolean).length,
+    timeRequired: `PT${post.readingMinutes}M`,
     author: {
       '@type': 'Person',
       name: post.author.name,
@@ -112,19 +171,27 @@ export default async function BlogPostPage({
     },
     publisher: {
       '@type': 'Organization',
-      name: 'PickSkill',
-      url: siteUrl,
+      name: SITE_NAME,
+      url: SITE_URL,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_URL}/icon.svg`,
+        width: 60,
+        height: 60,
+      },
     },
     mainEntityOfPage: { '@type': 'WebPage', '@id': postUrl },
-    ...(post.heroImage && {
-      image: {
-        '@type': 'ImageObject',
-        url: `${siteUrl}${post.heroImage}`,
-        ...(post.heroAlt && { caption: post.heroAlt }),
-      },
-    }),
     keywords: post.tags.join(', '),
   };
+  if (post.heroImage) {
+    articleSchema.image = {
+      '@type': 'ImageObject',
+      url: `${SITE_URL}${post.heroImage}`,
+      width: 1200,
+      height: 630,
+      ...(post.heroAlt && { caption: post.heroAlt }),
+    };
+  }
 
   // Breadcrumbs schema — helps Google show the post inside the right
   // section in search results.
@@ -138,6 +205,34 @@ export default async function BlogPostPage({
     ],
   };
 
+  // FAQPage schema — emitted only when the post body contains an
+  // extractable FAQ section (## FAQ + bold-Q / paragraph-A pattern).
+  // Google deprecated FAQ rich results for commercial sites in Aug
+  // 2023, BUT:
+  //   - AI overviews (ChatGPT web search, Perplexity, Google AIO)
+  //     still consume FAQPage as a structured citation signal — and
+  //     this blog is partly an AI-overview play (see blog-strategy.md
+  //     §1). Worth the schema even without the SERP-result rendering.
+  //   - Empty FAQ blocks get flagged by validators; only emit when
+  //     extractFaq returns ≥ 1 entries.
+  const faqEntries = extractFaq(post.body);
+  const faqSchema =
+    faqEntries.length > 0
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          inLanguage: localeBcp47[post.inLanguage],
+          mainEntity: faqEntries.map((e) => ({
+            '@type': 'Question',
+            name: e.question,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: e.answer,
+            },
+          })),
+        }
+      : null;
+
   return (
     <article className="mx-auto max-w-3xl px-4 py-10 sm:py-14">
       <script
@@ -148,6 +243,12 @@ export default async function BlogPostPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
 
       <nav className="mb-6">
         <LocalizedLink

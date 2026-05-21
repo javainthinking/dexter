@@ -30,7 +30,7 @@ export const localeDisplayName: Record<Locale, string> = {
 };
 
 /**
- * BCP-47 / IETF language tags used for hreflang and OG locale fields.
+ * BCP-47 / IETF language tags used for hreflang.
  */
 export const localeBcp47: Record<Locale, string> = {
   en: 'en',
@@ -41,4 +41,21 @@ export const localeBcp47: Record<Locale, string> = {
   ko: 'ko',
   'zh-CN': 'zh-CN',
   'zh-TW': 'zh-TW',
+};
+
+/**
+ * Open Graph locale format — underscore-separated language_REGION,
+ * the form Facebook/LinkedIn/etc. expect in `<meta property="og:locale">`.
+ * Different from BCP-47 (which uses hyphens) — keeping both maps
+ * explicit so callers can't mix them up.
+ */
+export const localeOg: Record<Locale, string> = {
+  en: 'en_US',
+  fr: 'fr_FR',
+  de: 'de_DE',
+  es: 'es_ES',
+  ja: 'ja_JP',
+  ko: 'ko_KR',
+  'zh-CN': 'zh_CN',
+  'zh-TW': 'zh_TW',
 };
