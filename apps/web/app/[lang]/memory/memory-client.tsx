@@ -2,15 +2,10 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, X, Trash2, Check, Menu, BrainCircuit, Loader2 } from 'lucide-react';
+import { Search, X, Trash2, Check, BrainCircuit, Loader2 } from 'lucide-react';
 import { Sidebar, type SessionSummary } from '../../../components/chat/sidebar';
 import { Button } from '../../../components/ui/button';
-import { ThemeToggle } from '../../../components/theme-toggle';
-import { LanguageSwitcher } from '../../../components/i18n/language-switcher';
-import { UserMenu } from '../../../components/auth/user-menu';
-import { AppNav } from '../../../components/nav/app-nav';
-import { Separator } from '../../../components/ui/separator';
-import { Logo } from '../../../components/logo';
+import { TopBar } from '../../../components/nav/top-bar';
 import {
   useDictionary,
   useLocale,
@@ -220,42 +215,10 @@ export function MemoryClient() {
       )}
 
       <main className="flex min-w-0 flex-1 flex-col">
-        {/* Mobile header */}
-        <header className="flex h-14 shrink-0 items-center justify-between border-b border-border px-3 md:hidden">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => setSidebarOpen(true)}
-              aria-label="Open sidebar"
-            >
-              <Menu className="size-4" />
-            </Button>
-            <Logo size="sm" />
-          </div>
-          <div className="flex items-center gap-1">
-            <AppNav />
-            <Separator orientation="vertical" className="h-6" />
-            <LanguageSwitcher />
-            <ThemeToggle />
-            <UserMenu />
-          </div>
-        </header>
-
-        {/* Desktop top bar */}
-        <header className="hidden h-14 shrink-0 items-center justify-between border-b border-border px-5 md:flex">
-          <div className="flex items-center gap-3">
-            <BrainCircuit className="size-4 text-[color:var(--accent)]" />
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
-              {dict.nav.memory}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <AppNav />
-            <Separator orientation="vertical" className="h-4" />
-            <LanguageSwitcher />
-          </div>
-        </header>
+        <TopBar
+          onOpenSidebar={() => setSidebarOpen(true)}
+          title={dict.nav.memory}
+        />
 
         {/* Main content */}
         <div className="flex-1 overflow-y-auto">

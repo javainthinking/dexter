@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Menu, RotateCcw } from 'lucide-react';
+import { RotateCcw } from 'lucide-react';
 import { Sidebar, type SessionSummary } from '../../../components/chat/sidebar';
 import { Composer } from '../../../components/chat/composer';
 import { EmptyState } from '../../../components/chat/empty-state';
@@ -15,11 +15,9 @@ import {
 import type { ToolCardEvent, ToolStatus } from '../../../components/chat/tool-card';
 import { Button } from '../../../components/ui/button';
 import { Separator } from '../../../components/ui/separator';
-import { ThemeToggle } from '../../../components/theme-toggle';
-import { Logo } from '../../../components/logo';
 import { LanguageSwitcher } from '../../../components/i18n/language-switcher';
-import { UserMenu } from '../../../components/auth/user-menu';
 import { AppNav } from '../../../components/nav/app-nav';
+import { TopBar } from '../../../components/nav/top-bar';
 import {
   useDictionary,
   useLocale,
@@ -358,19 +356,11 @@ function ChatPage() {
       )}
 
       <main className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center justify-between border-b border-border px-3 md:hidden">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => setSidebarOpen(true)}
-              aria-label={dict.chat.header.openSidebar}
-            >
-              <Menu className="size-4" />
-            </Button>
-            <Logo size="sm" />
-          </div>
-          <div className="flex items-center gap-1">
+        <TopBar
+          className="md:hidden"
+          onOpenSidebar={() => setSidebarOpen(true)}
+          showLogo
+          extraAction={
             <Button
               variant="ghost"
               size="icon-sm"
@@ -379,13 +369,8 @@ function ChatPage() {
             >
               <RotateCcw className="size-4" />
             </Button>
-            <AppNav />
-            <Separator orientation="vertical" className="h-6" />
-            <LanguageSwitcher />
-            <ThemeToggle />
-            <UserMenu />
-          </div>
-        </header>
+          }
+        />
 
         <header className="hidden h-14 shrink-0 items-center justify-between border-b border-border px-5 md:flex">
           <div className="flex items-center gap-3">

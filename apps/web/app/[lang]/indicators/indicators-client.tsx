@@ -2,14 +2,10 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { RefreshCw, Menu, AlertTriangle, Wallet, ChevronDown } from 'lucide-react';
+import { RefreshCw, AlertTriangle, Wallet, ChevronDown } from 'lucide-react';
 import { Sidebar, type SessionSummary } from '../../../components/chat/sidebar';
 import { Button } from '../../../components/ui/button';
-import { ThemeToggle } from '../../../components/theme-toggle';
-import { LanguageSwitcher } from '../../../components/i18n/language-switcher';
-import { UserMenu } from '../../../components/auth/user-menu';
-import { AppNav } from '../../../components/nav/app-nav';
-import { Separator } from '../../../components/ui/separator';
+import { TopBar } from '../../../components/nav/top-bar';
 import { Skeleton } from '../../../components/ui/skeleton';
 import { useDictionary, useLocale } from '../../../components/i18n/dictionary-provider';
 import { getLocalizedPath } from '../../../lib/i18n/paths';
@@ -228,33 +224,11 @@ export function IndicatorsClient({
       />
 
       <main className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between gap-3 border-b border-border px-4 py-3 lg:px-6">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setSidebarOpen(true)}>
-              <Menu className="size-5" />
-            </Button>
-            {/* Logo removed on app-internal pages — the sidebar + tab
-                already orient the user, and the top-right AppNav now
-                carries the global navigation. Keeps this header lean
-                so the page title + ticker selector get the visual
-                weight. */}
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold">
-                {dict.indicators?.title ?? 'Indicators'}
-              </span>
-              <span className="hidden text-xs text-muted-foreground sm:inline">
-                {dict.indicators?.subtitle ?? 'Technical signals across your watchlist'}
-              </span>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <AppNav />
-            <Separator orientation="vertical" className="h-6" />
-            <LanguageSwitcher />
-            <ThemeToggle />
-            <UserMenu variant="compact" />
-          </div>
-        </header>
+        <TopBar
+          onOpenSidebar={() => setSidebarOpen(true)}
+          title={dict.indicators?.title ?? 'Indicators'}
+          subtitle={dict.indicators?.subtitle ?? 'Technical signals across your watchlist'}
+        />
 
         {/* Portfolio selector bar */}
         {tab !== 'movers' && (

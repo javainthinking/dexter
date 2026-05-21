@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Bug, ImagePlus, Lightbulb, Loader2, MessageSquare, X } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
+import { TopBar } from '../../../components/nav/top-bar';
 import { useDictionary, format } from '../../../components/i18n/dictionary-provider';
 import { cn } from '../../../lib/utils';
 
@@ -259,13 +260,10 @@ export function FeedbackClient() {
   ];
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-12 sm:py-16">
-      <header className="mb-8">
-        <h1 className="font-serif text-3xl font-semibold leading-tight tracking-tight">
-          {dict.feedback.title}
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">{dict.feedback.subtitle}</p>
-      </header>
+    <div className="flex min-h-screen flex-col">
+      <TopBar title={dict.feedback.title} subtitle={dict.feedback.subtitle} />
+      <div className="mx-auto w-full max-w-2xl px-4 py-12 sm:py-16">
+
 
       {successId ? (
         <div className="rounded-lg border border-[color:var(--positive)]/40 bg-[color:var(--positive)]/10 p-4 text-sm">
@@ -472,6 +470,7 @@ export function FeedbackClient() {
           </Button>
         </div>
       </form>
+      </div>
     </div>
   );
 }
