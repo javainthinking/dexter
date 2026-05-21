@@ -309,5 +309,50 @@
       "expiredCode": "Ce code a expiré. Demandez-en un nouveau.",
       "generic": "Une erreur est survenue. Veuillez réessayer."
     }
+  },
+  "feedback": {
+    "title": "Envoyez-nous vos retours",
+    "subtitle": "Bugs, demandes de fonctionnalités, ou autre — nous lisons chaque message.",
+    "fields": {
+      "type": "Type",
+      "subject": "Objet (facultatif)",
+      "subjectPlaceholder": "Résumé en une ligne",
+      "message": "Message",
+      "messagePlaceholder": "Ce qui s'est passé, ce que vous attendiez, et tout contexte utile pour reproduire ou traiter."
+    },
+    "types": {
+      "bug": "Bug",
+      "feature": "Demande de fonctionnalité",
+      "general": "Général"
+    },
+    "attachments": {
+      "label": "Captures d'écran / images (facultatif)",
+      "help": "{count} / {max}",
+      "dropzone": "Glissez des images ici, ou",
+      "constraints": "Jusqu'à 3 images, 10 Mo chacune.",
+      "choose": "Choisir des fichiers",
+      "addMore": "En ajouter une",
+      "remove": "Retirer"
+    },
+    "submit": "Envoyer le retour",
+    "submitting": "Envoi en cours…",
+    "success": {
+      "title": "Merci — nous avons reçu votre message.",
+      "body": "Référence : {id}. Nous reviendrons vers vous si besoin.",
+      "again": "Envoyer un autre"
+    },
+    "errors": {
+      "messageRequired": "Veuillez saisir un message avant d'envoyer.",
+      "messageTooLong": "Le message est trop long. Veuillez le raccourcir.",
+      "tooMany": "Vous pouvez joindre au maximum {max} images.",
+      "tooLarge": "{name} dépasse {max}. Réduisez la taille ou choisissez un autre fichier.",
+      "unsupportedType": "Seuls les fichiers image sont pris en charge.",
+      "uploadFailed": "Échec de l'envoi",
+      "uploadForbidden": "Le stockage a refusé l'envoi. Veuillez réessayer.",
+      "networkError": "Erreur réseau pendant l'envoi. Vérifiez votre connexion.",
+      "unauthenticated": "Veuillez vous connecter.",
+      "storageNotConfigured": "L'envoi d'images n'est pas disponible pour le moment — envoyez votre message sans captures.",
+      "generic": "Une erreur est survenue. Veuillez réessayer."
+    }
   }
 }

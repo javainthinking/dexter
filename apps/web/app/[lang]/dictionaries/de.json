@@ -309,5 +309,50 @@
       "expiredCode": "Dieser Code ist abgelaufen. Fordern Sie einen neuen an.",
       "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
     }
+  },
+  "feedback": {
+    "title": "Feedback senden",
+    "subtitle": "Bug-Reports, Feature-Wünsche oder Sonstiges — wir lesen jede Nachricht.",
+    "fields": {
+      "type": "Art",
+      "subject": "Betreff (optional)",
+      "subjectPlaceholder": "Einzeilige Zusammenfassung",
+      "message": "Nachricht",
+      "messagePlaceholder": "Was passiert ist, was Sie erwartet haben, und jeder Kontext, der uns hilft, es zu reproduzieren oder zu bearbeiten."
+    },
+    "types": {
+      "bug": "Bug",
+      "feature": "Feature-Wunsch",
+      "general": "Allgemein"
+    },
+    "attachments": {
+      "label": "Screenshots / Bilder (optional)",
+      "help": "{count} / {max}",
+      "dropzone": "Bilder hierher ziehen, oder",
+      "constraints": "Bis zu 3 Bilder, je 10 MB.",
+      "choose": "Dateien auswählen",
+      "addMore": "Weiteres hinzufügen",
+      "remove": "Entfernen"
+    },
+    "submit": "Feedback senden",
+    "submitting": "Wird gesendet…",
+    "success": {
+      "title": "Danke — wir haben es erhalten.",
+      "body": "Referenz: {id}. Wir melden uns, wenn wir mehr Details brauchen.",
+      "again": "Weiteres senden"
+    },
+    "errors": {
+      "messageRequired": "Bitte schreiben Sie eine Nachricht, bevor Sie senden.",
+      "messageTooLong": "Die Nachricht ist zu lang. Bitte kürzen.",
+      "tooMany": "Sie können maximal {max} Bilder anhängen.",
+      "tooLarge": "{name} ist größer als {max}. Bitte verkleinern oder eine andere Datei wählen.",
+      "unsupportedType": "Nur Bilddateien werden unterstützt.",
+      "uploadFailed": "Upload fehlgeschlagen",
+      "uploadForbidden": "Der Speicher hat den Upload abgelehnt. Bitte erneut versuchen.",
+      "networkError": "Netzwerkfehler beim Hochladen. Bitte Verbindung prüfen.",
+      "unauthenticated": "Bitte zuerst anmelden.",
+      "storageNotConfigured": "Bild-Uploads sind derzeit nicht verfügbar — bitte senden Sie Ihre Nachricht ohne Screenshots.",
+      "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+    }
   }
 }

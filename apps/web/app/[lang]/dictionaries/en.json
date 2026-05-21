@@ -309,5 +309,50 @@
       "expiredCode": "That code has expired. Send a new one.",
       "generic": "Something went wrong. Please try again."
     }
+  },
+  "feedback": {
+    "title": "Send us feedback",
+    "subtitle": "Bug reports, feature requests, anything else — we read every message.",
+    "fields": {
+      "type": "Type",
+      "subject": "Subject (optional)",
+      "subjectPlaceholder": "One-line summary",
+      "message": "Message",
+      "messagePlaceholder": "What happened, what you expected, and any context we'd need to reproduce or act on it."
+    },
+    "types": {
+      "bug": "Bug",
+      "feature": "Feature request",
+      "general": "General"
+    },
+    "attachments": {
+      "label": "Screenshots / images (optional)",
+      "help": "{count} / {max}",
+      "dropzone": "Drag images here, or",
+      "constraints": "Up to 3 images, 10 MB each.",
+      "choose": "Choose files",
+      "addMore": "Add another",
+      "remove": "Remove"
+    },
+    "submit": "Send feedback",
+    "submitting": "Sending…",
+    "success": {
+      "title": "Thanks — we got it.",
+      "body": "Reference: {id}. We'll get back to you if we need more details.",
+      "again": "Send another"
+    },
+    "errors": {
+      "messageRequired": "Please write a message before sending.",
+      "messageTooLong": "Message is too long. Please trim it down.",
+      "tooMany": "You can attach at most {max} images.",
+      "tooLarge": "{name} is over {max}. Please resize or pick a smaller file.",
+      "unsupportedType": "Only image files are supported.",
+      "uploadFailed": "Upload failed",
+      "uploadForbidden": "The upload was rejected by storage. Please try again.",
+      "networkError": "Network error while uploading. Check your connection and try again.",
+      "unauthenticated": "Please sign in first.",
+      "storageNotConfigured": "Image uploads aren't available right now — please send your message without screenshots.",
+      "generic": "Something went wrong. Please try again."
+    }
   }
 }

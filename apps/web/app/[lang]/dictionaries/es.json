@@ -309,5 +309,50 @@
       "expiredCode": "Ese código ha caducado. Pide uno nuevo.",
       "generic": "Algo salió mal. Inténtalo de nuevo."
     }
+  },
+  "feedback": {
+    "title": "Envíanos tus comentarios",
+    "subtitle": "Reportes de bugs, peticiones de funciones o cualquier otra cosa — leemos cada mensaje.",
+    "fields": {
+      "type": "Tipo",
+      "subject": "Asunto (opcional)",
+      "subjectPlaceholder": "Resumen en una línea",
+      "message": "Mensaje",
+      "messagePlaceholder": "Qué ocurrió, qué esperabas y cualquier contexto útil para reproducirlo o resolverlo."
+    },
+    "types": {
+      "bug": "Bug",
+      "feature": "Petición de función",
+      "general": "General"
+    },
+    "attachments": {
+      "label": "Capturas / imágenes (opcional)",
+      "help": "{count} / {max}",
+      "dropzone": "Arrastra imágenes aquí, o",
+      "constraints": "Hasta 3 imágenes, 10 MB cada una.",
+      "choose": "Elegir archivos",
+      "addMore": "Añadir otra",
+      "remove": "Quitar"
+    },
+    "submit": "Enviar comentarios",
+    "submitting": "Enviando…",
+    "success": {
+      "title": "Gracias — lo hemos recibido.",
+      "body": "Referencia: {id}. Te contactaremos si necesitamos más detalles.",
+      "again": "Enviar otro"
+    },
+    "errors": {
+      "messageRequired": "Escribe un mensaje antes de enviar.",
+      "messageTooLong": "El mensaje es demasiado largo. Acórtalo, por favor.",
+      "tooMany": "Puedes adjuntar como máximo {max} imágenes.",
+      "tooLarge": "{name} supera {max}. Reduce el tamaño o elige otro archivo.",
+      "unsupportedType": "Solo se admiten archivos de imagen.",
+      "uploadFailed": "Subida fallida",
+      "uploadForbidden": "El almacenamiento rechazó la subida. Inténtalo de nuevo.",
+      "networkError": "Error de red durante la subida. Comprueba tu conexión.",
+      "unauthenticated": "Inicia sesión primero.",
+      "storageNotConfigured": "Las subidas de imágenes no están disponibles ahora mismo — envía tu mensaje sin capturas.",
+      "generic": "Algo salió mal. Inténtalo de nuevo."
+    }
   }
 }

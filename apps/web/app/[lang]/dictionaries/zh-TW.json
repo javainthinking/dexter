@@ -309,5 +309,50 @@
       "expiredCode": "驗證碼已過期,請重新取得。",
       "generic": "發生錯誤,請稍後再試。"
     }
+  },
+  "feedback": {
+    "title": "提交回饋",
+    "subtitle": "Bug、功能建議或其他任何想法 — 我們會認真閱讀每一則留言。",
+    "fields": {
+      "type": "類型",
+      "subject": "標題(選填)",
+      "subjectPlaceholder": "一句話概述",
+      "message": "內容",
+      "messagePlaceholder": "請描述發生了什麼、你期望的結果,以及任何有助於我們重現或處理的背景資訊。"
+    },
+    "types": {
+      "bug": "Bug",
+      "feature": "功能建議",
+      "general": "其他"
+    },
+    "attachments": {
+      "label": "截圖 / 圖片(選填)",
+      "help": "{count} / {max}",
+      "dropzone": "將圖片拖到這裡,或",
+      "constraints": "最多 3 張圖片,每張不超過 10 MB。",
+      "choose": "選擇檔案",
+      "addMore": "繼續新增",
+      "remove": "移除"
+    },
+    "submit": "送出回饋",
+    "submitting": "正在送出…",
+    "success": {
+      "title": "已收到 — 感謝你的回饋!",
+      "body": "編號:{id}。若需要更多資訊,我們會與你聯絡。",
+      "again": "再送一則"
+    },
+    "errors": {
+      "messageRequired": "請先填寫回饋內容。",
+      "messageTooLong": "內容過長,請精簡後再送出。",
+      "tooMany": "最多只能附加 {max} 張圖片。",
+      "tooLarge": "{name} 超過 {max} 上限,請壓縮後再試。",
+      "unsupportedType": "僅支援圖片檔案。",
+      "uploadFailed": "上傳失敗",
+      "uploadForbidden": "儲存服務拒絕了上傳請求,請重試。",
+      "networkError": "上傳時出現網路錯誤,請檢查網路後再試。",
+      "unauthenticated": "請先登入。",
+      "storageNotConfigured": "目前無法上傳圖片 — 請直接以文字送出回饋。",
+      "generic": "發生錯誤,請稍後再試。"
+    }
   }
 }

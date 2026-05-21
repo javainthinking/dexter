@@ -142,3 +142,63 @@ export async function uploadFileForUser(
     byteLength: bytes.byteLength,
   };
 }
+
+export interface PresignedPutResult {
+  /** URL the client PUTs the binary to. */
+  uploadUrl: string;
+  /** Object key the client should reference when submitting the form. */
+  key: string;
+  /** ISO 8601 expiry; presigned URLs become invalid after this. */
+  expiresAt: string;
+}
+
+/**
+ * Mint a presigned PUT URL so the browser can upload a file directly
+ * to R2 without proxying through our Vercel function. This is the
+ * client-upload pattern: server picks the key + signs the URL, browser
+ * does the heavy lifting.
+ *
+ * Why direct: a 10 MB image proxied through a Vercel function would
+ * burn ~10 MB of inbound bandwidth and ~10 MB of outbound to R2 per
+ * upload, plus tie up the function for the entire transfer. Presigned
+ * PUTs cut that to zero — the function does only the signing
+ * (sub-millisecond).
+ *
+ * The browser MUST send the same `Content-Type` it requested when
+ * PUT'ing, otherwise R2 returns 403 (signature mismatch). Callers
+ * should communicate the expected Content-Type back to the client.
+ *
+ * Caveat: R2 buckets must have CORS configured to allow PUT from the
+ * web origin. Without it the browser request is blocked before R2
+ * even sees the signature. See ops/r2-cors.md for the policy we
+ * apply (or run `bun run scripts/apply-r2-cors.ts` against a bucket).
+ */
+export async function getPresignedPutUrl(
+  key: string,
+  contentType: string,
+  opts: { ttlSeconds?: number } = {},
+): Promise<PresignedPutResult> {
+  if (!isR2Configured()) {
+    throw new Error('R2 is not configured (missing R2_* env vars)');
+  }
+  const client = getClient();
+  if (!client) {
+    throw new Error('R2 client unavailable despite env vars set');
+  }
+  const bucket = process.env.R2_BUCKET_NAME as string;
+  const ttl = opts.ttlSeconds ?? 10 * 60; // 10 min default — plenty of time for a 10MB image
+  const expiresAt = new Date(Date.now() + ttl * 1000).toISOString();
+
+  const uploadUrl = await getSignedUrl(
+    client,
+    new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      ContentType: contentType,
+    }),
+    { expiresIn: ttl },
+  );
+
+  return { uploadUrl, key, expiresAt };
+}
+

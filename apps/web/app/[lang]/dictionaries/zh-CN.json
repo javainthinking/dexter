@@ -309,5 +309,50 @@
       "expiredCode": "验证码已过期,请重新获取。",
       "generic": "出错了,请稍后重试。"
     }
+  },
+  "feedback": {
+    "title": "提交反馈",
+    "subtitle": "Bug、功能建议或其他任何想法 — 我们会认真阅读每一条留言。",
+    "fields": {
+      "type": "类型",
+      "subject": "标题(选填)",
+      "subjectPlaceholder": "一句话概述",
+      "message": "内容",
+      "messagePlaceholder": "请描述发生了什么、你期望的结果,以及任何有助于我们复现或处理的背景信息。"
+    },
+    "types": {
+      "bug": "Bug",
+      "feature": "功能建议",
+      "general": "其他"
+    },
+    "attachments": {
+      "label": "截图 / 图片(选填)",
+      "help": "{count} / {max}",
+      "dropzone": "将图片拖到这里,或",
+      "constraints": "最多 3 张图片,每张不超过 10 MB。",
+      "choose": "选择文件",
+      "addMore": "继续添加",
+      "remove": "移除"
+    },
+    "submit": "提交反馈",
+    "submitting": "正在提交…",
+    "success": {
+      "title": "已收到 — 谢谢你的反馈!",
+      "body": "编号:{id}。如果需要更多信息,我们会与你联系。",
+      "again": "再提交一条"
+    },
+    "errors": {
+      "messageRequired": "请先填写反馈内容。",
+      "messageTooLong": "内容过长,请精简后再提交。",
+      "tooMany": "最多只能附加 {max} 张图片。",
+      "tooLarge": "{name} 超过 {max} 上限,请压缩后重试。",
+      "unsupportedType": "仅支持图片文件。",
+      "uploadFailed": "上传失败",
+      "uploadForbidden": "存储拒绝了上传请求,请重试。",
+      "networkError": "上传时出现网络错误,请检查网络后重试。",
+      "unauthenticated": "请先登录。",
+      "storageNotConfigured": "当前不支持上传图片 — 请直接以文字提交反馈。",
+      "generic": "出现错误,请稍后重试。"
+    }
   }
 }

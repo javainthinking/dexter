@@ -309,5 +309,50 @@
       "expiredCode": "コードの有効期限が切れました。新しいコードをリクエストしてください。",
       "generic": "問題が発生しました。もう一度お試しください。"
     }
+  },
+  "feedback": {
+    "title": "フィードバックを送る",
+    "subtitle": "バグ報告・機能要望・その他なんでも — すべての投稿に目を通します。",
+    "fields": {
+      "type": "種類",
+      "subject": "件名(任意)",
+      "subjectPlaceholder": "一行サマリー",
+      "message": "本文",
+      "messagePlaceholder": "起きたこと、期待した動作、再現や対応に必要な情報をご記入ください。"
+    },
+    "types": {
+      "bug": "バグ",
+      "feature": "機能要望",
+      "general": "その他"
+    },
+    "attachments": {
+      "label": "スクリーンショット / 画像(任意)",
+      "help": "{count} / {max}",
+      "dropzone": "画像をここにドラッグ、または",
+      "constraints": "画像は最大 3 枚、1 枚あたり 10 MB まで。",
+      "choose": "ファイルを選択",
+      "addMore": "もう 1 枚追加",
+      "remove": "削除"
+    },
+    "submit": "フィードバックを送信",
+    "submitting": "送信中…",
+    "success": {
+      "title": "受け付けました — ありがとうございます。",
+      "body": "受付番号:{id}。詳細が必要な場合はこちらからご連絡します。",
+      "again": "別の内容を送る"
+    },
+    "errors": {
+      "messageRequired": "本文を入力してください。",
+      "messageTooLong": "本文が長すぎます。短くしてください。",
+      "tooMany": "添付できる画像は最大 {max} 枚です。",
+      "tooLarge": "{name} は {max} を超えています。リサイズするか別のファイルを選んでください。",
+      "unsupportedType": "画像ファイルのみアップロード可能です。",
+      "uploadFailed": "アップロード失敗",
+      "uploadForbidden": "ストレージにアップロードを拒否されました。再度お試しください。",
+      "networkError": "アップロード中にネットワークエラーが発生しました。接続をご確認ください。",
+      "unauthenticated": "サインインしてください。",
+      "storageNotConfigured": "現在画像のアップロードはご利用いただけません — テキストのみで送信してください。",
+      "generic": "問題が発生しました。もう一度お試しください。"
+    }
   }
 }
