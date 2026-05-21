@@ -6,10 +6,8 @@ import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
 import { Logo } from '../logo';
-import { ThemeToggle } from '../theme-toggle';
 import { LocalizedLink } from '../i18n/localized-link';
 import { useDictionary } from '../i18n/dictionary-provider';
-import { UserMenu } from '../auth/user-menu';
 import { cn } from '../../lib/utils';
 
 export interface SessionSummary {
@@ -119,12 +117,6 @@ export function Sidebar({
           </ul>
         )}
       </ScrollArea>
-
-      <Separator />
-      <div className="flex items-center justify-between gap-2 px-3 py-3">
-        <UserMenu className="min-w-0 flex-1" variant="full" />
-        <ThemeToggle />
-      </div>
     </aside>
   );
 }
