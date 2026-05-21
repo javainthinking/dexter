@@ -161,29 +161,36 @@ function ChatPage() {
       abortRef.current = controller;
 
       try {
-        const res = await fetch('/api/agent', {
+        // The initial POST starts chunk 0. If the agent hits the
+        // 300 s function-time budget on Vercel, it yields a
+        // `continuation_required` event carrying a jobId. We then loop:
+        // POST /api/agent/resume with that jobId and keep streaming
+        // into the same chat turn until either `done` arrives or the
+        // user aborts. From the user's POV one logical "turn" can span
+        // many function invocations seamlessly.
+        let res = await fetch('/api/agent', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ query: q }),
           signal: controller.signal,
         });
-
-        if (!res.ok || !res.body) {
-          throw new Error(`agent_failed_${res.status}`);
-        }
-
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder();
-        let buf = '';
         while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
-          buf += decoder.decode(value, { stream: true });
-          const records = buf.split('\n\n');
-          buf = records.pop() ?? '';
-          for (const record of records) {
-            if (record.trim()) applyRecord(turnId, record, setTurns, dict);
+          if (!res.ok || !res.body) {
+            throw new Error(`agent_failed_${res.status}`);
           }
+          const result = await streamSseInto(
+            res.body,
+            turnId,
+            setTurns,
+            dict,
+          );
+          if (!result.continueWith) break;
+          res = await fetch('/api/agent/resume', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ jobId: result.continueWith.jobId }),
+            signal: controller.signal,
+          });
         }
 
         setTurns((prev) =>
@@ -465,6 +472,78 @@ function applyRecord(
   setTurns((prev) =>
     prev.map((t) => (t.id === turnId ? reduceEvent(t, eventType, payload, dict) : t)),
   );
+}
+
+/**
+ * Parse just the `event:` line from an SSE record without doing full
+ * JSON parsing on `data:`. Used by the streaming loop to detect
+ * `continuation_required` without paying for the JSON parse twice (once
+ * here, once inside applyRecord).
+ */
+function peekSseEventType(record: string): string | null {
+  for (const line of record.split('\n')) {
+    if (line.startsWith('event:')) return line.slice(6).trim();
+  }
+  return null;
+}
+
+function peekSseData(record: string): Record<string, unknown> | null {
+  let dataLine = '';
+  for (const line of record.split('\n')) {
+    if (line.startsWith('data:')) dataLine += line.slice(5).trim();
+  }
+  if (!dataLine) return null;
+  try {
+    return JSON.parse(dataLine) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Pump SSE events from `body` into `setTurns` via applyRecord. Returns
+ * a continuation handle if the stream ended on a
+ * `continuation_required` event — the caller should immediately POST
+ * /api/agent/resume with that jobId and call streamSseInto again on
+ * the new response body to keep the turn flowing.
+ *
+ * Why this split (instead of a single recursive function): the fetch
+ * lives in the caller (`send`) where it has access to the AbortController.
+ * Splitting keeps signal-handling local and avoids needing to thread
+ * it through here.
+ */
+async function streamSseInto(
+  body: ReadableStream<Uint8Array>,
+  turnId: string,
+  setTurns: React.Dispatch<React.SetStateAction<ChatTurn[]>>,
+  dict: ReturnType<typeof useDictionary>,
+): Promise<{ continueWith?: { jobId: string } }> {
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  let buf = '';
+  let continueWith: { jobId: string } | undefined;
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buf += decoder.decode(value, { stream: true });
+    const records = buf.split('\n\n');
+    buf = records.pop() ?? '';
+    for (const record of records) {
+      if (!record.trim()) continue;
+      // Detect continuation BEFORE applyRecord forwards the event,
+      // since we want to capture the jobId even if the reducer
+      // doesn't have a case for it. The render side ignores
+      // continuation_required (it shouldn't visibly affect the turn
+      // — UX stays in the 'streaming' state through the resume hop).
+      if (peekSseEventType(record) === 'continuation_required') {
+        const payload = peekSseData(record);
+        const jobId = typeof payload?.jobId === 'string' ? payload.jobId : null;
+        if (jobId) continueWith = { jobId };
+      }
+      applyRecord(turnId, record, setTurns, dict);
+    }
+  }
+  return continueWith ? { continueWith } : {};
 }
 
 function reduceEvent(

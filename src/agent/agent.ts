@@ -31,6 +31,31 @@ const DEFAULT_MODEL = 'gpt-5.5';
 const DEFAULT_MAX_ITERATIONS = 30;
 const MAX_OVERFLOW_RETRIES = 2;
 const OVERFLOW_KEEP_ROUNDS = 3;
+
+/**
+ * Per-chunk wall-clock budget. When the agent is invoked under a
+ * chunked job (jobId provided), every iteration checks the elapsed
+ * time at the top of the loop and yields `continuation_required` if
+ * we've passed this threshold.
+ *
+ * Vercel functions cap at 300 s. We want margin for:
+ *   - the final LLM call in this chunk to complete (~10–20 s)
+ *   - the SSE close + state persistence to Postgres (~1 s)
+ *   - the client's auto-resume POST to start the next chunk
+ * 230 s leaves ~70 s of headroom which empirically is enough.
+ *
+ * For non-chunked runs (jobId not provided), this is ignored — the
+ * agent runs until completion or maxIterations regardless.
+ */
+const CHUNK_BUDGET_MS = 230_000;
+
+/**
+ * Hard cap across all chunks of a single agent task. Stops runaway
+ * loops without limiting any single chunk. Each chunk respects
+ * DEFAULT_MAX_ITERATIONS for that chunk; total iterations track across
+ * chunks via the persisted ctx.iteration.
+ */
+const TOTAL_ITERATION_CAP = 60;
 /**
  * How many times we'll refuse to exit the loop because the agent
  * hasn't produced a deliverable yet. Bumped from 2 → 4 after observing
@@ -137,6 +162,20 @@ function buildNudgePrompt(nudgeNumber: number): string {
  * - Streaming LLM responses with fallback to blocking
  * - Per-turn microcompact + threshold-based full compaction
  */
+/**
+ * Snapshot of the agent's working state captured just before yielding
+ * `continuation_required`. The controller reads this via
+ * `Agent.consumeContinuationSnapshot()` and persists it to
+ * `dexter_agent_jobs`. Each Agent instance is per-request, so storing
+ * this on the instance is safe — no cross-request leakage.
+ */
+export interface ContinuationSnapshot {
+  messages: BaseMessage[];
+  iteration: number;
+  requiredNudges: number;
+  lastApiInputTokens: number;
+}
+
 export class Agent {
   private readonly model: string;
   private readonly maxIterations: number;
@@ -148,6 +187,13 @@ export class Agent {
   private readonly memoryEnabled: boolean;
   private readonly messageQueue?: MessageQueue;
   private compactionFailures: number = 0;
+  /**
+   * Set by `runLoop` immediately before yielding `continuation_required`.
+   * The controller reads this synchronously after seeing the event and
+   * uses it to write the job row. Cleared on read so a single snapshot
+   * can't be re-consumed.
+   */
+  private continuationSnapshot: ContinuationSnapshot | null = null;
 
   private constructor(
     config: AgentConfig,
@@ -203,7 +249,20 @@ export class Agent {
   }
 
   /**
-   * Run the agent with streaming, concurrent tools, and microcompact.
+   * Read and clear the continuation snapshot captured by `runLoop`.
+   * Returns `null` if the most recent run didn't hit the time budget
+   * (or never ran at all). The controller calls this *after* the
+   * `continuation_required` event has been yielded.
+   */
+  consumeContinuationSnapshot(): ContinuationSnapshot | null {
+    const snap = this.continuationSnapshot;
+    this.continuationSnapshot = null;
+    return snap;
+  }
+
+  /**
+   * Run the agent from a fresh query. Builds the initial message array
+   * (system prompt + history + user query) and hands off to `runLoop`.
    */
   async *run(query: string, inMemoryHistory?: InMemoryChatHistory): AsyncGenerator<AgentEvent> {
     const startTime = Date.now();
@@ -218,15 +277,134 @@ export class Agent {
 
     // Build initial message array
     const historyMessages = inMemoryHistory?.getRecentTurnsAsMessages() ?? [];
-    let messages: BaseMessage[] = [
+    const messages: BaseMessage[] = [
       new SystemMessage(this.systemPrompt),
       ...historyMessages,
       new HumanMessage(query),
     ];
 
+    yield* this.runLoop({ messages, ctx, memoryFlushState, query });
+  }
+
+  /**
+   * Resume an agent run from a previously-persisted chunk. The caller
+   * (the /api/agent/resume route) has already:
+   *   - rehydrated `messages` from the job row via deserializeMessages
+   *   - re-entered withUser / withMemory / withOfficeRun scopes
+   *   - restored touchedFiles into the office-run scope
+   *
+   * We rebuild a RunContext seeded from the saved counters so F6
+   * (requiredNudges), microcompact (lastApiInputTokens), and total-time
+   * accounting (originalStartTime) all remain coherent across chunks.
+   *
+   * Does NOT re-prepend the system prompt or re-fetch history — both
+   * are already inside `messages` from the original run.
+   */
+  async *runContinuation(opts: {
+    jobId: string;
+    query: string;
+    messages: BaseMessage[];
+    totalIterations: number;
+    requiredNudges: number;
+    lastApiInputTokens: number;
+    /** When the original (chunk-0) run started, so totalTime stays accurate. */
+    originalStartTime: number;
+    /** 0-indexed chunk number being served. */
+    chunkIndex: number;
+  }): AsyncGenerator<AgentEvent> {
+    if (this.tools.length === 0) {
+      const totalTime = Date.now() - opts.originalStartTime;
+      yield { type: 'done', answer: 'No tools available.', toolCalls: [], iterations: opts.totalIterations, totalTime };
+      return;
+    }
+
+    const ctx = createRunContext(opts.query);
+    ctx.startTime = opts.originalStartTime;
+    ctx.iteration = opts.totalIterations;
+    ctx.requiredNudges = opts.requiredNudges;
+    ctx.lastApiInputTokens = opts.lastApiInputTokens;
+    const memoryFlushState = { alreadyFlushed: true }; // Memory was flushed on the original run
+
+    yield* this.runLoop({
+      messages: [...opts.messages],
+      ctx,
+      memoryFlushState,
+      query: opts.query,
+      jobId: opts.jobId,
+      chunkIndex: opts.chunkIndex,
+    });
+  }
+
+  /**
+   * Core agent loop. Iterates until one of:
+   *   - the LLM emits no tool calls and F6 doesn't nudge → final answer
+   *   - tool execution is denied or LLM errors → terminal done
+   *   - maxIterations (per-chunk) is reached → done with "max reached" msg
+   *   - TOTAL_ITERATION_CAP across chunks is hit → done (runaway guard)
+   *   - jobId is set AND elapsed wall-clock > CHUNK_BUDGET_MS → yields
+   *     continuation_required and returns (state persisted by caller)
+   */
+  private async *runLoop(opts: {
+    messages: BaseMessage[];
+    ctx: ReturnType<typeof createRunContext>;
+    memoryFlushState: { alreadyFlushed: boolean };
+    query: string;
+    /** When set, the loop runs in "chunked" mode and respects CHUNK_BUDGET_MS. */
+    jobId?: string;
+    chunkIndex?: number;
+  }): AsyncGenerator<AgentEvent> {
+    const { ctx, memoryFlushState, query, jobId } = opts;
+    let messages = opts.messages;
+    const chunkStartTime = Date.now();
+    const chunkStartIteration = ctx.iteration;
+
     // Main agent loop
     let overflowRetries = 0;
-    while (ctx.iteration < this.maxIterations) {
+    while (ctx.iteration < chunkStartIteration + this.maxIterations) {
+      // Total-iteration runaway guard — caps cumulative work across
+      // all chunks of one job. If hit, we exit with an honest message
+      // rather than burning more compute.
+      if (jobId && ctx.iteration >= TOTAL_ITERATION_CAP) {
+        const totalTime = Date.now() - ctx.startTime;
+        yield {
+          type: 'done',
+          answer: `Reached the total iteration cap (${TOTAL_ITERATION_CAP}) across all chunks of this run. I was unable to complete the task in the allotted steps.`,
+          toolCalls: ctx.scratchpad.getToolCallRecords(),
+          iterations: ctx.iteration,
+          totalTime,
+          tokenUsage: ctx.tokenCounter.getUsage(),
+          tokensPerSecond: ctx.tokenCounter.getTokensPerSecond(totalTime),
+        };
+        return;
+      }
+
+      // Time-budget gate. Only enforced when we're chunked (jobId set).
+      // Checked BEFORE incrementing iteration / starting an LLM call so
+      // we always cut between iterations, never mid-tool-call. State at
+      // this point is consistent — every tool call from the prior
+      // iteration has a paired tool result in `messages`.
+      if (jobId && Date.now() - chunkStartTime > CHUNK_BUDGET_MS) {
+        // Capture the working state so the controller can persist it
+        // after receiving the event. Stored on the instance because
+        // events themselves stay lightweight (they pass through the
+        // SSE sink to the browser; we don't want to ship 500 KB of
+        // messages over the wire).
+        this.continuationSnapshot = {
+          messages: [...messages],
+          iteration: ctx.iteration,
+          requiredNudges: ctx.requiredNudges,
+          lastApiInputTokens: ctx.lastApiInputTokens,
+        };
+        yield {
+          type: 'continuation_required',
+          jobId,
+          chunkIndex: opts.chunkIndex ?? 0,
+          totalIterations: ctx.iteration,
+          chunkDurationMs: Date.now() - chunkStartTime,
+        };
+        return;
+      }
+
       ctx.iteration++;
 
       // Microcompact: per-turn lightweight trimming before LLM call

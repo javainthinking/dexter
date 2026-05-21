@@ -94,6 +94,33 @@ export function getOfficeRunState(): OfficeRunState | null {
 }
 
 /**
+ * Read-only snapshot of the touched-files set without clearing it.
+ * Used by the chunked-agent controller to persist mid-run state on
+ * `continuation_required` so a subsequent chunk's drain picks up the
+ * same files.
+ */
+export function peekTouchedFiles(): string[] {
+  const state = storage.getStore();
+  return state ? Array.from(state.touchedFiles) : [];
+}
+
+/**
+ * Pre-populate the touched-files set from a previously-persisted job.
+ * Caller has already entered the office-run scope (via withOfficeRun);
+ * this just seeds the set so any drain in this scope will upload the
+ * files touched in earlier chunks too. Idempotent — safe to call twice.
+ */
+export function restoreOfficeTouches(paths: string[]): void {
+  const state = storage.getStore();
+  if (!state) {
+    warn('[office-run] restoreOfficeTouches called OUTSIDE scope — paths discarded');
+    return;
+  }
+  for (const p of paths) state.touchedFiles.add(p);
+  log(`[office-run] restored ${paths.length} touched file(s) from previous chunk`);
+}
+
+/**
  * Should we attempt R2 uploads for this run? Mirrors the gate the
  * office tool used to enforce inline:
  *   1. R2 is configured.

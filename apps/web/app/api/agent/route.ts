@@ -8,6 +8,12 @@ import { withUser } from '@dexter/core/runtime/user-context';
 
 import { resolveSession } from '../../../lib/session';
 import { getCurrentUser } from '../../../lib/auth/session';
+import {
+  createJob,
+  persistChunk,
+  markDone,
+  markError,
+} from '../../../lib/agent-job-store';
 
 /**
  * /api/agent — POST { query: string } → SSE stream of AgentEvent.
@@ -88,12 +94,78 @@ export async function POST(request: NextRequest): Promise<Response> {
     ports,
   );
 
+  // Create a chunked-agent job row before the first chunk runs. The
+  // job tracks per-chunk state across the 300 s function boundary —
+  // when the agent hits the time budget, it yields
+  // `continuation_required` and the route persists state here so a
+  // follow-up POST to /api/agent/resume can pick up where we left off.
+  // We always create a job (even for short runs that complete in one
+  // chunk) so the resume route's job-id lookup never has to
+  // distinguish "no job" from "job not found".
+  const job = await createJob({
+    userId: user.id,
+    sessionId: session.sessionId,
+    query,
+    model: body.model ?? null,
+  });
+
+  // Emit the jobId as the very first SSE event so the client can stash
+  // it before any other state. If the run never hits the time budget,
+  // the client just never uses it.
+  sink.emit({
+    type: 'job_registered',
+    jobId: job.jobId,
+  } as never);
+
   // Kick off the agent run asynchronously. The sink is what streams events
   // out to the client; runQuery() flushes the sink in its own `finally`.
   // The withUser scope makes user.id readable from tools (e.g. the office
   // R2 uploader) without threading it through every tool call site.
-  void withUser({ userId: user.id, email: user.email ?? undefined }, () => controller.runQuery(query))
-    .catch((err) => {
+  void withUser(
+    { userId: user.id, email: user.email ?? undefined },
+    () =>
+      controller.runQuery(query, {
+        jobId: job.jobId,
+        chunkIndex: 0,
+        onContinuation: async (snapshot) => {
+          try {
+            await persistChunk(job.jobId, snapshot);
+          } catch (err) {
+            const message = err instanceof Error ? err.message : String(err);
+            console.error(
+              JSON.stringify({
+                level: 'error',
+                surface: 'web',
+                route: '/api/agent',
+                requestId,
+                jobId: job.jobId,
+                msg: 'persist_chunk_failed',
+                error: message,
+              }),
+            );
+          }
+        },
+        onDone: async (answer) => {
+          try {
+            await markDone(job.jobId, answer);
+          } catch (err) {
+            const message = err instanceof Error ? err.message : String(err);
+            console.error(
+              JSON.stringify({
+                level: 'error',
+                surface: 'web',
+                route: '/api/agent',
+                requestId,
+                jobId: job.jobId,
+                msg: 'mark_done_failed',
+                error: message,
+              }),
+            );
+          }
+        },
+      }),
+  )
+    .catch(async (err) => {
       const message = err instanceof Error ? err.message : String(err);
       console.error(
         JSON.stringify({
@@ -102,10 +174,12 @@ export async function POST(request: NextRequest): Promise<Response> {
           route: '/api/agent',
           requestId,
           sessionId: session.sessionId,
+          jobId: job.jobId,
           msg: 'agent_run_error',
           error: message,
         }),
       );
+      await markError(job.jobId, message).catch(() => {});
     })
     .finally(async () => {
       // Persist the new turn(s) into durable storage. No-op in local mode.

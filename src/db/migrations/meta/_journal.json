@@ -22,6 +22,20 @@
       "when": 1778903000000,
       "tag": "0002_user_scope",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1779000000000,
+      "tag": "0003_portfolios",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1779370000000,
+      "tag": "0004_agent_jobs",
+      "breakpoints": true
     }
   ]
 }

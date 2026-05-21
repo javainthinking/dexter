@@ -8,7 +8,13 @@ export interface RunContext {
   readonly query: string;
   readonly scratchpad: Scratchpad;
   readonly tokenCounter: TokenCounter;
-  readonly startTime: number;
+  /**
+   * When this RUN (not just chunk) started. Carried forward across
+   * chunk boundaries in chunked mode so totalTime in the final
+   * DoneEvent reflects total wall clock from the original POST. Used
+   * by runContinuation() — see `Agent.runContinuation`.
+   */
+  startTime: number;
   iteration: number;
   /**
    * Input token count from the most recent API response.

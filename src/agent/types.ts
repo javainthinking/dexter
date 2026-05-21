@@ -263,6 +263,30 @@ export interface Deliverable {
 }
 
 /**
+ * Agent reached the per-invocation time budget and needs another
+ * function call to keep going. The controller persists state and
+ * closes the SSE stream; the client immediately POSTs /api/agent/resume
+ * with `jobId` to continue. Carries no answer — the agent isn't done.
+ *
+ * Why a dedicated event instead of folding it into `done`:
+ *   - The chat UI's `done` handler clears the streaming status; a
+ *     continuation isn't finished, so we want the UI to stay in
+ *     streaming state across the reconnect.
+ *   - The controller's `done` path runs the R2 drain; we explicitly do
+ *     NOT drain on continuation (touched files carry across chunks
+ *     and only the final chunk drains them).
+ */
+export interface ContinuationRequiredEvent {
+  type: 'continuation_required';
+  jobId: string;
+  chunkIndex: number;
+  /** Total iterations consumed so far across all chunks (diagnostic). */
+  totalIterations: number;
+  /** Elapsed wall-clock for this chunk in ms (diagnostic). */
+  chunkDurationMs: number;
+}
+
+/**
  * Agent completed with final result
  */
 export interface DoneEvent {
@@ -301,6 +325,7 @@ export type AgentEvent =
   | MemoryRecalledEvent
   | MemoryFlushEvent
   | StreamProgressEvent
+  | ContinuationRequiredEvent
   | DoneEvent;
 
 /**

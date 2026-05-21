@@ -6,6 +6,15 @@
   "functions": {
     "app/api/agent/route.ts": {
       "maxDuration": 300
+    },
+    "app/api/agent/resume/route.ts": {
+      "maxDuration": 300
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/cleanup-agent-jobs",
+      "schedule": "0 5 * * *"
+    }
+  ]
 }

@@ -11,7 +11,14 @@ import type { DisplayEvent, StreamMode } from '../agent/types.js';
 import type { HistoryItem, HistoryItemStatus, WorkingState } from '../types.js';
 import type { CorePorts, EventSink } from '../ports/index.js';
 import { withMemory } from '../runtime/memory-context.js';
-import { withOfficeRun, drainOfficeRun } from '../runtime/office-run.js';
+import {
+  withOfficeRun,
+  drainOfficeRun,
+  peekTouchedFiles,
+  restoreOfficeTouches,
+} from '../runtime/office-run.js';
+import type { ContinuationSnapshot } from '../agent/agent.js';
+import type { BaseMessage } from '@langchain/core/messages';
 
 export interface TurnStats {
   turnStartMs: number;
@@ -23,6 +30,44 @@ type ChangeListener = () => void;
 
 export interface RunQueryResult {
   answer: string;
+}
+
+/**
+ * Options for chunked agent execution. When provided, the controller
+ * enables the time-budget gate in `Agent.runLoop`, emits a
+ * `continuation_required` event when the budget is hit, and invokes
+ * the caller-provided callbacks for persistence + final-answer
+ * recording. CLI calls leave this undefined and run uninterrupted.
+ */
+export interface ChunkRunOpts {
+  /** Job row in dexter_agent_jobs; required when chunking is enabled. */
+  jobId: string;
+  /** 0-indexed chunk number being served by this invocation. */
+  chunkIndex?: number;
+  /**
+   * Set on every chunk after the first. The controller switches to
+   * `Agent.runContinuation` and seeds the office-run scope with
+   * `touchedFiles` from earlier chunks.
+   */
+  resume?: {
+    messages: BaseMessage[];
+    totalIterations: number;
+    requiredNudges: number;
+    lastApiInputTokens: number;
+    originalStartTime: number;
+    touchedFiles: string[];
+  };
+  /**
+   * Called when `continuation_required` fires. The snapshot carries
+   * everything needed to resume the next chunk. Failures inside the
+   * callback are swallowed (logged by the caller) — the SSE stream
+   * still closes cleanly so the client can re-issue.
+   */
+  onContinuation?: (
+    snapshot: ContinuationSnapshot & { touchedFiles: string[] },
+  ) => Promise<void>;
+  /** Called when the agent emits a terminal `done` event. */
+  onDone?: (finalAnswer: string) => Promise<void>;
 }
 
 /**
@@ -152,7 +197,10 @@ export class AgentRunnerController {
     this.emitChange();
   }
 
-  async runQuery(query: string): Promise<RunQueryResult | undefined> {
+  async runQuery(
+    query: string,
+    chunkOpts?: ChunkRunOpts,
+  ): Promise<RunQueryResult | undefined> {
     // Enter the Memory scope so memory_* tools that run inside this turn
     // pick up the injected port (MemoryLake for cloud Web, LocalMemoryAdapter
     // for CLI). When no Memory port is injected (legacy callers) the scope
@@ -164,15 +212,23 @@ export class AgentRunnerController {
     // Nested under withMemory because both scopes must be active for the
     // duration of any tool that reads either.
     const wrapped = () => {
-      if (this.ports.memory) {
-        return withMemory(this.ports.memory, () => this.runQueryInner(query));
+      // On resume, seed the office-run scope with files touched in
+      // previous chunks so the final drain still uploads them.
+      if (chunkOpts?.resume?.touchedFiles?.length) {
+        restoreOfficeTouches(chunkOpts.resume.touchedFiles);
       }
-      return this.runQueryInner(query);
+      if (this.ports.memory) {
+        return withMemory(this.ports.memory, () => this.runQueryInner(query, chunkOpts));
+      }
+      return this.runQueryInner(query, chunkOpts);
     };
     return withOfficeRun(wrapped);
   }
 
-  private async runQueryInner(query: string): Promise<RunQueryResult | undefined> {
+  private async runQueryInner(
+    query: string,
+    chunkOpts?: ChunkRunOpts,
+  ): Promise<RunQueryResult | undefined> {
     this.abortController = new AbortController();
     let finalAnswer: string | undefined;
 
@@ -202,8 +258,44 @@ export class AgentRunnerController {
         sessionApprovedTools: this.sessionApprovedTools,
         messageQueue: defaultQueue,
       });
-      const stream = agent.run(query, this.inMemoryChatHistory);
+      // Choose the entrypoint: fresh run for chunk 0 (or non-chunked
+      // CLI calls), `runContinuation` when resuming from a prior chunk.
+      const stream = chunkOpts?.resume
+        ? agent.runContinuation({
+            jobId: chunkOpts.jobId!,
+            query,
+            messages: chunkOpts.resume.messages,
+            totalIterations: chunkOpts.resume.totalIterations,
+            requiredNudges: chunkOpts.resume.requiredNudges,
+            lastApiInputTokens: chunkOpts.resume.lastApiInputTokens,
+            originalStartTime: chunkOpts.resume.originalStartTime,
+            chunkIndex: chunkOpts.chunkIndex ?? 0,
+          })
+        : agent.run(query, this.inMemoryChatHistory);
       for await (const event of stream) {
+        if (event.type === 'continuation_required') {
+          // Snapshot agent state + office-run touches and hand them off
+          // to the route handler via the onContinuation callback. The
+          // route persists to dexter_agent_jobs and closes the SSE
+          // stream. We deliberately do NOT drain — touched files are
+          // carried forward into the next chunk's drain via
+          // restoreOfficeTouches() above.
+          const snapshot = agent.consumeContinuationSnapshot();
+          if (snapshot && chunkOpts?.onContinuation) {
+            try {
+              await chunkOpts.onContinuation({
+                ...snapshot,
+                touchedFiles: peekTouchedFiles(),
+              });
+            } catch {
+              /* persistence failure is logged by the callback */
+            }
+          }
+          await this.handleEvent(event);
+          // Returning here closes the SSE stream cleanly; the client's
+          // auto-resume kicks off a fresh function invocation.
+          return undefined;
+        }
         if (event.type === 'done') {
           finalAnswer = (event as DoneEvent).answer;
           // Drain the office-run touch set: upload every non-empty file
@@ -219,7 +311,15 @@ export class AgentRunnerController {
             // ships without download chips. drainOfficeRun already
             // logged the individual failures.
           }
-          await this.handleEvent({ ...event, deliverables } as DoneEvent);
+          const finalEvent = { ...event, deliverables } as DoneEvent;
+          if (chunkOpts?.onDone) {
+            try {
+              await chunkOpts.onDone(finalEvent.answer);
+            } catch {
+              /* persistence failure shouldn't block delivery */
+            }
+          }
+          await this.handleEvent(finalEvent);
         } else {
           await this.handleEvent(event);
         }
