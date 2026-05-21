@@ -40,7 +40,7 @@ Annual plans save 20%. Cancel anytime.
 | Conversations per month | 30 | 200 | 1,000 | Unlimited |
 | Deep-research turns per month *(web + filings + multi-source)* | 5 | 50 | 300 | Unlimited |
 | Specialised workflows *(DCF, X/Twitter research, sector deep-dives)* | — | Basic | All | All + custom |
-| Long-term memory entries | 50 | 500 | 1,000 | Unlimited |
+| Long-term memory entries | Unlimited | Unlimited | Unlimited | Unlimited |
 | **Documents generated** | | | | |
 | Files per month *(PowerPoint / Word / Excel)* | 2 | 8 | 30 | 100+ |
 | AI model used for file generation | Advanced | Advanced | Advanced | Advanced |

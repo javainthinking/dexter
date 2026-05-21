@@ -93,7 +93,7 @@ single lever.
 | Default model | mini | mini | flagship | flagship |
 | Chats / month | 30 | 200 | 1000 (soft cap, then warn) | unlimited (overage above 2000: $0.05/each) |
 | File generations / month | 2 | 8 | 30 | 100 (overage: $1.00/each) |
-| Memory entries | 50 | 500 | 1000 | unlimited |
+| Memory entries | unlimited | unlimited | unlimited | unlimited |
 | **Agent — research** | | | | |
 | Deep research turns / month (web + filings) | 5 | 50 | 300 | unlimited |
 | Multi-skill workflows (DCF, x-research, etc.) | — | basic | all | all + custom skills |
