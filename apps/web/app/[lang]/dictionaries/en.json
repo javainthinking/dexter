@@ -38,7 +38,10 @@
       "quickDcf": "Run a quick DCF on NVDA using the latest 10-Q.",
       "comparable": "Compare AAPL and MSFT cash flow trends over the last 5 years.",
       "macro": "What does the latest CPI print mean for the 10Y?",
-      "thesis": "Summarize the bull and bear thesis for TSMC right now."
+      "thesis": "Summarize the bull and bear thesis for TSMC right now.",
+      "pitchDeck": "Build an investor pitch deck for TSMC — thesis, foundry pricing power, AI revenue mix, and a 3-year revenue forecast.",
+      "researchNote": "Write a 2-page equity research note on Apple — thesis, key drivers, risks, valuation, recommendation.",
+      "dcfModel": "Build a DCF model for NVDA in Excel — assumptions sheet, 5-year FCF projection, WACC + sensitivity, valuation summary."
     },
     "footer": {
       "disclaimer": "Not investment advice"
@@ -104,6 +107,18 @@
         "thesis": {
           "label": "Thesis",
           "prompt": "Summarize the current bull and bear thesis for TSMC."
+        },
+        "pitchDeck": {
+          "label": "Pitch deck",
+          "prompt": "Build an investor pitch deck for TSMC — thesis, foundry pricing power, AI revenue mix, and a 3-year revenue forecast."
+        },
+        "researchNote": {
+          "label": "Research note",
+          "prompt": "Write a 2-page equity research note on Apple — thesis, key drivers, risks, valuation, recommendation."
+        },
+        "dcfModel": {
+          "label": "DCF model",
+          "prompt": "Build a DCF model for NVDA in Excel — assumptions sheet, 5-year FCF projection, WACC + sensitivity, valuation summary."
         }
       }
     },

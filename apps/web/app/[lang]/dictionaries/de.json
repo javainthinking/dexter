@@ -38,7 +38,10 @@
       "quickDcf": "Mach eine schnelle DCF-Bewertung von NVDA auf Basis des letzten 10-Q.",
       "comparable": "Vergleiche die Cashflow-Trends von AAPL und MSFT der letzten 5 Jahre.",
       "macro": "Was bedeutet die aktuelle CPI-Veröffentlichung für die 10-jährigen Renditen?",
-      "thesis": "Fasse die aktuelle Bullen- und Bären-These zu TSMC zusammen."
+      "thesis": "Fasse die aktuelle Bullen- und Bären-These zu TSMC zusammen.",
+      "pitchDeck": "Erstelle ein Investoren-Pitchdeck zu TSMC — Thesis, Pricing-Macht in der Foundry, KI-Umsatzmix und eine 3-Jahres-Umsatzprognose.",
+      "researchNote": "Verfasse eine 2-seitige Equity-Research-Note zu Apple — Thesis, wichtigste Treiber, Risiken, Bewertung, Empfehlung.",
+      "dcfModel": "Erstelle ein DCF-Modell für NVDA in Excel — Annahmenblatt, 5-Jahres-FCF-Prognose, WACC + Sensitivität, Bewertungsübersicht."
     },
     "footer": {
       "disclaimer": "Keine Anlageberatung"
@@ -104,6 +107,18 @@
         "thesis": {
           "label": "These",
           "prompt": "Fasse die aktuelle Bullen- und Bären-These zu TSMC zusammen."
+        },
+        "pitchDeck": {
+          "label": "Investoren-Pitch",
+          "prompt": "Erstelle ein Investoren-Pitchdeck zu TSMC — Thesis, Pricing-Macht in der Foundry, KI-Umsatzmix und eine 3-Jahres-Umsatzprognose."
+        },
+        "researchNote": {
+          "label": "Equity-Research-Note",
+          "prompt": "Verfasse eine 2-seitige Equity-Research-Note zu Apple — Thesis, wichtigste Treiber, Risiken, Bewertung, Empfehlung."
+        },
+        "dcfModel": {
+          "label": "DCF-Modell",
+          "prompt": "Erstelle ein DCF-Modell für NVDA in Excel — Annahmenblatt, 5-Jahres-FCF-Prognose, WACC + Sensitivität, Bewertungsübersicht."
         }
       }
     },

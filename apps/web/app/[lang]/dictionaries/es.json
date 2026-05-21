@@ -38,7 +38,10 @@
       "quickDcf": "Calcula un DCF rápido para NVDA usando el último 10-Q.",
       "comparable": "Compara las tendencias de flujo de caja de AAPL y MSFT en los últimos 5 años.",
       "macro": "¿Qué implica la última publicación del CPI para el bono a 10 años?",
-      "thesis": "Resume la tesis alcista y bajista actual sobre TSMC."
+      "thesis": "Resume la tesis alcista y bajista actual sobre TSMC.",
+      "pitchDeck": "Crea un pitch deck para inversores sobre TSMC — tesis, poder de fijación de precios en fundición, mix de ingresos de IA y una previsión de ingresos a 3 años.",
+      "researchNote": "Redacta una nota de equity research de 2 páginas sobre Apple — tesis, drivers clave, riesgos, valoración y recomendación.",
+      "dcfModel": "Construye un modelo DCF de NVDA en Excel — hoja de supuestos, proyección de FCF a 5 años, WACC + sensibilidad, resumen de valoración."
     },
     "footer": {
       "disclaimer": "No constituye asesoramiento de inversión"
@@ -104,6 +107,18 @@
         "thesis": {
           "label": "Tesis",
           "prompt": "Resume la tesis alcista y bajista actual sobre TSMC."
+        },
+        "pitchDeck": {
+          "label": "Pitch deck",
+          "prompt": "Crea un pitch deck para inversores sobre TSMC — tesis, poder de fijación de precios en fundición, mix de ingresos de IA y una previsión de ingresos a 3 años."
+        },
+        "researchNote": {
+          "label": "Nota de equity",
+          "prompt": "Redacta una nota de equity research de 2 páginas sobre Apple — tesis, drivers clave, riesgos, valoración y recomendación."
+        },
+        "dcfModel": {
+          "label": "Modelo DCF",
+          "prompt": "Construye un modelo DCF de NVDA en Excel — hoja de supuestos, proyección de FCF a 5 años, WACC + sensibilidad, resumen de valoración."
         }
       }
     },

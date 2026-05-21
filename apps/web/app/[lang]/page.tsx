@@ -118,6 +118,9 @@ function SampleQuestions({ dict, chatHref }: { dict: Dictionary; chatHref: strin
     dict.landing.samples.comparable,
     dict.landing.samples.macro,
     dict.landing.samples.thesis,
+    dict.landing.samples.pitchDeck,
+    dict.landing.samples.researchNote,
+    dict.landing.samples.dcfModel,
   ];
   return (
     <section className="border-b border-border">

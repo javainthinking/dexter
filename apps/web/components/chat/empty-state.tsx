@@ -1,7 +1,16 @@
 'use client';
 
 import * as React from 'react';
-import { ArrowRight, TrendingUp, Building2, BarChart3, Newspaper } from 'lucide-react';
+import {
+  ArrowRight,
+  TrendingUp,
+  Building2,
+  BarChart3,
+  Newspaper,
+  Presentation,
+  FileText,
+  FileSpreadsheet,
+} from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useDictionary } from '../i18n/dictionary-provider';
 
@@ -12,6 +21,13 @@ export function EmptyState({ onPick }: { onPick: (prompt: string) => void }) {
     { icon: Building2, ...dict.chat.empty.prompts.comparable },
     { icon: BarChart3, ...dict.chat.empty.prompts.macro },
     { icon: Newspaper, ...dict.chat.empty.prompts.thesis },
+    // File-generation samples — typical financial-analysis deliverables
+    // the agent can produce end-to-end (R2-delivered + auto-downloaded
+    // in chat). Icons match the composer's quick-prompt buttons so the
+    // affordance reads consistently across the surface.
+    { icon: Presentation, ...dict.chat.empty.prompts.pitchDeck },
+    { icon: FileText, ...dict.chat.empty.prompts.researchNote },
+    { icon: FileSpreadsheet, ...dict.chat.empty.prompts.dcfModel },
   ];
   return (
     <div className="mx-auto flex max-w-3xl flex-col items-center px-4 py-12 text-center sm:py-20">

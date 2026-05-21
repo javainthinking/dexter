@@ -38,7 +38,10 @@
       "quickDcf": "최근 10-Q를 사용해 NVDA의 간단한 DCF를 돌려 줘.",
       "comparable": "지난 5년 AAPL과 MSFT의 현금흐름 추세를 비교해 줘.",
       "macro": "최근 CPI 발표가 10년물 미국 국채 금리에 의미하는 바는?",
-      "thesis": "TSMC에 대한 현재의 강세·약세 논리를 요약해 줘."
+      "thesis": "TSMC에 대한 현재의 강세·약세 논리를 요약해 줘.",
+      "pitchDeck": "TSMC 투자자 대상 피치덱을 만들어 — 투자 논거, 파운드리 가격 결정력, AI 매출 구성, 향후 3년 매출 전망.",
+      "researchNote": "Apple에 대한 2페이지짜리 주식 리서치 노트를 작성해 — 투자 논거, 주요 드라이버, 리스크, 밸류에이션, 추천 의견.",
+      "dcfModel": "Excel로 NVDA의 DCF 모델을 만들어 — 가정 시트, 5년 FCF 추정, WACC + 민감도 분석, 밸류에이션 요약."
     },
     "footer": {
       "disclaimer": "투자 자문이 아닙니다"
@@ -104,6 +107,18 @@
         "thesis": {
           "label": "투자 논리",
           "prompt": "TSMC에 대한 현재의 강세·약세 논리를 요약해 줘."
+        },
+        "pitchDeck": {
+          "label": "투자 피치덱",
+          "prompt": "TSMC 투자자 대상 피치덱을 만들어 — 투자 논거, 파운드리 가격 결정력, AI 매출 구성, 향후 3년 매출 전망."
+        },
+        "researchNote": {
+          "label": "기업 분석 보고서",
+          "prompt": "Apple에 대한 2페이지짜리 주식 리서치 노트를 작성해 — 투자 논거, 주요 드라이버, 리스크, 밸류에이션, 추천 의견."
+        },
+        "dcfModel": {
+          "label": "DCF 모델",
+          "prompt": "Excel로 NVDA의 DCF 모델을 만들어 — 가정 시트, 5년 FCF 추정, WACC + 민감도 분석, 밸류에이션 요약."
         }
       }
     },
