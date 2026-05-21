@@ -79,7 +79,7 @@ export default async function BlogIndexPage({
   if (!isLocale(lang)) notFound();
 
   const dict = await getDictionary(lang);
-  const posts = getAllPosts();
+  const posts = getAllPosts(lang as Locale);
 
   // Blog JSON-LD: a single Blog entity wrapping the list. Article
   // schema lives on each post page, not here.
@@ -126,11 +126,18 @@ export default async function BlogIndexPage({
             <li key={p.slug}>
               <LocalizedLink
                 href={`/blog/${p.slug}`}
+                // lang attribute is per-card, not per-page: the post may
+                // be served in English fallback even when the rest of
+                // the page is, say, Japanese. Telling the browser /
+                // screen readers / search engines the actual language
+                // of this card's title + description is more honest
+                // than letting them inherit the page locale.
+                lang={p.inLanguage}
                 className="group block rounded-lg border border-border bg-card p-5 transition-colors hover:border-border-strong hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-6"
               >
                 <div className="flex items-baseline justify-between gap-3">
                   <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
-                    {p.pillar}
+                    {dict.blog.pillars?.[p.pillar] ?? p.pillar}
                   </span>
                   <span className="font-mono text-[10px] text-subtle">
                     {formatDate(p.publishedAt, lang)} ·{' '}

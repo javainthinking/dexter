@@ -334,6 +334,14 @@
         "body": "打開對話框直接告訴它。AI 會自動擷取即時資料、跑出計算結果,並把成品輸出為可下載的 PPT、Word 或 Excel 檔案。",
         "button": "免費試用對話"
       }
+    },
+    "pillars": {
+      "thesis": "選股觀點",
+      "how-to": "操作指南",
+      "explainer": "原理解析",
+      "macro": "宏觀觀察",
+      "build-in-public": "公開開發",
+      "research": "研究筆記"
     }
   },
   "feedback": {

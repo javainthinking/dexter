@@ -334,6 +334,14 @@
         "body": "Open a chat and ask. The AI pulls live data, runs the calculation, and drops the result into a deck, doc, or spreadsheet you can download.",
         "button": "Try a free chat"
       }
+    },
+    "pillars": {
+      "thesis": "Thesis",
+      "how-to": "How-to",
+      "explainer": "Explainer",
+      "macro": "Macro",
+      "build-in-public": "Build in public",
+      "research": "Research"
     }
   },
   "feedback": {

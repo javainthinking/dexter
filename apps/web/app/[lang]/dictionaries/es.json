@@ -334,6 +334,14 @@
         "body": "Abre un chat y pídelo. La IA obtiene datos en vivo, hace los cálculos y entrega el resultado en un PPT, Word o Excel que puedes descargar.",
         "button": "Probar un chat gratis"
       }
+    },
+    "pillars": {
+      "thesis": "Tesis",
+      "how-to": "Cómo hacerlo",
+      "explainer": "Explicación",
+      "macro": "Macro",
+      "build-in-public": "Build in public",
+      "research": "Investigación"
     }
   },
   "feedback": {

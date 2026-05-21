@@ -334,6 +334,14 @@
         "body": "打开对话框直接告诉它。AI 会自动拉取实时数据、跑出计算结果,并把成品输出为可下载的 PPT、Word 或 Excel 文件。",
         "button": "免费试用对话"
       }
+    },
+    "pillars": {
+      "thesis": "选股观点",
+      "how-to": "操作指南",
+      "explainer": "原理解析",
+      "macro": "宏观观察",
+      "build-in-public": "公开开发",
+      "research": "研究笔记"
     }
   },
   "feedback": {

@@ -334,6 +334,14 @@
         "body": "Ouvrez une discussion et demandez. L'IA récupère les données en temps réel, fait les calculs et vous livre le résultat en PPT, Word ou Excel téléchargeable.",
         "button": "Essayer une discussion gratuite"
       }
+    },
+    "pillars": {
+      "thesis": "Thèse",
+      "how-to": "Pas-à-pas",
+      "explainer": "Explication",
+      "macro": "Macro",
+      "build-in-public": "Build in public",
+      "research": "Recherche"
     }
   },
   "feedback": {

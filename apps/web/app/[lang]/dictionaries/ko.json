@@ -334,6 +334,14 @@
         "body": "채팅을 열고 요청만 하세요. AI 가 실시간 데이터를 가져와 계산을 수행하고, 결과를 다운로드 가능한 PPT, Word, Excel 로 출력해 드립니다.",
         "button": "무료로 채팅 사용해 보기"
       }
+    },
+    "pillars": {
+      "thesis": "투자 관점",
+      "how-to": "방법론",
+      "explainer": "해설",
+      "macro": "거시",
+      "build-in-public": "공개 개발",
+      "research": "리서치"
     }
   },
   "feedback": {

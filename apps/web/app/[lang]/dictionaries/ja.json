@@ -334,6 +334,14 @@
         "body": "チャットを開いて依頼するだけ。AI がライブデータを取得し、計算を実行し、結果をダウンロード可能な PPT、Word、Excel ファイルとして出力します。",
         "button": "無料でチャットを試す"
       }
+    },
+    "pillars": {
+      "thesis": "投資テーゼ",
+      "how-to": "ハウツー",
+      "explainer": "解説",
+      "macro": "マクロ",
+      "build-in-public": "ビルド・イン・パブリック",
+      "research": "リサーチ"
     }
   },
   "feedback": {

@@ -264,7 +264,7 @@ export default async function BlogPostPage({
       <header className="mb-8">
         <div className="flex items-center gap-2">
           <span className="rounded-full border border-border bg-card px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-subtle">
-            {post.pillar}
+            {dict.blog.pillars?.[post.pillar] ?? post.pillar}
           </span>
           <span className="font-mono text-[10px] text-subtle">
             {formatDate(post.publishedAt, lang)} ·{' '}

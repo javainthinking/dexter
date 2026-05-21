@@ -49,22 +49,19 @@ export interface PostMeta {
   heroAlt?: string;
   /** Estimated reading time in minutes (computed from body length). */
   readingMinutes: number;
+  /**
+   * Which locale's content this metadata was loaded from. Equals the
+   * requested locale when a translated variant exists; otherwise
+   * `defaultLocale` (English fallback). Lets the index render an
+   * accurate `lang=` attribute per card and lets future code highlight
+   * which posts still need translation.
+   */
+  inLanguage: Locale;
 }
 
 export interface Post extends PostMeta {
   /** Raw markdown body (with frontmatter stripped). */
   body: string;
-  /**
-   * Which locale's content this Post object represents. Set by
-   * `getPostBySlug` based on which file actually loaded — either
-   * `content/blog/<locale>/<slug>.md` (a translated variant) or
-   * `content/blog/<slug>.md` (the English source used as fallback).
-   *
-   * Surfaces in BlogPosting `inLanguage` so schema accurately tells
-   * search engines / AI crawlers which language the body is in,
-   * separately from which locale the user requested.
-   */
-  inLanguage: Locale;
 }
 
 export interface FaqEntry {
@@ -75,7 +72,7 @@ export interface FaqEntry {
 const isMarkdown = (filename: string) =>
   filename.endsWith('.md') || filename.endsWith('.mdx');
 
-function parseFile(slug: string, raw: string): PostMeta & { body: string } {
+function parseFile(slug: string, raw: string, inLanguage: Locale): Post {
   const { data, content } = matter(raw);
   const wordCount = content.split(/\s+/).filter(Boolean).length;
   // Avg 200 wpm; round up to nearest minute so a 60-word definition
@@ -93,16 +90,30 @@ function parseFile(slug: string, raw: string): PostMeta & { body: string } {
     heroImage: data.heroImage ? String(data.heroImage) : undefined,
     heroAlt: data.heroAlt ? String(data.heroAlt) : undefined,
     readingMinutes,
+    inLanguage,
     body: content,
   };
 }
 
 /**
  * Return metadata for every post, sorted by publishedAt descending.
- * Body is omitted for the index list (saves serialization on the
- * server → client boundary).
+ * Locale-aware: when a translated variant exists at
+ * `content/blog/<locale>/<slug>.md`, its frontmatter (title,
+ * description, pillar label, etc.) is used; otherwise the English
+ * source is the fallback. So the /blog index cards render in the
+ * user's language wherever a translation is available, and in
+ * English (with `inLanguage='en'` on each card) for posts that
+ * haven't been translated yet.
+ *
+ * Slugs come from the English root — it's the authoritative slug set,
+ * and translated variants are required to mirror that filename so the
+ * canonical URL stays stable across locales (a slug change would
+ * break hreflang).
+ *
+ * Body is omitted from the return; the index doesn't need it and
+ * dropping it keeps the server → client payload small.
  */
-export function getAllPosts(): PostMeta[] {
+export function getAllPosts(locale: Locale = defaultLocale): PostMeta[] {
   let files: string[];
   try {
     files = readdirSync(CONTENT_DIR);
@@ -116,9 +127,10 @@ export function getAllPosts(): PostMeta[] {
     const full = join(CONTENT_DIR, f);
     if (!statSync(full).isFile()) continue;
     const slug = f.replace(/\.(md|mdx)$/, '');
-    const raw = readFileSync(full, 'utf-8');
-    const { body, ...meta } = parseFile(slug, raw);
-    void body; // intentionally drop body for list view
+    const post = getPostBySlug(slug, locale);
+    if (!post) continue;
+    const { body, ...meta } = post;
+    void body;
     posts.push(meta);
   }
   return posts.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
@@ -155,7 +167,7 @@ export function getPostBySlug(slug: string, locale: Locale = defaultLocale): Pos
   for (const { path, lang } of candidates) {
     try {
       const raw = readFileSync(path, 'utf-8');
-      return { ...parseFile(slug, raw), inLanguage: lang };
+      return parseFile(slug, raw, lang);
     } catch {
       continue;
     }

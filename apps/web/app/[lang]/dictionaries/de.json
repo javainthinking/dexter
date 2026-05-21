@@ -334,6 +334,14 @@
         "body": "Chat öffnen und beauftragen. Die KI holt sich Echtzeitdaten, rechnet durch und liefert das Ergebnis als herunterladbares PPT, Word oder Excel.",
         "button": "Kostenlosen Chat ausprobieren"
       }
+    },
+    "pillars": {
+      "thesis": "These",
+      "how-to": "How-to",
+      "explainer": "Erklärung",
+      "macro": "Makro",
+      "build-in-public": "Build in public",
+      "research": "Recherche"
     }
   },
   "feedback": {
