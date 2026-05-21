@@ -51,7 +51,7 @@ Annual plans save 20%. Cancel anytime.
 | Quote refresh | Manual | Manual + on-demand | Auto every 15 min during market hours | Auto every 5 min + real-time on demand |
 | Watchlists *(symbols you track without owning)* | — | 1 list, up to 20 symbols | 5 lists, up to 50 symbols each | Unlimited |
 | **Indicators dashboard** | | | | |
-| Technical & analytical dimensions | All 8 *(plus any new ones we add)* | All 8 *(plus any new ones we add)* | All 8 *(plus any new ones we add)* | All 8 + custom dimension builder |
+| Technical & analytical dimensions | All 8 *(plus any new ones we add)* | All 8 *(plus any new ones we add)* | All 8 *(plus any new ones we add)* | All 8 *(plus any new ones we add)* |
 | Drill-down per stock | Basic | Basic | Full | Full + side-by-side compare |
 | Export dashboard to a deck | — | — | ✓ *(uses your file-gen quota)* | ✓ Unlimited |
 | **Other** | | | | |
@@ -128,8 +128,7 @@ answering a different question:
 8. **Support / resistance** — key technical price levels
 
 **All 8 are available on every plan**, and any new dimensions we add
-will be included for everyone. The Power plan additionally unlocks a
-**custom dimension builder** for defining your own indicators.
+will be included for everyone.
 
 ### How does quote refresh differ between plans?
 

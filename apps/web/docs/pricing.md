@@ -103,7 +103,7 @@ single lever.
 | Quote refresh | manual only | manual + on-demand button | auto every 15 min during market hours | auto every 5 min + on-demand real-time |
 | Watchlists (no holdings) | — | 1 (≤20 symbols) | 5 (≤50 symbols each) | unlimited |
 | **Indicators dashboard** | | | | |
-| Dimensions available | all (currently 8, future additions included) | all (currently 8, future additions included) | all (currently 8, future additions included) | all + custom dimension builder |
+| Dimensions available | all (currently 8, future additions included) | all (currently 8, future additions included) | all (currently 8, future additions included) | all (currently 8, future additions included) |
 | Drill-down per stock | basic | basic | full | full + side-by-side compare |
 | Export dashboard to deck | — | — | ✓ (consumes file-gen quota) | ✓ unlimited |
 | **Automation** | | | | |
@@ -198,7 +198,8 @@ on Power, comfortably absorbed by the $129 anchor.
 All 8 dashboard dimensions (capital flow, divergence, KDJ, MACD,
 support/resistance, golden-cross, etc., per the dashboards we've
 already generated) are available on every tier, and any new
-dimensions we add will be included for everyone.
+dimensions we add will be included for everyone — no Power-only
+indicators.
 
 Rationale for not gating:
 - Each access is a small, bounded cost (a few historical-bar calls
@@ -209,10 +210,9 @@ Rationale for not gating:
 - Cost control here lives in the data layer (Yahoo-primary,
   server-side quote cache, batched fetches), not in feature gating
 
-The **custom dimension builder** stays as a Power-only feature — it
-lets users define their own indicator formulas, which is a real
-power-user surface and represents genuine compute (custom SQL /
-expressions). That distinction earns its keep.
+If we ever ship a "build your own indicator" feature, it'd be a
+candidate for tier gating then. Today there's no such feature on the
+roadmap, so the dimensions row is uniform across all four plans.
 
 ### 4.5 Automation gates (cron + WhatsApp)
 
