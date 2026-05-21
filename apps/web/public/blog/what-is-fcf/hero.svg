@@ -1,82 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Placeholder hero for `what-is-fcf` — brand-aligned SVG.
-  Composition: a stylised "cash funnel" where revenue (top) is
-  progressively narrowed by deductions (operating costs, capex), and
-  the remainder pools into a bright emerald reservoir at the bottom —
-  the FCF that's actually available to investors. Replace with the
-  GPT Image 2 render produced from _image-prompt.md when ready.
+  Infographic hero for `what-is-fcf`. Left column: title + formula.
+  Right column: a top-down waterfall — Revenue → Operating Cash Flow
+  (after costs) → Free Cash Flow (after capex), with each deduction
+  label between the bars. The final FCF bar is the brightest emerald.
+  Fonts use OS-standard families so sharp/librsvg rasterisation is
+  reliable.
 -->
 <svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="fcfBg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#14120b"/>
       <stop offset="100%" stop-color="#1b1913"/>
     </linearGradient>
-    <linearGradient id="fillFlow" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#4FCBA8" stop-opacity="0.15"/>
-      <stop offset="65%" stop-color="#4FCBA8" stop-opacity="0.45"/>
-      <stop offset="100%" stop-color="#4FCBA8" stop-opacity="0.9"/>
-    </linearGradient>
-    <radialGradient id="pool" cx="0.5" cy="0.5" r="0.55">
-      <stop offset="0%" stop-color="#4FCBA8" stop-opacity="1"/>
-      <stop offset="60%" stop-color="#4FCBA8" stop-opacity="0.7"/>
-      <stop offset="100%" stop-color="#4FCBA8" stop-opacity="0.05"/>
-    </radialGradient>
-    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="10" result="blur"/>
+    <filter id="fcfGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
       <feMerge>
-        <feMergeNode in="blur"/>
+        <feMergeNode in="b"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
   </defs>
 
-  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#fcfBg)"/>
 
-  <!-- Left-aligned funnel: revenue → OCF → FCF, with deductions on the side -->
-  <g transform="translate(320,80)">
-    <!-- Revenue bar (top, wide) -->
-    <rect x="0" y="0" width="320" height="44" rx="6" fill="#4FCBA8" opacity="0.85"/>
-    <!-- Operating costs deduction (chip on right) -->
-    <g transform="translate(360,0)">
-      <rect x="0" y="0" width="170" height="44" rx="6" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.4"/>
-      <rect x="14" y="16" width="84" height="6" rx="3" fill="#F4F4F5" opacity="0.65"/>
-      <rect x="14" y="28" width="60" height="5" rx="2.5" fill="#F4F4F5" opacity="0.35"/>
-      <line x1="-30" y1="22" x2="-2" y2="22" stroke="#4FCBA8" stroke-opacity="0.45" stroke-width="2" stroke-dasharray="4 4"/>
+  <!-- Eyebrow -->
+  <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">EXPLAINER · CASH FLOW</text>
+
+  <!-- Title -->
+  <text x="60" y="220" font-family="Georgia, 'Times New Roman', serif" font-size="120" font-weight="600" fill="#F4F4F5" letter-spacing="-1">FCF</text>
+
+  <!-- Subtitle -->
+  <text x="60" y="260" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="500" fill="#F4F4F5" opacity="0.85">Free Cash Flow</text>
+
+  <!-- Tagline -->
+  <text x="60" y="306" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">The cash that's actually left</text>
+  <text x="60" y="332" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">for investors after the bills.</text>
+
+  <!-- Formula card -->
+  <g transform="translate(60,430)">
+    <rect x="0" y="0" width="520" height="120" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">FORMULA</text>
+    <text x="22" y="76" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="22" fill="#F4F4F5">FCF = Operating Cash Flow</text>
+    <text x="122" y="104" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="22" fill="#F4F4F5">− Capital Expenditure</text>
+  </g>
+
+  <!-- Right column: waterfall (top-down) -->
+  <g transform="translate(660,135)">
+    <!-- Header -->
+    <text x="0" y="0" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#F4F4F5" opacity="0.55" letter-spacing="2">FROM TOP LINE TO FCF</text>
+
+    <!-- Revenue bar (full width) -->
+    <g transform="translate(0,22)">
+      <rect x="0" y="0" width="520" height="56" rx="8" fill="#4FCBA8" opacity="0.32"/>
+      <text x="20" y="36" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="600" fill="#F4F4F5">Revenue</text>
+      <text x="500" y="36" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="22" font-weight="700" fill="#F4F4F5" text-anchor="end">$100</text>
+    </g>
+
+    <!-- Deduction 1: Operating costs -->
+    <g transform="translate(0,90)">
+      <!-- Down arrow -->
+      <line x1="260" y1="0" x2="260" y2="22" stroke="#F4F4F5" stroke-opacity="0.35" stroke-width="1.5"/>
+      <polygon points="254,18 266,18 260,28" fill="#F4F4F5" fill-opacity="0.45"/>
+      <text x="280" y="22" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5" opacity="0.65">− Operating costs</text>
+      <text x="500" y="22" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="15" fill="#F4F4F5" opacity="0.65" text-anchor="end">−$72</text>
     </g>
 
     <!-- OCF bar (narrower) -->
-    <rect x="32" y="100" width="256" height="44" rx="6" fill="#4FCBA8" opacity="0.7"/>
-    <!-- Capex deduction chip -->
-    <g transform="translate(360,100)">
-      <rect x="0" y="0" width="170" height="44" rx="6" fill="#1b1913" stroke="#2D7E6E" stroke-opacity="0.55"/>
-      <rect x="14" y="16" width="68" height="6" rx="3" fill="#F4F4F5" opacity="0.65"/>
-      <rect x="14" y="28" width="50" height="5" rx="2.5" fill="#F4F4F5" opacity="0.35"/>
-      <line x1="-72" y1="22" x2="-2" y2="22" stroke="#2D7E6E" stroke-opacity="0.5" stroke-width="2" stroke-dasharray="4 4"/>
+    <g transform="translate(80,124)">
+      <rect x="0" y="0" width="360" height="56" rx="8" fill="#4FCBA8" opacity="0.58"/>
+      <text x="20" y="36" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="600" fill="#F4F4F5">Operating Cash Flow</text>
+      <text x="340" y="36" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="22" font-weight="700" fill="#F4F4F5" text-anchor="end">$28</text>
     </g>
 
-    <!-- Connecting flow shape (funnels narrowing) -->
-    <path d="M 0 44 L 320 44 L 288 100 L 32 100 Z"
-          fill="url(#fillFlow)" opacity="0.35"/>
-    <path d="M 32 144 L 288 144 L 232 200 L 88 200 Z"
-          fill="url(#fillFlow)" opacity="0.55"/>
+    <!-- Deduction 2: Capex -->
+    <g transform="translate(0,192)">
+      <line x1="260" y1="0" x2="260" y2="22" stroke="#F4F4F5" stroke-opacity="0.35" stroke-width="1.5"/>
+      <polygon points="254,18 266,18 260,28" fill="#F4F4F5" fill-opacity="0.45"/>
+      <text x="280" y="22" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5" opacity="0.65">− Capex (PP&amp;E)</text>
+      <text x="500" y="22" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="15" fill="#F4F4F5" opacity="0.65" text-anchor="end">−$10</text>
+    </g>
 
     <!-- FCF bar (narrowest, brightest) -->
-    <rect x="88" y="200" width="144" height="48" rx="8" fill="#4FCBA8" filter="url(#glow)"/>
+    <g transform="translate(190,226)" filter="url(#fcfGlow)">
+      <rect x="0" y="0" width="160" height="64" rx="10" fill="#4FCBA8"/>
+      <text x="20" y="40" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#14120b">FCF</text>
+      <text x="140" y="40" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="24" font-weight="700" fill="#14120b" text-anchor="end">$18</text>
+    </g>
 
-    <!-- Funnel droplets falling into reservoir -->
-    <circle cx="160" cy="285" r="4" fill="#4FCBA8"/>
-    <circle cx="170" cy="305" r="3" fill="#4FCBA8" opacity="0.75"/>
-    <circle cx="150" cy="325" r="3" fill="#4FCBA8" opacity="0.55"/>
+    <!-- FCF margin annotation on the right of the bar -->
+    <text x="370" y="262" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#4FCBA8" opacity="0.9">18% FCF margin</text>
+    <text x="370" y="282" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.5">cash to investors</text>
+
+    <!-- Caption below -->
+    <text x="260" y="335" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.4" text-anchor="middle">Illustrative numbers · $ amounts in arbitrary units</text>
   </g>
-
-  <!-- Reservoir pool — the FCF that ends up in investors' hands -->
-  <g transform="translate(480,490)">
-    <ellipse cx="0" cy="0" rx="190" ry="42" fill="url(#pool)" filter="url(#glow)"/>
-    <ellipse cx="0" cy="0" rx="180" ry="36" fill="none" stroke="#4FCBA8" stroke-opacity="0.55" stroke-width="1.5"/>
-  </g>
-
-  <!-- Subtle baseline rule -->
-  <line x1="120" y1="560" x2="1080" y2="560" stroke="#4FCBA8" stroke-opacity="0.12"/>
 </svg>

@@ -256,6 +256,26 @@ visuals. We generate them with **GPT Image 2** (OpenAI's
 `gpt-image-2-flash` model via API, or via ChatGPT for one-off
 generation).
 
+### Editorial direction (revised 2026-05-22)
+
+Hero images are **infographics, not abstract illustrations**. A
+reader who only sees the hero should be able to grasp the concept
+without reading the post. Every hero must include:
+
+- The post's central term as a large serif title (e.g. "DCF",
+  "WACC", "FCF") with a sans-serif subtitle naming the concept in
+  full and a one-line tagline beneath.
+- A boxed `FORMULA` card with the actual mathematical formula
+  rendered in monospace.
+- A labelled visualisation: the bar chart / waterfall / weighted
+  stack appropriate to the concept, with axis labels, value
+  labels, and at least one callout (e.g. "60–80% of EV",
+  "Resulting WACC — 8.2%", "18% FCF margin").
+
+The hero PNG doubles as the OG card image — text must remain
+legible at ~600×315 (Twitter / LinkedIn preview size). Title
+should be ≥80px, body labels ≥18px, monospace formulas ≥22px.
+
 ### Brand visual identity
 
 | Token | Value |
@@ -264,119 +284,119 @@ generation).
 | **Surface (card)** | `#1b1913` |
 | **Accent** | emerald `#4FCBA8` (dark mode) / `#2D7E6E` (light mode) |
 | **Text on dark** | near-white `#F4F4F5` |
-| **Mood** | analytical, modern, slightly playful, editorial — *not* corporate stock-photo |
-| **Reference brands** | Stripe blog, Linear blog, Vercel blog, Anthropic blog |
+| **Type — title** | Georgia / 'Times New Roman' serif, 120px, weight 600 |
+| **Type — subtitle / annotations** | Helvetica / Arial sans, 20–28px |
+| **Type — formula / labels** | ui-monospace / SF Mono / Menlo, 14–24px |
+| **Mood** | analytical, designed-infographic, editorial — *not* abstract decoration, *not* corporate stock-photo |
+| **Reference style** | FT Visual Vocabulary, Bloomberg explainer graphics, Stripe blog, Linear blog |
 
-### Master prompt template
+### Production pipeline (current)
 
-Use as the base; customise the **bracketed parts** per post.
+Heroes are authored as **brand-aligned SVGs** with embedded text,
+then rasterised to PNG via `scripts/rasterize-svg.ts` (sharp +
+librsvg). SVG-first means:
+
+- Title, subtitle, axis labels, callouts and formulas are real
+  vector text — sharp at every size, easy to translate later, and
+  searchable in the source repo.
+- The PNG ships for OG-card compatibility (Twitter / LinkedIn /
+  Slack don't render SVG reliably for previews).
+- The inline `<Image>` on the post page serves the same PNG,
+  which next/image re-encodes to AVIF / WebP at request time.
+
+For typography, use OS-standard families so the rasteriser doesn't
+need any custom-font setup: `Georgia` for the title, `Helvetica`
+for body, `ui-monospace / SF Mono / Menlo` for formulas. Avoid
+Unicode sub/super-scripts that may not be in the rendering font
+(e.g. `ₜ`); use SVG `<tspan font-size="…" dy="…">` instead.
+
+### Master infographic recipe
+
+Every hero follows the same two-column structure:
 
 ```
-A modern editorial illustration for a financial analysis blog post
-about [TOPIC IN ONE SENTENCE].
+┌──────────────────────────────┬──────────────────────────────┐
+│  EYEBROW · CATEGORY          │  HEADING / AXIS LABEL        │
+│                              │                              │
+│  TITLE                       │  ┌─ data viz ──────────────┐ │
+│  (giant serif, ≥80px)        │  │  bars / waterfall /     │ │
+│                              │  │  weighted stack with    │ │
+│  Subtitle                    │  │  inline value + axis    │ │
+│  Tagline (two short lines)   │  │  labels                 │ │
+│                              │  └─────────────────────────┘ │
+│  ┌── FORMULA ─────────────┐  │                              │
+│  │ rendered in monospace  │  │  callout: "X% of Y"          │
+│  └────────────────────────┘  │  small disclaimer            │
+└──────────────────────────────┴──────────────────────────────┘
+```
 
-Style: dark warm aesthetic with deep blacks (#14120b) and soft
-emerald accents (#4FCBA8). Minimalist, designed feel — think
-Stripe blog, Linear blog. NOT corporate stock photography.
+Per pillar the **visualisation** differs:
 
-Composition: clear focal point, generous negative space, asymmetric
-layout, subtle depth via overlapping geometric shapes.
+- **P1 (thesis)** — single hero metric chart with two callouts
+  (current price vs PickSkill price target, e.g.)
+- **P2 (how-to)** — numbered step sequence with arrows
+- **P3 (explainer)** — labelled bar / waterfall / weighted stack
+  that *is* the concept (as in DCF, WACC, FCF)
+- **P4 (macro)** — single-axis trend chart with one highlighted
+  data point + date callout
+- **P5 (build-in-public)** — a labelled architecture diagram or
+  before/after comparison
+- **P6 (original research)** — the headline chart from the
+  underlying dataset
 
-Elements to include: [POST-SPECIFIC: e.g., abstract candlestick
-chart fragments / isometric portfolio cards / geometric data
-visualisation / minimalist financial icons (no literal dollar
-signs)]
+### Generative fallback prompt (when an SVG can't carry the visual)
+
+When a hero requires illustration the SVG layer can't easily
+produce (e.g. textured backgrounds, abstract metaphors), use GPT
+Image 2 with this template — keep the same colour palette and the
+"infographic, not decoration" directive:
+
+```
+A modern editorial INFOGRAPHIC for a financial analysis blog
+post about [TOPIC IN ONE SENTENCE]. Two-column layout:
+
+LEFT: section eyebrow in monospace, the term [TERM] as a large
+editorial serif title, a sans-serif subtitle naming the concept
+in full, one short tagline, and a boxed formula card containing
+[FORMULA].
+
+RIGHT: a clear labelled visualisation appropriate to the concept
+([WATERFALL / BAR CHART / WEIGHTED STACK / etc.]) — with axis
+labels, value labels, and one callout reading "[CALLOUT TEXT]".
+
+Style: warm dark background (#14120b → #1b1913 gradient), emerald
+accents (#4FCBA8), near-white text (#F4F4F5). Editorial, designed
+infographic — Stripe blog / Linear blog / FT Visual Vocabulary
+references. Self-explanatory at OG-card thumbnail size.
 
 Avoid:
 - realistic human faces or hands
 - literal dollar/yen/bitcoin signs as icons
-- brand logos (Apple, Nvidia, etc.) — represent abstractly instead
-- text overlays (we add titles in HTML, not in the image)
+- brand logos — represent abstractly
+- abstract decoration without labels
 - gradient overload, lens flares, neon excess
-- cliched stock-photo signals (handshakes, suited men, etc.)
+- stock-photo finance imagery
 
-Aspect ratio: 1200×630 (16:8.4 horizontal, suitable for OG cards
-and blog hero).
+Aspect ratio: 1200×630.
 ```
 
-### Per-pillar prompt variants
+### Per-pillar visualisation cheat sheet
 
-**P1 — Stock thesis (hero image):**
+The right-column visual changes per pillar. The left column (eyebrow
++ title + subtitle + tagline + formula card) is the constant.
 
-```
-[Master template, customised with:]
+| Pillar | Right-column visualisation | One representative callout |
+|---|---|---|
+| **P1 — Thesis** | Single hero metric (e.g. current price vs price target) with bar/dot timeline of past 4 quarters' beats vs misses | "Current $135 → PT $182 · 35% upside" |
+| **P2 — How-to** | 3–4 numbered steps in a horizontal sequence with arrows, plus the step that runs in PickSkill highlighted in emerald | "Step 3 — PickSkill auto-runs this" |
+| **P3 — Explainer** | The concept itself as a labelled chart (DCF: bar chart of cash flows + TV; WACC: weighted stack; FCF: top-down waterfall) | A proportion like "60–80% of EV" or a result like "WACC = 8.2%" |
+| **P4 — Macro** | Single-axis trend line with one highlighted data point + date | "CPI release · 2026-05-15 · 3.1%" |
+| **P5 — Build-in-public** | Before / after architecture comparison, or a labelled system diagram | "From 30s to 60ms" |
+| **P6 — Research** | The headline chart from the dataset, with annotated outliers | "5 names beat 5 quarters running" |
 
-Elements: an abstract single-asset portrait — represent the company's
-core business as a geometric motif. For example:
-  - NVDA → stacked GPU blocks rendered isometrically, with subtle
-    data flow lines connecting them
-  - TSMC → a stylised silicon wafer with concentric circles, soft
-    glow from the emerald accent
-  - AAPL → a half-bitten geometric apple shape, but abstracted into
-    pure geometry (no Apple logo)
-Composition: large central element, off-centre, occupying ~60% of
-canvas. Empty warm-black space on one side for the post title.
-```
-
-**P2 — How-to (hero image):**
-
-```
-[Master template, customised with:]
-
-Elements: a step-by-step visualisation — represent the workflow as
-3 or 4 connected geometric shapes arranged left-to-right or in a
-staircase. Each shape is a different abstract symbol for that step.
-Use thin emerald connector lines.
-Avoid making it look like an actual app screenshot — keep it
-abstract and editorial.
-```
-
-**P3 — Concept explainer (hero image):**
-
-```
-[Master template, customised with:]
-
-Elements: a single concept rendered as a poster — like a textbook
-diagram crossed with editorial design. For "what is MACD" → two
-overlapping wave forms with emerald glow at intersection points.
-For "what is DCF" → a futuristic cash-flow timeline, abstract.
-Composition: centered, symmetrical, like a magazine cover diagram.
-```
-
-**P4 — Macro / event (hero image):**
-
-```
-[Master template, customised with:]
-
-Elements: a "world map" or "macro chart" feel — abstract globe
-fragments, intersecting trendlines, a single bold data point
-highlighted in emerald. Conveys timeliness + scale.
-Mood: more dramatic, slightly tense (markets move on these events).
-```
-
-**P5 — Build-in-public (hero image):**
-
-```
-[Master template, customised with:]
-
-Elements: a workshop / under-the-hood vibe — abstract gears, code
-fragments rendered as geometric shapes, a single bright spot
-suggesting insight or discovery.
-Mood: warmer, more human than the analysis pieces. This is the
-"we built something" story.
-```
-
-**P6 — Original research (hero image):**
-
-```
-[Master template, customised with:]
-
-Elements: a data-density visualisation — many small repeated
-elements (dots, bars, cells) forming a larger pattern. One or two
-emerald highlights call out outliers. Conveys "we counted the
-beans, and here's what we found."
-Mood: rigorous, scientific, but designed (not Excel-grid raw).
-```
+Skipping pillar-specific generative prompts in favour of the
+unified template above — the SVG-first pipeline lets us iterate
+on a hero by editing the file rather than re-prompting a model.
 
 ### Inline visuals (within posts)
 

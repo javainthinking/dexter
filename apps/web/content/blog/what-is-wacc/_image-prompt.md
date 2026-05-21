@@ -1,47 +1,64 @@
-# Hero prompt — what-is-wacc
+# Image prompt: what-is-wacc
 
-Master template (see `docs/blog-strategy.md` §6) with the per-post bracketed parts filled in.
+Source of truth for regenerating the hero. The current PNG is
+rasterised from the brand-aligned SVG sibling
+(`apps/web/public/blog/what-is-wacc/hero.svg`).
 
-## GPT Image 2 prompt
+## Editorial direction (current)
+
+**Infographic-first.** A reader who only sees the hero should
+understand that WACC is a weighted blend of equity and debt costs:
+
+- Left column: eyebrow + giant serif title (WACC) + subtitle
+  (Weighted Average Cost of Capital) + tagline + boxed formula
+  card.
+- Right column: a horizontal capital-structure bar split into
+  "Equity 70%" (bright emerald) and "Debt 30%" (darker teal) —
+  labelled with E/V and D/V underneath. Below it, two rows
+  showing the cost of each source (Re ≈ 10%, Rd·(1−t) ≈ 4%) with
+  matching coloured dots. A divider, then a highlighted result
+  row: "Resulting WACC = 8.2%" with a soft emerald glow.
+
+Colour tokens stay in-brand: `#14120b` background, `#1b1913`
+surfaces, emerald `#4FCBA8` accents, near-white `#F4F4F5` text.
+
+## Hero (1200×630, GPT Image 2 fallback prompt)
 
 ```
-A modern editorial illustration for a financial analysis blog post
-about WACC (Weighted Average Cost of Capital) — the discount rate
-that blends a company's cost of equity and after-tax cost of debt,
-weighted by capital structure.
+A modern editorial infographic for a financial blog post about
+WACC (weighted average cost of capital). Layout: two columns.
 
-Style: dark warm aesthetic with deep blacks (#14120b) and soft
-emerald accents (#4FCBA8). Minimalist, designed feel — think Stripe
-blog, Linear blog. NOT corporate stock photography.
+Left column: the word "WACC" rendered in a large editorial serif
+typeface, followed by a smaller sans-serif subtitle "Weighted
+Average Cost of Capital", then a dimmed one-line tagline, then a
+dark inset card containing the rendered formula
+"WACC = (E/V) · Re + (D/V) · Rd · (1 − t)" in a clean monospace.
 
-Composition: a central concentric two-arc dial — the outer arc
-(longer, in emerald) representing the equity weight, the inner arc
-(shorter, in deeper teal) representing the debt weight. A single
-glowing emerald node at the centre of the dial where the two arcs
-"weight" together — the WACC point. Around the dial, generous warm
-negative space; on one side, three minimal abstract chips suggesting
-the inputs (Re, Rd, tax shield) — no text labels, just iconography.
+Right column, top: a single horizontal bar split into two
+labelled segments — a brighter emerald segment "Equity 70%" and
+a darker teal segment "Debt 30%", with small captions "E / V"
+and "D / V" centred beneath each. Then a section heading "COST
+OF EACH SOURCE" and two rows, each prefixed by a coloured dot:
+"Cost of equity (Re) — 10.0%" and "After-tax cost of debt
+(Rd·(1−t)) — 4.0%". A divider line. Then a final highlighted
+result row inside a dark card with a glowing emerald outline:
+"Resulting WACC — 8.2%" rendered large.
 
-Elements: weighted-average dial, abstract input chips (no text),
-soft glow on the central node, single thin baseline rule for grounding.
+Style: warm dark background (#14120b → #1b1913 gradient), emerald
+accents (#4FCBA8), near-white text (#F4F4F5). Editorial, designed,
+infographic — Stripe blog / Linear blog / FT Visual Vocabulary
+references. The image must be self-explanatory.
 
-Avoid:
-- realistic human faces or hands
-- literal dollar/yen signs as icons
-- text overlays (the post title is added in HTML)
-- gradient overload, lens flares, neon excess
-- cliched stock-photo finance signals
-- a clock or speedometer aesthetic — this is a *weight* dial, not a meter
+Avoid: dollar signs, realistic faces, brand logos, speedometer or
+clock metaphors (WACC is a weight, not a meter), neon excess,
+stock-photo finance imagery.
 
-Aspect ratio: 1200×630 (16:8.4 horizontal, suitable for OG cards
-and blog hero).
+Aspect ratio: 1200×630, suitable for OG cards and blog hero.
 ```
 
-## Regeneration
+## Regeneration via the SVG → PNG pipeline (preferred)
 
 ```bash
-# After saving a new PNG to hero.png, no further action needed.
-# If only an updated SVG is shipped, rasterise:
 bun run scripts/rasterize-svg.ts \
   apps/web/public/blog/what-is-wacc/hero.svg \
   apps/web/public/blog/what-is-wacc/hero.png

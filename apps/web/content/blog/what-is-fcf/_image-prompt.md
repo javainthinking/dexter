@@ -1,45 +1,67 @@
-# Hero prompt — what-is-fcf
+# Image prompt: what-is-fcf
 
-Master template (see `docs/blog-strategy.md` §6) with per-post bracketed parts filled in.
+Source of truth for regenerating the hero. The current PNG is
+rasterised from the brand-aligned SVG sibling
+(`apps/web/public/blog/what-is-fcf/hero.svg`).
 
-## GPT Image 2 prompt
+## Editorial direction (current)
+
+**Infographic-first.** A reader who only sees the hero should
+understand that FCF is what's left after operating costs and
+capex come out of revenue:
+
+- Left column: eyebrow + giant serif title (FCF) + subtitle
+  (Free Cash Flow) + tagline + boxed formula card.
+- Right column: a top-down waterfall — Revenue (full-width bar,
+  $100) → "−Operating costs −$72" → Operating Cash Flow (narrower
+  bar, $28) → "−Capex −$10" → FCF (narrowest, brightest emerald
+  bar, $18, with a soft glow). To the right of the FCF bar, a
+  "18% FCF margin · cash to investors" annotation.
+
+Colour tokens stay in-brand: `#14120b` background, `#1b1913`
+surfaces, emerald `#4FCBA8` accents, near-white `#F4F4F5` text.
+
+## Hero (1200×630, GPT Image 2 fallback prompt)
 
 ```
-A modern editorial illustration for a financial analysis blog post
-about Free Cash Flow (FCF) — the cash a business actually generates
-that's available to investors after paying for operations and capex.
+A modern editorial infographic for a financial blog post about
+Free Cash Flow (FCF). Layout: two columns.
 
-Style: dark warm aesthetic with deep blacks (#14120b) and soft
-emerald accents (#4FCBA8). Minimalist, designed feel — think Stripe
-blog, Linear blog. NOT corporate stock photography.
+Left column: the abbreviation "FCF" rendered in a large editorial
+serif typeface, followed by a smaller sans-serif subtitle
+"Free Cash Flow", then a dimmed one-line tagline ("The cash
+that's actually left for investors after the bills"), then a
+dark inset card containing the rendered formula
+"FCF = Operating Cash Flow − Capital Expenditure" in a clean
+monospace.
 
-Composition: a stylised "cash funnel" arrangement on the left side
-of the canvas — a wider bar at the top (representing revenue),
-narrowing through two horizontal stages to a brighter, smaller bar
-at the bottom (representing FCF). On the right side of each stage,
-two abstract "deduction" chips (operating costs, capex) — no text,
-just iconography. Below the funnel, a soft glowing emerald reservoir
-ellipse, suggesting cash pooling — what's actually left for
-investors. Connect the funnel stages with subtle dashed lines.
+Right column: a top-down waterfall chart, three bars stacked
+vertically with deduction labels between them:
 
-Composition: left-aligned funnel + deduction chips on the right +
-reservoir pool at the bottom. Generous warm-black negative space
-above and to the right for the post title (added in HTML).
+  - "Revenue" — full-width emerald bar at 32% opacity, labelled
+    "$100".
+  - Between bars: a downward arrow and "− Operating costs" with
+    "−$72" on the right.
+  - "Operating Cash Flow" — narrower bar at 58% opacity, labelled
+    "$28".
+  - Between bars: downward arrow and "− Capex (PP&E)" with "−$10".
+  - "FCF" — the narrowest, brightest, glowing emerald bar with
+    nearly opaque emerald fill and a soft glow. Labelled "$18".
+  - To the right of the FCF bar, a callout: "18% FCF margin —
+    cash to investors".
 
-Avoid:
-- realistic human faces or hands
-- literal dollar signs, cash bills, gold coins
-- text overlays inside the image
-- gradient overload, lens flares, neon excess
-- a literal "funnel cone" — keep it more like minimalist editorial
-  diagrams, not literal funnels
-- corporate stock-photo signals
+Style: warm dark background (#14120b → #1b1913 gradient), emerald
+accents (#4FCBA8), near-white text (#F4F4F5). Editorial, designed
+infographic — Stripe blog / Linear blog / FT Visual Vocabulary.
+Self-explanatory as an infographic.
 
-Aspect ratio: 1200×630 (16:8.4 horizontal, suitable for OG cards
-and blog hero).
+Avoid: literal funnel cones, dollar-sign icons, gold coins, brand
+logos, realistic faces, neon excess, gradient overload.
+
+Aspect ratio: 1200×630, suitable for OG cards and blog hero.
 ```
 
-## Regeneration
+## Regeneration via the SVG → PNG pipeline (preferred)
 
 ```bash
 bun run scripts/rasterize-svg.ts \
