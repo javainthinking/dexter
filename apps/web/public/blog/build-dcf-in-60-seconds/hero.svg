@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Infographic hero for `build-dcf-in-60-seconds`. Left column carries
+  the title and the "4-step workflow" card. Right column shows the
+  time comparison — a 60-minute bar versus a 60-second bar at the
+  same horizontal scale, making the magnitude difference visceral.
+-->
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="tBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+    <linearGradient id="tBarSlow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3a3a3a" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#5a5a5a" stop-opacity="0.85"/>
+    </linearGradient>
+    <filter id="tGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#tBg)"/>
+
+  <!-- Eyebrow -->
+  <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">TUTORIAL · VALUATION</text>
+
+  <!-- Title -->
+  <text x="60" y="220" font-family="Georgia, 'Times New Roman', serif" font-size="84" font-weight="600" fill="#F4F4F5" letter-spacing="-0.5">Build a DCF</text>
+  <text x="60" y="288" font-family="Georgia, 'Times New Roman', serif" font-size="84" font-weight="600" fill="#4FCBA8" letter-spacing="-0.5">in 60 seconds.</text>
+
+  <!-- Tagline -->
+  <text x="60" y="338" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">A 4-step walkthrough of the</text>
+  <text x="60" y="364" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">PickSkill DCF workflow.</text>
+
+  <!-- Workflow card -->
+  <g transform="translate(60,430)">
+    <rect x="0" y="0" width="520" height="130" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">THE 4 STEPS</text>
+    <g font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="16" fill="#F4F4F5">
+      <text x="22"  y="62">1. Open a chat</text>
+      <text x="22"  y="86">2. Paste the DCF prompt</text>
+      <text x="22" y="110">3. Edit assumptions inline</text>
+      <text x="498" y="110" font-size="13" fill="#4FCBA8" opacity="0.85" text-anchor="end">→ download .xlsx</text>
+    </g>
+  </g>
+
+  <!-- Right column: time-comparison chart -->
+  <g transform="translate(660,140)">
+    <text x="0" y="0" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#F4F4F5" opacity="0.55" letter-spacing="2">TIME TO COMPLETE</text>
+
+    <!-- Excel row -->
+    <g transform="translate(0,30)">
+      <text x="0" y="20" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#F4F4F5" opacity="0.65">Excel by hand</text>
+      <text x="500" y="20" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" font-weight="700" fill="#F4F4F5" opacity="0.65" text-anchor="end">~60 min</text>
+      <!-- Bar: full width = 60 min -->
+      <rect x="0" y="34" width="500" height="40" rx="6" fill="url(#tBarSlow)"/>
+      <text x="20" y="60" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.75">data plumbing · template setup · projection · sensitivity</text>
+    </g>
+
+    <!-- PickSkill row -->
+    <g transform="translate(0,116)">
+      <text x="0" y="20" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#F4F4F5">PickSkill</text>
+      <text x="500" y="20" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" font-weight="700" fill="#4FCBA8" text-anchor="end">~60 sec</text>
+      <!-- Bar: 1/60 of 500 ≈ 8 px; bump to ~12 so the label fits visually -->
+      <g filter="url(#tGlow)">
+        <rect x="0" y="34" width="14" height="40" rx="6" fill="#4FCBA8"/>
+      </g>
+      <text x="24" y="60" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.75">prompt → sourced output</text>
+    </g>
+
+    <!-- Multiplier callout -->
+    <g transform="translate(0,210)">
+      <line x1="0" y1="0" x2="500" y2="0" stroke="#F4F4F5" stroke-opacity="0.18"/>
+      <text x="0" y="36" font-family="Georgia, 'Times New Roman', serif" font-size="34" font-weight="600" fill="#F4F4F5">~60×</text>
+      <text x="120" y="28" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5" opacity="0.65">faster, same math —</text>
+      <text x="120" y="48" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5" opacity="0.65">every assumption sourced + editable.</text>
+    </g>
+  </g>
+</svg>

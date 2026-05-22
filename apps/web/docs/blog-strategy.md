@@ -485,6 +485,45 @@ companion — every DCF input comes from a 10-K — so it bridges
 explainer ↔ how-to pillars and pulls in the "how do I actually
 read this filing" search cohort.
 
+**Tutorial track (P2-tutorial sub-pillar)**
+
+A dedicated tutorial track inside the P2 how-to pillar, every
+post built around a *real PickSkill workflow*. Each tutorial:
+
+- Solves one user goal in 4–7 numbered steps
+- Includes the exact prompt(s) to copy-paste into `/chat`
+- Shows representative example output (anonymised or generic)
+- Cross-links to relevant explainers in the foundation cluster
+- Ends with "What you can't do this fast" — honest about limits
+
+Tutorials are the highest-leverage GTM content the blog ships:
+- Direct product activation — the reader sees the exact path
+- High share-rate on Reddit/HN when the workflow is genuinely new
+- Renewable evergreen — refresh one ticker per quarter
+
+| # | Tutorial | Feature exercised | GTM | SEO | GEO |
+|---|---|---|---|---|---|
+| T1 | `build-dcf-in-60-seconds` | `/chat` + DCF tool + Excel export | ★★★ | ★★★ | ★★★ |
+| T2 | `summarise-a-10k-in-60-seconds` | `/chat` + EDGAR extractor | ★★★ | ★★ | ★★★ |
+| T3 | `track-a-portfolio-with-indicators` | `/portfolios` + `/indicators` (MACD, KDJ, divergence) | ★★★ | ★★ | ★★ |
+| T4 | `compare-5-saas-companies-on-fcf-and-growth` | `/chat` + multi-ticker comparison + xlsx | ★★ | ★★ | ★★★ |
+| T5 | `generate-investor-deck-from-a-chat` | `/chat` + PPTX export | ★★★ | ★★ | ★★ |
+| T6 | `remember-a-thesis-across-sessions` | `/memory` | ★★ | ★ | ★ |
+| T7 | `screen-stocks-by-pe-and-fcf-yield` | `/chat` + screener prompt | ★★ | ★★ | ★★ |
+| T8 | `read-a-companys-risk-factors-diff` | `/chat` + 10-K diff | ★★ | ★ | ★★★ |
+
+Tutorial-content design rules:
+- **Title formula**: `How to {do specific thing} in {time}` or
+  `How to {do specific thing} with PickSkill`. Time-bound titles
+  ("in 60 seconds", "in 5 minutes") get the highest CTR.
+- **Step 1 always shows the chat input.** Reader sees the exact
+  prompt before any tooling explanation.
+- **Each step gets one screenshot or one code/prompt block.** No
+  step is just prose — there must be a concrete artifact.
+- **"Try it" callout** appears at the end of step 4 (or the last
+  step before the example output) with a deep-link to `/chat`
+  that pre-fills the prompt.
+
 **Next batch — prioritised by GTM × SEO × GEO leverage**
 
 Each row scored on three axes:
@@ -494,26 +533,26 @@ Each row scored on three axes:
 
 | # | Post | Pillar | GTM | SEO | GEO | Cluster role |
 |---|---|---|---|---|---|---|
-| 1 | `dcf-vs-comparable-company-analysis` | P3 explainer | ★★ | ★★★ | ★★★ | bridges DCF cluster → relative-valuation cluster |
-| 2 | `what-is-pe-ratio` | P3 explainer | ★★ | ★★★ | ★★★ | seeds the relative-valuation cluster |
-| 3 | `what-is-ev-ebitda` | P3 explainer | ★★ | ★★ | ★★★ | completes relative-valuation cluster |
-| 4 | `ai-for-stock-research-2026` | P5 build-in-public | ★★★ | ★★ | ★★ | category-defining; positions PickSkill in the "AI financial analyst" search |
-| 5 | `how-to-build-dcf-in-excel-template` | P2 how-to | ★★★ | ★★ | ★★ | mid-funnel demo; downloadable Excel = brand-mention asset |
-| 6 | `nvda-bull-case-2026-q2` | P1 thesis | ★★ | ★★★ | ★★ | first thesis post; refresh quarterly so it stays evergreen for the ticker |
-| 7 | `what-is-ebitda` | P3 explainer | ★ | ★★★ | ★★★ | high-volume definitional; pairs with EV/EBITDA |
-| 8 | `income-statement-vs-balance-sheet-vs-cash-flow` | P3 explainer | ★ | ★★ | ★★★ | the three-statement explainer cluster |
+| 1 | `build-dcf-in-60-seconds` | P2 tutorial | ★★★ | ★★★ | ★★★ | flagship tutorial; activates the DCF-cluster reader |
+| 2 | `dcf-vs-comparable-company-analysis` | P3 explainer | ★★ | ★★★ | ★★★ | bridges DCF cluster → relative-valuation cluster |
+| 3 | `what-is-pe-ratio` | P3 explainer | ★★ | ★★★ | ★★★ | seeds the relative-valuation cluster |
+| 4 | `summarise-a-10k-in-60-seconds` | P2 tutorial | ★★★ | ★★ | ★★★ | activation post for the 10-K reading-guide reader |
+| 5 | `what-is-ev-ebitda` | P3 explainer | ★★ | ★★ | ★★★ | completes relative-valuation cluster |
+| 6 | `ai-for-stock-research-2026` | P5 build-in-public | ★★★ | ★★ | ★★ | category-defining; positions PickSkill in the "AI financial analyst" search |
+| 7 | `track-a-portfolio-with-indicators` | P2 tutorial | ★★★ | ★★ | ★★ | activates the `/portfolios` + `/indicators` surfaces |
+| 8 | `nvda-bull-case-2026-q2` | P1 thesis | ★★ | ★★★ | ★★ | first thesis post; refresh quarterly so it stays evergreen for the ticker |
 
-Why this order:
-- **Posts 1–3** extend the existing foundation cluster into
-  *relative valuation*. DCF (already done) is absolute valuation;
-  P/E and EV/EBITDA are the relative-valuation siblings. Strong
-  internal-linking pattern.
-- **Posts 4–5** are GTM-forward — they put PickSkill as the
-  subject of the post rather than the analyst's tool. Higher
-  conversion intent.
-- **Post 6** is the first thesis post; deliberately scheduled
-  after the foundations so the thesis can reference each
-  explainer for backing.
+Why this re-ordered sequence:
+- **Tutorial pairs follow explainers**: every explainer cluster
+  earns its tutorial sibling. `what-is-dcf` already exists →
+  ship T1 `build-dcf-in-60-seconds` first. `how-to-read-10k`
+  already exists → ship T2 `summarise-a-10k-in-60-seconds`
+  next. This converts readers in the cluster *now*.
+- **Relative-valuation cluster (#2, #3, #5)** still builds the
+  ranking signal map; explainer-tutorial pairs follow once it's
+  live.
+- **GTM-forward (#6) and thesis (#8)** still bookend the batch
+  for the same reasons as before.
 
 **Editorial infrastructure**
 
