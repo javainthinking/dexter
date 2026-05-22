@@ -116,27 +116,34 @@ export function DesignStylePanel({
 }
 
 /**
- * Brand card — paint-chip style.
+ * Brand card — minimal swatch style.
  *
- * Three visual layers stacked top-to-bottom:
- *   1. **Swatch** (aspect 4:3) — brand-colour gradient with a soft dot
- *      texture overlaid for tactile depth. The diagonal highlight line
- *      from the previous design is retained as a subtle "design swatch"
- *      cue.
- *   2. **Logo plate** (centred on the swatch) — a soft white rounded
- *      square that *frames* the brand mark. GitHub avatars are
- *      full-bleed inside the plate (they come pre-cropped from the
- *      org's avatar). Simple Icons SVGs render inverted (brand colour
- *      on white) for contrast. Letter-mark fallbacks render in serif
- *      over the same plate.
- *   3. **Paint-chip band** below — a darker stripe of the same brand
- *      colour holding the brand name + an inline hex chip in mono.
- *      This is the visual cue that links "see, that's the brand
- *      colour" to "and here's exactly what hex it is".
+ * Layout: the **brand colour itself is the hero**. The logo lives as
+ * a small (~28px) badge tucked top-left like a maker's mark on a
+ * paint chip — it identifies the brand but doesn't dominate. The
+ * remaining space is mostly empty colour with a soft "light source"
+ * glow at top-right for tactile depth (no chunky white plate, no
+ * centred sticker effect).
  *
- * Hover: lifts 2px, brightens the swatch, scales the logo plate
- * slightly. The whole interaction reads as picking up a paint chip
- * from a designer's swatch book — not clicking a row in a list.
+ *   ┌──────────────────────────────┐
+ *   │ [logo]            ☀ (glow)   │  ← swatch (mostly empty colour)
+ *   │                              │
+ *   │                              │
+ *   ├──────────────────────────────┤
+ *   │ Airbnb              #FF5A5F  │  ← paint-chip band
+ *   └──────────────────────────────┘
+ *
+ * Logo rendering is source-aware:
+ *   - GitHub avatars come with their own background (Airbnb white-bg
+ *     wordmark, ClickHouse black-bg yellow-bars, etc.), so we clip
+ *     them with rounded corners and a 1px ring matching the swatch.
+ *   - Simple Icons (transparent SVG, brand-coloured fill) render in
+ *     a contrast tone — white on dark brands, near-black on light —
+ *     so they're readable directly on the swatch with no plate.
+ *   - Letter-mark fallback uses serif in the same contrast tone.
+ *
+ * Hover: card lifts 2px, the corner glow brightens, and the logo
+ * scales subtly. No sticker pop.
  */
 function BrandCard({
   brand,
@@ -148,8 +155,11 @@ function BrandCard({
   const logoUrl = getBrandLogoUrl(brand);
   const isGithubAvatar = brand.githubOrg !== null;
   const darkerStripe = darkenHex(brand.color, 0.25);
-  const swatchSecondary = darkenHex(brand.color, 0.45);
+  const swatchSecondary = darkenHex(brand.color, 0.4);
   const isDarkBrand = isDark(brand.color);
+  // On light brand swatches we tint Simple Icons + letter marks dark
+  // for legibility; on dark brand swatches, white.
+  const fgHex = isDarkBrand ? 'ffffff' : '14120b';
 
   return (
     <button
@@ -163,47 +173,52 @@ function BrandCard({
       )}
       aria-label={brand.name}
     >
-      {/* Swatch — gradient + texture + diagonal highlight + logo plate */}
+      {/* Swatch — brand-colour field with a soft top-right glow for
+          depth, plus a faint dot texture for tactile feel. */}
       <div
-        className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden"
+        className="relative aspect-[5/3] w-full overflow-hidden"
         style={{
           background: `linear-gradient(135deg, #${brand.color} 0%, #${swatchSecondary} 100%)`,
         }}
       >
-        {/* Dot-texture overlay — readable depth on solid swatches */}
+        {/* Soft radial glow at top-right — "light hitting paint". */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-25 mix-blend-overlay"
+          className="pointer-events-none absolute inset-0 transition-opacity duration-300 group-hover:opacity-100"
+          style={{
+            background:
+              'radial-gradient(circle at 85% 15%, rgba(255,255,255,0.28) 0%, transparent 55%)',
+            opacity: 0.7,
+          }}
+        />
+        {/* Faint dot texture — same idea as before but lower opacity
+            so it whispers instead of shouting. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-[0.12] mix-blend-overlay"
           style={{
             backgroundImage:
-              'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.6) 1px, transparent 0)',
+              'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.7) 1px, transparent 0)',
             backgroundSize: '14px 14px',
           }}
         />
-        {/* Diagonal swatch highlight */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-25 mix-blend-overlay"
-          style={{
-            background:
-              'linear-gradient(135deg, transparent 0%, transparent 48%, rgba(255,255,255,0.4) 50%, transparent 52%, transparent 100%)',
-          }}
-        />
 
-        {/* Logo plate — pure-white rounded square so brand marks read
-            consistently across colours (a dark logo on a dark brand
-            colour would otherwise vanish). GitHub avatars fill the
-            plate; Simple Icons + letter marks are inset. */}
+        {/* Logo badge — top-left, small. */}
         <div
           className={cn(
-            'relative flex size-[58%] items-center justify-center overflow-hidden rounded-lg',
-            'bg-white shadow-[0_4px_20px_rgba(0,0,0,0.18)]',
-            'transition-transform duration-300 group-hover:scale-[1.04]',
+            'absolute left-3 top-3 flex size-7 items-center justify-center overflow-hidden',
+            'rounded-md transition-transform duration-300 group-hover:scale-105',
+            // 1px outline only for GitHub avatars (they have their own
+            // background); other variants render directly on the swatch.
+            isGithubAvatar &&
+              (isDarkBrand
+                ? 'ring-1 ring-white/15'
+                : 'ring-1 ring-black/10'),
           )}
         >
           {logoUrl && isGithubAvatar ? (
-            // GitHub avatar — full-bleed. The org's avatar is already
-            // cropped/styled by GitHub; we just frame it.
+            // GitHub avatar — small clipped image, no plate. The
+            // org's own background (usually white) shows directly.
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={logoUrl}
@@ -214,24 +229,22 @@ function BrandCard({
               className="size-full object-cover"
             />
           ) : logoUrl ? (
-            // Simple Icons — brand colour glyph inset on the plate so
-            // it doesn't touch the edges.
+            // Simple Icons SVG — rendered in the contrast tone so it
+            // reads directly on the brand swatch.
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={`https://cdn.simpleicons.org/${brand.iconSlug}/${brand.color}`}
+              src={`https://cdn.simpleicons.org/${brand.iconSlug}/${fgHex}`}
               alt=""
-              width={64}
-              height={64}
+              width={28}
+              height={28}
               loading="lazy"
-              className="size-[60%] object-contain"
+              className="size-5 object-contain"
             />
           ) : (
-            // Last-resort monogram: brand initial in the brand colour
-            // on the white plate. Distinct from the gradient swatch
-            // outside, still readable.
+            // Letter mark — serif initial in the contrast tone.
             <span
-              className="font-serif text-3xl font-semibold leading-none"
-              style={{ color: `#${brand.color}` }}
+              className="font-serif text-lg font-semibold leading-none"
+              style={{ color: isDarkBrand ? '#FFFFFF' : '#14120b' }}
               aria-hidden="true"
             >
               {brand.name.charAt(0)}
@@ -241,8 +254,7 @@ function BrandCard({
       </div>
 
       {/* Paint-chip band — darker stripe of the brand colour with the
-          name + a hex chip. White text on dark brand colours, dark
-          text on light brand colours. */}
+          name + a hex chip. Auto-switches text colour by luminance. */}
       <div
         className="flex w-full items-center justify-between gap-2 px-3 py-2"
         style={{
