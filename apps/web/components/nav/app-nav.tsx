@@ -1,6 +1,6 @@
 'use client';
 
-import { Wallet, LineChart, MessageSquare, Newspaper, type LucideIcon } from 'lucide-react';
+import { Wallet, LineChart, MessageSquare, type LucideIcon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { LocalizedLink } from '../i18n/localized-link';
 import { useDictionary } from '../i18n/dictionary-provider';
@@ -56,13 +56,13 @@ export function AppNav() {
     // Memory entry intentionally absent — it's surfaced inside the
     // UserMenu dropdown (a personal-account surface), not as a
     // top-level section. See components/auth/user-menu.tsx.
-    {
-      key: 'blog',
-      href: '/blog',
-      icon: Newspaper,
-      label: dict.nav?.blog ?? 'Blog',
-      active: cleanPath === '/blog' || cleanPath.startsWith('/blog/'),
-    },
+    //
+    // Blog entry intentionally absent for signed-in users — once
+    // someone is in the product, the marketing blog is a context
+    // switch out of the app, not a primary destination. Keep it
+    // discoverable via the logged-out marketing header + the footer,
+    // but don't compete with Portfolios/Indicators/Feedback in the
+    // signed-in top bar.
     {
       key: 'feedback',
       href: '/feedback',
