@@ -261,6 +261,7 @@
     "emptyPortfolioHint": "Füge ein paar Ticker hinzu, um Indikatoren zu sehen.",
     "addHoldings": "Positionen hinzufügen",
     "tabs": {
+      "summary": "Übersicht",
       "macd": "MACD",
       "ma": "Gleitender Durchschnitt",
       "volume": "Volumen",

@@ -261,6 +261,7 @@
     "emptyPortfolioHint": "銘柄をいくつか追加すると指標が表示されます。",
     "addHoldings": "銘柄を追加",
     "tabs": {
+      "summary": "サマリー",
       "macd": "MACD",
       "ma": "移動平均",
       "volume": "出来高",

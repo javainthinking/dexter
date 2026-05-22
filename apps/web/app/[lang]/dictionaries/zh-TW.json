@@ -261,6 +261,7 @@
     "emptyPortfolioHint": "新增幾檔標的即可查看指標。",
     "addHoldings": "新增標的",
     "tabs": {
+      "summary": "匯總",
       "macd": "MACD",
       "ma": "均線",
       "volume": "量價",

@@ -15,13 +15,20 @@ import { MacdCard } from '../../../components/indicators/macd-card';
 import { MaCard } from '../../../components/indicators/ma-card';
 import { VolumeCard } from '../../../components/indicators/volume-card';
 import { FlowCard } from '../../../components/indicators/flow-card';
+import {
+  SummaryView,
+  SummarySkeleton,
+  type SummaryEntry,
+  type SummaryDimension,
+} from '../../../components/indicators/summary-view';
 
 // The Movers (gainers/losers) tab moved to /market — that surface is
 // portfolio-independent and the broader Market section is where future
 // market-wide signals will land too. Indicators stays focused on
 // per-watchlist technicals.
 
-type Tab = 'macd' | 'ma' | 'volume' | 'flow';
+type Tab = 'summary' | 'macd' | 'ma' | 'volume' | 'flow';
+type DimensionTab = Exclude<Tab, 'summary'>;
 
 interface PortfolioSummary {
   id: string;
@@ -56,11 +63,49 @@ interface IndicatorsResponse {
 }
 
 const TABS: ReadonlyArray<{ id: Tab }> = [
+  // Summary leads — it's the cross-dimension synthesis view, which
+  // is what most users want first ("am I lining up across all four
+  // indicators?"). Individual dimension tabs are the drill-down.
+  { id: 'summary' },
   { id: 'macd' },
   { id: 'ma' },
   { id: 'volume' },
   { id: 'flow' },
 ];
+
+/**
+ * Per-dimension bucket-reason vocabulary. Currently duplicated from
+ * the card files (macd-card.tsx etc) — they each define their own
+ * BUCKET_LABELS map. We mirror them here so the summary view's
+ * per-dot hover tooltips show the same dimension-specific phrasing
+ * the headline pill uses on a single-dimension card. A future
+ * cleanup could lift this into `lib/indicators/labels.ts` and have
+ * the cards consume from there; out of scope for the summary feature.
+ */
+const DIMENSION_BUCKET_LABELS = {
+  macd: {
+    bullish: { en: 'Bullish · golden cross', zh: '看多 · 金叉/红柱放大' },
+    bearish: { en: 'Bearish · death cross', zh: '看空 · 死叉/绿柱放大' },
+    neutral: { en: 'Neutral', zh: '待观察' },
+  },
+  ma: {
+    bullish: { en: 'Bullish · MA aligned up', zh: '看多 · 多头排列' },
+    bearish: { en: 'Bearish · MA aligned down', zh: '看空 · 空头排列' },
+    neutral: { en: 'Neutral · MA tangled', zh: '待观察 · 均线缠绕' },
+  },
+  volume: {
+    bullish: { en: 'Bullish · heavy buying', zh: '看多 · 放量上涨' },
+    bearish: { en: 'Bearish · heavy selling', zh: '看空 · 放量下跌' },
+    neutral: { en: 'Neutral · light volume', zh: '待观察 · 缩量整理' },
+  },
+  flow: {
+    bullish: { en: 'Bullish · inflow', zh: '看多 · 主力净流入' },
+    bearish: { en: 'Bearish · outflow', zh: '看空 · 主力净流出' },
+    neutral: { en: 'Neutral · choppy', zh: '震荡 · 方向不明' },
+  },
+} as const;
+
+const DIMENSION_TABS: ReadonlyArray<DimensionTab> = ['macd', 'ma', 'volume', 'flow'];
 
 export function IndicatorsClient({
   initialPortfolios,
@@ -78,8 +123,15 @@ export function IndicatorsClient({
   const [portfolios, setPortfolios] = React.useState<PortfolioSummary[]>(initialPortfolios);
   const [activeId, setActiveId] = React.useState<string | null>(initialPortfolios[0]?.id ?? null);
   const [activeDetail, setActiveDetail] = React.useState<PortfolioWithHoldings | null>(null);
-  const [tab, setTab] = React.useState<Tab>('macd');
+  // Summary is the default landing tab — gives users the cross-
+  // dimension read first; they tab into MACD/MA/etc for drill-down.
+  const [tab, setTab] = React.useState<Tab>('summary');
   const [data, setData] = React.useState<IndicatorsResponse | null>(null);
+  // Summary view has a different response shape (4 dimensions merged
+  // per ticker) so it gets its own state slot rather than overloading
+  // `data` with a discriminated union — keeps each render branch's
+  // type narrowing trivial.
+  const [summaryEntries, setSummaryEntries] = React.useState<SummaryEntry[] | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -165,32 +217,95 @@ export function IndicatorsClient({
     [tickerNames],
   );
 
+  const isZh = dict.indicators?._localeHint === 'zh';
+
   // ─── indicator fetch ──────────────────────────────────────────────
   // Every remaining tab is portfolio-scoped (per-ticker technicals), so
   // we just bail out when the active portfolio has no holdings.
   const fetchData = React.useCallback(async () => {
     if (tickers.length === 0) {
       setData(null);
+      setSummaryEntries(null);
       return;
     }
     setLoading(true);
     setError(null);
     try {
-      const url = `/api/indicators/${tab}?tickers=${encodeURIComponent(tickers.join(','))}&days=140`;
-      const res = await fetch(url, { cache: 'no-store' });
-      if (!res.ok) {
-        const body = (await res.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(body?.error || `HTTP ${res.status}`);
+      if (tab === 'summary') {
+        // Parallel fan-out: one fetch per dimension, four round-trips
+        // in flight at once. Wall-clock latency = max(dim_i), not sum
+        // — the upstream fallback chain dominates, and parallel fetch
+        // makes 4 chains ~the same cost as 1.
+        const responses = await Promise.all(
+          DIMENSION_TABS.map(async (dim) => {
+            const url = `/api/indicators/${dim}?tickers=${encodeURIComponent(tickers.join(','))}&days=140`;
+            const res = await fetch(url, { cache: 'no-store' });
+            if (!res.ok) {
+              const body = (await res.json().catch(() => null)) as { error?: string } | null;
+              throw new Error(body?.error || `HTTP ${res.status}`);
+            }
+            return (await res.json()) as IndicatorsResponse;
+          }),
+        );
+
+        // Merge into one row per ticker. Tickers come from the
+        // portfolio holdings array so the row order matches what the
+        // user expects; each dimension's response may include errors
+        // per ticker which we just shuttle into the cell.
+        const byTickerByDim = new Map<DimensionTab, Map<string, IndicatorTickerEntry>>();
+        DIMENSION_TABS.forEach((dim, i) => {
+          const m = new Map<string, IndicatorTickerEntry>();
+          for (const t of responses[i].tickers) m.set(t.ticker, t);
+          byTickerByDim.set(dim, m);
+        });
+
+        const lang = isZh ? 'zh' : 'en';
+        const entries: SummaryEntry[] = tickers.map((ticker) => {
+          const buildDim = (dim: DimensionTab): SummaryDimension => {
+            const e = byTickerByDim.get(dim)?.get(ticker);
+            if (!e) return { error: 'missing' };
+            if (e.error) return { error: e.error };
+            const labels = DIMENSION_BUCKET_LABELS[dim];
+            return {
+              bucket: e.bucket,
+              bucketTrend: e.bucketTrend,
+              bucketLabels: {
+                bullish: labels.bullish[lang],
+                bearish: labels.bearish[lang],
+                neutral: labels.neutral[lang],
+              },
+            };
+          };
+          return {
+            ticker,
+            displayName: tickerNames.get(ticker) ?? null,
+            macd: buildDim('macd'),
+            ma: buildDim('ma'),
+            volume: buildDim('volume'),
+            flow: buildDim('flow'),
+          };
+        });
+        setSummaryEntries(entries);
+        setData(null);
+      } else {
+        const url = `/api/indicators/${tab}?tickers=${encodeURIComponent(tickers.join(','))}&days=140`;
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) {
+          const body = (await res.json().catch(() => null)) as { error?: string } | null;
+          throw new Error(body?.error || `HTTP ${res.status}`);
+        }
+        const json = (await res.json()) as IndicatorsResponse;
+        setData(json);
+        setSummaryEntries(null);
       }
-      const json = (await res.json()) as IndicatorsResponse;
-      setData(json);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
       setData(null);
+      setSummaryEntries(null);
     } finally {
       setLoading(false);
     }
-  }, [tab, tickers]);
+  }, [tab, tickers, tickerNames, isZh]);
 
   React.useEffect(() => {
     fetchData();
@@ -286,8 +401,17 @@ export function IndicatorsClient({
             <EmptyEmptyPortfolio dict={dict} locale={locale} activeId={activeId} />
           )}
 
-          {tickers.length > 0 && loading && <SkeletonCardGrid count={tickers.length} />}
+          {tickers.length > 0 && loading && tab === 'summary' && (
+            <SummarySkeleton rows={Math.min(tickers.length, 6)} />
+          )}
+          {tickers.length > 0 && loading && tab !== 'summary' && (
+            <SkeletonCardGrid count={tickers.length} />
+          )}
           {error && <ErrorPanel message={error} onRetry={fetchData} dict={dict} />}
+
+          {!loading && tab === 'summary' && summaryEntries && (
+            <SummaryView entries={summaryEntries} />
+          )}
 
           {!loading && data && tab === 'macd' && (
             <CardGrid>

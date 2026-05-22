@@ -130,6 +130,7 @@ export function CardShell({
             bucketLabel={bucketLabel}
             bucketTrend={bucketTrend}
             bucketLabels={bucketLabels}
+            variant="full"
           />
         )}
       </header>
@@ -139,16 +140,33 @@ export function CardShell({
   );
 }
 
-function BucketBadge({
+/**
+ * The status pill rendered in card headers + summary rows. Two
+ * variants:
+ *   - 'full' (default for cards): dot trail + bucket label (e.g.
+ *     "Bullish · golden cross"). Reads as a complete sentence.
+ *   - 'compact': dot trail only, no label, narrower pill — used by
+ *     the summary table where four badges sit on one row and the
+ *     reason text would crowd everything out. Hover tooltips on
+ *     each dot still surface the reason per-day, so meaning is
+ *     never lost; we just don't pre-render it on the badge face.
+ *
+ * Exported so the summary view can reuse the exact same trail +
+ * tooltip behaviour the card headers ship with — one source of
+ * truth for "what a bucket trail looks like" across the app.
+ */
+export function BucketBadge({
   bucket,
   bucketLabel,
   bucketTrend,
   bucketLabels,
+  variant = 'full',
 }: {
   bucket: Bucket;
-  bucketLabel: string;
+  bucketLabel?: string;
   bucketTrend?: BucketSample[];
   bucketLabels?: Record<Bucket, string>;
+  variant?: 'full' | 'compact';
 }) {
   // Trail rendering details:
   // - Past dots use a lighter tone (opacity-50) so the "today" dot,
@@ -159,6 +177,7 @@ function BucketBadge({
   //   close the row — avoids drawing the same date twice.
   const past = bucketTrend && bucketTrend.length > 1 ? bucketTrend.slice(0, -1) : [];
   const today = bucketTrend?.[bucketTrend.length - 1];
+  const showLabel = variant === 'full' && Boolean(bucketLabel);
 
   // One TooltipProvider scoped to this badge keeps the rich tooltips
   // local — we don't want every chip on the page sharing a global
@@ -168,7 +187,11 @@ function BucketBadge({
     <TooltipProvider delayDuration={150}>
       <span
         className={cn(
-          'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold shrink-0',
+          'inline-flex items-center gap-1.5 rounded-full border text-xs font-semibold shrink-0',
+          // Compact variant tightens the padding because there's no
+          // label text — keeps the pill from looking like an empty
+          // shell around the trail.
+          variant === 'full' ? 'px-2.5 py-1' : 'px-1.5 py-0.5',
           BUCKET_COLOR[bucket],
         )}
       >
@@ -199,7 +222,7 @@ function BucketBadge({
             aria-hidden="true"
           />
         )}
-        {bucketLabel}
+        {showLabel && bucketLabel}
       </span>
     </TooltipProvider>
   );

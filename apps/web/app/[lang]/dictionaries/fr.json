@@ -261,6 +261,7 @@
     "emptyPortfolioHint": "Ajoute quelques symboles pour voir les indicateurs.",
     "addHoldings": "Ajouter des positions",
     "tabs": {
+      "summary": "Synthèse",
       "macd": "MACD",
       "ma": "Moyennes mobiles",
       "volume": "Volume",

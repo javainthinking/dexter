@@ -261,6 +261,7 @@
     "emptyPortfolioHint": "Añade algunos tickers para ver indicadores.",
     "addHoldings": "Añadir posiciones",
     "tabs": {
+      "summary": "Resumen",
       "macd": "MACD",
       "ma": "Medias móviles",
       "volume": "Volumen",

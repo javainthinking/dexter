@@ -261,6 +261,7 @@
     "emptyPortfolioHint": "티커 몇 개를 추가하면 지표가 표시됩니다.",
     "addHoldings": "종목 추가",
     "tabs": {
+      "summary": "요약",
       "macd": "MACD",
       "ma": "이동평균선",
       "volume": "거래량",
