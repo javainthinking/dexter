@@ -213,26 +213,43 @@ function BrandCard({
         />
 
         {/* Logo badge — 40px top-left, frosted-glass plate that adapts
-            to whatever brand swatch sits behind it. On dark swatches
-            the plate is a faint white tint + white hairline ring; on
-            light swatches, faint black tint + black hairline ring.
-            This way the plate reads as a neutral "card stock" frame
-            regardless of brand colour, without committing to a single
-            grey value that would clash with one extreme or the other. */}
+            to whatever brand swatch sits behind it.
+
+            Plate treatment is variant-aware:
+            - GitHub avatars fill the plate edge-to-edge, so a faint
+              1-stop ring isn't enough separation when the logo colour
+              matches the swatch (Airbnb red mark on red swatch, NVIDIA
+              green wordmark on green). These get a more opaque plate
+              + 3px inner "matte" padding so a clear neutral band
+              surrounds the avatar, plus a faint drop shadow that lifts
+              the plate off the swatch.
+            - Simple Icons + letter marks render directly on negative
+              space (the glyph IS the foreground, no embedded plate),
+              so they keep the subtle frosted tint — bumping plate
+              opacity here would just fight the glyph's contrast tone. */}
         <div
           className={cn(
             'absolute left-3 top-3 flex size-10 items-center justify-center overflow-hidden',
             'rounded-md transition-transform duration-300 group-hover:scale-105',
-            isDarkBrand
-              ? 'bg-white/12 ring-1 ring-white/25'
-              : 'bg-black/8 ring-1 ring-black/15',
+            !useLetterFallback && isGithubAvatar
+              ? cn(
+                  'p-[3px] shadow-sm shadow-black/30',
+                  isDarkBrand
+                    ? 'bg-white/25 ring-1 ring-white/40'
+                    : 'bg-black/30 ring-1 ring-black/30',
+                )
+              : isDarkBrand
+                ? 'bg-white/12 ring-1 ring-white/25'
+                : 'bg-black/8 ring-1 ring-black/15',
           )}
         >
           {!useLetterFallback && isGithubAvatar ? (
-            // GitHub avatar — fills the plate. Org's own background
-            // (usually white) sits over the frosted-glass tint, which
-            // still shows through any transparent edge pixels and as
-            // the visible hairline ring around the outside.
+            // GitHub avatar — sits inside the plate with a 3px matte
+            // band visible around it (via the parent's padding). The
+            // band is the plate's bg + ring, which now contrasts with
+            // both the swatch and the avatar's own background — so
+            // even Airbnb's red-on-red and NVIDIA's green-on-green
+            // logos read as distinct objects in the corner.
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={logoUrl!}
@@ -241,7 +258,7 @@ function BrandCard({
               height={256}
               loading="lazy"
               onError={() => setImgFailed(true)}
-              className="size-full object-cover"
+              className="size-full rounded-[5px] object-cover"
             />
           ) : !useLetterFallback ? (
             // Simple Icons SVG — inset on the frosted plate, rendered
