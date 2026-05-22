@@ -10,6 +10,7 @@ import {
   formatPct,
   rangeOf,
   type Bucket,
+  type BucketSample,
 } from './card-shell';
 
 interface VolumeRow {
@@ -24,6 +25,7 @@ interface VolumeEntry {
   prices?: Array<{ time: string; close: number | null; volume: number | null }>;
   indicator?: VolumeRow[];
   bucket?: Bucket;
+  bucketTrend?: BucketSample[];
   latest?: Record<string, number | null | string>;
   error?: string;
 }
@@ -75,6 +77,7 @@ export function VolumeCard({ entry, dict }: { entry: VolumeEntry; dict: any }) {
       asOf={asOf}
       bucket={bucket}
       bucketLabel={bucketLabel}
+      bucketTrend={entry.bucketTrend}
       metrics={
         <>
           <MetricCell label={dict.indicators?.metrics?.latest ?? 'Last'} value={formatNum(close, 2)} />

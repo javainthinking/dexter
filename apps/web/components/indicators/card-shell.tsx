@@ -5,6 +5,16 @@ import { cn } from '../../lib/utils';
 
 export type Bucket = 'bullish' | 'bearish' | 'neutral';
 
+/**
+ * One sample point of the bucket trend the card draws as a leading
+ * sparkline inside the status pill. Wire-format matches the API's
+ * `bucketTrend` field (see lib/indicators/math.ts → BucketSample).
+ */
+export interface BucketSample {
+  time: string;
+  bucket: Bucket;
+}
+
 const BUCKET_COLOR: Record<Bucket, string> = {
   bullish: 'bg-rose-500/15 text-rose-500 border-rose-500/30',
   bearish: 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30',
@@ -28,6 +38,7 @@ export function CardShell({
   displayName,
   bucket,
   bucketLabel,
+  bucketTrend,
   asOf,
   children,
   metrics,
@@ -41,6 +52,13 @@ export function CardShell({
   displayName?: string | null;
   bucket?: Bucket;
   bucketLabel?: string;
+  /**
+   * Last N bucket samples (oldest → newest, last entry = today). When
+   * present the pill renders a leading dot trail so users can see how
+   * the signal evolved across the trading week, not just today's call.
+   * Omit to fall back to the single-dot legacy badge.
+   */
+  bucketTrend?: BucketSample[];
   asOf?: string | null;
   children: React.ReactNode;
   metrics?: React.ReactNode;
@@ -58,25 +76,73 @@ export function CardShell({
           )}
         </div>
         {bucket && bucketLabel && (
-          // Bigger, more prominent status pill — the bucket label is the
-          // headline call (bullish / bearish / neutral + the reason) and
-          // needs to read at a glance. Solid status dot + text-xs
-          // semibold; uppercase dropped so Chinese reads as designed and
-          // English still feels like a chip.
-          <span
-            className={cn(
-              'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold shrink-0',
-              BUCKET_COLOR[bucket],
-            )}
-          >
-            <span className={cn('size-2 rounded-full shrink-0', BUCKET_DOT_COLOR[bucket])} aria-hidden="true" />
-            {bucketLabel}
-          </span>
+          // Status pill — leading dot trail (last N days, oldest →
+          // newest) followed by the bucket label. The trail's
+          // rightmost dot is always "today" and matches the
+          // pill's overall colour, while preceding dots show how
+          // the signal evolved — turning the badge into a
+          // mini-timeline without adding a second row.
+          //
+          // Each trail dot is hover-titled with `<date> · <bucket>`
+          // so users can pin down which day flipped. We don't
+          // animate or vary spacing on size — keeps the scan-line
+          // calm when 12 cards sit on screen.
+          <BucketBadge bucket={bucket} bucketLabel={bucketLabel} bucketTrend={bucketTrend} />
         )}
       </header>
       <div className="px-3 pt-3">{children}</div>
       {metrics && <div className="grid grid-cols-4 gap-2 px-3 py-3 text-xs">{metrics}</div>}
     </article>
+  );
+}
+
+function BucketBadge({
+  bucket,
+  bucketLabel,
+  bucketTrend,
+}: {
+  bucket: Bucket;
+  bucketLabel: string;
+  bucketTrend?: BucketSample[];
+}) {
+  // Trail rendering details:
+  // - Past dots use a lighter tone (opacity-50) so the "today" dot,
+  //   which is also the colour the surrounding pill picks up, reads
+  //   as the focal point.
+  // - The last sample in the trend IS today; we drop it from the
+  //   leading dots and let the existing "today" dot (always rendered)
+  //   close the row — avoids drawing the same date twice.
+  const past = bucketTrend && bucketTrend.length > 1 ? bucketTrend.slice(0, -1) : [];
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold shrink-0',
+        BUCKET_COLOR[bucket],
+      )}
+    >
+      {past.length > 0 && (
+        <span className="flex items-center gap-1" aria-hidden="true">
+          {past.map((s, i) => (
+            <span
+              key={`${s.time}-${i}`}
+              title={`${s.time} · ${s.bucket}`}
+              className={cn(
+                'size-1.5 rounded-full opacity-50 transition-opacity hover:opacity-100',
+                BUCKET_DOT_COLOR[s.bucket],
+              )}
+            />
+          ))}
+        </span>
+      )}
+      <span
+        title={bucketTrend?.[bucketTrend.length - 1]
+          ? `${bucketTrend[bucketTrend.length - 1].time} · ${bucket}`
+          : undefined}
+        className={cn('size-2 rounded-full shrink-0', BUCKET_DOT_COLOR[bucket])}
+        aria-hidden="true"
+      />
+      {bucketLabel}
+    </span>
   );
 }
 

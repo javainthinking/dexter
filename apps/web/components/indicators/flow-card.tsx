@@ -10,6 +10,7 @@ import {
   formatPct,
   rangeOf,
   type Bucket,
+  type BucketSample,
 } from './card-shell';
 
 interface FlowRow {
@@ -24,6 +25,7 @@ interface FlowEntry {
   prices?: Array<{ time: string; close: number | null }>;
   indicator?: FlowRow[];
   bucket?: Bucket;
+  bucketTrend?: BucketSample[];
   latest?: Record<string, number | null | string>;
   error?: string;
 }
@@ -76,6 +78,7 @@ export function FlowCard({ entry, dict }: { entry: FlowEntry; dict: any }) {
       asOf={asOf}
       bucket={bucket}
       bucketLabel={bucketLabel}
+      bucketTrend={entry.bucketTrend}
       metrics={
         <>
           <MetricCell label={dict.indicators?.metrics?.latest ?? 'Last'} value={formatNum(close, 2)} />

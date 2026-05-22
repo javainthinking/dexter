@@ -9,7 +9,9 @@ import {
 import {
   bucketFlow,
   bucketMa,
+  bucketMaTrend,
   bucketMacd,
+  bucketTrend,
   bucketVolume,
   computeFlow,
   computeMa,
@@ -17,8 +19,18 @@ import {
   computeVolume,
   latestSummary,
   type Bucket,
+  type BucketSample,
   type PriceBar,
 } from '../../../../lib/indicators/math';
+
+/**
+ * Trailing window for the per-card bucket sparkline. 5 days matches
+ * "trading week" mental model and is the maximum the badge can show
+ * without crowding the bucket-label text. Tuneable here — every
+ * dimension uses the same lookback so the trail is comparable across
+ * tabs at a glance.
+ */
+const BUCKET_TREND_LOOKBACK = 5;
 
 /**
  * GET /api/indicators/[dimension]?tickers=NVDA,TSLA&days=140
@@ -83,6 +95,7 @@ export async function GET(
             prices,
             indicator: indicator.series,
             bucket: indicator.bucket,
+            bucketTrend: indicator.bucketTrend,
             latest: { ...summary, ...indicator.latestExtras },
           };
         } catch (error) {
@@ -117,17 +130,20 @@ export async function GET(
 interface ComputeResult {
   series: unknown[];
   bucket: Bucket;
+  bucketTrend: BucketSample[];
   latestExtras: Record<string, number | null>;
 }
 
 function computeForDimension(dimension: string, prices: PriceBar[]): ComputeResult {
   const closes = prices.map((p) => p.close);
+  const times = prices.map((p) => p.time);
   if (dimension === 'macd') {
     const rows = computeMacd(closes);
     const last = rows[rows.length - 1] ?? { dif: null, dea: null, hist: null };
     return {
       series: rows,
       bucket: bucketMacd(rows),
+      bucketTrend: bucketTrend(rows, bucketMacd, times, BUCKET_TREND_LOOKBACK),
       latestExtras: { dif: last.dif, dea: last.dea, hist: last.hist },
     };
   }
@@ -137,6 +153,7 @@ function computeForDimension(dimension: string, prices: PriceBar[]): ComputeResu
     return {
       series: rows,
       bucket: bucketMa(closes, rows),
+      bucketTrend: bucketMaTrend(closes, rows, times, BUCKET_TREND_LOOKBACK),
       latestExtras: { ma5: last.ma5, ma20: last.ma20, ma60: last.ma60 },
     };
   }
@@ -146,6 +163,7 @@ function computeForDimension(dimension: string, prices: PriceBar[]): ComputeResu
     return {
       series: rows,
       bucket: bucketVolume(rows),
+      bucketTrend: bucketTrend(rows, bucketVolume, times, BUCKET_TREND_LOOKBACK),
       latestExtras: { avgVol20: last.avgVol20, volRatio: last.volRatio },
     };
   }
@@ -155,6 +173,7 @@ function computeForDimension(dimension: string, prices: PriceBar[]): ComputeResu
   return {
     series: rows,
     bucket: bucketFlow(rows),
+    bucketTrend: bucketTrend(rows, bucketFlow, times, BUCKET_TREND_LOOKBACK),
     latestExtras: { dailyFlow: last.daily, cum20: last.cum20, cum5: last.cum5 },
   };
 }

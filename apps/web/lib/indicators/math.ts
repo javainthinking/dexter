@@ -259,6 +259,78 @@ export function bucketFlow(rows: FlowRow[]): Bucket {
 }
 
 // ---------------------------------------------------------------------------
+// Bucket trend — historical signal for the last N trading bars
+// ---------------------------------------------------------------------------
+
+/**
+ * Sample of the bucket signal at a single past trading bar. Returned
+ * by `bucketTrend` so a card can render a multi-day sparkline of
+ * bullish/bearish/neutral states instead of only "today's call".
+ */
+export interface BucketSample {
+  /** Bar date (ISO YYYY-MM-DD) — matches the corresponding price bar. */
+  time: string;
+  bucket: Bucket;
+}
+
+/**
+ * Compute the bucket at each of the last `lookback` bars by
+ * "rewinding" the indicator rows to that bar's index and running the
+ * existing per-dimension bucket function.
+ *
+ * Why this is correct (and why it doesn't need re-fetching backdated
+ * prices): every per-bar row produced by computeMacd / computeMa /
+ * computeVolume / computeFlow uses only data from `prices[0..i]` — so
+ * slicing the rows array at index `i` and feeding the head into the
+ * bucket fn yields the *same* bucket value you'd get if you had
+ * requested OHLCV with end_date = bars[i].time and computed fresh.
+ *
+ * Returned samples are ordered oldest → newest (i.e. last element is
+ * "today"). Length is `min(lookback, validBars)`; if there aren't
+ * enough bars to satisfy the bucket fn's tail requirement at a given
+ * position the bucket fn already returns 'neutral' for that slice, so
+ * the trend degrades gracefully near the start of the series.
+ */
+export function bucketTrend<Row>(
+  rows: Row[],
+  bucketFn: (rs: Row[]) => Bucket,
+  times: string[],
+  lookback: number,
+): BucketSample[] {
+  const n = rows.length;
+  if (n === 0 || lookback <= 0) return [];
+  const start = Math.max(0, n - lookback);
+  const out: BucketSample[] = [];
+  for (let i = start; i < n; i++) {
+    out.push({
+      time: times[i] ?? '',
+      // Slice end-exclusive: bucket as of bar `i` sees rows[0..i].
+      bucket: bucketFn(rows.slice(0, i + 1)),
+    });
+  }
+  return out;
+}
+
+/**
+ * MA needs the closes array alongside the rows. This thin adapter
+ * wraps `bucketMa` so `bucketTrend` can use the generic signature.
+ * (MACD / Volume / Flow's bucket fns already match `(rows) => Bucket`.)
+ */
+export function bucketMaTrend(
+  closes: Array<number | null>,
+  rows: MaRow[],
+  times: string[],
+  lookback: number,
+): BucketSample[] {
+  return bucketTrend(
+    rows,
+    (rs) => bucketMa(closes.slice(0, rs.length), rs),
+    times,
+    lookback,
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Latest-bar helpers
 // ---------------------------------------------------------------------------
 

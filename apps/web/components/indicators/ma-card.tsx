@@ -10,6 +10,7 @@ import {
   formatPct,
   rangeOf,
   type Bucket,
+  type BucketSample,
 } from './card-shell';
 
 interface MaRow {
@@ -24,6 +25,7 @@ interface MaEntry {
   prices?: Array<{ time: string; close: number | null }>;
   indicator?: MaRow[];
   bucket?: Bucket;
+  bucketTrend?: BucketSample[];
   latest?: Record<string, number | null | string>;
   error?: string;
 }
@@ -66,6 +68,7 @@ export function MaCard({ entry, dict }: { entry: MaEntry; dict: any }) {
       asOf={asOf}
       bucket={bucket}
       bucketLabel={bucketLabel}
+      bucketTrend={entry.bucketTrend}
       metrics={
         <>
           <MetricCell label={dict.indicators?.metrics?.latest ?? 'Last'} value={formatNum(close, 2)} />

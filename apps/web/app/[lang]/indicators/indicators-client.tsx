@@ -39,6 +39,12 @@ interface IndicatorTickerEntry {
   prices?: Array<{ time: string; open: number | null; high: number | null; low: number | null; close: number | null; volume: number | null }>;
   indicator?: unknown[];
   bucket?: 'bullish' | 'bearish' | 'neutral';
+  /**
+   * Last N bucket samples (oldest → newest, last = today). Forwarded
+   * verbatim from /api/indicators/:dim and consumed by the card shell
+   * to render the multi-day signal trail in the badge.
+   */
+  bucketTrend?: Array<{ time: string; bucket: 'bullish' | 'bearish' | 'neutral' }>;
   latest?: Record<string, number | null | string>;
   error?: string;
 }

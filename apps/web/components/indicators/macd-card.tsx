@@ -10,6 +10,7 @@ import {
   formatPct,
   rangeOf,
   type Bucket,
+  type BucketSample,
 } from './card-shell';
 
 interface MacdSeriesRow {
@@ -24,6 +25,7 @@ interface MacdEntry {
   prices?: Array<{ time: string; close: number | null }>;
   indicator?: MacdSeriesRow[];
   bucket?: Bucket;
+  bucketTrend?: BucketSample[];
   latest?: Record<string, number | null | string>;
   error?: string;
 }
@@ -72,6 +74,7 @@ export function MacdCard({ entry, dict }: { entry: MacdEntry; dict: any }) {
       asOf={asOf}
       bucket={bucket}
       bucketLabel={bucketLabel}
+      bucketTrend={entry.bucketTrend}
       metrics={
         <>
           <MetricCell
