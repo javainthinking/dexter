@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="s10Bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+    <linearGradient id="s10SlowBar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3a3a3a"/>
+      <stop offset="100%" stop-color="#5a5a5a"/>
+    </linearGradient>
+    <filter id="s10Glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#s10Bg)"/>
+
+  <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">TUTORIAL · FILINGS</text>
+
+  <!-- Title -->
+  <text x="60" y="210" font-family="Georgia, 'Times New Roman', serif" font-size="78" font-weight="600" fill="#F4F4F5" letter-spacing="-0.5">Summarise a 10-K</text>
+  <text x="60" y="282" font-family="Georgia, 'Times New Roman', serif" font-size="78" font-weight="600" fill="#4FCBA8" letter-spacing="-0.5">in 60 seconds.</text>
+
+  <text x="60" y="332" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">MD&amp;A · Financials · Risk Factor diff · Footnotes</text>
+  <text x="60" y="358" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">— with every claim linked to the source page.</text>
+
+  <!-- 4-step card -->
+  <g transform="translate(60,430)">
+    <rect x="0" y="0" width="540" height="140" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">THE 4 STEPS</text>
+    <g font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="16" fill="#F4F4F5">
+      <text x="22" y="62">1. Open a chat</text>
+      <text x="22" y="86">2. Paste "summarise the latest 10-K"</text>
+      <text x="22" y="110">3. Read the 90-sec walk-through</text>
+      <text x="22" y="134">4. Ask follow-ups — same context</text>
+    </g>
+  </g>
+
+  <!-- Right: time comparison -->
+  <g transform="translate(680,150)">
+    <text x="0" y="0" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#F4F4F5" opacity="0.55" letter-spacing="2">TIME TO COMPLETE</text>
+
+    <!-- By hand -->
+    <g transform="translate(0,30)">
+      <text x="0" y="20" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#F4F4F5" opacity="0.65">By hand</text>
+      <text x="490" y="20" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="17" font-weight="700" fill="#F4F4F5" opacity="0.65" text-anchor="end">~30 min</text>
+      <rect x="0" y="34" width="490" height="38" rx="6" fill="url(#s10SlowBar)" opacity="0.85"/>
+      <text x="20" y="58" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.75">find filing · read 4 items · diff vs prior year · chase footnotes</text>
+    </g>
+
+    <!-- PickSkill -->
+    <g transform="translate(0,110)">
+      <text x="0" y="20" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#F4F4F5">PickSkill</text>
+      <text x="490" y="20" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="17" font-weight="700" fill="#4FCBA8" text-anchor="end">~60 sec</text>
+      <g filter="url(#s10Glow)">
+        <rect x="0" y="34" width="16" height="38" rx="6" fill="#4FCBA8"/>
+      </g>
+      <text x="26" y="58" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.75">one prompt → sourced walk-through</text>
+    </g>
+
+    <!-- Multiplier -->
+    <g transform="translate(0,210)">
+      <line x1="0" y1="0" x2="490" y2="0" stroke="#F4F4F5" stroke-opacity="0.18"/>
+      <text x="0" y="36" font-family="Georgia, 'Times New Roman', serif" font-size="32" font-weight="600" fill="#F4F4F5">~30×</text>
+      <text x="120" y="28" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#F4F4F5" opacity="0.65">faster —</text>
+      <text x="120" y="48" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#F4F4F5" opacity="0.65">same 4 sections, sourced.</text>
+    </g>
+  </g>
+</svg>
