@@ -25,8 +25,13 @@ export interface DesignStyleBrand {
 const RAW_BASE =
   'https://raw.githubusercontent.com/VoltAgent/awesome-design-md/main/design-md';
 
+/**
+ * Per-brand path on the raw CDN. The file is uppercase `DESIGN.md`
+ * in every directory of the repo — GitHub raw URLs are case-sensitive,
+ * so a lowercase path returns 404. Verified across all 71 brands.
+ */
 export function getDesignMdUrl(slug: string): string {
-  return `${RAW_BASE}/${slug}/design.md`;
+  return `${RAW_BASE}/${slug}/DESIGN.md`;
 }
 
 export const designStyleBrands: DesignStyleBrand[] = [
