@@ -1,9 +1,26 @@
-import type { Viewport } from 'next';
+import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { Inter, JetBrains_Mono, Source_Serif_4 } from 'next/font/google';
 import Script from 'next/script';
 import { Providers } from './providers';
 import './globals.css';
+
+/**
+ * metadataBase is the URL Next.js uses to resolve every relative URL
+ * in metadata — canonical, hreflang languages, OG image paths,
+ * Twitter image paths, etc. Without it, those render as relative
+ * paths (e.g. `/blog/what-is-fcf`), which SEO auditors and Google's
+ * stricter validators flag as invalid: canonicals and hreflang must
+ * be absolute URLs.
+ *
+ * Hardcoded to the production origin on purpose. Preview deploys
+ * intentionally advertise the production canonical so they never
+ * compete for indexing — Vercel preview URLs would otherwise leak
+ * into search results.
+ */
+export const metadata: Metadata = {
+  metadataBase: new URL('https://pickskill.ai'),
+};
 
 // Google Analytics 4 measurement ID. Env-overrideable so a separate
 // preview / staging deploy can point at its own GA property without a
