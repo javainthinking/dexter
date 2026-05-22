@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Sidebar, type SessionSummary } from '../../../components/chat/sidebar';
-import { Composer } from '../../../components/chat/composer';
+import { Composer, type ComposerHandle } from '../../../components/chat/composer';
 import { EmptyState } from '../../../components/chat/empty-state';
 import {
   AssistantMessage,
@@ -54,6 +54,21 @@ function ChatPage() {
   const [pending, setPending] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
   const threadRef = useRef<HTMLDivElement>(null);
+  const composerRef = useRef<ComposerHandle>(null);
+
+  // Load a sample-question prompt into the composer (textarea value +
+  // focus + cursor-at-end) without sending. Used by both:
+  //   - the in-chat empty-state when a user clicks a sample card
+  //   - the deep-link consume effect when ?prompt= arrives from the homepage
+  // Falls back to setInput when the composer hasn't mounted yet (e.g.
+  // first-mount deep-link consume runs before the empty-state renders).
+  const loadIntoComposer = useCallback((text: string) => {
+    if (composerRef.current) {
+      composerRef.current.loadPrompt(text);
+    } else {
+      setInput(text);
+    }
+  }, []);
 
   const refreshSessions = useCallback(async () => {
     try {
@@ -246,8 +261,8 @@ function ChatPage() {
     if (typeof window !== 'undefined') {
       window.history.replaceState(null, '', window.location.pathname);
     }
-    setInput(initialPromptRef.current);
-  }, [hasDeepLinkPrompt]);
+    loadIntoComposer(initialPromptRef.current);
+  }, [hasDeepLinkPrompt, loadIntoComposer]);
 
   const stop = useCallback(() => {
     abortRef.current?.abort();
@@ -387,7 +402,7 @@ function ChatPage() {
           )}
         >
           {empty ? (
-            <EmptyState onPick={(p) => void send(p)} />
+            <EmptyState onPick={loadIntoComposer} />
           ) : (
             <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
               <div className="space-y-7">
@@ -406,6 +421,7 @@ function ChatPage() {
         <div className="shrink-0 border-t border-border bg-background px-3 pb-4 pt-3 sm:px-6">
           <div className="mx-auto w-full max-w-3xl">
             <Composer
+              ref={composerRef}
               value={input}
               onChange={setInput}
               onSubmit={() => void send(input)}

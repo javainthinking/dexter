@@ -18,16 +18,29 @@ interface ComposerProps {
   autoFocus?: boolean;
 }
 
-export function Composer({
-  value,
-  onChange,
-  onSubmit,
-  onStop,
-  pending,
-  disabled,
-  placeholder,
-  autoFocus,
-}: ComposerProps) {
+/**
+ * Imperative handle exposed to parents. Lets the chat page populate
+ * the composer from outside (e.g. when the user clicks a sample
+ * question in the empty-state) without re-implementing the value +
+ * focus + cursor-at-end pattern at every call site.
+ */
+export interface ComposerHandle {
+  loadPrompt: (text: string) => void;
+}
+
+export const Composer = React.forwardRef<ComposerHandle, ComposerProps>(function Composer(
+  {
+    value,
+    onChange,
+    onSubmit,
+    onStop,
+    pending,
+    disabled,
+    placeholder,
+    autoFocus,
+  },
+  ref,
+) {
   const dict = useDictionary();
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
@@ -69,6 +82,8 @@ export function Composer({
     },
     [onChange, pending, disabled],
   );
+
+  React.useImperativeHandle(ref, () => ({ loadPrompt }), [loadPrompt]);
 
   const quickActions: Array<{
     key: 'ppt' | 'word' | 'excel';
@@ -180,4 +195,4 @@ export function Composer({
       </div>
     </form>
   );
-}
+});
