@@ -30,9 +30,14 @@ interface FlowEntry {
   error?: string;
 }
 
+// Flow is a *synthetic* direction proxy — sign(close − prev_close) ×
+// volume × close. It does NOT read institutional / Level-2 order
+// flow. Earlier copy used 主力净流入 / 主力净流出 which implied real
+// "main force capital" data; relabeled to make clear we're showing
+// a quantitative estimate, not the China-market 主力资金 feed.
 const BUCKET_LABELS = {
-  bullish: { en: 'Bullish · inflow', zh: '看多 · 主力净流入' },
-  bearish: { en: 'Bearish · outflow', zh: '看空 · 主力净流出' },
+  bullish: { en: 'Bullish · est. inflow', zh: '看多 · 资金流入(估算)' },
+  bearish: { en: 'Bearish · est. outflow', zh: '看空 · 资金流出(估算)' },
   neutral: { en: 'Neutral · choppy', zh: '震荡 · 方向不明' },
 } as const;
 

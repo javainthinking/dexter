@@ -237,6 +237,7 @@
     "_localeHint": "fr",
     "title": "Indicateurs",
     "subtitle": "Signaux techniques sur votre liste de suivi.",
+    "flowMethodology": "Le \"Flux de capitaux\" est une estimation : signe(clôture − clôture précédente) × volume × clôture. Pas un vrai flux d'ordres institutionnels.",
     "tickers": "Symboles",
     "tickerPlaceholder": "Ajouter un symbole (ex. NVDA, 0700.HK)",
     "addTicker": "Ajouter",

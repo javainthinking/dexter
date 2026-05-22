@@ -237,6 +237,7 @@
     "_localeHint": "ko",
     "title": "지표",
     "subtitle": "관심 종목의 기술적 시그널.",
+    "flowMethodology": "\"자금 흐름\"은 \"종가 방향 × 거래대금\"으로 추정한 대리 지표이며, 실제 기관 / 레벨 2 주문 흐름이 아닙니다.",
     "tickers": "티커",
     "tickerPlaceholder": "티커 추가 (예: NVDA, 0700.HK)",
     "addTicker": "추가",

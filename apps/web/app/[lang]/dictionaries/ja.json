@@ -237,6 +237,7 @@
     "_localeHint": "ja",
     "title": "テクニカル指標",
     "subtitle": "ウォッチリスト全体のテクニカルシグナル。",
+    "flowMethodology": "「資金フロー」は「終値方向 × 出来高 × 終値」による代理推定値であり、機関投資家のリアルな注文フローではありません。",
     "tickers": "ティッカー",
     "tickerPlaceholder": "ティッカーを追加(例: NVDA、0700.HK)",
     "addTicker": "追加",

@@ -237,6 +237,7 @@
     "_localeHint": "zh",
     "title": "指标",
     "subtitle": "持仓的技术面信号。",
+    "flowMethodology": "\"资金流向\"是基于「收盘方向 × 当日成交额」的代理估算指标,并非真实的主力资金或 Level-2 订单流数据。",
     "tickers": "标的",
     "tickerPlaceholder": "添加标的(如 NVDA、0700.HK)",
     "addTicker": "添加",

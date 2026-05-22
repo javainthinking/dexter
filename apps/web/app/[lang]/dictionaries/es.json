@@ -237,6 +237,7 @@
     "_localeHint": "es",
     "title": "Indicadores",
     "subtitle": "Señales técnicas de tu watchlist.",
+    "flowMethodology": "El \"Flujo de Capital\" es una estimación: signo(cierre − cierre previo) × volumen × cierre. No es flujo de órdenes institucional real.",
     "tickers": "Tickers",
     "tickerPlaceholder": "Añadir ticker (ej. NVDA, 0700.HK)",
     "addTicker": "Añadir",

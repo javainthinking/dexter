@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { RefreshCw, AlertTriangle, Wallet, ChevronDown } from 'lucide-react';
+import { RefreshCw, AlertTriangle, Wallet, ChevronDown, Info } from 'lucide-react';
 import { Sidebar, type SessionSummary } from '../../../components/chat/sidebar';
 import { Button } from '../../../components/ui/button';
 import { TopBar } from '../../../components/nav/top-bar';
@@ -100,8 +100,12 @@ const DIMENSION_BUCKET_LABELS = {
     neutral: { en: 'Neutral · light volume', zh: '待观察 · 缩量整理' },
   },
   flow: {
-    bullish: { en: 'Bullish · inflow', zh: '看多 · 主力净流入' },
-    bearish: { en: 'Bearish · outflow', zh: '看空 · 主力净流出' },
+    // Mirrors the labels in flow-card.tsx — kept in sync so Summary
+    // trail tooltips and the dimension-card pill use identical
+    // phrasing. The "(估算)" suffix flags that this is a synthetic
+    // direction proxy, not the China-market 主力资金 Level-2 feed.
+    bullish: { en: 'Bullish · est. inflow', zh: '看多 · 资金流入(估算)' },
+    bearish: { en: 'Bearish · est. outflow', zh: '看空 · 资金流出(估算)' },
     neutral: { en: 'Neutral · choppy', zh: '震荡 · 方向不明' },
   },
 } as const;
@@ -487,11 +491,14 @@ export function IndicatorsClient({
             </CardGrid>
           )}
           {!loading && data && tab === 'flow' && (
-            <CardGrid>
-              {enrichedEntries(data.tickers).map((e) => (
-                <FlowCard key={e.ticker} entry={e as never} dict={dict} />
-              ))}
-            </CardGrid>
+            <div className="space-y-4">
+              <FlowMethodologyNote dict={dict} />
+              <CardGrid>
+                {enrichedEntries(data.tickers).map((e) => (
+                  <FlowCard key={e.ticker} entry={e as never} dict={dict} />
+                ))}
+              </CardGrid>
+            </div>
           )}
         </div>
       </main>
@@ -578,6 +585,29 @@ function EmptyNoPortfolios({ dict, locale }: { dict: any; locale: string }) {
         <Wallet className="size-3.5" />
         {dict.indicators?.goToPortfolios ?? 'Go to portfolios'}
       </LocalizedLink>
+    </div>
+  );
+}
+
+/**
+ * One-line disclosure that sits above the Flow tab card grid. The
+ * "Capital flow" indicator is a synthetic direction proxy (signed
+ * dollar volume), not a read of real institutional / Level-2 order
+ * flow — the previous Chinese label "主力净流入" wrongly implied the
+ * latter. This note tells the reader exactly what they're looking
+ * at so the bucket call lands in the right mental model.
+ *
+ * Not dismissible like the Summary hint — the Flow methodology is
+ * permanently part of how the column reads, not a one-time intro.
+ */
+function FlowMethodologyNote({ dict }: { dict: any }) {
+  const text =
+    dict.indicators?.flowMethodology ??
+    'Capital flow is a proxy: sign(close − prev close) × volume × close. Direction-and-magnitude estimate, NOT real institutional order flow.';
+  return (
+    <div className="flex items-start gap-2 rounded-md border border-border bg-muted/30 px-3 py-2">
+      <Info className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+      <p className="text-xs leading-relaxed text-muted-foreground">{text}</p>
     </div>
   );
 }

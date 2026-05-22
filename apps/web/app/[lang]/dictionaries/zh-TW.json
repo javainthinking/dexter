@@ -237,6 +237,7 @@
     "_localeHint": "zh",
     "title": "指標",
     "subtitle": "持倉的技術面訊號。",
+    "flowMethodology": "「資金流向」是基於「收盤方向 × 當日成交額」的代理估算指標,並非真實的主力資金或 Level-2 訂單流資料。",
     "tickers": "標的",
     "tickerPlaceholder": "新增標的(如 NVDA、0700.HK)",
     "addTicker": "新增",

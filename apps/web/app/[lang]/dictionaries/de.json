@@ -237,6 +237,7 @@
     "_localeHint": "de",
     "title": "Indikatoren",
     "subtitle": "Technische Signale deiner Watchlist.",
+    "flowMethodology": "Der \"Kapitalfluss\" ist eine Schätzung: vorzeichen(Schluss − Vortagesschluss) × Volumen × Schluss. Kein echter institutioneller Orderfluss.",
     "tickers": "Ticker",
     "tickerPlaceholder": "Ticker hinzufügen (z. B. NVDA, 0700.HK)",
     "addTicker": "Hinzufügen",

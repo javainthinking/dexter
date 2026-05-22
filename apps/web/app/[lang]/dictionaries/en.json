@@ -237,6 +237,7 @@
     "_localeHint": "en",
     "title": "Indicators",
     "subtitle": "Technical signals across your watchlist.",
+    "flowMethodology": "Capital Flow is a proxy: sign(close − prev close) × volume × close. A direction-and-magnitude estimate, NOT real institutional / Level-2 order flow.",
     "tickers": "Tickers",
     "tickerPlaceholder": "Add ticker (e.g. NVDA, 0700.HK)",
     "addTicker": "Add",
