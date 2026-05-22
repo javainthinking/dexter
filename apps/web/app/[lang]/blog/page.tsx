@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import {
   isLocale,
@@ -10,9 +11,9 @@ import {
 } from '../../../lib/i18n/locales';
 import { getLocalizedPath } from '../../../lib/i18n/paths';
 import { generateAlternatesMetadata } from '../../../lib/i18n/seo';
-import { getAllPosts } from '../../../lib/blog';
+import { getAllPosts, type PostMeta } from '../../../lib/blog';
 import { LocalizedLink } from '../../../components/i18n/localized-link';
-import { getDictionary } from '../dictionaries';
+import { getDictionary, type Dictionary } from '../dictionaries';
 
 const SITE_URL = 'https://pickskill.ai';
 const SITE_NAME = 'PickSkill';
@@ -98,6 +99,14 @@ export default async function BlogIndexPage({
     })),
   };
 
+  // Index layout: the newest post gets a "featured" card with a wide
+  // image on top + larger title (vertical layout). Every subsequent
+  // post renders as a horizontal card — thumbnail on the left,
+  // content on the right. On mobile, all cards stack vertically.
+  // This gives the most-recent post the visual weight it deserves
+  // without making the rest of the index feel like a list of footnotes.
+  const [featured, ...rest] = posts;
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:py-16">
       <script
@@ -121,44 +130,141 @@ export default async function BlogIndexPage({
           {dict.blog.index.empty}
         </p>
       ) : (
-        <ul className="space-y-8">
-          {posts.map((p) => (
-            <li key={p.slug}>
-              <LocalizedLink
-                href={`/blog/${p.slug}`}
-                // lang attribute is per-card, not per-page: the post may
-                // be served in English fallback even when the rest of
-                // the page is, say, Japanese. Telling the browser /
-                // screen readers / search engines the actual language
-                // of this card's title + description is more honest
-                // than letting them inherit the page locale.
-                lang={p.inLanguage}
-                className="group block rounded-lg border border-border bg-card p-5 transition-colors hover:border-border-strong hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-6"
-              >
-                <div className="flex items-baseline justify-between gap-3">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
-                    {dict.blog.pillars?.[p.pillar] ?? p.pillar}
-                  </span>
-                  <span className="font-mono text-[10px] text-subtle">
-                    {formatDate(p.publishedAt, lang)} ·{' '}
-                    {dict.blog.index.minRead.replace('{count}', String(p.readingMinutes))}
-                  </span>
-                </div>
-                <h2 className="mt-3 font-serif text-xl font-semibold leading-snug text-foreground sm:text-2xl">
-                  {p.title}
-                </h2>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {p.description}
-                </p>
-                <span className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-[color:var(--accent)] transition-transform group-hover:translate-x-0.5">
-                  {dict.blog.index.readPost} <ArrowRight className="size-3" />
-                </span>
-              </LocalizedLink>
-            </li>
-          ))}
-        </ul>
+        <div className="space-y-8">
+          {featured && (
+            <FeaturedCard post={featured} lang={lang} dict={dict} />
+          )}
+          {rest.length > 0 && (
+            <ul className="space-y-6">
+              {rest.map((p) => (
+                <li key={p.slug}>
+                  <CompactCard post={p} lang={lang} dict={dict} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       )}
     </div>
+  );
+}
+
+/**
+ * Featured (newest) post card — full-width image on top, big title
+ * and description below. `priority` on the image so it counts as the
+ * LCP element for /blog and is not lazy-loaded.
+ */
+function FeaturedCard({
+  post,
+  lang,
+  dict,
+}: {
+  post: PostMeta;
+  lang: string;
+  dict: Dictionary;
+}) {
+  return (
+    <LocalizedLink
+      href={`/blog/${post.slug}`}
+      // lang attribute is per-card, not per-page: the post may be
+      // served in English fallback even when the rest of the page is,
+      // say, Japanese. Telling the browser / screen readers / search
+      // engines the actual language of this card's title + description
+      // is more honest than letting them inherit the page locale.
+      lang={post.inLanguage}
+      className="group block overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-border-strong hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      {post.heroImage && (
+        <div className="relative aspect-[1200/630] w-full overflow-hidden bg-muted">
+          <Image
+            src={post.heroImage}
+            alt={post.heroAlt ?? post.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 720px"
+            priority
+            unoptimized={post.heroImage.endsWith('.svg')}
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+          />
+        </div>
+      )}
+      <div className="flex flex-col gap-3 p-5 sm:p-7">
+        <div className="flex items-baseline justify-between gap-3">
+          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
+            {dict.blog.pillars?.[post.pillar] ?? post.pillar}
+          </span>
+          <span className="font-mono text-[10px] text-subtle">
+            {formatDate(post.publishedAt, lang)} ·{' '}
+            {dict.blog.index.minRead.replace('{count}', String(post.readingMinutes))}
+          </span>
+        </div>
+        <h2 className="font-serif text-2xl font-semibold leading-snug text-foreground sm:text-3xl">
+          {post.title}
+        </h2>
+        <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+          {post.description}
+        </p>
+        <span className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-[color:var(--accent)] transition-transform group-hover:translate-x-0.5">
+          {dict.blog.index.readPost} <ArrowRight className="size-3" />
+        </span>
+      </div>
+    </LocalizedLink>
+  );
+}
+
+/**
+ * Compact card for follow-up posts — thumbnail on the left,
+ * content on the right at >=sm breakpoint; stacks vertically on
+ * mobile. Image lazy-loaded (browser default for non-priority
+ * next/image).
+ */
+function CompactCard({
+  post,
+  lang,
+  dict,
+}: {
+  post: PostMeta;
+  lang: string;
+  dict: Dictionary;
+}) {
+  return (
+    <LocalizedLink
+      href={`/blog/${post.slug}`}
+      lang={post.inLanguage}
+      className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-border-strong hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:flex-row"
+    >
+      {post.heroImage && (
+        <div className="relative aspect-[1200/630] w-full shrink-0 overflow-hidden bg-muted sm:aspect-auto sm:w-[260px] sm:self-stretch">
+          <Image
+            src={post.heroImage}
+            alt={post.heroAlt ?? post.title}
+            fill
+            sizes="(max-width: 640px) 100vw, 260px"
+            unoptimized={post.heroImage.endsWith('.svg')}
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+          />
+        </div>
+      )}
+      <div className="flex min-w-0 flex-1 flex-col gap-2.5 p-5 sm:p-6">
+        <div className="flex items-baseline justify-between gap-3">
+          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
+            {dict.blog.pillars?.[post.pillar] ?? post.pillar}
+          </span>
+          <span className="font-mono text-[10px] text-subtle">
+            {formatDate(post.publishedAt, lang)} ·{' '}
+            {dict.blog.index.minRead.replace('{count}', String(post.readingMinutes))}
+          </span>
+        </div>
+        <h2 className="font-serif text-lg font-semibold leading-snug text-foreground sm:text-xl">
+          {post.title}
+        </h2>
+        <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+          {post.description}
+        </p>
+        <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-[color:var(--accent)] transition-transform group-hover:translate-x-0.5">
+          {dict.blog.index.readPost} <ArrowRight className="size-3" />
+        </span>
+      </div>
+    </LocalizedLink>
   );
 }
 
