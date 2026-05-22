@@ -270,6 +270,13 @@
     "metrics": {
       "latest": "종가",
       "change": "등락%"
+    },
+    "summaryColumns": {
+      "ticker": "종목",
+      "macd": "MACD",
+      "ma": "MA",
+      "volume": "거래량",
+      "flow": "자금"
     }
   },
   "market": {

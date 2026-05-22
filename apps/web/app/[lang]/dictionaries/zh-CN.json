@@ -270,6 +270,13 @@
     "metrics": {
       "latest": "最新价",
       "change": "涨跌%"
+    },
+    "summaryColumns": {
+      "ticker": "代码",
+      "macd": "MACD",
+      "ma": "均线",
+      "volume": "量能",
+      "flow": "资金流"
     }
   },
   "market": {

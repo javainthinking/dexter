@@ -270,6 +270,13 @@
     "metrics": {
       "latest": "Último",
       "change": "Var %"
+    },
+    "summaryColumns": {
+      "ticker": "Símbolo",
+      "macd": "MACD",
+      "ma": "MA",
+      "volume": "Vol",
+      "flow": "Flujo"
     }
   },
   "market": {

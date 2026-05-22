@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { BucketBadge, type Bucket, type BucketSample } from './card-shell';
+import { useDictionary } from '../i18n/dictionary-provider';
 
 /**
  * Per-dimension reading for one ticker. Shape mirrors what the
@@ -33,17 +34,27 @@ export interface SummaryEntry {
 }
 
 /**
- * Compact dimension keys + short labels used in the column header
- * row and on each cell. MACD / MA / Vol / Flow are universal in
- * financial UIs — no i18n needed; localising them would actually
- * hurt scannability for cross-locale traders.
+ * Dimension column keys for the summary table. The user-facing
+ * labels are localised at render time via the `indicators.summaryColumns`
+ * dict namespace — MACD stays as "MACD" everywhere (universal acronym),
+ * but MA / Vol / Flow have local equivalents that matter for native
+ * readers ("均线 / 量能 / 资金流" in zh-CN, "出来高" in ja, etc.).
  */
-const DIMENSIONS = [
-  { key: 'macd' as const, label: 'MACD' },
-  { key: 'ma' as const, label: 'MA' },
-  { key: 'volume' as const, label: 'Vol' },
-  { key: 'flow' as const, label: 'Flow' },
-];
+const DIMENSION_KEYS = ['macd', 'ma', 'volume', 'flow'] as const;
+type DimensionKey = (typeof DIMENSION_KEYS)[number];
+
+/**
+ * Fallback labels — used when the dict lookup misses (e.g. older
+ * dictionary version deployed). English short forms because the
+ * scenarios where the fallback fires are usually English-locale
+ * dev/staging contexts.
+ */
+const DIMENSION_FALLBACK_LABEL: Record<DimensionKey, string> = {
+  macd: 'MACD',
+  ma: 'MA',
+  volume: 'Vol',
+  flow: 'Flow',
+};
 
 /**
  * Cross-dimension summary table. One row per ticker, four compact
@@ -60,6 +71,12 @@ const DIMENSIONS = [
  * trails horizontally on mobile.
  */
 export function SummaryView({ entries }: { entries: SummaryEntry[] }) {
+  const dict = useDictionary();
+  const columnLabels = (dict.indicators?.summaryColumns ?? {}) as Partial<
+    Record<DimensionKey | 'ticker', string>
+  >;
+  const labelFor = (k: DimensionKey) => columnLabels[k] ?? DIMENSION_FALLBACK_LABEL[k];
+
   if (entries.length === 0) {
     return null;
   }
@@ -73,15 +90,15 @@ export function SummaryView({ entries }: { entries: SummaryEntry[] }) {
                 scope="col"
                 className="sticky left-0 z-10 bg-muted/40 px-3 py-2 text-left text-[10px] font-mono uppercase tracking-[0.16em] text-muted-foreground"
               >
-                Ticker
+                {columnLabels.ticker ?? 'Ticker'}
               </th>
-              {DIMENSIONS.map((d) => (
+              {DIMENSION_KEYS.map((k) => (
                 <th
-                  key={d.key}
+                  key={k}
                   scope="col"
                   className="px-3 py-2 text-left text-[10px] font-mono uppercase tracking-[0.16em] text-muted-foreground"
                 >
-                  {d.label}
+                  {labelFor(k)}
                 </th>
               ))}
             </tr>
@@ -116,10 +133,10 @@ function SummaryRow({ entry, striped }: { entry: SummaryEntry; striped: boolean 
           </div>
         )}
       </th>
-      {DIMENSIONS.map((d) => {
-        const dim = entry[d.key];
+      {DIMENSION_KEYS.map((k) => {
+        const dim = entry[k];
         return (
-          <td key={d.key} className="px-3 py-2 align-middle">
+          <td key={k} className="px-3 py-2 align-middle">
             <DimensionCell dim={dim} />
           </td>
         );
@@ -168,8 +185,8 @@ export function SummarySkeleton({ rows = 5 }: { rows?: number }) {
               <div className="h-3 w-16 rounded bg-muted" />
               <div className="h-2 w-20 rounded bg-muted" />
             </div>
-            {DIMENSIONS.map((d) => (
-              <div key={d.key} className="h-5 w-20 rounded-full bg-muted" />
+            {DIMENSION_KEYS.map((k) => (
+              <div key={k} className="h-5 w-20 rounded-full bg-muted" />
             ))}
           </div>
         ))}

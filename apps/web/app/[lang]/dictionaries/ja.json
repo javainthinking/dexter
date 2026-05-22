@@ -270,6 +270,13 @@
     "metrics": {
       "latest": "終値",
       "change": "変動%"
+    },
+    "summaryColumns": {
+      "ticker": "銘柄",
+      "macd": "MACD",
+      "ma": "MA",
+      "volume": "出来高",
+      "flow": "資金"
     }
   },
   "market": {
