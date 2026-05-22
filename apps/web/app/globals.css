@@ -46,6 +46,15 @@
   --warning: oklch(0.65 0.16 75);
   --info: oklch(0.55 0.13 235);
 
+  /* Up / down semantic — used by every chart, badge, and metric cell
+     that needs to render "price went up" vs "price went down". Whether
+     up=red (CN convention) or up=green (Western convention) is a user
+     setting; the override below at [data-market-color="us"] swaps which
+     hue gets each role. By delegating to --positive / --negative, dark
+     mode picks up automatically without re-declaring per variant. */
+  --up: var(--negative);
+  --down: var(--positive);
+
   /* Geometry */
   --radius: 0.625rem;
   --shadow-elev1: 0 1px 2px 0 oklch(0 0 0 / 0.04), 0 1px 3px 0 oklch(0 0 0 / 0.06);
@@ -95,8 +104,33 @@
   --warning: oklch(0.82 0.13 75);
   --info: oklch(0.72 0.11 235);
 
+  /* Up/down inherit from positive/negative — no per-mode re-declare. */
+  --up: var(--negative);
+  --down: var(--positive);
+
   --shadow-elev1: 0 1px 2px 0 oklch(0 0 0 / 0.4), 0 1px 3px 0 oklch(0 0 0 / 0.3);
   --shadow-elev2: 0 4px 6px -1px oklch(0 0 0 / 0.5), 0 2px 4px -2px oklch(0 0 0 / 0.4);
+}
+
+/* ─────────────────────────────────────────────────────────────────── */
+/*  Market colour convention                                            */
+/*                                                                      */
+/*  Default ( :root above ) is the China-market convention:             */
+/*    红涨绿跌 — up = red, down = green.                                */
+/*                                                                      */
+/*  When the user picks the Western convention from the user menu, the  */
+/*  MarketColorProvider sets data-market-color="us" on <html> and the   */
+/*  rule below flips which hue plays each role. Everything downstream   */
+/*  ( bg-up, text-down, bucket badges, chart strokes, % change cells )  */
+/*  follows automatically — no per-site branching needed.               */
+/*                                                                      */
+/*  This block lives outside `:root` and `.dark` because the swap is    */
+/*  orthogonal to colour mode: dark + US works, light + US works.       */
+/* ─────────────────────────────────────────────────────────────────── */
+
+[data-market-color='us'] {
+  --up: var(--positive);
+  --down: var(--negative);
 }
 
 @theme inline {
@@ -131,6 +165,12 @@
   --color-negative: var(--negative);
   --color-warning: var(--warning);
   --color-info: var(--info);
+
+  /* User-toggleable up/down — exposes `bg-up`, `text-down`, `border-up`,
+     `bg-up/15`, etc. to Tailwind. Indirected through --up/--down so a
+     single attribute on <html> swaps the meaning everywhere. */
+  --color-up: var(--up);
+  --color-down: var(--down);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

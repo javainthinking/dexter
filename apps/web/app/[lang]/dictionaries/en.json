@@ -332,6 +332,13 @@
       "generic": "Something went wrong. Please try again."
     }
   },
+  "userMenu": {
+    "marketColor": {
+      "title": "Color convention",
+      "redUp": "Red up · CN",
+      "redDown": "Red down · US/EU"
+    }
+  },
   "blog": {
     "meta": {
       "indexTitle": "Blog — PickSkill",

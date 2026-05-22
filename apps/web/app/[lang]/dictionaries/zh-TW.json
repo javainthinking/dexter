@@ -332,6 +332,13 @@
       "generic": "發生錯誤,請稍後再試。"
     }
   },
+  "userMenu": {
+    "marketColor": {
+      "title": "漲跌配色",
+      "redUp": "紅漲綠跌（華語）",
+      "redDown": "紅跌綠漲（歐美）"
+    }
+  },
   "blog": {
     "meta": {
       "indexTitle": "部落格 — PickSkill",

@@ -332,6 +332,13 @@
       "generic": "문제가 발생했습니다. 다시 시도해 주세요."
     }
   },
+  "userMenu": {
+    "marketColor": {
+      "title": "등락 색상",
+      "redUp": "빨강 상승 · 중국식",
+      "redDown": "빨강 하락 · 미국식"
+    }
+  },
   "blog": {
     "meta": {
       "indexTitle": "블로그 — PickSkill",

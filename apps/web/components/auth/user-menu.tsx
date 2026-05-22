@@ -2,12 +2,14 @@
 
 import * as React from 'react';
 import { useSession, signOut } from 'next-auth/react';
-import { BrainCircuit, LogOut, User as UserIcon } from 'lucide-react';
+import { BrainCircuit, LogOut, Palette, User as UserIcon } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
@@ -15,6 +17,7 @@ import { LocalizedLink } from '../i18n/localized-link';
 import { useDictionary, useLocale } from '../i18n/dictionary-provider';
 import { getLocalizedPath } from '../../lib/i18n/paths';
 import { cn } from '../../lib/utils';
+import { useMarketColor } from '../settings/market-color-provider';
 
 interface UserMenuProps {
   /** Render compact (avatar only, used in headers) or full (avatar + name). */
@@ -26,6 +29,8 @@ export function UserMenu({ variant = 'compact', className }: UserMenuProps) {
   const { data, status } = useSession();
   const dict = useDictionary();
   const locale = useLocale();
+  const { convention, setConvention } = useMarketColor();
+  const marketColorDict = dict.userMenu?.marketColor;
 
   if (status === 'loading') {
     return (
@@ -97,6 +102,56 @@ export function UserMenu({ variant = 'compact', className }: UserMenuProps) {
           </LocalizedLink>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
+
+        {/* Market-colour convention toggle. Visible inside the user
+            menu (not the global theme toggle) because it's a personal
+            financial-display preference — like dark mode is to vision,
+            this is to "which colour means up." Two radio items keep
+            the choice obvious: 红涨绿跌 (CN) vs 红跌绿涨 (Western).
+            onSelect preventDefault keeps the menu open so users can
+            flip between the two and see the live preview in the
+            charts behind the popover. */}
+        <DropdownMenuLabel className="flex items-center gap-1.5">
+          <Palette className="size-3" aria-hidden="true" />
+          {marketColorDict?.title ?? 'Color convention'}
+        </DropdownMenuLabel>
+        <DropdownMenuRadioGroup
+          value={convention}
+          onValueChange={(v) => {
+            if (v === 'cn' || v === 'us') setConvention(v);
+          }}
+        >
+          <DropdownMenuRadioItem
+            value="cn"
+            onSelect={(e) => e.preventDefault()}
+          >
+            <span className="flex items-center gap-2">
+              {/* Inline swatch row — left dot is "up" (red in CN), right is
+                  "down" (green in CN). The swatches are hard-coded for the
+                  CN label because the label text describes red-as-up
+                  literally; flipping them would contradict the words. */}
+              <span className="inline-flex items-center gap-0.5">
+                <span className="size-2 rounded-full bg-rose-500" aria-hidden="true" />
+                <span className="size-2 rounded-full bg-emerald-500" aria-hidden="true" />
+              </span>
+              {marketColorDict?.redUp ?? 'Red up · CN'}
+            </span>
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem
+            value="us"
+            onSelect={(e) => e.preventDefault()}
+          >
+            <span className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-0.5">
+                <span className="size-2 rounded-full bg-emerald-500" aria-hidden="true" />
+                <span className="size-2 rounded-full bg-rose-500" aria-hidden="true" />
+              </span>
+              {marketColorDict?.redDown ?? 'Red down · US/EU'}
+            </span>
+          </DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+        <DropdownMenuSeparator />
+
         <DropdownMenuItem
           onClick={() => void signOut({ callbackUrl: getLocalizedPath('/', locale) })}
         >

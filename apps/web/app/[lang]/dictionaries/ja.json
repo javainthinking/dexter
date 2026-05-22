@@ -332,6 +332,13 @@
       "generic": "問題が発生しました。もう一度お試しください。"
     }
   },
+  "userMenu": {
+    "marketColor": {
+      "title": "上下の配色",
+      "redUp": "赤上 · 中国式",
+      "redDown": "赤下 · 欧米式"
+    }
+  },
   "blog": {
     "meta": {
       "indexTitle": "ブログ — PickSkill",

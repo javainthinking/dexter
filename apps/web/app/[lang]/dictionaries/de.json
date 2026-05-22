@@ -332,6 +332,13 @@
       "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
     }
   },
+  "userMenu": {
+    "marketColor": {
+      "title": "Farbkonvention",
+      "redUp": "Rot steigt · CN",
+      "redDown": "Rot fällt · US/EU"
+    }
+  },
   "blog": {
     "meta": {
       "indexTitle": "Blog — PickSkill",

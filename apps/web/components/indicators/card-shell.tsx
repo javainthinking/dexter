@@ -21,45 +21,39 @@ export interface BucketSample {
   bucket: Bucket;
 }
 
+// Every "bucket has a colour" map below references `up` / `down`
+// instead of `rose` / `emerald` so the user-selected market-colour
+// convention (red-up CN vs red-down US/EU — toggled in the user
+// menu) flows through automatically. Bullish always means "price
+// went up"; whether that's painted red or green is decided once
+// in globals.css via the `--up` / `--down` CSS vars.
 const BUCKET_COLOR: Record<Bucket, string> = {
-  bullish: 'bg-rose-500/15 text-rose-500 border-rose-500/30',
-  bearish: 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30',
+  bullish: 'bg-up/15 text-up border-up/30',
+  bearish: 'bg-down/15 text-down border-down/30',
   neutral: 'bg-muted text-muted-foreground border-border',
 };
 
-/**
- * Solid status dot rendered inside the bucket badge. Sits at the
- * stronger end of the color scale so the call is readable at a glance
- * even when the muted card chrome surrounds it. Red-up / green-down
- * per the China-market convention used elsewhere in the app.
- */
 const BUCKET_DOT_COLOR: Record<Bucket, string> = {
-  bullish: 'bg-rose-500',
-  bearish: 'bg-emerald-500',
+  bullish: 'bg-up',
+  bearish: 'bg-down',
   neutral: 'bg-muted-foreground',
 };
 
 /**
- * Tinted tooltip body that echoes the dot it's annotating — same red /
- * green / muted palette as the pill itself so users see a coherent
- * visual story instead of "every tooltip looks the same regardless of
- * which day I'm hovering."
- *
- * The values override the popover defaults set by `TooltipContent`
- * (which uses bg-popover + text-popover-foreground). Light mode uses
- * the 50-shade for a near-opaque pale tint; dark mode uses the 950
- * shade at /95 opacity so the popover shadow still anchors it
- * visually instead of blending with the page background.
+ * Tinted tooltip body that echoes the dot it's annotating. Uses the
+ * `up` / `down` tokens with two alpha tiers — a soft `/10` background
+ * in light mode and a denser `/20` in dark mode so the chip stays
+ * visible against either page background without losing its
+ * floating-card feel. Border and text both lock to the same hue at
+ * higher strength so the chip reads as one continuous swatch.
  *
  * Date sub-row inside inherits the parent text colour and is dimmed
  * with `opacity-70` — keeps the headline reason line as the visual
  * focal point without paying for a second per-bucket colour map.
  */
 const BUCKET_TOOLTIP_CLASS: Record<Bucket, string> = {
-  bullish:
-    'bg-rose-50 dark:bg-rose-950/95 border-rose-500/40 text-rose-700 dark:text-rose-300',
-  bearish:
-    'bg-emerald-50 dark:bg-emerald-950/95 border-emerald-500/40 text-emerald-700 dark:text-emerald-300',
+  bullish: 'bg-up/10 dark:bg-up/20 border-up/40 text-up',
+  bearish: 'bg-down/10 dark:bg-down/20 border-down/40 text-down',
   // Neutral falls back to the default popover styling — no override
   // class needed. Keeping the entry here so the lookup never returns
   // undefined and surrounding code stays branch-free.
@@ -303,8 +297,11 @@ export function MetricCell({
       <div
         className={cn(
           'font-mono font-semibold',
-          tone === 'up' && 'text-rose-500',
-          tone === 'down' && 'text-emerald-500',
+          // tone='up' / 'down' resolve through globals.css so the same
+          // metric cell paints red on a CN profile and green on a US
+          // profile when price went up. See [data-market-color] swap.
+          tone === 'up' && 'text-up',
+          tone === 'down' && 'text-down',
         )}
       >
         {value ?? '—'}

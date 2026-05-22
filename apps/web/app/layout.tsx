@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { Inter, JetBrains_Mono, Source_Serif_4 } from 'next/font/google';
 import Script from 'next/script';
 import { Providers } from './providers';
+import { MARKET_COLOR_PREPAINT_SCRIPT } from '../components/settings/market-color-provider';
 import './globals.css';
 
 /**
@@ -75,6 +76,17 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={`${inter.variable} ${jetbrainsMono.variable} ${serifDisplay.variable}`}
     >
       <body>
+        {/* No-flash market-colour script — reads localStorage and
+            stamps `data-market-color="us"` on <html> *before* React
+            hydrates, so a returning Western-convention user never
+            sees a flash of CN-coloured charts. Runs synchronously
+            before interactivity (the only correct strategy here;
+            afterInteractive would paint once with the wrong colour). */}
+        <Script
+          id="market-color-prepaint"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: MARKET_COLOR_PREPAINT_SCRIPT }}
+        />
         {/*
           Google Analytics tag. `next/script` with strategy="afterInteractive"
           injects this immediately after page interactivity instead of

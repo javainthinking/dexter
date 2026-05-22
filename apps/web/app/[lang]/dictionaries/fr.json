@@ -332,6 +332,13 @@
       "generic": "Une erreur est survenue. Veuillez réessayer."
     }
   },
+  "userMenu": {
+    "marketColor": {
+      "title": "Code couleur",
+      "redUp": "Rouge à la hausse · CN",
+      "redDown": "Rouge à la baisse · US/EU"
+    }
+  },
   "blog": {
     "meta": {
       "indexTitle": "Blog — PickSkill",

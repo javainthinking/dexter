@@ -847,13 +847,16 @@ function HoldingRow({
     setValue(holding.weight == null ? '' : String(holding.weight));
   }, [holding.weight]);
 
-  // Red-up / green-down per the China-market convention the rest of the
-  // app uses (same as the indicator cards). Watchlist-only rows where
-  // the chain returned an error fall back to "—".
+  // Up/down hue follows the user's market-colour convention (toggled
+  // in the user-menu). The `text-up` / `text-down` Tailwind tokens
+  // resolve through the --up / --down CSS vars in globals.css —
+  // default CN (up=red), switches to US (up=green) when the user
+  // picks the Western convention. Watchlist-only rows where the
+  // chain returned an error fall back to "—".
   const hasQuote = quote && quote.error == null && quote.close != null;
   const pct = hasQuote ? quote.changePct : null;
   const tone =
-    pct == null ? '' : pct > 0 ? 'text-rose-500' : pct < 0 ? 'text-emerald-500' : 'text-muted-foreground';
+    pct == null ? '' : pct > 0 ? 'text-up' : pct < 0 ? 'text-down' : 'text-muted-foreground';
 
   return (
     <li className="flex items-center gap-3 px-3 py-2">

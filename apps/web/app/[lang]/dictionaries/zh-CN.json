@@ -332,6 +332,13 @@
       "generic": "出错了,请稍后重试。"
     }
   },
+  "userMenu": {
+    "marketColor": {
+      "title": "涨跌配色",
+      "redUp": "红涨绿跌（中国）",
+      "redDown": "红跌绿涨（欧美）"
+    }
+  },
   "blog": {
     "meta": {
       "indexTitle": "博客 — PickSkill",

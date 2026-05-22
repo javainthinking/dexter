@@ -85,7 +85,10 @@ function MoversList({
               <div className="font-mono text-xs font-semibold">${formatNum(r.price, 2)}</div>
               <div
                 className={
-                  'font-mono text-[11px] ' + (accent === 'up' ? 'text-rose-500' : 'text-emerald-500')
+                  // Up/down hue follows the user's market-colour
+                  // convention via the --up / --down CSS vars; the
+                  // accent stays "up means up" regardless of palette.
+                  'font-mono text-[11px] ' + (accent === 'up' ? 'text-up' : 'text-down')
                 }
               >
                 {r.percent_change >= 0 ? '+' : ''}
