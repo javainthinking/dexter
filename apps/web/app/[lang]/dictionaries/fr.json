@@ -147,6 +147,14 @@
       "download": "Télécharger",
       "expiresAt": "Lien valable jusqu'au {date}",
       "sizeKb": "{kb} Ko"
+    },
+    "design": {
+      "buttonLabel": "Style de design",
+      "title": "Référencer un design system",
+      "subtitle": "Cliquez sur une marque pour charger son design.md dans le chat — ajout uniquement, jamais envoyé automatiquement.",
+      "sourceLabel": "Source",
+      "close": "Fermer",
+      "promptPrefix": "Veuillez suivre ce style de design :"
     }
   },
   "theme": {

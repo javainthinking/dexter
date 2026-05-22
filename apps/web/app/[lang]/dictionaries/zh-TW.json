@@ -147,6 +147,14 @@
       "download": "下載",
       "expiresAt": "連結將於 {date} 失效",
       "sizeKb": "{kb} KB"
+    },
+    "design": {
+      "buttonLabel": "設計風格",
+      "title": "引用設計風格",
+      "subtitle": "點擊品牌將其 design.md 載入對話框中 —— 僅追加,不會自動傳送。",
+      "sourceLabel": "資料源",
+      "close": "關閉",
+      "promptPrefix": "請參考這個設計風格:"
     }
   },
   "theme": {

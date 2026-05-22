@@ -147,6 +147,14 @@
       "download": "ダウンロード",
       "expiresAt": "リンクの有効期限：{date}",
       "sizeKb": "{kb} KB"
+    },
+    "design": {
+      "buttonLabel": "デザインスタイル",
+      "title": "デザインシステムを参照",
+      "subtitle": "ブランドをクリックすると design.md がチャットに追加されます ── 追加のみ、自動送信なし。",
+      "sourceLabel": "ソース",
+      "close": "閉じる",
+      "promptPrefix": "このデザインスタイルを参考にしてください:"
     }
   },
   "theme": {

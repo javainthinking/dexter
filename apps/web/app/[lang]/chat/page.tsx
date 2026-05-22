@@ -5,7 +5,9 @@ import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Sidebar, type SessionSummary } from '../../../components/chat/sidebar';
 import { Composer, type ComposerHandle } from '../../../components/chat/composer';
+import { DesignStylePanel } from '../../../components/chat/design-style-panel';
 import { EmptyState } from '../../../components/chat/empty-state';
+import { composeDesignReference } from '../../../lib/design-styles';
 import {
   AssistantMessage,
   UserMessage,
@@ -55,6 +57,24 @@ function ChatPage() {
   const abortRef = useRef<AbortController | null>(null);
   const threadRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<ComposerHandle>(null);
+  const [designPanelOpen, setDesignPanelOpen] = useState(false);
+
+  // Picking a brand from the design-style panel: append a "please
+  // reference this design style: <url>" line to the current composer
+  // value (or use it as the entire content if the composer is empty)
+  // and close the panel. Replaces nothing — purely additive — because
+  // a design reference is something you tack onto an in-progress
+  // request, not a request on its own.
+  const handlePickDesign = useCallback(
+    (brand: Parameters<NonNullable<React.ComponentProps<typeof DesignStylePanel>['onPickBrand']>>[0]) => {
+      const prefix =
+        dict.chat?.design?.promptPrefix ?? 'Please reference this design style:';
+      const nextValue = composeDesignReference(input, prefix, brand);
+      composerRef.current?.loadPrompt(nextValue);
+      setDesignPanelOpen(false);
+    },
+    [input, dict],
+  );
 
   // Load a sample-question prompt into the composer (textarea value +
   // focus + cursor-at-end) without sending. Used by both:
@@ -427,6 +447,7 @@ function ChatPage() {
               onSubmit={() => void send(input)}
               onStop={stop}
               pending={pending}
+              onOpenDesignStyle={() => setDesignPanelOpen(true)}
             />
             <p className="mt-2 text-center font-mono text-[10px] tracking-[0.14em] text-subtle">
               {dict.chat.composer.footer}
@@ -434,6 +455,11 @@ function ChatPage() {
           </div>
         </div>
       </main>
+      <DesignStylePanel
+        open={designPanelOpen}
+        onOpenChange={setDesignPanelOpen}
+        onPickBrand={handlePickDesign}
+      />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { ArrowUp, FileSpreadsheet, FileText, Presentation, Square } from 'lucide-react';
+import { ArrowUp, FileSpreadsheet, FileText, Palette, Presentation, Square } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Kbd } from '../ui/kbd';
 import { useDictionary } from '../i18n/dictionary-provider';
@@ -16,6 +16,10 @@ interface ComposerProps {
   disabled?: boolean;
   placeholder?: string;
   autoFocus?: boolean;
+  /** Optional click handler for the rainbow-gradient design-style button.
+   *  When provided the button renders; when omitted it stays hidden so
+   *  Composer remains usable in surfaces that don't need the panel. */
+  onOpenDesignStyle?: () => void;
 }
 
 /**
@@ -38,6 +42,7 @@ export const Composer = React.forwardRef<ComposerHandle, ComposerProps>(function
     disabled,
     placeholder,
     autoFocus,
+    onOpenDesignStyle,
   },
   ref,
 ) {
@@ -160,6 +165,46 @@ export const Composer = React.forwardRef<ComposerHandle, ComposerProps>(function
               <span className="hidden sm:inline">{a.label}</span>
             </Button>
           ))}
+          {onOpenDesignStyle && (
+            // Rainbow-gradient design-style trigger. Visually distinct
+            // from the file-output quick prompts so the user reads it as
+            // "open something" rather than "load a prompt". The
+            // group-hover ring + conic gradient backdrop signals the
+            // affordance is colourful by design — matches the panel
+            // content (brand swatches) on the other side of the click.
+            <button
+              type="button"
+              onClick={onOpenDesignStyle}
+              disabled={pending || disabled}
+              title={dict.chat?.design?.buttonLabel ?? 'Design style'}
+              aria-label={dict.chat?.design?.buttonLabel ?? 'Design style'}
+              className={cn(
+                'group relative ml-1 inline-flex h-7 items-center gap-1 rounded-md px-2 text-[11px]',
+                'font-medium text-white transition-all',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                'focus-visible:ring-offset-background',
+                'disabled:pointer-events-none disabled:opacity-50',
+              )}
+              style={{
+                background:
+                  'linear-gradient(135deg, #f43f5e 0%, #a855f7 35%, #3b82f6 65%, #10b981 100%)',
+              }}
+            >
+              {/* Soft conic glow behind the button, revealed on hover */}
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 -z-10 rounded-md opacity-0 blur transition-opacity duration-300 group-hover:opacity-70"
+                style={{
+                  background:
+                    'conic-gradient(from 180deg at 50% 50%, #f43f5e, #f59e0b, #10b981, #3b82f6, #a855f7, #f43f5e)',
+                }}
+              />
+              <Palette className="size-3.5" />
+              <span className="hidden sm:inline">
+                {dict.chat?.design?.buttonLabel ?? 'Design style'}
+              </span>
+            </button>
+          )}
         </div>
         <p className="hidden items-center gap-1.5 px-2 text-[11px] text-subtle md:flex">
           <Kbd>↩</Kbd>
