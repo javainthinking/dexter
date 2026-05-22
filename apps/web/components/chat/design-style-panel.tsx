@@ -203,22 +203,27 @@ function BrandCard({
           }}
         />
 
-        {/* Logo badge — top-left, small. */}
+        {/* Logo badge — 40px top-left, frosted-glass plate that adapts
+            to whatever brand swatch sits behind it. On dark swatches
+            the plate is a faint white tint + white hairline ring; on
+            light swatches, faint black tint + black hairline ring.
+            This way the plate reads as a neutral "card stock" frame
+            regardless of brand colour, without committing to a single
+            grey value that would clash with one extreme or the other. */}
         <div
           className={cn(
-            'absolute left-3 top-3 flex size-7 items-center justify-center overflow-hidden',
+            'absolute left-3 top-3 flex size-10 items-center justify-center overflow-hidden',
             'rounded-md transition-transform duration-300 group-hover:scale-105',
-            // 1px outline only for GitHub avatars (they have their own
-            // background); other variants render directly on the swatch.
-            isGithubAvatar &&
-              (isDarkBrand
-                ? 'ring-1 ring-white/15'
-                : 'ring-1 ring-black/10'),
+            isDarkBrand
+              ? 'bg-white/12 ring-1 ring-white/25'
+              : 'bg-black/8 ring-1 ring-black/15',
           )}
         >
           {logoUrl && isGithubAvatar ? (
-            // GitHub avatar — small clipped image, no plate. The
-            // org's own background (usually white) shows directly.
+            // GitHub avatar — fills the plate. Org's own background
+            // (usually white) sits over the frosted-glass tint, which
+            // still shows through any transparent edge pixels and as
+            // the visible hairline ring around the outside.
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={logoUrl}
@@ -229,8 +234,8 @@ function BrandCard({
               className="size-full object-cover"
             />
           ) : logoUrl ? (
-            // Simple Icons SVG — rendered in the contrast tone so it
-            // reads directly on the brand swatch.
+            // Simple Icons SVG — inset on the frosted plate, rendered
+            // in the contrast tone for the brand swatch.
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={`https://cdn.simpleicons.org/${brand.iconSlug}/${fgHex}`}
@@ -238,12 +243,12 @@ function BrandCard({
               width={28}
               height={28}
               loading="lazy"
-              className="size-5 object-contain"
+              className="size-6 object-contain"
             />
           ) : (
-            // Letter mark — serif initial in the contrast tone.
+            // Letter mark — serif initial inset on the frosted plate.
             <span
-              className="font-serif text-lg font-semibold leading-none"
+              className="font-serif text-xl font-semibold leading-none"
               style={{ color: isDarkBrand ? '#FFFFFF' : '#14120b' }}
               aria-hidden="true"
             >
