@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="prtBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+    <filter id="prtGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#prtBg)"/>
+
+  <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">TUTORIAL · TECHNICAL ANALYSIS</text>
+
+  <text x="60" y="210" font-family="Georgia, 'Times New Roman', serif" font-size="64" font-weight="600" fill="#F4F4F5" letter-spacing="-0.5">Track 12 names</text>
+  <text x="60" y="274" font-family="Georgia, 'Times New Roman', serif" font-size="64" font-weight="600" fill="#F4F4F5" letter-spacing="-0.5">across</text>
+  <text x="290" y="274" font-family="Georgia, 'Times New Roman', serif" font-size="64" font-weight="600" fill="#4FCBA8" letter-spacing="-0.5">8 indicators.</text>
+
+  <text x="60" y="322" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">One sortable dashboard, not 96 chart lookups —</text>
+  <text x="60" y="348" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">zoom only into the names that warrant it.</text>
+
+  <!-- 5-step card -->
+  <g transform="translate(60,430)">
+    <rect x="0" y="0" width="540" height="140" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">THE 5 STEPS</text>
+    <g font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#F4F4F5">
+      <text x="22" y="62">1. Pick a portfolio</text>
+      <text x="22" y="84">2. Choose indicator dimensions</text>
+      <text x="22" y="106">3. Ask chat for the dashboard</text>
+      <text x="22" y="128">4. Cross-reference + 5. Schedule</text>
+    </g>
+  </g>
+
+  <!-- Right: 8-indicator grid -->
+  <g transform="translate(680,140)">
+    <text x="0" y="0" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#F4F4F5" opacity="0.55" letter-spacing="2">8 INDICATOR DIMENSIONS</text>
+
+    <!-- Grid 2 cols × 4 rows -->
+    <g font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#F4F4F5">
+      <!-- Row 1: Price + MACD (highlighted) -->
+      <g transform="translate(0,24)">
+        <rect x="0" y="0" width="220" height="46" rx="8" fill="#1b1913" stroke="#F4F4F5" stroke-opacity="0.22"/>
+        <text x="14" y="28" font-weight="600">Price</text>
+        <text x="206" y="28" text-anchor="end" font-size="11" fill="#F4F4F5" opacity="0.5">trend vs MAs</text>
+      </g>
+      <g transform="translate(240,24)" filter="url(#prtGlow)">
+        <rect x="0" y="0" width="220" height="46" rx="8" fill="#4FCBA8"/>
+        <text x="14" y="28" fill="#14120b" font-weight="700">MACD</text>
+        <text x="206" y="28" text-anchor="end" font-size="11" fill="#14120b" opacity="0.85">cross + momentum</text>
+      </g>
+
+      <!-- Row 2: Fundamentals + KDJ -->
+      <g transform="translate(0,80)">
+        <rect x="0" y="0" width="220" height="46" rx="8" fill="#1b1913" stroke="#F4F4F5" stroke-opacity="0.22"/>
+        <text x="14" y="28" font-weight="600">Fundamentals</text>
+        <text x="206" y="28" text-anchor="end" font-size="11" fill="#F4F4F5" opacity="0.5">PE / PB / FCFY</text>
+      </g>
+      <g transform="translate(240,80)">
+        <rect x="0" y="0" width="220" height="46" rx="8" fill="#1b1913" stroke="#F4F4F5" stroke-opacity="0.22"/>
+        <text x="14" y="28" font-weight="600">KDJ</text>
+        <text x="206" y="28" text-anchor="end" font-size="11" fill="#F4F4F5" opacity="0.5">oversold / overbought</text>
+      </g>
+
+      <!-- Row 3: Sentiment + Divergence (highlighted) -->
+      <g transform="translate(0,136)">
+        <rect x="0" y="0" width="220" height="46" rx="8" fill="#1b1913" stroke="#F4F4F5" stroke-opacity="0.22"/>
+        <text x="14" y="28" font-weight="600">Sentiment</text>
+        <text x="206" y="28" text-anchor="end" font-size="11" fill="#F4F4F5" opacity="0.5">news + analyst</text>
+      </g>
+      <g transform="translate(240,136)" filter="url(#prtGlow)">
+        <rect x="0" y="0" width="220" height="46" rx="8" fill="#4FCBA8"/>
+        <text x="14" y="28" fill="#14120b" font-weight="700">Divergence</text>
+        <text x="206" y="28" text-anchor="end" font-size="11" fill="#14120b" opacity="0.85">early warning</text>
+      </g>
+
+      <!-- Row 4: Capital Flow (highlighted) + Support/Res -->
+      <g transform="translate(0,192)" filter="url(#prtGlow)">
+        <rect x="0" y="0" width="220" height="46" rx="8" fill="#4FCBA8"/>
+        <text x="14" y="28" fill="#14120b" font-weight="700">Capital Flow</text>
+        <text x="206" y="28" text-anchor="end" font-size="11" fill="#14120b" opacity="0.85">net institutional</text>
+      </g>
+      <g transform="translate(240,192)">
+        <rect x="0" y="0" width="220" height="46" rx="8" fill="#1b1913" stroke="#F4F4F5" stroke-opacity="0.22"/>
+        <text x="14" y="28" font-weight="600">Support/Res</text>
+        <text x="206" y="28" text-anchor="end" font-size="11" fill="#F4F4F5" opacity="0.5">levels + holdings</text>
+      </g>
+    </g>
+
+    <text x="0" y="280" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#4FCBA8" opacity="0.85">→ stack 2–3 highlighted signals = high-conviction candidate</text>
+  </g>
+</svg>
