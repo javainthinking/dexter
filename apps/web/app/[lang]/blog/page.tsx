@@ -13,6 +13,7 @@ import { getLocalizedPath } from '../../../lib/i18n/paths';
 import { generateAlternatesMetadata } from '../../../lib/i18n/seo';
 import { getAllPosts, type PostMeta } from '../../../lib/blog';
 import { LocalizedLink } from '../../../components/i18n/localized-link';
+import { Breadcrumbs } from '../../../components/blog/breadcrumbs';
 import { getDictionary, type Dictionary } from '../dictionaries';
 
 const SITE_URL = 'https://pickskill.ai';
@@ -82,13 +83,16 @@ export default async function BlogIndexPage({
   const dict = await getDictionary(lang);
   const posts = getAllPosts(lang as Locale);
 
+  const homeUrl = `${SITE_URL}${getLocalizedPath('/', lang as Locale)}`;
+  const blogUrl = `${SITE_URL}${getLocalizedPath('/blog', lang as Locale)}`;
+
   // Blog JSON-LD: a single Blog entity wrapping the list. Article
   // schema lives on each post page, not here.
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
     name: 'PickSkill Blog',
-    url: `${SITE_URL}${getLocalizedPath('/blog', lang as Locale)}`,
+    url: blogUrl,
     inLanguage: localeBcp47[lang as Locale],
     blogPost: posts.map((p) => ({
       '@type': 'BlogPosting',
@@ -97,6 +101,19 @@ export default async function BlogIndexPage({
       datePublished: p.publishedAt,
       ...(p.updatedAt && { dateModified: p.updatedAt }),
     })),
+  };
+
+  // BreadcrumbList JSON-LD — matches the visible <Breadcrumbs/> below.
+  // Two items: Home → Blog (current). Google reads this to render the
+  // breadcrumb trail in SERPs and AI overviews use it to scope the
+  // page within the site's section hierarchy.
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: dict.nav.home, item: homeUrl },
+      { '@type': 'ListItem', position: 2, name: dict.nav.blog, item: blogUrl },
+    ],
   };
 
   // Index layout: the newest post gets a "featured" card with a wide
@@ -112,6 +129,17 @@ export default async function BlogIndexPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <Breadcrumbs
+        ariaLabel={dict.blog.breadcrumb.ariaLabel}
+        items={[
+          { label: dict.blog.breadcrumb.home, href: '/' },
+          { label: dict.blog.breadcrumb.blog },
+        ]}
       />
       <header className="mb-10 border-b border-border pb-8">
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">

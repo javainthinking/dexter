@@ -161,7 +161,8 @@
     "indicators": "Indicateurs",
     "portfolios": "Portefeuilles",
     "blog": "Blog",
-    "feedback": "Retours"
+    "feedback": "Retours",
+    "home": "Accueil"
   },
   "portfolios": {
     "title": "Portefeuilles",
@@ -342,6 +343,11 @@
       "macro": "Macro",
       "build-in-public": "Build in public",
       "research": "Recherche"
+    },
+    "breadcrumb": {
+      "ariaLabel": "Fil d'Ariane",
+      "home": "Accueil",
+      "blog": "Blog"
     }
   },
   "feedback": {

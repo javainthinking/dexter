@@ -161,7 +161,8 @@
     "indicators": "指標",
     "portfolios": "持倉",
     "blog": "部落格",
-    "feedback": "回饋"
+    "feedback": "回饋",
+    "home": "首頁"
   },
   "portfolios": {
     "title": "持倉",
@@ -342,6 +343,11 @@
       "macro": "宏觀觀察",
       "build-in-public": "公開開發",
       "research": "研究筆記"
+    },
+    "breadcrumb": {
+      "ariaLabel": "麵包屑導覽",
+      "home": "首頁",
+      "blog": "部落格"
     }
   },
   "feedback": {

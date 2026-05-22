@@ -161,7 +161,8 @@
     "indicators": "テクニカル指標",
     "portfolios": "ポートフォリオ",
     "blog": "ブログ",
-    "feedback": "フィードバック"
+    "feedback": "フィードバック",
+    "home": "ホーム"
   },
   "portfolios": {
     "title": "ポートフォリオ",
@@ -342,6 +343,11 @@
       "macro": "マクロ",
       "build-in-public": "ビルド・イン・パブリック",
       "research": "リサーチ"
+    },
+    "breadcrumb": {
+      "ariaLabel": "パンくずリスト",
+      "home": "ホーム",
+      "blog": "ブログ"
     }
   },
   "feedback": {

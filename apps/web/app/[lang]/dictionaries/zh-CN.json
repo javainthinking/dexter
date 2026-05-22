@@ -161,7 +161,8 @@
     "indicators": "指标",
     "portfolios": "持仓",
     "blog": "博客",
-    "feedback": "反馈"
+    "feedback": "反馈",
+    "home": "首页"
   },
   "portfolios": {
     "title": "持仓",
@@ -342,6 +343,11 @@
       "macro": "宏观观察",
       "build-in-public": "公开开发",
       "research": "研究笔记"
+    },
+    "breadcrumb": {
+      "ariaLabel": "面包屑导航",
+      "home": "首页",
+      "blog": "博客"
     }
   },
   "feedback": {

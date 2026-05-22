@@ -161,7 +161,8 @@
     "indicators": "Indikatoren",
     "portfolios": "Portfolios",
     "blog": "Blog",
-    "feedback": "Feedback"
+    "feedback": "Feedback",
+    "home": "Startseite"
   },
   "portfolios": {
     "title": "Portfolios",
@@ -342,6 +343,11 @@
       "macro": "Makro",
       "build-in-public": "Build in public",
       "research": "Recherche"
+    },
+    "breadcrumb": {
+      "ariaLabel": "Brotkrumen-Navigation",
+      "home": "Startseite",
+      "blog": "Blog"
     }
   },
   "feedback": {

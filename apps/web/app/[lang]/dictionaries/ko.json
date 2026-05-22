@@ -161,7 +161,8 @@
     "indicators": "지표",
     "portfolios": "포트폴리오",
     "blog": "블로그",
-    "feedback": "피드백"
+    "feedback": "피드백",
+    "home": "홈"
   },
   "portfolios": {
     "title": "포트폴리오",
@@ -342,6 +343,11 @@
       "macro": "거시",
       "build-in-public": "공개 개발",
       "research": "리서치"
+    },
+    "breadcrumb": {
+      "ariaLabel": "탐색 경로",
+      "home": "홈",
+      "blog": "블로그"
     }
   },
   "feedback": {

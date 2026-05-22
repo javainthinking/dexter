@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
@@ -17,6 +17,7 @@ import { getLocalizedPath } from '../../../../lib/i18n/paths';
 import { generateAlternatesMetadata } from '../../../../lib/i18n/seo';
 import { extractFaq, getAllSlugs, getPostBySlug } from '../../../../lib/blog';
 import { LocalizedLink } from '../../../../components/i18n/localized-link';
+import { Breadcrumbs } from '../../../../components/blog/breadcrumbs';
 import { getDictionary } from '../../dictionaries';
 
 const SITE_URL = 'https://pickskill.ai';
@@ -195,14 +196,16 @@ export default async function BlogPostPage({
     };
   }
 
-  // Breadcrumbs schema — helps Google show the post inside the right
-  // section in search results.
+  // Breadcrumbs schema — matches the visible <Breadcrumbs/> rendered
+  // below the SiteHeader. Labels are localized so the JSON-LD and the
+  // visible breadcrumb trail always agree (Google requires the
+  // schema's items to be visible on-page).
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: homeUrl },
-      { '@type': 'ListItem', position: 2, name: 'Blog', item: blogUrl },
+      { '@type': 'ListItem', position: 1, name: dict.nav.home, item: homeUrl },
+      { '@type': 'ListItem', position: 2, name: dict.nav.blog, item: blogUrl },
       { '@type': 'ListItem', position: 3, name: post.title, item: postUrl },
     ],
   };
@@ -252,14 +255,18 @@ export default async function BlogPostPage({
         />
       )}
 
-      <nav className="mb-6">
-        <LocalizedLink
-          href="/blog"
-          className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="size-3" /> {dict.blog.post.backToBlog}
-        </LocalizedLink>
-      </nav>
+      <Breadcrumbs
+        ariaLabel={dict.blog.breadcrumb.ariaLabel}
+        items={[
+          { label: dict.blog.breadcrumb.home, href: '/' },
+          { label: dict.blog.breadcrumb.blog, href: '/blog' },
+          // Post title is the current page — no href, gets
+          // aria-current="page". Truncation handled in CSS by the
+          // browser based on container width; we don't pre-truncate
+          // because crawlers need the full title in the breadcrumb.
+          { label: post.title },
+        ]}
+      />
 
       <header className="mb-8">
         <div className="flex items-center gap-2">

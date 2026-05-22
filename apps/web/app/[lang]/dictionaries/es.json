@@ -161,7 +161,8 @@
     "indicators": "Indicadores",
     "portfolios": "Carteras",
     "blog": "Blog",
-    "feedback": "Comentarios"
+    "feedback": "Comentarios",
+    "home": "Inicio"
   },
   "portfolios": {
     "title": "Carteras",
@@ -342,6 +343,11 @@
       "macro": "Macro",
       "build-in-public": "Build in public",
       "research": "Investigación"
+    },
+    "breadcrumb": {
+      "ariaLabel": "Ruta de navegación",
+      "home": "Inicio",
+      "blog": "Blog"
     }
   },
   "feedback": {
