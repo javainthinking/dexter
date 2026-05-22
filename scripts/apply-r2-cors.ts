@@ -199,11 +199,28 @@ async function applyCorsViaCloudflare(): Promise<void> {
   console.log('✓ CORS policy written via Cloudflare REST.');
 }
 
+/**
+ * Cloudflare R2 dashboard's CORS Policy editor accepts S3-compatible
+ * PascalCase JSON (same shape as AWS PutBucketCors), NOT the REST
+ * API's nested camelCase shape. See
+ * https://developers.cloudflare.com/r2/buckets/cors/ — the dashboard
+ * examples there are PascalCase.
+ */
+function toDashboardCorsShape() {
+  return corsRules.map((r) => ({
+    AllowedOrigins: r.AllowedOrigins ?? [],
+    AllowedMethods: r.AllowedMethods ?? [],
+    AllowedHeaders: r.AllowedHeaders ?? [],
+    ExposeHeaders: r.ExposeHeaders ?? [],
+    MaxAgeSeconds: r.MaxAgeSeconds ?? undefined,
+  }));
+}
+
 function printDashboardJson(): void {
   console.log('Paste this JSON into Cloudflare dashboard');
-  console.log('(R2 → bucket → Settings → CORS Policy → JSON):');
+  console.log('(R2 → bucket → Settings → CORS Policy → Edit CORS policy):');
   console.log('');
-  console.log(JSON.stringify(toCloudflareCorsShape().rules, null, 2));
+  console.log(JSON.stringify(toDashboardCorsShape(), null, 2));
 }
 
 const args = process.argv.slice(2);
