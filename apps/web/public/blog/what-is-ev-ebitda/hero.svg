@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="evBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+    <filter id="evGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#evBg)"/>
+
+  <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">EXPLAINER · MULTIPLES</text>
+
+  <text x="60" y="220" font-family="Georgia, 'Times New Roman', serif" font-size="86" font-weight="600" fill="#F4F4F5" letter-spacing="-1">EV/EBITDA</text>
+  <text x="60" y="260" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="500" fill="#F4F4F5" opacity="0.85">The multiple that sees through capital structure</text>
+  <text x="60" y="306" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">When P/E lies because of debt or taxes,</text>
+  <text x="60" y="332" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">EV/EBITDA still tells the truth.</text>
+
+  <!-- Formula card -->
+  <g transform="translate(60,430)">
+    <rect x="0" y="0" width="540" height="140" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">FORMULA</text>
+    <text x="22" y="68" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="16" fill="#F4F4F5">EV = Market Cap + Debt − Cash</text>
+    <text x="22" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="16" fill="#F4F4F5">EBITDA = Operating Income + D&amp;A</text>
+    <line x1="22" y1="104" x2="500" y2="104" stroke="#4FCBA8" stroke-opacity="0.4"/>
+    <text x="22" y="128" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" font-weight="700">EV/EBITDA = EV ÷ EBITDA</text>
+  </g>
+
+  <!-- Right: sector reading bands -->
+  <g transform="translate(680,140)">
+    <text x="0" y="0" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#F4F4F5" opacity="0.55" letter-spacing="2">TYPICAL READS BY SECTOR</text>
+
+    <g font-family="Helvetica, Arial, sans-serif">
+      <!-- Utilities -->
+      <g transform="translate(0,30)">
+        <text x="0" y="20" font-size="15" fill="#F4F4F5" opacity="0.85">Utilities</text>
+        <rect x="160" y="6" width="60" height="20" rx="4" fill="#4FCBA8" opacity="0.45"/>
+        <text x="190" y="20" font-size="13" fill="#14120b" font-weight="700" text-anchor="middle">8–10×</text>
+      </g>
+      <!-- Industrials -->
+      <g transform="translate(0,70)">
+        <text x="0" y="20" font-size="15" fill="#F4F4F5" opacity="0.85">Industrials</text>
+        <rect x="160" y="6" width="80" height="20" rx="4" fill="#4FCBA8" opacity="0.55"/>
+        <text x="200" y="20" font-size="13" fill="#14120b" font-weight="700" text-anchor="middle">10–14×</text>
+      </g>
+      <!-- Consumer/Healthcare -->
+      <g transform="translate(0,110)">
+        <text x="0" y="20" font-size="15" fill="#F4F4F5" opacity="0.85">Consumer / Health</text>
+        <rect x="160" y="6" width="110" height="20" rx="4" fill="#4FCBA8" opacity="0.7"/>
+        <text x="215" y="20" font-size="13" fill="#14120b" font-weight="700" text-anchor="middle">14–20×</text>
+      </g>
+      <!-- Software/Internet -->
+      <g transform="translate(0,150)" filter="url(#evGlow)">
+        <text x="0" y="20" font-size="15" fill="#F4F4F5" opacity="0.85">Software</text>
+        <rect x="160" y="6" width="170" height="20" rx="4" fill="#4FCBA8"/>
+        <text x="245" y="20" font-size="13" fill="#14120b" font-weight="700" text-anchor="middle">18–30×+</text>
+      </g>
+    </g>
+
+    <!-- Note callout -->
+    <g transform="translate(0,220)">
+      <line x1="0" y1="0" x2="490" y2="0" stroke="#F4F4F5" stroke-opacity="0.18"/>
+      <text x="0" y="32" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="600" fill="#F4F4F5">Cross-sector raw compare?</text>
+      <text x="0" y="54" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#4FCBA8" opacity="0.9">→ structurally meaningless</text>
+    </g>
+  </g>
+</svg>
