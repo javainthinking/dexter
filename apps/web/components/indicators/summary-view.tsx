@@ -1,8 +1,19 @@
 'use client';
 
 import * as React from 'react';
+import { Info, X } from 'lucide-react';
 import { BucketBadge, type Bucket, type BucketSample } from './card-shell';
 import { useDictionary } from '../i18n/dictionary-provider';
+import { cn } from '../../lib/utils';
+
+/**
+ * localStorage key used to remember that the user dismissed the
+ * Summary explainer. Bumping this key (e.g. when the hint copy is
+ * rewritten and you want everyone to see it again) is the upgrade
+ * path — don't try to be clever with versioned values inside the
+ * stored string.
+ */
+const HINT_DISMISSED_KEY = 'pickskill-summary-hint-dismissed';
 
 /**
  * Per-dimension reading for one ticker. Shape mirrors what the
@@ -81,8 +92,10 @@ export function SummaryView({ entries }: { entries: SummaryEntry[] }) {
     return null;
   }
   return (
-    <div className="rounded-lg border border-border bg-card overflow-hidden">
-      <div className="overflow-x-auto">
+    <div className="space-y-3">
+      <SummaryHint />
+      <div className="rounded-lg border border-border bg-card overflow-hidden">
+        <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-muted/40">
             <tr>
@@ -109,7 +122,81 @@ export function SummaryView({ entries }: { entries: SummaryEntry[] }) {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
+    </div>
+  );
+}
+
+/**
+ * One-line explainer banner shown above the Summary table for users
+ * who haven't dismissed it. Covers two questions a first-time viewer
+ * always asks: "what am I looking at?" (5 trading days × 4 indicators)
+ * and "where do I get more detail?" (hover the dots).
+ *
+ * Dismissal persists in localStorage so a returning user never sees
+ * it twice. The default state during SSR is *dismissed* — that way
+ * returning users get a clean first paint with no flash of an
+ * already-dismissed banner. First-time visitors briefly see the
+ * banner appear on hydration; that's the right trade-off because
+ * the table content is what they're focused on anyway.
+ */
+function SummaryHint() {
+  const dict = useDictionary();
+  // Start dismissed so SSR + returning-user paints don't show the
+  // banner. The effect below flips it open if storage says
+  // "never dismissed."
+  const [dismissed, setDismissed] = React.useState(true);
+
+  React.useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(HINT_DISMISSED_KEY);
+      if (stored !== '1') setDismissed(false);
+    } catch {
+      // localStorage blocked → fall back to showing the banner.
+      // No persistence means it'll show again on next mount, which
+      // is the failure mode users would expect for "could not save
+      // your preference."
+      setDismissed(false);
+    }
+  }, []);
+
+  if (dismissed) return null;
+
+  const hint =
+    dict.indicators?.summary?.hint ??
+    'Each row shows the last 5 trading days of signal evolution across all four indicators. Hover any dot for the date and reason.';
+  const dismissLabel = dict.indicators?.summary?.dismiss ?? 'Dismiss';
+
+  return (
+    <div
+      role="note"
+      className={cn(
+        'flex items-start gap-2.5 rounded-md border border-border bg-muted/30 px-3 py-2',
+      )}
+    >
+      <Info className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+      <p className="flex-1 text-xs leading-relaxed text-muted-foreground">{hint}</p>
+      <button
+        type="button"
+        onClick={() => {
+          try {
+            window.localStorage.setItem(HINT_DISMISSED_KEY, '1');
+          } catch {
+            /* persistence is best-effort */
+          }
+          setDismissed(true);
+        }}
+        className={cn(
+          'shrink-0 rounded p-0.5 text-muted-foreground transition-colors',
+          'hover:bg-muted hover:text-foreground',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        )}
+        aria-label={dismissLabel}
+        title={dismissLabel}
+      >
+        <X className="size-3.5" />
+      </button>
     </div>
   );
 }

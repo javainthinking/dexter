@@ -277,6 +277,10 @@
       "ma": "MA",
       "volume": "Vol",
       "flow": "Flujo"
+    },
+    "summary": {
+      "hint": "Cada fila muestra los últimos 5 días bursátiles de evolución de señales en los cuatro indicadores. Pasa el cursor sobre un punto para ver la fecha y el motivo.",
+      "dismiss": "Cerrar"
     }
   },
   "market": {

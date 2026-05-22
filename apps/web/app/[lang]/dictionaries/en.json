@@ -277,6 +277,10 @@
       "ma": "MA",
       "volume": "Vol",
       "flow": "Flow"
+    },
+    "summary": {
+      "hint": "Each row shows the last 5 trading days of signal evolution across all four indicators. Hover any dot for the date and reason.",
+      "dismiss": "Dismiss"
     }
   },
   "market": {

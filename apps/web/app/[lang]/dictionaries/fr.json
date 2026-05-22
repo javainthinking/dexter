@@ -277,6 +277,10 @@
       "ma": "MA",
       "volume": "Vol",
       "flow": "Flux"
+    },
+    "summary": {
+      "hint": "Chaque ligne montre l'évolution des signaux sur les 5 derniers jours de bourse pour les quatre indicateurs. Survolez un point pour voir la date et la raison.",
+      "dismiss": "Fermer"
     }
   },
   "market": {
