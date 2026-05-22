@@ -99,9 +99,10 @@ function ChatPage() {
   // show an empty thread even though the conversation lives in Postgres.
   //
   // Skip when ?prompt= was present in the initial URL. The deep-link
-  // consume effect below kicks off send() immediately and we don't want
-  // hydration loading the previous session to (a) flash old content
-  // briefly or (b) overwrite the optimistic streaming turn.
+  // path populates the composer with the sample question and leaves
+  // the user a fresh thread to send into — hydrating would attach the
+  // sample question as a follow-up to whatever old conversation lives
+  // in the session, which is not what "try this on the homepage" means.
   // hasDeepLinkPrompt is a ref-derived boolean — it's stable across
   // renders, so this effect only runs once.
   useEffect(() => {
@@ -234,20 +235,19 @@ function ChatPage() {
     if (consumed.current) return;
     if (!hasDeepLinkPrompt) return;
     consumed.current = true;
-    // Mirror the in-chat empty-state click exactly: it just calls
-    // send(p). No forced session creation, no awaited network round-
-    // trip before sending. The optimistic turn renders immediately so
-    // the user sees their question + the "thinking" status without a
-    // blank period.
+    // Deep-link from a "try this" sample card on the homepage:
+    // populate the composer textarea with the prompt and let the user
+    // hit Send when they're ready. Do NOT auto-submit — clicking a
+    // homepage example should feel like loading a question into the
+    // input box, not committing a turn the user didn't explicitly send.
     //
     // URL is stripped via plain history.replaceState — NOT router.replace
-    // — to avoid Suspense re-suspending the page while the stream runs.
+    // — to avoid Suspense re-suspending the page.
     if (typeof window !== 'undefined') {
       window.history.replaceState(null, '', window.location.pathname);
     }
-    setInput('');
-    void send(initialPromptRef.current);
-  }, [hasDeepLinkPrompt, send]);
+    setInput(initialPromptRef.current);
+  }, [hasDeepLinkPrompt]);
 
   const stop = useCallback(() => {
     abortRef.current?.abort();
