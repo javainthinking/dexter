@@ -273,6 +273,7 @@
     },
     "summaryColumns": {
       "ticker": "종목",
+      "dailyChange": "일간 변동",
       "macd": "MACD",
       "ma": "MA",
       "volume": "거래량",

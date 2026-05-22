@@ -273,6 +273,7 @@
     },
     "summaryColumns": {
       "ticker": "Ticker",
+      "dailyChange": "5D %",
       "macd": "MACD",
       "ma": "MA",
       "volume": "Vol",

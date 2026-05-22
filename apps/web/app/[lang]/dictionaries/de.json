@@ -273,6 +273,7 @@
     },
     "summaryColumns": {
       "ticker": "Symbol",
+      "dailyChange": "Tägl. %",
       "macd": "MACD",
       "ma": "MA",
       "volume": "Vol",

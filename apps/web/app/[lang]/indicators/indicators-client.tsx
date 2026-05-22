@@ -20,6 +20,7 @@ import {
   SummarySkeleton,
   type SummaryEntry,
   type SummaryDimension,
+  type DailyChange,
 } from '../../../components/indicators/summary-view';
 
 // The Movers (gainers/losers) tab moved to /market — that surface is
@@ -106,6 +107,41 @@ const DIMENSION_BUCKET_LABELS = {
 } as const;
 
 const DIMENSION_TABS: ReadonlyArray<DimensionTab> = ['macd', 'ma', 'volume', 'flow'];
+
+/**
+ * Number of daily price bars to surface in the Summary view's
+ * `5D %` column. Matches BUCKET_TREND_LOOKBACK on the API side so
+ * each row reads as one aligned timeline (5 daily pct values
+ * sitting under 5 bucket dots). Hard-coded here to keep the
+ * client and server constants visible side by side in PRs — the
+ * compile error if they drift is precisely the signal we want.
+ */
+const SUMMARY_TREND_DAYS = 5;
+
+/**
+ * Pull the last N daily percent changes from a price series. Each
+ * entry pairs the bar's ISO date with `(close - prev_close) / prev_close * 100`,
+ * so position i in the returned array refers to bar (n-N+i) — the
+ * same indexing the bucket trail uses. The very first bar of the
+ * window needs the bar before it to compute its pct, hence we read
+ * N+1 bars off the tail.
+ */
+function dailyChangesFromPrices(
+  prices: Array<{ time: string; close: number | null }> | undefined,
+  lookback: number,
+): DailyChange[] {
+  if (!prices || prices.length === 0) return [];
+  const start = Math.max(1, prices.length - lookback);
+  const out: DailyChange[] = [];
+  for (let i = start; i < prices.length; i++) {
+    const cur = prices[i].close;
+    const prev = prices[i - 1].close;
+    const pct =
+      cur != null && prev != null && prev !== 0 ? ((cur - prev) / prev) * 100 : null;
+    out.push({ time: prices[i].time, changePct: pct });
+  }
+  return out;
+}
 
 export function IndicatorsClient({
   initialPortfolios,
@@ -276,9 +312,25 @@ export function IndicatorsClient({
               },
             };
           };
+
+          // Daily pct changes: every dimension's response carries the
+          // same OHLCV (same upstream chain, same date range), so we
+          // can pull from any one. Try MACD first — if it errored,
+          // fall through to the others so the price column still
+          // populates as long as *one* dimension succeeded.
+          let dailyChanges: DailyChange[] = [];
+          for (const dim of DIMENSION_TABS) {
+            const e = byTickerByDim.get(dim)?.get(ticker);
+            if (e?.prices && e.prices.length > 0) {
+              dailyChanges = dailyChangesFromPrices(e.prices, SUMMARY_TREND_DAYS);
+              break;
+            }
+          }
+
           return {
             ticker,
             displayName: tickerNames.get(ticker) ?? null,
+            dailyChanges,
             macd: buildDim('macd'),
             ma: buildDim('ma'),
             volume: buildDim('volume'),

@@ -35,9 +35,26 @@ export interface SummaryDimension {
   error?: string;
 }
 
+/**
+ * One trading-day's price reading rendered next to the bucket trails
+ * so users can correlate "what the signal called" with "what the
+ * price actually did." Same length (5) and same date alignment as
+ * each `bucketTrend` so the columns scan as a single timeline.
+ */
+export interface DailyChange {
+  time: string;
+  changePct: number | null;
+}
+
 export interface SummaryEntry {
   ticker: string;
   displayName: string | null;
+  /**
+   * Last N daily percent changes (oldest → newest, length matches the
+   * bucket-trend window). Pulled from the OHLCV the indicator
+   * endpoints already return — no extra fetch.
+   */
+  dailyChanges: DailyChange[];
   macd: SummaryDimension;
   ma: SummaryDimension;
   volume: SummaryDimension;
@@ -84,7 +101,7 @@ const DIMENSION_FALLBACK_LABEL: Record<DimensionKey, string> = {
 export function SummaryView({ entries }: { entries: SummaryEntry[] }) {
   const dict = useDictionary();
   const columnLabels = (dict.indicators?.summaryColumns ?? {}) as Partial<
-    Record<DimensionKey | 'ticker', string>
+    Record<DimensionKey | 'ticker' | 'dailyChange', string>
   >;
   const labelFor = (k: DimensionKey) => columnLabels[k] ?? DIMENSION_FALLBACK_LABEL[k];
 
@@ -104,6 +121,16 @@ export function SummaryView({ entries }: { entries: SummaryEntry[] }) {
                 className="sticky left-0 z-10 bg-muted/40 px-3 py-2 text-left text-[10px] font-mono uppercase tracking-[0.16em] text-muted-foreground"
               >
                 {columnLabels.ticker ?? 'Ticker'}
+              </th>
+              {/* "5D %" column comes right after Ticker so users
+                  scan: identity → what the price actually did → what
+                  each indicator called. Reading order matches the
+                  causal/temporal mental model. */}
+              <th
+                scope="col"
+                className="px-3 py-2 text-left text-[10px] font-mono uppercase tracking-[0.16em] text-muted-foreground"
+              >
+                {columnLabels.dailyChange ?? '5D %'}
               </th>
               {DIMENSION_KEYS.map((k) => (
                 <th
@@ -220,6 +247,9 @@ function SummaryRow({ entry, striped }: { entry: SummaryEntry; striped: boolean 
           </div>
         )}
       </th>
+      <td className="px-3 py-2 align-middle">
+        <DailyChangeRow changes={entry.dailyChanges} />
+      </td>
       {DIMENSION_KEYS.map((k) => {
         const dim = entry[k];
         return (
@@ -230,6 +260,62 @@ function SummaryRow({ entry, striped }: { entry: SummaryEntry; striped: boolean 
       })}
     </tr>
   );
+}
+
+/**
+ * Five tiny signed-percent values sat in a row, aligned positionally
+ * with the bucket trails in the four dimension columns to the right.
+ * Reading down a row, users can correlate "did the price actually
+ * move the way the signal called?" without flipping between tabs.
+ *
+ * Colouring uses the `text-up` / `text-down` tokens so the current
+ * market-colour convention (CN red-up vs US green-up) flows through.
+ * Each number's hover title carries the ISO date for the
+ * corresponding bar.
+ */
+function DailyChangeRow({ changes }: { changes: DailyChange[] }) {
+  if (changes.length === 0) {
+    return <span className="font-mono text-xs text-muted-foreground">—</span>;
+  }
+  return (
+    <div className="inline-flex items-center gap-1.5 font-mono text-[10px] tabular-nums">
+      {changes.map((c) => (
+        <span
+          key={c.time}
+          title={c.time}
+          className={cn(
+            'min-w-[2.4rem] text-right',
+            c.changePct == null && 'text-muted-foreground',
+            c.changePct != null && c.changePct > 0 && 'text-up',
+            c.changePct != null && c.changePct < 0 && 'text-down',
+            c.changePct === 0 && 'text-muted-foreground',
+          )}
+        >
+          {formatDailyChange(c.changePct)}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * Compact signed-percent formatter for the 5-up row:
+ *   - null → "—"
+ *   - 0 → "0"
+ *   - |v| ≥ 10 → integer with sign ("+12", "-15")
+ *   - else → one decimal with sign ("+1.2", "-0.8")
+ *
+ * One decimal at the small magnitudes carries enough resolution to
+ * distinguish "flat" days from real ones; the integer truncation
+ * past 10% saves a char without losing meaning (no one ranks
+ * "+12.3%" vs "+12%" differently at a glance).
+ */
+function formatDailyChange(v: number | null): string {
+  if (v == null || !Number.isFinite(v)) return '—';
+  if (v === 0) return '0';
+  const sign = v > 0 ? '+' : '−';
+  const abs = Math.abs(v);
+  return abs >= 10 ? `${sign}${Math.round(abs)}` : `${sign}${abs.toFixed(1)}`;
 }
 
 function DimensionCell({ dim }: { dim: SummaryDimension }) {
@@ -272,6 +358,7 @@ export function SummarySkeleton({ rows = 5 }: { rows?: number }) {
               <div className="h-3 w-16 rounded bg-muted" />
               <div className="h-2 w-20 rounded bg-muted" />
             </div>
+            <div className="h-4 w-36 rounded bg-muted" />
             {DIMENSION_KEYS.map((k) => (
               <div key={k} className="h-5 w-20 rounded-full bg-muted" />
             ))}
