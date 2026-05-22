@@ -39,6 +39,33 @@ const BUCKET_DOT_COLOR: Record<Bucket, string> = {
   neutral: 'bg-muted-foreground',
 };
 
+/**
+ * Tinted tooltip body that echoes the dot it's annotating — same red /
+ * green / muted palette as the pill itself so users see a coherent
+ * visual story instead of "every tooltip looks the same regardless of
+ * which day I'm hovering."
+ *
+ * The values override the popover defaults set by `TooltipContent`
+ * (which uses bg-popover + text-popover-foreground). Light mode uses
+ * the 50-shade for a near-opaque pale tint; dark mode uses the 950
+ * shade at /95 opacity so the popover shadow still anchors it
+ * visually instead of blending with the page background.
+ *
+ * Date sub-row inside inherits the parent text colour and is dimmed
+ * with `opacity-70` — keeps the headline reason line as the visual
+ * focal point without paying for a second per-bucket colour map.
+ */
+const BUCKET_TOOLTIP_CLASS: Record<Bucket, string> = {
+  bullish:
+    'bg-rose-50 dark:bg-rose-950/95 border-rose-500/40 text-rose-700 dark:text-rose-300',
+  bearish:
+    'bg-emerald-50 dark:bg-emerald-950/95 border-emerald-500/40 text-emerald-700 dark:text-emerald-300',
+  // Neutral falls back to the default popover styling — no override
+  // class needed. Keeping the entry here so the lookup never returns
+  // undefined and surrounding code stays branch-free.
+  neutral: '',
+};
+
 export function CardShell({
   ticker,
   displayName,
@@ -221,8 +248,11 @@ function BucketDot({
           )}
         />
       </TooltipTrigger>
-      <TooltipContent side="top" className="text-center">
-        <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+      <TooltipContent
+        side="top"
+        className={cn('text-center', BUCKET_TOOLTIP_CLASS[sample.bucket])}
+      >
+        <div className="text-[10px] uppercase tracking-wide opacity-70">
           {formatTooltipDate(sample.time)}
         </div>
         <div className="text-xs font-medium">{reason}</div>
