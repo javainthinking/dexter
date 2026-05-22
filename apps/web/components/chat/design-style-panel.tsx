@@ -100,12 +100,12 @@ export function DesignStylePanel({
           {/* Footer attribution */}
           <footer className="shrink-0 border-t border-border px-5 py-3">
             <a
-              href="https://github.com/VoltAgent/awesome-design-md"
+              href="https://getdesign.md"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
             >
-              {sourceLabel}: VoltAgent/awesome-design-md
+              {sourceLabel}: getdesign.md
               <ExternalLink className="size-3" aria-hidden="true" />
             </a>
           </footer>
