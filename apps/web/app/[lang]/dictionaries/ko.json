@@ -151,7 +151,7 @@
     "design": {
       "buttonLabel": "디자인 스타일",
       "title": "디자인 시스템 참조",
-      "subtitle": "브랜드를 클릭하면 design.md 가 채팅에 추가됩니다 — 추가만, 자동 전송 없음.",
+      "subtitle": "원하는 디자인 스타일 선택",
       "sourceLabel": "출처",
       "close": "닫기",
       "promptPrefix": "이 디자인 스타일을 참고해 주세요:"

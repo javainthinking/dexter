@@ -151,7 +151,7 @@
     "design": {
       "buttonLabel": "设计风格",
       "title": "引用设计风格",
-      "subtitle": "点击品牌将其 design.md 加载到对话框中 —— 仅追加,不会自动发送。",
+      "subtitle": "选择想要的设计风格",
       "sourceLabel": "数据源",
       "close": "关闭",
       "promptPrefix": "请参考这个设计风格:"

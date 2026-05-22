@@ -151,7 +151,7 @@
     "design": {
       "buttonLabel": "Estilo de diseño",
       "title": "Referenciar un sistema de diseño",
-      "subtitle": "Haz clic en una marca para cargar su design.md en el chat — solo se añade, nunca se envía automáticamente.",
+      "subtitle": "Elige un estilo de diseño",
       "sourceLabel": "Fuente",
       "close": "Cerrar",
       "promptPrefix": "Por favor, sigue este estilo de diseño:"
