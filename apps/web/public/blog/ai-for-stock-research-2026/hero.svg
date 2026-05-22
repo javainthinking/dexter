@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="aiBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+    <filter id="aiGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#aiBg)"/>
+
+  <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">BUILD-IN-PUBLIC · CATEGORY MAP</text>
+
+  <text x="60" y="200" font-family="Georgia, 'Times New Roman', serif" font-size="74" font-weight="600" fill="#F4F4F5" letter-spacing="-0.5">AI for stock research</text>
+  <text x="60" y="266" font-family="Georgia, 'Times New Roman', serif" font-size="74" font-weight="600" fill="#4FCBA8" letter-spacing="-0.5">in 2026.</text>
+
+  <text x="60" y="320" font-family="Helvetica, Arial, sans-serif" font-size="22" fill="#F4F4F5" opacity="0.65">What's solved, what's working, what's still hype —</text>
+  <text x="60" y="350" font-family="Helvetica, Arial, sans-serif" font-size="22" fill="#F4F4F5" opacity="0.65">honestly mapped across five categories.</text>
+
+  <!-- Bottom-left honest framing card -->
+  <g transform="translate(60,430)">
+    <rect x="0" y="0" width="540" height="140" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">THE 2026 EDGE</text>
+    <text x="22" y="66" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#F4F4F5">Not "access to data" — that's solved.</text>
+    <text x="22" y="92" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#F4F4F5">It's time spent on judgement vs. plumbing.</text>
+    <text x="22" y="120" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#4FCBA8" opacity="0.85">→ AI takes the plumbing.</text>
+  </g>
+
+  <!-- Right: 5-category scoreboard -->
+  <g transform="translate(680,140)">
+    <text x="0" y="0" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#F4F4F5" opacity="0.55" letter-spacing="2">FIVE CATEGORIES</text>
+
+    <g font-family="Helvetica, Arial, sans-serif" font-size="14">
+      <!-- Solved: filing extraction -->
+      <g transform="translate(0,24)" filter="url(#aiGlow)">
+        <rect x="0" y="0" width="460" height="40" rx="8" fill="#4FCBA8"/>
+        <text x="14" y="25" fill="#14120b" font-weight="700">Filing extraction</text>
+        <text x="446" y="25" fill="#14120b" font-weight="700" text-anchor="end">SOLVED</text>
+      </g>
+      <!-- Solved: model generation -->
+      <g transform="translate(0,72)" filter="url(#aiGlow)">
+        <rect x="0" y="0" width="460" height="40" rx="8" fill="#4FCBA8"/>
+        <text x="14" y="25" fill="#14120b" font-weight="700">Model generation (DCF, Comps)</text>
+        <text x="446" y="25" fill="#14120b" font-weight="700" text-anchor="end">SOLVED</text>
+      </g>
+      <!-- Solved: technical monitoring -->
+      <g transform="translate(0,120)" filter="url(#aiGlow)">
+        <rect x="0" y="0" width="460" height="40" rx="8" fill="#4FCBA8"/>
+        <text x="14" y="25" fill="#14120b" font-weight="700">Technical monitoring</text>
+        <text x="446" y="25" fill="#14120b" font-weight="700" text-anchor="end">SOLVED</text>
+      </g>
+      <!-- Working with input: idea screening -->
+      <g transform="translate(0,168)">
+        <rect x="0" y="0" width="460" height="40" rx="8" fill="#1b1913" stroke="#2D7E6E" stroke-opacity="0.7"/>
+        <text x="14" y="25" fill="#F4F4F5">Idea screening</text>
+        <text x="446" y="25" fill="#2D7E6E" font-weight="700" text-anchor="end" opacity="0.95">WORKING</text>
+      </g>
+      <!-- Working: content drafting -->
+      <g transform="translate(0,216)">
+        <rect x="0" y="0" width="460" height="40" rx="8" fill="#1b1913" stroke="#2D7E6E" stroke-opacity="0.7"/>
+        <text x="14" y="25" fill="#F4F4F5">Content drafting</text>
+        <text x="446" y="25" fill="#2D7E6E" font-weight="700" text-anchor="end" opacity="0.95">WORKING</text>
+      </g>
+    </g>
+  </g>
+</svg>
