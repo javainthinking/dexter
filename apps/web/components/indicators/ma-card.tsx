@@ -55,7 +55,16 @@ export function MaCard({ entry, dict }: { entry: MaEntry; dict: any }) {
   const dev = (target: number | null) => (close != null && target != null && target !== 0 ? ((close - target) / target) * 100 : null);
 
   const bucket = entry.bucket ?? 'neutral';
-  const bucketLabel = BUCKET_LABELS[bucket][isZh ? 'zh' : 'en'];
+  const bucketLang = isZh ? 'zh' : 'en';
+  const bucketLabel = BUCKET_LABELS[bucket][bucketLang];
+  // Pre-localized labels for every bucket — the trail tooltip needs
+  // them so a past bearish day shows "Bearish · MA aligned down"
+  // (MA's dimension-specific phrasing) rather than just "bearish".
+  const bucketLabels = {
+    bullish: BUCKET_LABELS.bullish[bucketLang],
+    bearish: BUCKET_LABELS.bearish[bucketLang],
+    neutral: BUCKET_LABELS.neutral[bucketLang],
+  };
 
   const W = 420;
   const H = 230;
@@ -69,6 +78,7 @@ export function MaCard({ entry, dict }: { entry: MaEntry; dict: any }) {
       bucket={bucket}
       bucketLabel={bucketLabel}
       bucketTrend={entry.bucketTrend}
+      bucketLabels={bucketLabels}
       metrics={
         <>
           <MetricCell label={dict.indicators?.metrics?.latest ?? 'Last'} value={formatNum(close, 2)} />

@@ -2,6 +2,12 @@
 
 import * as React from 'react';
 import { cn } from '../../lib/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../ui/tooltip';
 
 export type Bucket = 'bullish' | 'bearish' | 'neutral';
 
@@ -39,6 +45,7 @@ export function CardShell({
   bucket,
   bucketLabel,
   bucketTrend,
+  bucketLabels,
   asOf,
   children,
   metrics,
@@ -59,6 +66,16 @@ export function CardShell({
    * Omit to fall back to the single-dot legacy badge.
    */
   bucketTrend?: BucketSample[];
+  /**
+   * Full localised label map for the current dimension — used by the
+   * per-dot hover tooltip so a past *bearish* day shows the SAME
+   * phrasing the headline pill uses on a current-bearish card
+   * ("Bearish · death cross" for MACD, "Bearish · MA aligned down"
+   * for MA, etc.) instead of the bare bucket name.
+   *
+   * Optional. When omitted the tooltip falls back to the raw bucket.
+   */
+  bucketLabels?: Record<Bucket, string>;
   asOf?: string | null;
   children: React.ReactNode;
   metrics?: React.ReactNode;
@@ -87,7 +104,12 @@ export function CardShell({
           // so users can pin down which day flipped. We don't
           // animate or vary spacing on size — keeps the scan-line
           // calm when 12 cards sit on screen.
-          <BucketBadge bucket={bucket} bucketLabel={bucketLabel} bucketTrend={bucketTrend} />
+          <BucketBadge
+            bucket={bucket}
+            bucketLabel={bucketLabel}
+            bucketTrend={bucketTrend}
+            bucketLabels={bucketLabels}
+          />
         )}
       </header>
       <div className="px-3 pt-3">{children}</div>
@@ -100,10 +122,12 @@ function BucketBadge({
   bucket,
   bucketLabel,
   bucketTrend,
+  bucketLabels,
 }: {
   bucket: Bucket;
   bucketLabel: string;
   bucketTrend?: BucketSample[];
+  bucketLabels?: Record<Bucket, string>;
 }) {
   // Trail rendering details:
   // - Past dots use a lighter tone (opacity-50) so the "today" dot,
@@ -113,37 +137,125 @@ function BucketBadge({
   //   leading dots and let the existing "today" dot (always rendered)
   //   close the row — avoids drawing the same date twice.
   const past = bucketTrend && bucketTrend.length > 1 ? bucketTrend.slice(0, -1) : [];
+  const today = bucketTrend?.[bucketTrend.length - 1];
+
+  // One TooltipProvider scoped to this badge keeps the rich tooltips
+  // local — we don't want every chip on the page sharing a global
+  // delay configuration. 150ms is fast enough to feel responsive on a
+  // 6-pixel hover target without firing accidentally during scroll.
   return (
-    <span
-      className={cn(
-        'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold shrink-0',
-        BUCKET_COLOR[bucket],
-      )}
-    >
-      {past.length > 0 && (
-        <span className="flex items-center gap-1" aria-hidden="true">
-          {past.map((s, i) => (
-            <span
-              key={`${s.time}-${i}`}
-              title={`${s.time} · ${s.bucket}`}
-              className={cn(
-                'size-1.5 rounded-full opacity-50 transition-opacity hover:opacity-100',
-                BUCKET_DOT_COLOR[s.bucket],
-              )}
-            />
-          ))}
-        </span>
-      )}
+    <TooltipProvider delayDuration={150}>
       <span
-        title={bucketTrend?.[bucketTrend.length - 1]
-          ? `${bucketTrend[bucketTrend.length - 1].time} · ${bucket}`
-          : undefined}
-        className={cn('size-2 rounded-full shrink-0', BUCKET_DOT_COLOR[bucket])}
-        aria-hidden="true"
-      />
-      {bucketLabel}
-    </span>
+        className={cn(
+          'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold shrink-0',
+          BUCKET_COLOR[bucket],
+        )}
+      >
+        {past.length > 0 && (
+          <span
+            className="flex items-center gap-1"
+            // Group label for SR users — individual dot triggers carry
+            // the precise date + reason in aria-label as well.
+            aria-label="Signal history, oldest first"
+          >
+            {past.map((s, i) => (
+              <BucketDot
+                key={`${s.time}-${i}`}
+                sample={s}
+                bucketLabels={bucketLabels}
+                size="sm"
+              />
+            ))}
+          </span>
+        )}
+        {today ? (
+          <BucketDot sample={today} bucketLabels={bucketLabels} size="md" />
+        ) : (
+          // No trend data — render the legacy solo dot so existing
+          // surfaces that don't pass `bucketTrend` still get a badge.
+          <span
+            className={cn('size-2 rounded-full shrink-0', BUCKET_DOT_COLOR[bucket])}
+            aria-hidden="true"
+          />
+        )}
+        {bucketLabel}
+      </span>
+    </TooltipProvider>
   );
+}
+
+/**
+ * One hover-tooltip-ready dot in the bucket trail. The wrapping
+ * `<span>` is the tooltip trigger — Radix' Slot machinery forwards
+ * refs through it. We render the dot itself, not a button, because
+ * the trail is a passive read-out (no click action) and a real
+ * button would draw focus rings on hover.
+ *
+ * Tooltip content: small date+weekday header on top, then the
+ * dimension-specific reason label ("Bullish · golden cross" etc.)
+ * picked from `bucketLabels`. Two lines lets users instantly see
+ * "which day was this, and what call did the system make then" —
+ * which is the whole point of the trail.
+ */
+function BucketDot({
+  sample,
+  bucketLabels,
+  size,
+}: {
+  sample: BucketSample;
+  bucketLabels?: Record<Bucket, string>;
+  size: 'sm' | 'md';
+}) {
+  const reason = bucketLabels?.[sample.bucket] ?? capitalize(sample.bucket);
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span
+          role="img"
+          aria-label={`${sample.time} · ${reason}`}
+          className={cn(
+            'rounded-full shrink-0 cursor-help',
+            size === 'sm' && 'size-1.5 opacity-50 transition-opacity hover:opacity-100',
+            size === 'md' && 'size-2',
+            BUCKET_DOT_COLOR[sample.bucket],
+          )}
+        />
+      </TooltipTrigger>
+      <TooltipContent side="top" className="text-center">
+        <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+          {formatTooltipDate(sample.time)}
+        </div>
+        <div className="text-xs font-medium">{reason}</div>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
+/**
+ * Format an ISO date as "Mon · 2026-05-18" — weekday first because
+ * users orient on the trading week (Mon/Tue/Wed), and the absolute
+ * date stays available for precision. Weekday uses the browser's
+ * resolved locale so EU/Asia users see localised abbreviations.
+ *
+ * Falls back to the raw ISO if the string can't be parsed — never
+ * throws inside a render path.
+ */
+function formatTooltipDate(iso: string): string {
+  if (!iso) return '';
+  try {
+    // `T00:00:00` pins parsing to the local timezone so we don't drift
+    // a day when running in a UTC-offset locale.
+    const d = new Date(`${iso}T00:00:00`);
+    if (Number.isNaN(d.getTime())) return iso;
+    const wd = new Intl.DateTimeFormat(undefined, { weekday: 'short' }).format(d);
+    return `${wd} · ${iso}`;
+  } catch {
+    return iso;
+  }
+}
+
+function capitalize(s: string): string {
+  return s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 export function MetricCell({
