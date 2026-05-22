@@ -1,67 +1,117 @@
 import type { MetadataRoute } from 'next';
 import { getAllPosts } from '../lib/blog';
-import { locales, defaultLocale } from '../lib/i18n/locales';
+import { locales, defaultLocale, type Locale } from '../lib/i18n/locales';
 
 /**
  * Dynamic sitemap.xml — Next.js App Router convention.
  *
- * Includes the marketing pages (/, /pricing if/when it exists, /blog)
- * plus every published blog post, emitted once per locale with
- * hreflang alternates. App-internal pages (/chat, /memory, /portfolios,
- * /indicators, /feedback) are deliberately excluded — they're behind
- * auth and don't have public content for search engines.
+ * Spec (apps/web/docs/blog-i18n.md + i18n-nextjs reference):
  *
- * Build-time call to getAllPosts() is fine — same FS read as the
- * /blog index route uses. Output is one entry per (locale × url)
- * pair with alternates language map so Google understands the
- * translations even when content is English-only today.
+ *   - Each public URL is listed EXACTLY ONCE. The <loc> is the
+ *     default-locale URL (clean, no `/en` prefix). Every locale
+ *     variant of that URL is attached as <xhtml:link rel="alternate">
+ *     via `alternates.languages`, and an `x-default` entry points
+ *     to the same default URL.
+ *   - Emitting one entry per (URL × locale) violates Google's
+ *     hreflang requirement that alternates be mutually consistent
+ *     across all language variants of the same page — the previous
+ *     shape duplicated each URL N times and inflated the sitemap.
+ *
+ * What's included:
+ *   - / (homepage)
+ *   - /blog (index)
+ *   - /chat (public marketing entry-point — primary CTA)
+ *   - /blog/<slug> for every published post
+ *
+ * What's excluded:
+ *   - /memory, /portfolios, /indicators, /feedback — behind auth,
+ *     no public content for crawlers
+ *   - /sign-in — utility route, zero SEO value
+ *   - /api/* — never indexable
  */
 
 const SITE_URL = 'https://pickskill.ai';
 
-function path(p: string, locale: string): string {
-  if (locale === defaultLocale) return p === '/' ? '' : p;
-  return `/${locale}${p === '/' ? '' : p}`;
+/**
+ * Compose the locale-prefixed pathname. Default locale uses the
+ * clean URL (no `/en` prefix) per our routing convention.
+ *
+ *   path('/', 'en')        → ''
+ *   path('/', 'zh-CN')     → '/zh-CN'
+ *   path('/blog', 'en')    → '/blog'
+ *   path('/blog', 'zh-CN') → '/zh-CN/blog'
+ */
+function localePath(canonicalPath: string, locale: Locale): string {
+  const clean = canonicalPath === '/' ? '' : canonicalPath;
+  if (locale === defaultLocale) return clean;
+  return `/${locale}${clean}`;
 }
 
-function buildAlternates(p: string): Record<string, string> {
-  return Object.fromEntries(
-    locales.map((l) => [l, `${SITE_URL}${path(p, l)}` || `${SITE_URL}/`]),
-  );
+function localeUrl(canonicalPath: string, locale: Locale): string {
+  const tail = localePath(canonicalPath, locale);
+  // Avoid an empty URL for the homepage in the default locale
+  // (`${SITE_URL}` alone has no trailing slash; Google prefers the
+  // explicit slash for the homepage canonical).
+  return tail === '' ? `${SITE_URL}/` : `${SITE_URL}${tail}`;
 }
+
+/**
+ * Build the `alternates.languages` map for a given canonical path.
+ * Includes every supported locale plus `x-default`. Next.js renders
+ * each entry as `<xhtml:link rel="alternate" hreflang="…" href="…"/>`.
+ *
+ * Returned keys use BCP-47 (`en`, `zh-CN`) — already the format the
+ * `locales` array stores. `x-default` mirrors the default-locale URL
+ * so search engines have a fallback when none of the more specific
+ * hreflangs match the user's preferences.
+ */
+function buildAlternates(canonicalPath: string): Record<string, string> {
+  const languages: Record<string, string> = {};
+  for (const locale of locales) {
+    languages[locale] = localeUrl(canonicalPath, locale);
+  }
+  languages['x-default'] = localeUrl(canonicalPath, defaultLocale);
+  return languages;
+}
+
+interface StaticEntry {
+  path: string;
+  priority: number;
+  changeFrequency: NonNullable<MetadataRoute.Sitemap[number]['changeFrequency']>;
+}
+
+const STATIC_PAGES: StaticEntry[] = [
+  { path: '/', priority: 1.0, changeFrequency: 'weekly' },
+  { path: '/chat', priority: 0.9, changeFrequency: 'weekly' },
+  { path: '/blog', priority: 0.8, changeFrequency: 'weekly' },
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const posts = getAllPosts();
+  // Slugs are locale-independent (translated variants live under
+  // content/blog/<locale>/<slug>.md but reuse the English slug). One
+  // call to getAllPosts() in the default locale gives the canonical
+  // slug set + their lastmod stamps.
+  const posts = getAllPosts(defaultLocale);
   const now = new Date();
 
-  const staticPages: Array<{
-    path: string;
-    priority: number;
-    changeFrequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
-  }> = [
-    { path: '/', priority: 1.0, changeFrequency: 'weekly' },
-    { path: '/blog', priority: 0.8, changeFrequency: 'weekly' },
-  ];
+  const staticEntries: MetadataRoute.Sitemap = STATIC_PAGES.map((page) => ({
+    url: localeUrl(page.path, defaultLocale),
+    lastModified: now,
+    changeFrequency: page.changeFrequency,
+    priority: page.priority,
+    alternates: { languages: buildAlternates(page.path) },
+  }));
 
-  const staticEntries: MetadataRoute.Sitemap = staticPages.flatMap((page) =>
-    locales.map((locale) => ({
-      url: `${SITE_URL}${path(page.path, locale)}` || `${SITE_URL}/`,
-      lastModified: now,
-      changeFrequency: page.changeFrequency,
-      priority: page.priority,
-      alternates: { languages: buildAlternates(page.path) },
-    })),
-  );
-
-  const postEntries: MetadataRoute.Sitemap = posts.flatMap((p) =>
-    locales.map((locale) => ({
-      url: `${SITE_URL}${path(`/blog/${p.slug}`, locale)}`,
+  const postEntries: MetadataRoute.Sitemap = posts.map((p) => {
+    const postPath = `/blog/${p.slug}`;
+    return {
+      url: localeUrl(postPath, defaultLocale),
       lastModified: new Date(p.updatedAt ?? p.publishedAt),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
-      alternates: { languages: buildAlternates(`/blog/${p.slug}`) },
-    })),
-  );
+      alternates: { languages: buildAlternates(postPath) },
+    };
+  });
 
   return [...staticEntries, ...postEntries];
 }
