@@ -278,7 +278,7 @@ function DailyChangeRow({ changes }: { changes: DailyChange[] }) {
     return <span className="font-mono text-xs text-muted-foreground">—</span>;
   }
   return (
-    <div className="inline-flex items-center gap-1.5 font-mono text-[10px] tabular-nums">
+    <div className="inline-flex items-center gap-2 font-mono text-xs font-medium tabular-nums">
       {changes.map((c) => {
         // The column header is the canonical "this is a percentage"
         // signal; the bare numbers stay compact for scannability.
@@ -295,7 +295,10 @@ function DailyChangeRow({ changes }: { changes: DailyChange[] }) {
             key={c.time}
             title={titleParts.join(' · ')}
             className={cn(
-              'min-w-[2.4rem] text-right',
+              // Wider min-width at the bumped 12px size so all five
+              // values stay column-aligned even when one is "+12"
+              // (3 chars) and its neighbour is "+0.4" (4 chars).
+              'min-w-[2.75rem] text-right',
               c.changePct == null && 'text-muted-foreground',
               c.changePct != null && c.changePct > 0 && 'text-up',
               c.changePct != null && c.changePct < 0 && 'text-down',
