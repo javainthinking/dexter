@@ -161,6 +161,15 @@ function BrandCard({
   // for legibility; on dark brand swatches, white.
   const fgHex = isDarkBrand ? 'ffffff' : '14120b';
 
+  // Defensive: a remote image URL can still 404 at runtime — Simple
+  // Icons periodically drops brands (Slack and Kraken both vanished
+  // for licensing reasons), and a GitHub org can be renamed. Without
+  // an onError handler the broken-image glyph leaks into the card.
+  // Track per-card load failure; when it flips we render the letter
+  // monogram fallback instead, just as if no URL had been supplied.
+  const [imgFailed, setImgFailed] = React.useState(false);
+  const useLetterFallback = !logoUrl || imgFailed;
+
   return (
     <button
       type="button"
@@ -219,23 +228,27 @@ function BrandCard({
               : 'bg-black/8 ring-1 ring-black/15',
           )}
         >
-          {logoUrl && isGithubAvatar ? (
+          {!useLetterFallback && isGithubAvatar ? (
             // GitHub avatar — fills the plate. Org's own background
             // (usually white) sits over the frosted-glass tint, which
             // still shows through any transparent edge pixels and as
             // the visible hairline ring around the outside.
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={logoUrl}
+              src={logoUrl!}
               alt=""
               width={256}
               height={256}
               loading="lazy"
+              onError={() => setImgFailed(true)}
               className="size-full object-cover"
             />
-          ) : logoUrl ? (
+          ) : !useLetterFallback ? (
             // Simple Icons SVG — inset on the frosted plate, rendered
-            // in the contrast tone for the brand swatch.
+            // in the contrast tone for the brand swatch. The contrast
+            // tone is passed via the URL (Simple Icons CDN re-colours
+            // the SVG server-side), so getBrandLogoUrl's white-default
+            // is overridden here for legibility on light brands.
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={`https://cdn.simpleicons.org/${brand.iconSlug}/${fgHex}`}
@@ -243,10 +256,13 @@ function BrandCard({
               width={28}
               height={28}
               loading="lazy"
+              onError={() => setImgFailed(true)}
               className="size-6 object-contain"
             />
           ) : (
             // Letter mark — serif initial inset on the frosted plate.
+            // Reached for brands with no logo source AND for brands
+            // whose remote image 404'd at load time.
             <span
               className="font-serif text-xl font-semibold leading-none"
               style={{ color: isDarkBrand ? '#FFFFFF' : '#14120b' }}
