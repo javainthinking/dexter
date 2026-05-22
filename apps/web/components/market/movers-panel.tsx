@@ -1,7 +1,11 @@
 'use client';
 
 import * as React from 'react';
-import { formatNum } from './card-shell';
+// formatNum is a tiny number-formatter shared with the indicator cards.
+// Keeping the import points at the original module so we don't fork the
+// helper just because the panel moved namespaces — the helper itself is
+// not market-specific and refactoring it would be scope creep.
+import { formatNum } from '../indicators/card-shell';
 
 interface Mover {
   symbol: string;
@@ -22,7 +26,12 @@ interface MoversData {
 }
 
 export function MoversPanel({ data, dict }: { data: MoversData; dict: any }) {
-  const isZh = dict.indicators?._localeHint === 'zh';
+  // _localeHint is a per-namespace marker every dictionary carries; read
+  // it from the market namespace now that the panel lives there. Falls
+  // back to indicators for backwards compatibility while dictionaries
+  // roll out (no-op once every locale ships the market namespace).
+  const isZh =
+    (dict.market?._localeHint ?? dict.indicators?._localeHint) === 'zh';
 
   return (
     <div className="space-y-4">

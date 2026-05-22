@@ -167,6 +167,7 @@
   "nav": {
     "memory": "Gedächtnis",
     "indicators": "Indikatoren",
+    "market": "Markt",
     "portfolios": "Portfolios",
     "blog": "Blog",
     "feedback": "Feedback",
@@ -263,13 +264,23 @@
       "macd": "MACD",
       "ma": "Gleitender Durchschnitt",
       "volume": "Volumen",
-      "flow": "Kapitalfluss",
-      "movers": "Top-Bewegungen"
+      "flow": "Kapitalfluss"
     },
     "metrics": {
       "latest": "Letzter",
       "change": "Änd. %"
     }
+  },
+  "market": {
+    "_localeHint": "de",
+    "title": "Markt",
+    "subtitle": "Gewinner, Verlierer und marktweite Signale.",
+    "tabs": {
+      "movers": "Top-Bewegungen"
+    },
+    "refresh": "Aktualisieren",
+    "retry": "Wiederholen",
+    "error": "Marktdaten konnten nicht geladen werden."
   },
   "memory": {
     "title": "Gedächtnis",

@@ -167,6 +167,7 @@
   "nav": {
     "memory": "메모리",
     "indicators": "지표",
+    "market": "마켓",
     "portfolios": "포트폴리오",
     "blog": "블로그",
     "feedback": "피드백",
@@ -263,13 +264,23 @@
       "macd": "MACD",
       "ma": "이동평균선",
       "volume": "거래량",
-      "flow": "자금 흐름",
-      "movers": "등락주"
+      "flow": "자금 흐름"
     },
     "metrics": {
       "latest": "종가",
       "change": "등락%"
     }
+  },
+  "market": {
+    "_localeHint": "ko",
+    "title": "마켓",
+    "subtitle": "등락주와 시장 전반 시그널.",
+    "tabs": {
+      "movers": "등락주"
+    },
+    "refresh": "새로 고침",
+    "retry": "다시 시도",
+    "error": "시장 데이터를 불러오지 못했습니다."
   },
   "memory": {
     "title": "메모리",

@@ -167,6 +167,7 @@
   "nav": {
     "memory": "Mémoire",
     "indicators": "Indicateurs",
+    "market": "Marché",
     "portfolios": "Portefeuilles",
     "blog": "Blog",
     "feedback": "Retours",
@@ -263,13 +264,23 @@
       "macd": "MACD",
       "ma": "Moyennes mobiles",
       "volume": "Volume",
-      "flow": "Flux de capitaux",
-      "movers": "Plus grands mouvements"
+      "flow": "Flux de capitaux"
     },
     "metrics": {
       "latest": "Dernier",
       "change": "Var %"
     }
+  },
+  "market": {
+    "_localeHint": "fr",
+    "title": "Marché",
+    "subtitle": "Hausses, baisses et signaux du marché.",
+    "tabs": {
+      "movers": "Plus grands mouvements"
+    },
+    "refresh": "Actualiser",
+    "retry": "Réessayer",
+    "error": "Impossible de charger les données du marché."
   },
   "memory": {
     "title": "Mémoire",

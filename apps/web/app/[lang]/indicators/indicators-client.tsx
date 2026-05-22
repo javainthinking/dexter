@@ -15,9 +15,13 @@ import { MacdCard } from '../../../components/indicators/macd-card';
 import { MaCard } from '../../../components/indicators/ma-card';
 import { VolumeCard } from '../../../components/indicators/volume-card';
 import { FlowCard } from '../../../components/indicators/flow-card';
-import { MoversPanel } from '../../../components/indicators/movers-panel';
 
-type Tab = 'macd' | 'ma' | 'volume' | 'flow' | 'movers';
+// The Movers (gainers/losers) tab moved to /market — that surface is
+// portfolio-independent and the broader Market section is where future
+// market-wide signals will land too. Indicators stays focused on
+// per-watchlist technicals.
+
+type Tab = 'macd' | 'ma' | 'volume' | 'flow';
 
 interface PortfolioSummary {
   id: string;
@@ -45,21 +49,11 @@ interface IndicatorsResponse {
   tickers: IndicatorTickerEntry[];
 }
 
-interface MoversResponse {
-  asOf: string;
-  dimension: 'movers';
-  gainers: Array<{ symbol: string; name: string; price: number; change: number; percent_change: number; volume: number }>;
-  losers: Array<{ symbol: string; name: string; price: number; change: number; percent_change: number; volume: number }>;
-  market?: string | null;
-  retrieved_at?: string | null;
-}
-
-const TABS: Array<{ id: Tab; needsTickers: boolean }> = [
-  { id: 'macd', needsTickers: true },
-  { id: 'ma', needsTickers: true },
-  { id: 'volume', needsTickers: true },
-  { id: 'flow', needsTickers: true },
-  { id: 'movers', needsTickers: false },
+const TABS: ReadonlyArray<{ id: Tab }> = [
+  { id: 'macd' },
+  { id: 'ma' },
+  { id: 'volume' },
+  { id: 'flow' },
 ];
 
 export function IndicatorsClient({
@@ -79,7 +73,7 @@ export function IndicatorsClient({
   const [activeId, setActiveId] = React.useState<string | null>(initialPortfolios[0]?.id ?? null);
   const [activeDetail, setActiveDetail] = React.useState<PortfolioWithHoldings | null>(null);
   const [tab, setTab] = React.useState<Tab>('macd');
-  const [data, setData] = React.useState<IndicatorsResponse | MoversResponse | null>(null);
+  const [data, setData] = React.useState<IndicatorsResponse | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -166,26 +160,23 @@ export function IndicatorsClient({
   );
 
   // ─── indicator fetch ──────────────────────────────────────────────
-  const needsTickers = TABS.find((t) => t.id === tab)?.needsTickers ?? false;
-
+  // Every remaining tab is portfolio-scoped (per-ticker technicals), so
+  // we just bail out when the active portfolio has no holdings.
   const fetchData = React.useCallback(async () => {
-    if (needsTickers && tickers.length === 0) {
+    if (tickers.length === 0) {
       setData(null);
       return;
     }
     setLoading(true);
     setError(null);
     try {
-      const url =
-        tab === 'movers'
-          ? '/api/indicators/movers'
-          : `/api/indicators/${tab}?tickers=${encodeURIComponent(tickers.join(','))}&days=140`;
+      const url = `/api/indicators/${tab}?tickers=${encodeURIComponent(tickers.join(','))}&days=140`;
       const res = await fetch(url, { cache: 'no-store' });
       if (!res.ok) {
         const body = (await res.json().catch(() => null)) as { error?: string } | null;
         throw new Error(body?.error || `HTTP ${res.status}`);
       }
-      const json = (await res.json()) as IndicatorsResponse | MoversResponse;
+      const json = (await res.json()) as IndicatorsResponse;
       setData(json);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -193,7 +184,7 @@ export function IndicatorsClient({
     } finally {
       setLoading(false);
     }
-  }, [tab, tickers, needsTickers]);
+  }, [tab, tickers]);
 
   React.useEffect(() => {
     fetchData();
@@ -227,43 +218,42 @@ export function IndicatorsClient({
           subtitle={dict.indicators?.subtitle ?? 'Technical signals across your watchlist'}
         />
 
-        {/* Portfolio selector bar */}
-        {tab !== 'movers' && (
-          <div className="flex flex-wrap items-center gap-3 border-b border-border bg-background px-4 py-3 lg:px-6">
-            <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              {dict.indicators?.portfolio ?? 'Portfolio'}
+        {/* Portfolio selector bar — every remaining tab is per-watchlist
+            now that Movers has moved to /market. */}
+        <div className="flex flex-wrap items-center gap-3 border-b border-border bg-background px-4 py-3 lg:px-6">
+          <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            {dict.indicators?.portfolio ?? 'Portfolio'}
+          </span>
+          {portfolios.length === 0 ? (
+            <span className="text-sm text-muted-foreground">
+              {dict.indicators?.noPortfolios ?? 'No portfolios — create one first.'}
             </span>
-            {portfolios.length === 0 ? (
-              <span className="text-sm text-muted-foreground">
-                {dict.indicators?.noPortfolios ?? 'No portfolios — create one first.'}
-              </span>
-            ) : (
-              <PortfolioPicker
-                portfolios={portfolios}
-                value={activeId}
-                onChange={setActiveId}
-              />
-            )}
-            <button
-              type="button"
-              onClick={fetchData}
-              disabled={loading || (needsTickers && tickers.length === 0)}
-              className="ml-auto inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
-              title={dict.indicators?.refresh ?? 'Refresh'}
-              aria-label={dict.indicators?.refresh ?? 'Refresh'}
-            >
-              <RefreshCw className={cn('size-3.5', loading && 'animate-spin')} />
-              <span className="hidden md:inline">{dict.indicators?.refresh ?? 'Refresh'}</span>
-            </button>
-            <LocalizedLink
-              href="/portfolios"
-              className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
-            >
-              <Wallet className="size-3.5" />
-              {dict.indicators?.managePortfolios ?? 'Manage portfolios'}
-            </LocalizedLink>
-          </div>
-        )}
+          ) : (
+            <PortfolioPicker
+              portfolios={portfolios}
+              value={activeId}
+              onChange={setActiveId}
+            />
+          )}
+          <button
+            type="button"
+            onClick={fetchData}
+            disabled={loading || tickers.length === 0}
+            className="ml-auto inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
+            title={dict.indicators?.refresh ?? 'Refresh'}
+            aria-label={dict.indicators?.refresh ?? 'Refresh'}
+          >
+            <RefreshCw className={cn('size-3.5', loading && 'animate-spin')} />
+            <span className="hidden md:inline">{dict.indicators?.refresh ?? 'Refresh'}</span>
+          </button>
+          <LocalizedLink
+            href="/portfolios"
+            className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+          >
+            <Wallet className="size-3.5" />
+            {dict.indicators?.managePortfolios ?? 'Manage portfolios'}
+          </LocalizedLink>
+        </div>
 
         {/* Tabs */}
         <nav className="flex flex-wrap items-center gap-1 border-b border-border bg-muted/30 px-4 py-2 lg:px-6">
@@ -282,67 +272,44 @@ export function IndicatorsClient({
               {indicatorsLabel(t.id)}
             </button>
           ))}
-          {/* Refresh shortcut for the movers tab, which doesn't appear
-              in the portfolio selector bar above. */}
-          {tab === 'movers' && (
-            <button
-              type="button"
-              onClick={fetchData}
-              disabled={loading}
-              className="ml-auto inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
-              title={dict.indicators?.refresh ?? 'Refresh'}
-              aria-label={dict.indicators?.refresh ?? 'Refresh'}
-            >
-              <RefreshCw className={cn('size-3.5', loading && 'animate-spin')} />
-              <span className="hidden md:inline">{dict.indicators?.refresh ?? 'Refresh'}</span>
-            </button>
-          )}
         </nav>
 
         <div className="flex-1 overflow-y-auto px-4 py-4 lg:px-6">
-          {needsTickers && portfolios.length === 0 && (
-            <EmptyNoPortfolios dict={dict} locale={locale} />
-          )}
-          {needsTickers && portfolios.length > 0 && tickers.length === 0 && (
+          {portfolios.length === 0 && <EmptyNoPortfolios dict={dict} locale={locale} />}
+          {portfolios.length > 0 && tickers.length === 0 && (
             <EmptyEmptyPortfolio dict={dict} locale={locale} activeId={activeId} />
           )}
 
-          {needsTickers && tickers.length > 0 && loading && (
-            <SkeletonCardGrid count={tickers.length} />
-          )}
-          {tab === 'movers' && loading && <SkeletonMoversPanel />}
+          {tickers.length > 0 && loading && <SkeletonCardGrid count={tickers.length} />}
           {error && <ErrorPanel message={error} onRetry={fetchData} dict={dict} />}
 
-          {!loading && data && tab === 'macd' && 'tickers' in data && (
+          {!loading && data && tab === 'macd' && (
             <CardGrid>
               {enrichedEntries(data.tickers).map((e) => (
                 <MacdCard key={e.ticker} entry={e as never} dict={dict} />
               ))}
             </CardGrid>
           )}
-          {!loading && data && tab === 'ma' && 'tickers' in data && (
+          {!loading && data && tab === 'ma' && (
             <CardGrid>
               {enrichedEntries(data.tickers).map((e) => (
                 <MaCard key={e.ticker} entry={e as never} dict={dict} />
               ))}
             </CardGrid>
           )}
-          {!loading && data && tab === 'volume' && 'tickers' in data && (
+          {!loading && data && tab === 'volume' && (
             <CardGrid>
               {enrichedEntries(data.tickers).map((e) => (
                 <VolumeCard key={e.ticker} entry={e as never} dict={dict} />
               ))}
             </CardGrid>
           )}
-          {!loading && data && tab === 'flow' && 'tickers' in data && (
+          {!loading && data && tab === 'flow' && (
             <CardGrid>
               {enrichedEntries(data.tickers).map((e) => (
                 <FlowCard key={e.ticker} entry={e as never} dict={dict} />
               ))}
             </CardGrid>
-          )}
-          {!loading && tab === 'movers' && data && 'gainers' in data && (
-            <MoversPanel data={data} dict={dict} />
           )}
         </div>
       </main>
@@ -496,40 +463,6 @@ function SkeletonCardGrid({ count }: { count: number }) {
       {Array.from({ length: n }).map((_, i) => (
         <SkeletonCard key={i} />
       ))}
-    </div>
-  );
-}
-
-function SkeletonMoversPanel() {
-  return (
-    <div className="space-y-4">
-      <Skeleton className="h-6 w-48" />
-      <div className="grid gap-4 lg:grid-cols-2">
-        {Array.from({ length: 2 }).map((_, col) => (
-          <section
-            key={col}
-            className="rounded-lg border border-border bg-card overflow-hidden"
-          >
-            <div className="border-b border-border px-3 py-2">
-              <Skeleton className="h-4 w-28" />
-            </div>
-            <ul className="divide-y divide-border">
-              {Array.from({ length: 8 }).map((_, row) => (
-                <li key={row} className="flex items-center justify-between gap-2 px-3 py-2">
-                  <div className="space-y-1">
-                    <Skeleton className="h-3 w-12" />
-                    <Skeleton className="h-2 w-24" />
-                  </div>
-                  <div className="space-y-1 text-right">
-                    <Skeleton className="h-3 w-14" />
-                    <Skeleton className="h-2 w-10" />
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
-      </div>
     </div>
   );
 }

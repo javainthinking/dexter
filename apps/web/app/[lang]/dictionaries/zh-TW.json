@@ -167,6 +167,7 @@
   "nav": {
     "memory": "記憶",
     "indicators": "指標",
+    "market": "市場",
     "portfolios": "持倉",
     "blog": "部落格",
     "feedback": "回饋",
@@ -263,13 +264,23 @@
       "macd": "MACD",
       "ma": "均線",
       "volume": "量價",
-      "flow": "資金流量",
-      "movers": "漲跌榜"
+      "flow": "資金流量"
     },
     "metrics": {
       "latest": "最新價",
       "change": "漲跌%"
     }
+  },
+  "market": {
+    "_localeHint": "zh",
+    "title": "市場",
+    "subtitle": "漲跌榜與全市場動向。",
+    "tabs": {
+      "movers": "漲跌榜"
+    },
+    "refresh": "重新整理",
+    "retry": "重試",
+    "error": "載入市場資料失敗。"
   },
   "memory": {
     "title": "記憶",

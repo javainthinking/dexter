@@ -167,6 +167,7 @@
   "nav": {
     "memory": "Memory",
     "indicators": "Indicators",
+    "market": "Market",
     "portfolios": "Portfolios",
     "blog": "Blog",
     "feedback": "Feedback",
@@ -263,13 +264,23 @@
       "macd": "MACD",
       "ma": "Moving avg",
       "volume": "Volume",
-      "flow": "Capital flow",
-      "movers": "Market movers"
+      "flow": "Capital flow"
     },
     "metrics": {
       "latest": "Last",
       "change": "Chg %"
     }
+  },
+  "market": {
+    "_localeHint": "en",
+    "title": "Market",
+    "subtitle": "Gainers, losers, and market-wide signals.",
+    "tabs": {
+      "movers": "Gainers & losers"
+    },
+    "refresh": "Refresh",
+    "retry": "Retry",
+    "error": "Failed to load market data."
   },
   "memory": {
     "title": "Memory",

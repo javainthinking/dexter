@@ -167,6 +167,7 @@
   "nav": {
     "memory": "Memoria",
     "indicators": "Indicadores",
+    "market": "Mercado",
     "portfolios": "Carteras",
     "blog": "Blog",
     "feedback": "Comentarios",
@@ -263,13 +264,23 @@
       "macd": "MACD",
       "ma": "Medias móviles",
       "volume": "Volumen",
-      "flow": "Flujo de capital",
-      "movers": "Top mercado"
+      "flow": "Flujo de capital"
     },
     "metrics": {
       "latest": "Último",
       "change": "Var %"
     }
+  },
+  "market": {
+    "_localeHint": "es",
+    "title": "Mercado",
+    "subtitle": "Líderes, rezagados y señales del mercado.",
+    "tabs": {
+      "movers": "Top mercado"
+    },
+    "refresh": "Actualizar",
+    "retry": "Reintentar",
+    "error": "No se pudieron cargar los datos del mercado."
   },
   "memory": {
     "title": "Memoria",

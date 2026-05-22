@@ -167,6 +167,7 @@
   "nav": {
     "memory": "メモリ",
     "indicators": "テクニカル指標",
+    "market": "マーケット",
     "portfolios": "ポートフォリオ",
     "blog": "ブログ",
     "feedback": "フィードバック",
@@ -263,13 +264,23 @@
       "macd": "MACD",
       "ma": "移動平均",
       "volume": "出来高",
-      "flow": "資金フロー",
-      "movers": "値動きランキング"
+      "flow": "資金フロー"
     },
     "metrics": {
       "latest": "終値",
       "change": "変動%"
     }
+  },
+  "market": {
+    "_localeHint": "ja",
+    "title": "マーケット",
+    "subtitle": "値動きランキングと市場全体のシグナル。",
+    "tabs": {
+      "movers": "値動きランキング"
+    },
+    "refresh": "更新",
+    "retry": "再試行",
+    "error": "マーケットデータの読み込みに失敗しました。"
   },
   "memory": {
     "title": "メモリ",

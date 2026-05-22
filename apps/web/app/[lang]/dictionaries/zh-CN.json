@@ -167,6 +167,7 @@
   "nav": {
     "memory": "记忆",
     "indicators": "指标",
+    "market": "市场",
     "portfolios": "持仓",
     "blog": "博客",
     "feedback": "反馈",
@@ -263,13 +264,23 @@
       "macd": "MACD",
       "ma": "均线",
       "volume": "量价",
-      "flow": "资金流量",
-      "movers": "涨跌榜"
+      "flow": "资金流量"
     },
     "metrics": {
       "latest": "最新价",
       "change": "涨跌%"
     }
+  },
+  "market": {
+    "_localeHint": "zh",
+    "title": "市场",
+    "subtitle": "涨跌榜与全市场动向。",
+    "tabs": {
+      "movers": "涨跌榜"
+    },
+    "refresh": "刷新",
+    "retry": "重试",
+    "error": "加载市场数据失败。"
   },
   "memory": {
     "title": "记忆",

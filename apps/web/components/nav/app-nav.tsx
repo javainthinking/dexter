@@ -1,6 +1,12 @@
 'use client';
 
-import { Wallet, LineChart, MessageSquare, type LucideIcon } from 'lucide-react';
+import {
+  Wallet,
+  LineChart,
+  Activity,
+  MessageSquare,
+  type LucideIcon,
+} from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { LocalizedLink } from '../i18n/localized-link';
 import { useDictionary } from '../i18n/dictionary-provider';
@@ -53,6 +59,18 @@ export function AppNav() {
       label: dict.nav?.indicators ?? 'Indicators',
       active: cleanPath === '/indicators' || cleanPath.startsWith('/indicators/'),
     },
+    {
+      // Market is the market-wide surface (gainers/losers today; sector
+      // heatmap, breadth, sentiment indices later). Sits next to
+      // Indicators because both are "what's happening" reads — but
+      // Indicators is per-watchlist and Market is whole-market, so they
+      // earn distinct entries instead of nested tabs.
+      key: 'market',
+      href: '/market',
+      icon: Activity,
+      label: dict.nav?.market ?? 'Market',
+      active: cleanPath === '/market' || cleanPath.startsWith('/market/'),
+    },
     // Memory entry intentionally absent — it's surfaced inside the
     // UserMenu dropdown (a personal-account surface), not as a
     // top-level section. See components/auth/user-menu.tsx.
@@ -61,8 +79,8 @@ export function AppNav() {
     // someone is in the product, the marketing blog is a context
     // switch out of the app, not a primary destination. Keep it
     // discoverable via the logged-out marketing header + the footer,
-    // but don't compete with Portfolios/Indicators/Feedback in the
-    // signed-in top bar.
+    // but don't compete with Portfolios / Indicators / Market /
+    // Feedback in the signed-in top bar.
     {
       key: 'feedback',
       href: '/feedback',

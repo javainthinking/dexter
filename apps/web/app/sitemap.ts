@@ -24,8 +24,8 @@ import { locales, defaultLocale, type Locale } from '../lib/i18n/locales';
  *   - /blog/<slug> for every published post
  *
  * What's excluded:
- *   - /memory, /portfolios, /indicators, /feedback — behind auth,
- *     no public content for crawlers
+ *   - /memory, /portfolios, /indicators, /market, /feedback — behind
+ *     auth, no public content for crawlers
  *   - /sign-in — utility route, zero SEO value
  *   - /api/* — never indexable
  */
