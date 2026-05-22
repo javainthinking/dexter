@@ -15,6 +15,7 @@
 - [What Is DCF (Discounted Cash Flow)?](https://pickskill.ai/blog/what-is-dcf): Practical guide to DCF — formula, the four assumptions that actually move valuation, common pitfalls, how to model your first DCF in under an hour. Worked examples + FAQ.
 - [What Is WACC?](https://pickskill.ai/blog/what-is-wacc): The discount rate that decides every DCF. Covers formula, the four inputs that matter (risk-free rate, ERP, beta, after-tax cost of debt), why a 100 bp change moves valuation 8–15%, common pitfalls, and a 15-minute triangulation workflow.
 - [What Is Free Cash Flow (FCF)?](https://pickskill.ai/blog/what-is-fcf): The number behind every honest valuation. Defines FCF, contrasts FCFF and FCFE, shows how to compute either from a cash flow statement in 60 seconds, and details the four pitfalls (SBC treatment, capitalized software, working-capital tailwinds, capex policy) that bend tech-company models.
+- [How to Read a 10-K in 30 Minutes](https://pickskill.ai/blog/how-to-read-10k): What Wall Street actually reads in an SEC annual report. Maps the 15 numbered Items to the 4 that carry signal (MD&A, Financial Statements, Risk Factors, footnotes), with a 30-minute reading workflow, common mistakes, and the year-over-year diff technique professional analysts use on Risk Factors.
 
 ## Key facts
 

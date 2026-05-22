@@ -476,24 +476,52 @@ links when relevant + asked.
 - [x] `what-is-dcf` — Discounted Cash Flow explainer (P3, ~1,500 words, 8 locales)
 - [x] `what-is-wacc` — WACC explainer with four-input framework (P3, ~1,500 words, 8 locales)
 - [x] `what-is-fcf` — Free Cash Flow explainer with FCFF/FCFE split (P3, ~1,500 words, 8 locales)
+- [x] `how-to-read-10k` — annual-report reading guide (P2, ~1,500 words, 8 locales) — *shipped 2026-05-22*
 
-These three internally cross-link (DCF ↔ WACC ↔ FCF) so the
-foundation cluster pushes ranking signals between explainers
-covering the same DCF mental model. They also share the
-`/chat` and `/indicators` product link conventions.
+The first three cross-link (DCF ↔ WACC ↔ FCF) so the foundation
+cluster pushes ranking signals between explainers covering the
+same DCF mental model. The 10-K guide is the *data source*
+companion — every DCF input comes from a 10-K — so it bridges
+explainer ↔ how-to pillars and pulls in the "how do I actually
+read this filing" search cohort.
 
-**Next batch — ship in week 2**
+**Next batch — prioritised by GTM × SEO × GEO leverage**
 
-- [ ] `how-to-read-10k` — concept-to-action explainer (P3/P2 hybrid;
-      bridges definition → "PickSkill summarises a 10-K in 60 seconds")
-- [ ] `dcf-vs-comparable-company-analysis` — comparison explainer (P3;
-      "X vs Y" structure is high-leverage on GEO citations)
-- [ ] `what-is-pe-ratio` — explainer (P3; highest-volume finance
-      search term; bedrock GEO content)
-- [ ] `nvda-bull-case-2026` — first thesis post (P1; NVDA is the
-      most-searched ticker in retail finance)
-- [ ] `how-to-build-dcf-in-excel-with-template` — how-to (P2; mid-funnel,
-      "PickSkill does this in one prompt" framing)
+Each row scored on three axes:
+- **GTM** = how directly the post showcases what PickSkill does
+- **SEO** = monthly search volume × commercial intent (US/global)
+- **GEO** = likelihood of AI-overview citation given content structure
+
+| # | Post | Pillar | GTM | SEO | GEO | Cluster role |
+|---|---|---|---|---|---|---|
+| 1 | `dcf-vs-comparable-company-analysis` | P3 explainer | ★★ | ★★★ | ★★★ | bridges DCF cluster → relative-valuation cluster |
+| 2 | `what-is-pe-ratio` | P3 explainer | ★★ | ★★★ | ★★★ | seeds the relative-valuation cluster |
+| 3 | `what-is-ev-ebitda` | P3 explainer | ★★ | ★★ | ★★★ | completes relative-valuation cluster |
+| 4 | `ai-for-stock-research-2026` | P5 build-in-public | ★★★ | ★★ | ★★ | category-defining; positions PickSkill in the "AI financial analyst" search |
+| 5 | `how-to-build-dcf-in-excel-template` | P2 how-to | ★★★ | ★★ | ★★ | mid-funnel demo; downloadable Excel = brand-mention asset |
+| 6 | `nvda-bull-case-2026-q2` | P1 thesis | ★★ | ★★★ | ★★ | first thesis post; refresh quarterly so it stays evergreen for the ticker |
+| 7 | `what-is-ebitda` | P3 explainer | ★ | ★★★ | ★★★ | high-volume definitional; pairs with EV/EBITDA |
+| 8 | `income-statement-vs-balance-sheet-vs-cash-flow` | P3 explainer | ★ | ★★ | ★★★ | the three-statement explainer cluster |
+
+Why this order:
+- **Posts 1–3** extend the existing foundation cluster into
+  *relative valuation*. DCF (already done) is absolute valuation;
+  P/E and EV/EBITDA are the relative-valuation siblings. Strong
+  internal-linking pattern.
+- **Posts 4–5** are GTM-forward — they put PickSkill as the
+  subject of the post rather than the analyst's tool. Higher
+  conversion intent.
+- **Post 6** is the first thesis post; deliberately scheduled
+  after the foundations so the thesis can reference each
+  explainer for backing.
+
+**Editorial infrastructure**
+
+- [ ] Author bio page at `/blog/authors/<slug>` with credentials +
+      sameAs links (deferred — currently the team byline is honest)
+- [ ] FAQ schema block component (`<FaqBlock />` MDX shortcode)
+- [ ] Internal linking convention (one product link per post,
+      auto-injected by helper)
 
 **Editorial infrastructure**
 
