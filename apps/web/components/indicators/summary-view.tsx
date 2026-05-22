@@ -279,21 +279,33 @@ function DailyChangeRow({ changes }: { changes: DailyChange[] }) {
   }
   return (
     <div className="inline-flex items-center gap-1.5 font-mono text-[10px] tabular-nums">
-      {changes.map((c) => (
-        <span
-          key={c.time}
-          title={c.time}
-          className={cn(
-            'min-w-[2.4rem] text-right',
-            c.changePct == null && 'text-muted-foreground',
-            c.changePct != null && c.changePct > 0 && 'text-up',
-            c.changePct != null && c.changePct < 0 && 'text-down',
-            c.changePct === 0 && 'text-muted-foreground',
-          )}
-        >
-          {formatDailyChange(c.changePct)}
-        </span>
-      ))}
+      {changes.map((c) => {
+        // The column header is the canonical "this is a percentage"
+        // signal; the bare numbers stay compact for scannability.
+        // Hover title carries the precise value with the % glyph so
+        // anyone uncertain about the unit (or the rounding) can
+        // confirm in one motion.
+        const titleParts = [c.time];
+        if (c.changePct != null && Number.isFinite(c.changePct)) {
+          const signed = c.changePct >= 0 ? `+${c.changePct.toFixed(2)}` : `${c.changePct.toFixed(2)}`;
+          titleParts.push(`${signed}%`);
+        }
+        return (
+          <span
+            key={c.time}
+            title={titleParts.join(' · ')}
+            className={cn(
+              'min-w-[2.4rem] text-right',
+              c.changePct == null && 'text-muted-foreground',
+              c.changePct != null && c.changePct > 0 && 'text-up',
+              c.changePct != null && c.changePct < 0 && 'text-down',
+              c.changePct === 0 && 'text-muted-foreground',
+            )}
+          >
+            {formatDailyChange(c.changePct)}
+          </span>
+        );
+      })}
     </div>
   );
 }

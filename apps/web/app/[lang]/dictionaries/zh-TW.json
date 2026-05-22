@@ -273,7 +273,7 @@
     },
     "summaryColumns": {
       "ticker": "代碼",
-      "dailyChange": "日漲跌",
+      "dailyChange": "日漲跌幅",
       "macd": "MACD",
       "ma": "均線",
       "volume": "量能",

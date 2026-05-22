@@ -273,7 +273,7 @@
     },
     "summaryColumns": {
       "ticker": "Symbole",
-      "dailyChange": "Var. quotid.",
+      "dailyChange": "Var. quotid. %",
       "macd": "MACD",
       "ma": "MA",
       "volume": "Vol",

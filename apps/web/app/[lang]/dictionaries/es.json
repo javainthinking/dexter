@@ -273,7 +273,7 @@
     },
     "summaryColumns": {
       "ticker": "Símbolo",
-      "dailyChange": "Var. diaria",
+      "dailyChange": "Var. diaria %",
       "macd": "MACD",
       "ma": "MA",
       "volume": "Vol",
