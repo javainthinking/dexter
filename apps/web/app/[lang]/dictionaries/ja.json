@@ -266,7 +266,11 @@
       "macd": "MACD",
       "ma": "移動平均",
       "volume": "出来高",
-      "flow": "資金フロー"
+      "flow": "資金フロー",
+      "rsi": "RSI",
+      "kdj": "KDJ",
+      "boll": "ボリンジャー",
+      "adx": "ADX"
     },
     "metrics": {
       "latest": "終値",
@@ -278,7 +282,11 @@
       "macd": "MACD",
       "ma": "MA",
       "volume": "出来高",
-      "flow": "資金"
+      "flow": "資金",
+      "rsi": "RSI",
+      "kdj": "KDJ",
+      "boll": "BOLL",
+      "adx": "ADX"
     },
     "summary": {
       "hint": "各行は、4つの指標における過去 5 営業日のシグナル推移を示します。ドットにマウスを合わせると、日付と理由が表示されます。",

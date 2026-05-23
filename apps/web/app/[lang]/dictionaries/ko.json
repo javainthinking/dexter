@@ -266,7 +266,11 @@
       "macd": "MACD",
       "ma": "이동평균선",
       "volume": "거래량",
-      "flow": "자금 흐름"
+      "flow": "자금 흐름",
+      "rsi": "RSI",
+      "kdj": "KDJ",
+      "boll": "볼린저",
+      "adx": "ADX"
     },
     "metrics": {
       "latest": "종가",
@@ -278,7 +282,11 @@
       "macd": "MACD",
       "ma": "MA",
       "volume": "거래량",
-      "flow": "자금"
+      "flow": "자금",
+      "rsi": "RSI",
+      "kdj": "KDJ",
+      "boll": "BOLL",
+      "adx": "ADX"
     },
     "summary": {
       "hint": "각 행은 4개 지표에서 지난 5거래일 동안의 시그널 흐름을 나타냅니다. 점에 마우스를 올리면 날짜와 이유가 표시됩니다.",

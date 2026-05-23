@@ -266,7 +266,11 @@
       "macd": "MACD",
       "ma": "Gleitender Durchschnitt",
       "volume": "Volumen",
-      "flow": "Kapitalfluss"
+      "flow": "Kapitalfluss",
+      "rsi": "RSI",
+      "kdj": "KDJ",
+      "boll": "Bollinger",
+      "adx": "ADX"
     },
     "metrics": {
       "latest": "Letzter",
@@ -278,7 +282,11 @@
       "macd": "MACD",
       "ma": "MA",
       "volume": "Vol",
-      "flow": "Fluss"
+      "flow": "Fluss",
+      "rsi": "RSI",
+      "kdj": "KDJ",
+      "boll": "BOLL",
+      "adx": "ADX"
     },
     "summary": {
       "hint": "Jede Zeile zeigt die Signalentwicklung der letzten 5 Handelstage über alle vier Indikatoren. Maus über einen Punkt für Datum und Grund.",

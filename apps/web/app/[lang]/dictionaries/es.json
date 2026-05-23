@@ -266,7 +266,11 @@
       "macd": "MACD",
       "ma": "Medias móviles",
       "volume": "Volumen",
-      "flow": "Flujo de capital"
+      "flow": "Flujo de capital",
+      "rsi": "RSI",
+      "kdj": "KDJ",
+      "boll": "Bollinger",
+      "adx": "ADX"
     },
     "metrics": {
       "latest": "Último",
@@ -278,7 +282,11 @@
       "macd": "MACD",
       "ma": "MA",
       "volume": "Vol",
-      "flow": "Flujo"
+      "flow": "Flujo",
+      "rsi": "RSI",
+      "kdj": "KDJ",
+      "boll": "BOLL",
+      "adx": "ADX"
     },
     "summary": {
       "hint": "Cada fila muestra los últimos 5 días bursátiles de evolución de señales en los cuatro indicadores. Pasa el cursor sobre un punto para ver la fecha y el motivo.",

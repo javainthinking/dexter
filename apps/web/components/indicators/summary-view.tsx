@@ -57,6 +57,10 @@ export interface SummaryEntry {
   dailyChanges: DailyChange[];
   macd: SummaryDimension;
   ma: SummaryDimension;
+  rsi: SummaryDimension;
+  kdj: SummaryDimension;
+  boll: SummaryDimension;
+  adx: SummaryDimension;
   volume: SummaryDimension;
   flow: SummaryDimension;
 }
@@ -68,7 +72,7 @@ export interface SummaryEntry {
  * but MA / Vol / Flow have local equivalents that matter for native
  * readers ("均线 / 量能 / 资金流" in zh-CN, "出来高" in ja, etc.).
  */
-const DIMENSION_KEYS = ['macd', 'ma', 'volume', 'flow'] as const;
+const DIMENSION_KEYS = ['macd', 'ma', 'rsi', 'kdj', 'boll', 'adx', 'volume', 'flow'] as const;
 type DimensionKey = (typeof DIMENSION_KEYS)[number];
 
 /**
@@ -80,6 +84,10 @@ type DimensionKey = (typeof DIMENSION_KEYS)[number];
 const DIMENSION_FALLBACK_LABEL: Record<DimensionKey, string> = {
   macd: 'MACD',
   ma: 'MA',
+  rsi: 'RSI',
+  kdj: 'KDJ',
+  boll: 'BOLL',
+  adx: 'ADX',
   volume: 'Vol',
   flow: 'Flow',
 };

@@ -237,6 +237,106 @@ HTML 结构(两部分):
 `;
 }
 
+export function RSI_PROMPT(): string {
+  return `${buildCommonRules()}
+
+【RSI 维度】
+
+指标:RSI(14) — Wilder 平滑相对强弱指数
+- 上涨日 gain = close − prev_close (>0), 下跌日 loss = prev_close − close (>0)
+- 首 14 根用简单平均, 之后用 Wilder 平滑: avg = (prev_avg × 13 + new) / 14
+- RSI = 100 − 100 / (1 + avg_gain / avg_loss)
+
+信号桶(均值回归视角,而非单纯动量):
+- 超卖反弹    (看多): RSI ≤ 30(可能反弹)
+- 超买回落    (看空): RSI ≥ 70(可能回落)
+- 区间内      (待观察): 30 < RSI < 70
+
+每张卡 chart:上半价格折线,下半 RSI 折线(紫色),叠加 70/30 红绿虚线参考、50 中线
+每张卡 metrics:最新价、日涨跌%、RSI(14)、Zone(OB / OS / —)
+
+输出文件名:portfolio_rsi_{YYYY-MM-DD}.html
+`;
+}
+
+export function KDJ_PROMPT(): string {
+  return `${buildCommonRules()}
+
+【KDJ 维度】
+
+指标:KDJ(9, 3, 3) — A 股最常用的随机震荡指标
+- N = 9 日窗口:hi_n / lo_n / close
+- RSV = (close − lo_n) / (hi_n − lo_n) × 100
+- K = (2 × prevK + RSV) / 3       初值 K=50
+- D = (2 × prevD + K)   / 3       初值 D=50
+- J = 3K − 2D
+
+信号桶:
+- 金叉/超卖     (看多): K 在 50 下方上穿 D, 或 K&D 同时 < 20
+- 死叉/超买     (看空): K 在 50 上方下穿 D, 或 K&D 同时 > 80
+- 中位区        (待观察): 上述条件都不满足
+
+每张卡 chart:上半价格,下半 K(蓝) / D(黄) / J(紫) 三线,叠加 20/80 红绿虚线
+每张卡 metrics:最新价、K、D、J(K/D 高于 80 涂"下"色, 低于 20 涂"上"色)
+
+输出文件名:portfolio_kdj_{YYYY-MM-DD}.html
+`;
+}
+
+export function BOLL_PROMPT(): string {
+  return `${buildCommonRules()}
+
+【布林带 BOLL 维度】
+
+指标:Bollinger Bands(20, 2)
+- MID   = SMA(close, 20)
+- STDEV = 20 日 close 总体标准差
+- UPPER = MID + 2 × STDEV
+- LOWER = MID − 2 × STDEV
+- BANDWIDTH(%) = (UPPER − LOWER) / MID × 100   (用于识别收口/突破)
+- %B = (close − LOWER) / (UPPER − LOWER) × 100  (价格在通道内位置, 0=下轨 100=上轨)
+
+信号桶:
+- 突破上轨    (看多): close ≥ UPPER(沿轨上行)
+- 跌破下轨    (看空): close ≤ LOWER(沿轨下行)
+- 通道内运行  (待观察): LOWER < close < UPPER
+
+每张卡 chart:价格折线 + UPPER/LOWER 黄色虚线 + MID 紫色实线(同一坐标)
+每张卡 metrics:最新价、%B、MID、BW%
+
+输出文件名:portfolio_boll_{YYYY-MM-DD}.html
+`;
+}
+
+export function ADX_PROMPT(): string {
+  return `${buildCommonRules()}
+
+【ADX/DMI 维度】
+
+指标:ADX(14) / DI+ / DI− — Wilder 趋势强度
+- TR  = max(high−low, |high−prev_close|, |low−prev_close|)
+- +DM = (high − prev_high) 当其 > (prev_low − low) 且 > 0,否则 0
+- −DM = (prev_low − low) 当其 > (high − prev_high) 且 > 0,否则 0
+- 用 14 日 Wilder 平滑得到 smoothed TR/+DM/−DM
+- DI+ = 100 × smoothed_+DM / smoothed_TR
+- DI− = 100 × smoothed_−DM / smoothed_TR
+- DX  = 100 × |DI+ − DI−| / (DI+ + DI−)
+- ADX = 14 日 Wilder 平滑 DX(头 14 个 DX 用算术平均做种子)
+
+信号桶:
+- 上升趋势    (看多): ADX ≥ 25 且 DI+ > DI−
+- 下降趋势    (看空): ADX ≥ 25 且 DI− > DI+
+- 无趋势      (待观察): ADX < 25(此时不要追,等趋势确立)
+
+每张卡 chart:上半价格,下半 DI+(红) / DI−(绿) / ADX(黄)三线,25 虚线为趋势阈值
+每张卡 metrics:最新价、ADX、DI+、DI−
+
+⚠️ 头部 overview 中提醒:"ADX 只衡量趋势强度,不是方向单一指标 —— 需结合 DI+ / DI− 才能定方向。"
+
+输出文件名:portfolio_adx_{YYYY-MM-DD}.html
+`;
+}
+
 export function FLOW_PROMPT(): string {
   return `${buildCommonRules()}
 

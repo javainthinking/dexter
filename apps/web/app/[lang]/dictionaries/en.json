@@ -266,7 +266,11 @@
       "macd": "MACD",
       "ma": "Moving avg",
       "volume": "Volume",
-      "flow": "Capital flow"
+      "flow": "Capital flow",
+      "rsi": "RSI",
+      "kdj": "KDJ",
+      "boll": "Bollinger",
+      "adx": "ADX"
     },
     "metrics": {
       "latest": "Last",
@@ -278,7 +282,11 @@
       "macd": "MACD",
       "ma": "MA",
       "volume": "Vol",
-      "flow": "Flow"
+      "flow": "Flow",
+      "rsi": "RSI",
+      "kdj": "KDJ",
+      "boll": "BOLL",
+      "adx": "ADX"
     },
     "summary": {
       "hint": "Each row shows the last 5 trading days of signal evolution across all four indicators. Hover any dot for the date and reason.",

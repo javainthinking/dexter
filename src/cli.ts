@@ -27,6 +27,10 @@ import {
   VOLUME_PROMPT,
   MA_PROMPT,
   FLOW_PROMPT,
+  RSI_PROMPT,
+  KDJ_PROMPT,
+  BOLL_PROMPT,
+  ADX_PROMPT,
   MOVERS_PROMPT,
 } from './commands/dashboards.js';
 import {
@@ -398,6 +402,18 @@ export async function runCli() {
         break;
       case 'flow':
         await agentRunner.runQuery(FLOW_PROMPT());
+        break;
+      case 'rsi':
+        await agentRunner.runQuery(RSI_PROMPT());
+        break;
+      case 'kdj':
+        await agentRunner.runQuery(KDJ_PROMPT());
+        break;
+      case 'boll':
+        await agentRunner.runQuery(BOLL_PROMPT());
+        break;
+      case 'adx':
+        await agentRunner.runQuery(ADX_PROMPT());
         break;
       case 'movers':
         await agentRunner.runQuery(MOVERS_PROMPT());

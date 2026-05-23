@@ -7,17 +7,28 @@ import {
   todayIso,
 } from '../../../../lib/indicators/prices';
 import {
+  bucketAdx,
+  bucketBoll,
+  bucketBollTrend,
   bucketFlow,
+  bucketKdj,
   bucketMa,
   bucketMaTrend,
   bucketMacd,
+  bucketRsi,
   bucketTrend,
   bucketVolume,
+  computeAdx,
+  computeBoll,
   computeFlow,
+  computeKdj,
   computeMa,
   computeMacd,
+  computeRsi,
   computeVolume,
+  isLimitOrHaltBar,
   latestSummary,
+  maskLimitDaysInTrend,
   type Bucket,
   type BucketSample,
   type PriceBar,
@@ -49,7 +60,7 @@ const BUCKET_TREND_LOOKBACK = 5;
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-const DIMENSIONS = new Set(['macd', 'ma', 'volume', 'flow', 'movers']);
+const DIMENSIONS = new Set(['macd', 'ma', 'volume', 'flow', 'rsi', 'kdj', 'boll', 'adx', 'movers']);
 
 export async function GET(
   request: NextRequest,
@@ -89,13 +100,22 @@ export async function GET(
           const { prices, sourceUrl } = await getHistoricalPrices(ticker, startDate, endDate);
           const indicator = computeForDimension(dimension, prices);
           const summary = latestSummary(prices);
+          // Limit-up / limit-down / halt defence: when high === low the
+          // bar carries no usable range, so every range-aware indicator
+          // gets fed degenerate input. Force those days to `neutral`
+          // for both the headline bucket (today) and the 5-day trail —
+          // applied here so all 8 dimensions get the same protection
+          // without per-indicator branches.
+          const todayIsLimit = isLimitOrHaltBar(prices[prices.length - 1]);
+          const safeBucket: Bucket = todayIsLimit ? 'neutral' : indicator.bucket;
+          const safeTrend = maskLimitDaysInTrend(prices, indicator.bucketTrend);
           return {
             ticker,
             sourceUrl,
             prices,
             indicator: indicator.series,
-            bucket: indicator.bucket,
-            bucketTrend: indicator.bucketTrend,
+            bucket: safeBucket,
+            bucketTrend: safeTrend,
             latest: { ...summary, ...indicator.latestExtras },
           };
         } catch (error) {
@@ -165,6 +185,46 @@ function computeForDimension(dimension: string, prices: PriceBar[]): ComputeResu
       bucket: bucketVolume(rows),
       bucketTrend: bucketTrend(rows, bucketVolume, times, BUCKET_TREND_LOOKBACK),
       latestExtras: { avgVol20: last.avgVol20, volRatio: last.volRatio },
+    };
+  }
+  if (dimension === 'rsi') {
+    const rows = computeRsi(closes);
+    const last = rows[rows.length - 1] ?? { rsi: null };
+    return {
+      series: rows,
+      bucket: bucketRsi(rows),
+      bucketTrend: bucketTrend(rows, bucketRsi, times, BUCKET_TREND_LOOKBACK),
+      latestExtras: { rsi: last.rsi },
+    };
+  }
+  if (dimension === 'kdj') {
+    const rows = computeKdj(prices);
+    const last = rows[rows.length - 1] ?? { k: null, d: null, j: null };
+    return {
+      series: rows,
+      bucket: bucketKdj(rows),
+      bucketTrend: bucketTrend(rows, bucketKdj, times, BUCKET_TREND_LOOKBACK),
+      latestExtras: { k: last.k, d: last.d, j: last.j },
+    };
+  }
+  if (dimension === 'boll') {
+    const rows = computeBoll(closes);
+    const last = rows[rows.length - 1] ?? { mid: null, upper: null, lower: null, bandwidth: null };
+    return {
+      series: rows,
+      bucket: bucketBoll(closes, rows),
+      bucketTrend: bucketBollTrend(closes, rows, times, BUCKET_TREND_LOOKBACK),
+      latestExtras: { mid: last.mid, upper: last.upper, lower: last.lower, bandwidth: last.bandwidth },
+    };
+  }
+  if (dimension === 'adx') {
+    const rows = computeAdx(prices);
+    const last = rows[rows.length - 1] ?? { plusDi: null, minusDi: null, adx: null };
+    return {
+      series: rows,
+      bucket: bucketAdx(rows),
+      bucketTrend: bucketTrend(rows, bucketAdx, times, BUCKET_TREND_LOOKBACK),
+      latestExtras: { plusDi: last.plusDi, minusDi: last.minusDi, adx: last.adx },
     };
   }
   // flow

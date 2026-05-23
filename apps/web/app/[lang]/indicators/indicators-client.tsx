@@ -15,6 +15,10 @@ import { MacdCard } from '../../../components/indicators/macd-card';
 import { MaCard } from '../../../components/indicators/ma-card';
 import { VolumeCard } from '../../../components/indicators/volume-card';
 import { FlowCard } from '../../../components/indicators/flow-card';
+import { RsiCard } from '../../../components/indicators/rsi-card';
+import { KdjCard } from '../../../components/indicators/kdj-card';
+import { BollCard } from '../../../components/indicators/boll-card';
+import { AdxCard } from '../../../components/indicators/adx-card';
 import {
   SummaryView,
   SummarySkeleton,
@@ -28,7 +32,7 @@ import {
 // market-wide signals will land too. Indicators stays focused on
 // per-watchlist technicals.
 
-type Tab = 'summary' | 'macd' | 'ma' | 'volume' | 'flow';
+type Tab = 'summary' | 'macd' | 'ma' | 'volume' | 'flow' | 'rsi' | 'kdj' | 'boll' | 'adx';
 type DimensionTab = Exclude<Tab, 'summary'>;
 
 interface PortfolioSummary {
@@ -65,11 +69,18 @@ interface IndicatorsResponse {
 
 const TABS: ReadonlyArray<{ id: Tab }> = [
   // Summary leads — it's the cross-dimension synthesis view, which
-  // is what most users want first ("am I lining up across all four
-  // indicators?"). Individual dimension tabs are the drill-down.
+  // is what most users want first ("am I lining up across all
+  // indicators?"). Individual dimension tabs are the drill-down,
+  // ordered by what most users reach for first: trend (MACD/MA) →
+  // momentum (RSI/KDJ) → volatility (BOLL) → trend strength (ADX) →
+  // volume / flow.
   { id: 'summary' },
   { id: 'macd' },
   { id: 'ma' },
+  { id: 'rsi' },
+  { id: 'kdj' },
+  { id: 'boll' },
+  { id: 'adx' },
   { id: 'volume' },
   { id: 'flow' },
 ];
@@ -108,9 +119,38 @@ const DIMENSION_BUCKET_LABELS = {
     bearish: { en: 'Bearish · est. outflow', zh: '看空 · 资金流出(估算)' },
     neutral: { en: 'Neutral · choppy', zh: '震荡 · 方向不明' },
   },
+  rsi: {
+    bullish: { en: 'Bullish · oversold', zh: '看多 · 超卖反弹' },
+    bearish: { en: 'Bearish · overbought', zh: '看空 · 超买回落' },
+    neutral: { en: 'Neutral · in range', zh: '中性 · 区间内' },
+  },
+  kdj: {
+    bullish: { en: 'Bullish · golden cross/oversold', zh: '看多 · 金叉/超卖' },
+    bearish: { en: 'Bearish · death cross/overbought', zh: '看空 · 死叉/超买' },
+    neutral: { en: 'Neutral · mid-range', zh: '中性 · 中位区' },
+  },
+  boll: {
+    bullish: { en: 'Bullish · riding upper band', zh: '看多 · 突破上轨' },
+    bearish: { en: 'Bearish · piercing lower band', zh: '看空 · 跌破下轨' },
+    neutral: { en: 'Neutral · within bands', zh: '中性 · 通道内运行' },
+  },
+  adx: {
+    bullish: { en: 'Bullish · trending up', zh: '看多 · 上升趋势' },
+    bearish: { en: 'Bearish · trending down', zh: '看空 · 下降趋势' },
+    neutral: { en: 'Neutral · no trend', zh: '中性 · 无趋势' },
+  },
 } as const;
 
-const DIMENSION_TABS: ReadonlyArray<DimensionTab> = ['macd', 'ma', 'volume', 'flow'];
+const DIMENSION_TABS: ReadonlyArray<DimensionTab> = [
+  'macd',
+  'ma',
+  'rsi',
+  'kdj',
+  'boll',
+  'adx',
+  'volume',
+  'flow',
+];
 
 /**
  * Number of daily price bars to surface in the Summary view's
@@ -337,6 +377,10 @@ export function IndicatorsClient({
             dailyChanges,
             macd: buildDim('macd'),
             ma: buildDim('ma'),
+            rsi: buildDim('rsi'),
+            kdj: buildDim('kdj'),
+            boll: buildDim('boll'),
+            adx: buildDim('adx'),
             volume: buildDim('volume'),
             flow: buildDim('flow'),
           };
@@ -480,6 +524,34 @@ export function IndicatorsClient({
             <CardGrid>
               {enrichedEntries(data.tickers).map((e) => (
                 <MaCard key={e.ticker} entry={e as never} dict={dict} />
+              ))}
+            </CardGrid>
+          )}
+          {!loading && data && tab === 'rsi' && (
+            <CardGrid>
+              {enrichedEntries(data.tickers).map((e) => (
+                <RsiCard key={e.ticker} entry={e as never} dict={dict} />
+              ))}
+            </CardGrid>
+          )}
+          {!loading && data && tab === 'kdj' && (
+            <CardGrid>
+              {enrichedEntries(data.tickers).map((e) => (
+                <KdjCard key={e.ticker} entry={e as never} dict={dict} />
+              ))}
+            </CardGrid>
+          )}
+          {!loading && data && tab === 'boll' && (
+            <CardGrid>
+              {enrichedEntries(data.tickers).map((e) => (
+                <BollCard key={e.ticker} entry={e as never} dict={dict} />
+              ))}
+            </CardGrid>
+          )}
+          {!loading && data && tab === 'adx' && (
+            <CardGrid>
+              {enrichedEntries(data.tickers).map((e) => (
+                <AdxCard key={e.ticker} entry={e as never} dict={dict} />
               ))}
             </CardGrid>
           )}
