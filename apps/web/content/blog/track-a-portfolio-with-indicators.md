@@ -1,6 +1,6 @@
 ---
-title: Track a Multi-Stock Portfolio with Technical Indicators
-description: A 5-step tutorial: set up a portfolio, layer 8 indicator dimensions, and use AI dashboards (MACD, KDJ, divergence, flow) to spot signals.
+title: "Track a Multi-Stock Portfolio with Technical Indicators"
+description: "A 5-step tutorial: set up a portfolio, layer 8 indicator dimensions, and use AI dashboards (MACD, KDJ, divergence, flow) to spot signals."
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

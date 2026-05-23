@@ -1,6 +1,6 @@
 ---
-title: 3-Indicator Filter: MACD + RSI + ADX, the Right Way
-description: Stack indicators with discipline. ADX as regime filter, MACD as trigger, RSI as sanity check. Worked examples that filter false positives.
+title: "3-Indicator Filter: MACD + RSI + ADX, the Right Way"
+description: "Stack indicators with discipline. ADX as regime filter, MACD as trigger, RSI as sanity check. Worked examples that filter false positives."
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

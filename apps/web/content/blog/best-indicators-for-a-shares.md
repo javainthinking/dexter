@@ -1,6 +1,6 @@
 ---
-title: Top 5 Technical Indicators for Chinese A-Shares
-description: A-shares have ±10% limits, T+1 settlement, 80% retail flow. The 5 indicators that actually work: KDJ + MACD + MA60 + Volume + Capital Flow.
+title: "Top 5 Technical Indicators for Chinese A-Shares"
+description: "A-shares have ±10% limits, T+1 settlement, 80% retail flow. The 5 indicators that actually work: KDJ + MACD + MA60 + Volume + Capital Flow."
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

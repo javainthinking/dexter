@@ -1,6 +1,6 @@
 ---
-title: 5-Day Signal Trail: Why Today's Indicator Lies
-description: Every chart app shows today's indicator call. None show the 5-day trail. Three patterns and why this filters 60% of false signals.
+title: "5-Day Signal Trail: Why Today's Indicator Lies"
+description: "Every chart app shows today's indicator call. None show the 5-day trail. Three patterns and why this filters 60% of false signals."
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

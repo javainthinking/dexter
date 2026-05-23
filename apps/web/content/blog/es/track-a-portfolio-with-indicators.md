@@ -1,6 +1,6 @@
 ---
-title: Seguir una cartera con indicadores técnicos
-description: Tutorial en 5 pasos: crear cartera, superponer 8 dimensiones de indicadores, usar dashboards IA (MACD, KDJ, divergencia, flujo) para detectar señales.
+title: "Seguir una cartera con indicadores técnicos"
+description: "Tutorial en 5 pasos: crear cartera, superponer 8 dimensiones de indicadores, usar dashboards IA (MACD, KDJ, divergencia, flujo) para detectar señales."
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

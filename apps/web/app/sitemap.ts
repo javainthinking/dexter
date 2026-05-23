@@ -104,9 +104,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const postEntries: MetadataRoute.Sitemap = posts.map((p) => {
     const postPath = `/blog/${p.slug}`;
+    // Defensive Date construction: a malformed publishedAt / updatedAt
+    // (broken YAML frontmatter that fell through gray-matter as an
+    // empty string, for example) would otherwise crash the build with
+    // `RangeError: Invalid time value` inside next/sitemap's
+    // toISOString call. Fall through to `now` so the post still
+    // appears in the sitemap and the build keeps going — the
+    // underlying frontmatter bug should be fixed separately.
+    const parsed = new Date(p.updatedAt ?? p.publishedAt);
+    const lastModified = Number.isNaN(parsed.getTime()) ? now : parsed;
     return {
       url: localeUrl(postPath, defaultLocale),
-      lastModified: new Date(p.updatedAt ?? p.publishedAt),
+      lastModified,
       changeFrequency: 'monthly' as const,
       priority: 0.7,
       alternates: { languages: buildAlternates(postPath) },

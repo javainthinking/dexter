@@ -1,6 +1,6 @@
 ---
-title: Mehrwerte-Portfolio mit technischen Indikatoren tracken
-description: Ein 5-Schritte-Tutorial: Portfolio aufsetzen, 8 Indikatordimensionen darüberlegen, KI-Dashboards (MACD, KDJ, Divergenz, Kapitalfluss) für Signale nutzen.
+title: "Mehrwerte-Portfolio mit technischen Indikatoren tracken"
+description: "Ein 5-Schritte-Tutorial: Portfolio aufsetzen, 8 Indikatordimensionen darüberlegen, KI-Dashboards (MACD, KDJ, Divergenz, Kapitalfluss) für Signale nutzen."
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

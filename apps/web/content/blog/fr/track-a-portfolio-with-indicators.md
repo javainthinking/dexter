@@ -1,6 +1,6 @@
 ---
-title: Suivre un portefeuille avec indicateurs techniques
-description: Tutoriel en 5 étapes : créer un portefeuille, superposer 8 dimensions d'indicateurs, utiliser des dashboards IA (MACD, KDJ, divergence, flux).
+title: "Suivre un portefeuille avec indicateurs techniques"
+description: "Tutoriel en 5 étapes : créer un portefeuille, superposer 8 dimensions d'indicateurs, utiliser des dashboards IA (MACD, KDJ, divergence, flux)."
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:
