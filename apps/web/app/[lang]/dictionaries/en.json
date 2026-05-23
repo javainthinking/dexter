@@ -274,7 +274,8 @@
     },
     "metrics": {
       "latest": "Last",
-      "change": "Chg %"
+      "change": "Chg %",
+      "fiveDayChange": "5D %"
     },
     "summaryColumns": {
       "ticker": "Ticker",
@@ -290,7 +291,12 @@
     },
     "summary": {
       "hint": "Each row shows the last 5 trading days of signal evolution across all four indicators. Hover any dot for the date and reason.",
-      "dismiss": "Dismiss"
+      "dismiss": "Dismiss",
+      "openDetail": "View signal timeline",
+      "detailTitle": "Signal timeline",
+      "detailSubtitle": "The last 5 trading days · every indicator, every day",
+      "detailEmpty": "No timeline data available.",
+      "detailClose": "Close"
     }
   },
   "market": {

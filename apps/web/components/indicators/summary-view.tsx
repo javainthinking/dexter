@@ -1,8 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { Info, X } from 'lucide-react';
+import { ChevronRight, Info, X } from 'lucide-react';
 import { BucketBadge, type Bucket, type BucketSample } from './card-shell';
+import { TickerDetailSheet } from './ticker-detail-sheet';
 import { useDictionary } from '../i18n/dictionary-provider';
 import { cn } from '../../lib/utils';
 
@@ -55,6 +56,30 @@ export interface SummaryEntry {
    * endpoints already return — no extra fetch.
    */
   dailyChanges: DailyChange[];
+  /**
+   * Latest close price (the last bar's close), surfaced from any
+   * non-errored dimension's `latest.close`. Same value across all
+   * dimensions because they all read the same OHLCV — picking the
+   * first non-null one is sufficient. Optional so a row whose every
+   * dimension errored doesn't break the type contract.
+   */
+  latestClose?: number | null;
+  /**
+   * ISO date (yyyy-mm-dd) of the latest bar — surfaced alongside
+   * latestClose so the modal header can show "as of {date}".
+   */
+  latestAsOf?: string | null;
+  /**
+   * Daily-close series (oldest → newest, ~90 trading days). Picked
+   * from the first non-errored dimension's prices in the same
+   * fallthrough pattern as latestClose / dailyChanges. Used by the
+   * detail modal to render a sparkline above the timeline; not used
+   * by the summary table itself.
+   *
+   * Trimmed to `{time, close}` pairs only — full OHLCV would balloon
+   * the payload (~6× more keys) for no current consumer.
+   */
+  prices?: Array<{ time: string; close: number | null }>;
   macd: SummaryDimension;
   ma: SummaryDimension;
   rsi: SummaryDimension;
@@ -113,6 +138,17 @@ export function SummaryView({ entries }: { entries: SummaryEntry[] }) {
   >;
   const labelFor = (k: DimensionKey) => columnLabels[k] ?? DIMENSION_FALLBACK_LABEL[k];
 
+  // Track which ticker has its detail sheet open. We store the
+  // ticker string (not the entry object) so the sheet's content
+  // automatically refreshes when `entries` itself reloads — staying
+  // tied to the current data instead of a stale snapshot. The
+  // selected entry is looked up from `entries` on render.
+  const [openTicker, setOpenTicker] = React.useState<string | null>(null);
+  const selectedEntry = React.useMemo(
+    () => (openTicker ? entries.find((e) => e.ticker === openTicker) ?? null : null),
+    [openTicker, entries],
+  );
+
   if (entries.length === 0) {
     return null;
   }
@@ -153,12 +189,23 @@ export function SummaryView({ entries }: { entries: SummaryEntry[] }) {
           </thead>
           <tbody>
             {entries.map((e, i) => (
-              <SummaryRow key={e.ticker} entry={e} striped={i % 2 === 1} />
+              <SummaryRow
+                key={e.ticker}
+                entry={e}
+                striped={i % 2 === 1}
+                onOpenDetail={() => setOpenTicker(e.ticker)}
+              />
             ))}
           </tbody>
         </table>
         </div>
       </div>
+      <TickerDetailSheet
+        entry={selectedEntry}
+        onOpenChange={(open) => {
+          if (!open) setOpenTicker(null);
+        }}
+      />
     </div>
   );
 }
@@ -236,7 +283,18 @@ function SummaryHint() {
   );
 }
 
-function SummaryRow({ entry, striped }: { entry: SummaryEntry; striped: boolean }) {
+function SummaryRow({
+  entry,
+  striped,
+  onOpenDetail,
+}: {
+  entry: SummaryEntry;
+  striped: boolean;
+  onOpenDetail: () => void;
+}) {
+  const dict = useDictionary();
+  const openDetailLabel =
+    dict.indicators?.summary?.openDetail ?? 'View signal timeline';
   return (
     <tr className={striped ? 'bg-muted/20' : undefined}>
       <th
@@ -248,12 +306,40 @@ function SummaryRow({ entry, striped }: { entry: SummaryEntry; striped: boolean 
           (striped ? 'bg-muted/20' : 'bg-card')
         }
       >
-        <div className="font-mono text-sm font-semibold">{entry.ticker}</div>
-        {entry.displayName && (
-          <div className="max-w-[12rem] truncate text-xs text-muted-foreground">
-            {entry.displayName}
-          </div>
-        )}
+        {/* Button-wrapped ticker so the entire identity block is one
+            keyboard- and screen-reader-friendly affordance. We avoid
+            a separate "open" icon button — making the natural
+            scan-target (the ticker text) the click target keeps
+            Fitts' Law on our side and matches user expectation that
+            "the row identity opens the row detail." */}
+        <button
+          type="button"
+          onClick={onOpenDetail}
+          aria-label={`${openDetailLabel} — ${entry.ticker}`}
+          className={cn(
+            'group flex w-full max-w-full items-center gap-1.5 rounded-md text-left',
+            'cursor-pointer transition-colors',
+            'hover:text-[color:var(--accent)]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
+          )}
+        >
+          <span className="min-w-0 flex-1">
+            <span className="block font-mono text-sm font-semibold underline decoration-dotted decoration-muted-foreground/40 underline-offset-4 group-hover:decoration-current">
+              {entry.ticker}
+            </span>
+            {entry.displayName && (
+              <span className="block max-w-[12rem] truncate text-xs text-muted-foreground">
+                {entry.displayName}
+              </span>
+            )}
+          </span>
+          {/* Chevron — the secondary affordance. Slides slightly on
+              hover so the cell visibly "leans into" the user. */}
+          <ChevronRight
+            aria-hidden="true"
+            className="size-3.5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-[color:var(--accent)]"
+          />
+        </button>
       </th>
       <td className="px-3 py-2 align-middle">
         <DailyChangeRow changes={entry.dailyChanges} />

@@ -274,7 +274,8 @@
     },
     "metrics": {
       "latest": "Letzter",
-      "change": "Änd. %"
+      "change": "Änd. %",
+      "fiveDayChange": "5T %"
     },
     "summaryColumns": {
       "ticker": "Symbol",
@@ -290,7 +291,12 @@
     },
     "summary": {
       "hint": "Jede Zeile zeigt die Signalentwicklung der letzten 5 Handelstage über alle vier Indikatoren. Maus über einen Punkt für Datum und Grund.",
-      "dismiss": "Schließen"
+      "dismiss": "Schließen",
+      "openDetail": "Signal-Zeitachse anzeigen",
+      "detailTitle": "Signal-Zeitachse",
+      "detailSubtitle": "Die letzten 5 Handelstage · jeder Indikator, jeden Tag",
+      "detailEmpty": "Keine Zeitachsendaten verfügbar.",
+      "detailClose": "Schließen"
     }
   },
   "market": {

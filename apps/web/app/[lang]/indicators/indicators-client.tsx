@@ -357,24 +357,52 @@ export function IndicatorsClient({
             };
           };
 
-          // Daily pct changes: every dimension's response carries the
-          // same OHLCV (same upstream chain, same date range), so we
-          // can pull from any one. Try MACD first — if it errored,
-          // fall through to the others so the price column still
-          // populates as long as *one* dimension succeeded.
+          // Daily pct changes + latest close: every dimension's
+          // response carries the same OHLCV (same upstream chain, same
+          // date range), so we pull from the first dimension whose
+          // prices array is populated. Falling through dim by dim lets
+          // a single working indicator hydrate both the 5D % column
+          // and the modal header's price line — even when the
+          // user-clicked dimension errored.
           let dailyChanges: DailyChange[] = [];
+          let latestClose: number | null = null;
+          let latestAsOf: string | null = null;
+          let prices: Array<{ time: string; close: number | null }> | undefined;
           for (const dim of DIMENSION_TABS) {
             const e = byTickerByDim.get(dim)?.get(ticker);
-            if (e?.prices && e.prices.length > 0) {
+            if (!e?.prices || e.prices.length === 0) continue;
+            if (dailyChanges.length === 0) {
               dailyChanges = dailyChangesFromPrices(e.prices, SUMMARY_TREND_DAYS);
-              break;
             }
+            // Surface the full daily-close series for the modal
+            // sparkline. We strip everything but {time, close} to
+            // keep the payload tight — full OHLCV would 6× the
+            // SummaryEntry size for no current consumer.
+            if (!prices) {
+              prices = e.prices.map((p) => ({ time: p.time, close: p.close }));
+            }
+            // `latest.close` is what the per-card MetricCell reads —
+            // mirror that so the modal price matches the value users
+            // already see on the dedicated indicator card.
+            const close = e.latest?.close;
+            if (latestClose == null && typeof close === 'number' && Number.isFinite(close)) {
+              latestClose = close;
+              const asOf = e.latest?.asOf;
+              latestAsOf = typeof asOf === 'string' ? asOf : null;
+            }
+            // Stop walking dimensions once we've populated everything
+            // we need from this one — no point reading further if the
+            // first non-errored dim already gave us a full record.
+            if (latestClose != null && dailyChanges.length > 0 && prices) break;
           }
 
           return {
             ticker,
             displayName: tickerNames.get(ticker) ?? null,
             dailyChanges,
+            latestClose,
+            latestAsOf,
+            prices,
             macd: buildDim('macd'),
             ma: buildDim('ma'),
             rsi: buildDim('rsi'),

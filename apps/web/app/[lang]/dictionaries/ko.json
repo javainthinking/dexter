@@ -274,7 +274,8 @@
     },
     "metrics": {
       "latest": "종가",
-      "change": "등락%"
+      "change": "등락%",
+      "fiveDayChange": "5일 변동"
     },
     "summaryColumns": {
       "ticker": "종목",
@@ -290,7 +291,12 @@
     },
     "summary": {
       "hint": "각 행은 4개 지표에서 지난 5거래일 동안의 시그널 흐름을 나타냅니다. 점에 마우스를 올리면 날짜와 이유가 표시됩니다.",
-      "dismiss": "닫기"
+      "dismiss": "닫기",
+      "openDetail": "신호 추이 보기",
+      "detailTitle": "신호 추이",
+      "detailSubtitle": "최근 5 거래일 · 모든 지표, 매일의 신호",
+      "detailEmpty": "추이 데이터가 없습니다.",
+      "detailClose": "닫기"
     }
   },
   "market": {

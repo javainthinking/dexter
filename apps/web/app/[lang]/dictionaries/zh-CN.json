@@ -274,7 +274,8 @@
     },
     "metrics": {
       "latest": "最新价",
-      "change": "涨跌%"
+      "change": "涨跌%",
+      "fiveDayChange": "5日涨跌"
     },
     "summaryColumns": {
       "ticker": "代码",
@@ -290,7 +291,12 @@
     },
     "summary": {
       "hint": "每行展示该标的过去 5 个交易日在 4 个维度上的信号变化趋势。鼠标悬停任一圆点可查看具体日期和信号原因。",
-      "dismiss": "关闭"
+      "dismiss": "关闭",
+      "openDetail": "查看信号趋势详情",
+      "detailTitle": "信号趋势详情",
+      "detailSubtitle": "最近 5 个交易日 · 每个指标每天的信号",
+      "detailEmpty": "暂无趋势数据。",
+      "detailClose": "关闭"
     }
   },
   "market": {

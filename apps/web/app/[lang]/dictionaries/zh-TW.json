@@ -274,7 +274,8 @@
     },
     "metrics": {
       "latest": "最新價",
-      "change": "漲跌%"
+      "change": "漲跌%",
+      "fiveDayChange": "5日漲跌"
     },
     "summaryColumns": {
       "ticker": "代碼",
@@ -290,7 +291,12 @@
     },
     "summary": {
       "hint": "每行展示該標的過去 5 個交易日在 4 個維度上的信號變化趨勢。滑鼠懸停任一圓點可查看具體日期和信號原因。",
-      "dismiss": "關閉"
+      "dismiss": "關閉",
+      "openDetail": "查看訊號趨勢詳情",
+      "detailTitle": "訊號趨勢詳情",
+      "detailSubtitle": "最近 5 個交易日 · 每個指標每天的訊號",
+      "detailEmpty": "暫無趨勢資料。",
+      "detailClose": "關閉"
     }
   },
   "market": {

@@ -274,7 +274,8 @@
     },
     "metrics": {
       "latest": "終値",
-      "change": "変動%"
+      "change": "変動%",
+      "fiveDayChange": "5日騰落"
     },
     "summaryColumns": {
       "ticker": "銘柄",
@@ -290,7 +291,12 @@
     },
     "summary": {
       "hint": "各行は、4つの指標における過去 5 営業日のシグナル推移を示します。ドットにマウスを合わせると、日付と理由が表示されます。",
-      "dismiss": "閉じる"
+      "dismiss": "閉じる",
+      "openDetail": "シグナル推移を表示",
+      "detailTitle": "シグナル推移",
+      "detailSubtitle": "直近5取引日 · すべての指標、毎日のシグナル",
+      "detailEmpty": "推移データがありません。",
+      "detailClose": "閉じる"
     }
   },
   "market": {

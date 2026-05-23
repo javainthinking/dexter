@@ -274,7 +274,8 @@
     },
     "metrics": {
       "latest": "Último",
-      "change": "Var %"
+      "change": "Var %",
+      "fiveDayChange": "5D %"
     },
     "summaryColumns": {
       "ticker": "Símbolo",
@@ -290,7 +291,12 @@
     },
     "summary": {
       "hint": "Cada fila muestra los últimos 5 días bursátiles de evolución de señales en los cuatro indicadores. Pasa el cursor sobre un punto para ver la fecha y el motivo.",
-      "dismiss": "Cerrar"
+      "dismiss": "Cerrar",
+      "openDetail": "Ver línea de tiempo de señales",
+      "detailTitle": "Línea de tiempo de señales",
+      "detailSubtitle": "Los últimos 5 días bursátiles · cada indicador, cada día",
+      "detailEmpty": "Sin datos de línea de tiempo disponibles.",
+      "detailClose": "Cerrar"
     }
   },
   "market": {
