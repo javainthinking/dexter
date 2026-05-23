@@ -94,7 +94,7 @@ export function MaCard({ entry, dict }: { entry: MaEntry; dict: any }) {
         <path d={buildPath(ma20, W, H, range.min, range.max, 4, 6)} fill="none" stroke="#f59e0b" strokeWidth="1" />
         <path d={buildPath(ma60, W, H, range.min, range.max, 4, 6)} fill="none" stroke="#a78bfa" strokeWidth="1" />
         {/* Legend */}
-        <g transform={`translate(${W - 130}, 8)`}>
+        <g transform={`translate(${W - 140}, 8)`}>
           <text x="0" y="0" fontSize="9" fill="currentColor" className="text-muted-foreground">price</text>
           <line x1="36" y1="-3" x2="50" y2="-3" stroke="currentColor" strokeWidth="1.5" className="text-foreground" />
           <text x="58" y="0" fontSize="9" fill="#60a5fa">MA5</text>
