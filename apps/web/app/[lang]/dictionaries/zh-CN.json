@@ -297,7 +297,10 @@
       "detailSubtitle": "最近 5 个交易日 · 每个指标每天的信号",
       "detailEmpty": "暂无趋势数据。",
       "detailClose": "关闭"
-    }
+    },
+    "exportPpt": "生成 PPT",
+    "exportWord": "生成 Word",
+    "exportExcel": "生成 Excel"
   },
   "market": {
     "_localeHint": "zh",

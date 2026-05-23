@@ -297,7 +297,10 @@
       "detailSubtitle": "The last 5 trading days · every indicator, every day",
       "detailEmpty": "No timeline data available.",
       "detailClose": "Close"
-    }
+    },
+    "exportPpt": "Generate PPT",
+    "exportWord": "Generate Word",
+    "exportExcel": "Generate Excel"
   },
   "market": {
     "_localeHint": "en",

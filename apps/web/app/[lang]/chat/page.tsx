@@ -26,6 +26,7 @@ import {
   format,
 } from '../../../components/i18n/dictionary-provider';
 import { cn } from '../../../lib/utils';
+import { readAndClearChatSeed } from '../../../lib/chat-seed';
 
 export default function ChatRoute() {
   return (
@@ -44,7 +45,23 @@ function ChatPage() {
   // useSearchParams() will re-render with an empty value, which used to
   // re-trigger the hydration effect and clobber the optimistic
   // streaming turn that send() just added.
-  const initialPromptRef = useRef(searchParams.get('prompt') ?? '');
+  // Two ways to land here with a pre-filled composer:
+  //   1. ?prompt= URL param — used by the homepage "try this" cards
+  //      (short, marketing-friendly seeds).
+  //   2. sessionStorage seed — used by the /indicators export buttons
+  //      (multi-KB JSON payloads that don't survive URL transport).
+  // We capture both ONCE on mount via a ref so subsequent re-renders
+  // (search-params change, etc.) don't replay the seed. URL param
+  // takes precedence if both are somehow present.
+  const initialPromptRef = useRef<string>(
+    (() => {
+      const urlPrompt = searchParams.get('prompt') ?? '';
+      if (urlPrompt) return urlPrompt;
+      // readAndClearChatSeed has its own typeof window guard and is
+      // safe to call here in a 'use client' component.
+      return readAndClearChatSeed() ?? '';
+    })(),
+  );
   const hasDeepLinkPrompt = initialPromptRef.current !== '';
 
   const [sessions, setSessions] = useState<SessionSummary[]>([]);

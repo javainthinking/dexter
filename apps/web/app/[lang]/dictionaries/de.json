@@ -297,7 +297,10 @@
       "detailSubtitle": "Die letzten 5 Handelstage · jeder Indikator, jeden Tag",
       "detailEmpty": "Keine Zeitachsendaten verfügbar.",
       "detailClose": "Schließen"
-    }
+    },
+    "exportPpt": "PPT erzeugen",
+    "exportWord": "Word erzeugen",
+    "exportExcel": "Excel erzeugen"
   },
   "market": {
     "_localeHint": "de",

@@ -297,7 +297,10 @@
       "detailSubtitle": "Los últimos 5 días bursátiles · cada indicador, cada día",
       "detailEmpty": "Sin datos de línea de tiempo disponibles.",
       "detailClose": "Cerrar"
-    }
+    },
+    "exportPpt": "Generar PPT",
+    "exportWord": "Generar Word",
+    "exportExcel": "Generar Excel"
   },
   "market": {
     "_localeHint": "es",

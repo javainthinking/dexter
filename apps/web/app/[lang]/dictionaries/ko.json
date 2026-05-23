@@ -297,7 +297,10 @@
       "detailSubtitle": "최근 5 거래일 · 모든 지표, 매일의 신호",
       "detailEmpty": "추이 데이터가 없습니다.",
       "detailClose": "닫기"
-    }
+    },
+    "exportPpt": "PPT 생성",
+    "exportWord": "Word 생성",
+    "exportExcel": "Excel 생성"
   },
   "market": {
     "_localeHint": "ko",

@@ -297,7 +297,10 @@
       "detailSubtitle": "Les 5 derniers jours de bourse · chaque indicateur, chaque jour",
       "detailEmpty": "Aucune donnée de chronologie disponible.",
       "detailClose": "Fermer"
-    }
+    },
+    "exportPpt": "Générer PPT",
+    "exportWord": "Générer Word",
+    "exportExcel": "Générer Excel"
   },
   "market": {
     "_localeHint": "fr",

@@ -297,7 +297,10 @@
       "detailSubtitle": "直近5取引日 · すべての指標、毎日のシグナル",
       "detailEmpty": "推移データがありません。",
       "detailClose": "閉じる"
-    }
+    },
+    "exportPpt": "PPTを生成",
+    "exportWord": "Wordを生成",
+    "exportExcel": "Excelを生成"
   },
   "market": {
     "_localeHint": "ja",

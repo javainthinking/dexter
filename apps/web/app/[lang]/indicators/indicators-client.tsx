@@ -2,7 +2,16 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { RefreshCw, AlertTriangle, Wallet, ChevronDown, Info } from 'lucide-react';
+import {
+  RefreshCw,
+  AlertTriangle,
+  Wallet,
+  ChevronDown,
+  Info,
+  Presentation,
+  FileText,
+  FileSpreadsheet,
+} from 'lucide-react';
 import { Sidebar, type SessionSummary } from '../../../components/chat/sidebar';
 import { Button } from '../../../components/ui/button';
 import { TopBar } from '../../../components/nav/top-bar';
@@ -28,6 +37,12 @@ import {
   resolveInitialActivePortfolioId,
   writeLastActivePortfolioId,
 } from '../../../lib/active-portfolio';
+import { writeChatSeed } from '../../../lib/chat-seed';
+import {
+  buildExportPrompt,
+  type ExportFormat,
+  type ExportLang,
+} from '../../../lib/indicators/export-prompts';
 import {
   SummaryView,
   SummarySkeleton,
@@ -459,6 +474,51 @@ export function IndicatorsClient({
     fetchData();
   }, [fetchData]);
 
+  // ─── export ──────────────────────────────────────────────────────
+  // Hand off the current view's data to the chat composer as a
+  // pre-filled prompt. The seed travels via sessionStorage (not URL)
+  // because the JSON payload is too large for query-param round-trips.
+  // The chat page reads + clears the seed on mount via readAndClearChatSeed.
+  const activePortfolioName =
+    portfolios.find((p) => p.id === activeId)?.name ?? null;
+  const hasViewData = tab === 'summary' ? !!summaryEntries : !!data;
+  const onExport = React.useCallback(
+    (format: ExportFormat) => {
+      // The current UI locale becomes the prompt language so the
+      // generated PPT/Word/Excel comes back in the same language
+      // the user is already reading. ExportLang and Locale share
+      // the same string set; cast is structural.
+      const exportLang = locale as ExportLang;
+      const prompt =
+        tab === 'summary'
+          ? buildExportPrompt({
+              format,
+              lang: exportLang,
+              portfolioName: activePortfolioName,
+              summaryEntries: summaryEntries ?? undefined,
+            })
+          : buildExportPrompt({
+              format,
+              lang: exportLang,
+              portfolioName: activePortfolioName,
+              dimension: tab as DimensionKey,
+              dimensionTickers: enrichedEntries(data?.tickers ?? []) as never[],
+            });
+      if (!prompt) return;
+      writeChatSeed(prompt);
+      router.push(getLocalizedPath('/chat', locale));
+    },
+    [
+      tab,
+      activePortfolioName,
+      summaryEntries,
+      data,
+      enrichedEntries,
+      router,
+      locale,
+    ],
+  );
+
   // ─── sidebar handlers ─────────────────────────────────────────────
   const onNewConversation = () => router.push(getLocalizedPath('/chat', locale));
   const onSwitchSession = (id: string) =>
@@ -504,6 +564,37 @@ export function IndicatorsClient({
               onChange={setActiveId}
             />
           )}
+          {/* Export buttons — generate a chat-seed prompt + JSON
+              payload and jump to /chat. Disabled until the current
+              tab's view data has actually loaded so users don't
+              click into an empty/loading state. */}
+          <div className="ml-auto flex items-center gap-1">
+            {/* Word first, then Excel, then PPT — common workflow
+                is "draft a report → pull numbers into a sheet →
+                wrap into a deck for sharing", so the buttons read
+                left-to-right in that order. */}
+            <ExportButton
+              format="word"
+              icon={FileText}
+              label={dict.indicators?.exportWord ?? 'Generate Word'}
+              disabled={!hasViewData || loading || tickers.length === 0}
+              onClick={() => onExport('word')}
+            />
+            <ExportButton
+              format="excel"
+              icon={FileSpreadsheet}
+              label={dict.indicators?.exportExcel ?? 'Generate Excel'}
+              disabled={!hasViewData || loading || tickers.length === 0}
+              onClick={() => onExport('excel')}
+            />
+            <ExportButton
+              format="ppt"
+              icon={Presentation}
+              label={dict.indicators?.exportPpt ?? 'Generate PPT'}
+              disabled={!hasViewData || loading || tickers.length === 0}
+              onClick={() => onExport('ppt')}
+            />
+          </div>
           <button
             type="button"
             // Refresh explicitly bypasses the in-memory response
@@ -512,7 +603,7 @@ export function IndicatorsClient({
             // still hit the cache.
             onClick={() => fetchData(true)}
             disabled={loading || tickers.length === 0}
-            className="ml-auto inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
+            className="inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
             title={dict.indicators?.refresh ?? 'Refresh'}
             aria-label={dict.indicators?.refresh ?? 'Refresh'}
           >
@@ -855,5 +946,40 @@ function CardGrid({ children }: { children: React.ReactNode }) {
     <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(420px,1fr))]">
       {children}
     </div>
+  );
+}
+
+/**
+ * Toolbar button that triggers an export-to-chat handoff. Visual
+ * shape mirrors the Refresh button so the three exports + refresh
+ * read as a cohesive cluster. Label hidden on small screens to keep
+ * the toolbar from wrapping; icons + tooltips carry the meaning.
+ */
+function ExportButton({
+  format,
+  icon: Icon,
+  label,
+  disabled,
+  onClick,
+}: {
+  format: ExportFormat;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  disabled: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      data-format={format}
+      className="inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
+      title={label}
+      aria-label={label}
+    >
+      <Icon className="size-3.5" />
+      <span className="hidden md:inline">{label}</span>
+    </button>
   );
 }
