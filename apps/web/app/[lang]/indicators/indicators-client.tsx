@@ -25,6 +25,10 @@ import {
   type DimensionKey,
 } from '../../../lib/indicators/labels';
 import {
+  resolveInitialActivePortfolioId,
+  writeLastActivePortfolioId,
+} from '../../../lib/active-portfolio';
+import {
   SummaryView,
   SummarySkeleton,
   type SummaryEntry,
@@ -145,8 +149,30 @@ export function IndicatorsClient({
   const [sessionsLoading, setSessionsLoading] = React.useState(true);
 
   const [portfolios, setPortfolios] = React.useState<PortfolioSummary[]>(initialPortfolios);
-  const [activeId, setActiveId] = React.useState<string | null>(initialPortfolios[0]?.id ?? null);
+  // Initial active portfolio: prefer the last-active id stored from
+  // either /portfolios or a previous /indicators visit, so navigating
+  // between the two surfaces keeps the user's mental "current
+  // portfolio" stable. Falls back to the first portfolio when no
+  // stored id is set (first-ever visit) or the stored id has since
+  // been deleted. Lazy initializer means localStorage is read once on
+  // mount — no re-renders, no flashing of the wrong portfolio.
+  const [activeId, setActiveId] = React.useState<string | null>(() =>
+    resolveInitialActivePortfolioId(initialPortfolios),
+  );
+
+  // Persist activeId changes so /portfolios picks up the latest
+  // selection on its next visit (and vice versa).
+  React.useEffect(() => {
+    writeLastActivePortfolioId(activeId);
+  }, [activeId]);
   const [activeDetail, setActiveDetail] = React.useState<PortfolioWithHoldings | null>(null);
+  // True while the holdings detail for `activeId` is in flight. Gated
+  // separately from indicator-data loading because they happen in
+  // sequence (detail → tickers → indicators) and we need a skeleton
+  // during the first leg too, not just the second. Without this, a
+  // portfolio with holdings briefly renders "This portfolio has no
+  // holdings yet" while the detail fetch is still in the air.
+  const [detailLoading, setDetailLoading] = React.useState(false);
   // Summary is the default landing tab — gives users the cross-
   // dimension read first; they tab into MACD/MA/etc for drill-down.
   const [tab, setTab] = React.useState<Tab>('summary');
@@ -189,28 +215,49 @@ export function IndicatorsClient({
         if (!res.ok) return;
         const json = (await res.json()) as { portfolios: PortfolioSummary[] };
         setPortfolios(json.portfolios);
-        setActiveId((cur) => cur ?? json.portfolios[0]?.id ?? null);
+        // Validate the current selection against the fresh list — if
+        // the portfolio was deleted from another tab/device between
+        // sessions, fall through to the first portfolio so the UI
+        // doesn't sit on a now-invalid id.
+        setActiveId((cur) => {
+          if (cur && json.portfolios.some((p) => p.id === cur)) return cur;
+          return json.portfolios[0]?.id ?? null;
+        });
       } catch {
         /* swallow */
       }
     }
   }, []);
 
-  // Load detail (holdings) for the active portfolio.
+  // Load detail (holdings) for the active portfolio. Clearing
+  // `activeDetail` at the top of the effect is intentional — without
+  // it, switching from portfolio A to portfolio B briefly renders
+  // portfolio A's holdings under portfolio B's name while the fetch
+  // is in flight. Setting it to null forces the skeleton to render
+  // instead.
   React.useEffect(() => {
     if (!activeId) {
       setActiveDetail(null);
+      setDetailLoading(false);
       return;
     }
+    setActiveDetail(null);
+    setDetailLoading(true);
     let cancelled = false;
     (async () => {
       try {
         const res = await fetch(`/api/portfolios/${activeId}`);
-        if (!res.ok) return;
+        if (!res.ok) {
+          if (!cancelled) setDetailLoading(false);
+          return;
+        }
         const json = (await res.json()) as { portfolio: PortfolioWithHoldings };
-        if (!cancelled) setActiveDetail(json.portfolio);
+        if (!cancelled) {
+          setActiveDetail(json.portfolio);
+          setDetailLoading(false);
+        }
       } catch {
-        /* swallow */
+        if (!cancelled) setDetailLoading(false);
       }
     })();
     return () => {
@@ -502,7 +549,28 @@ export function IndicatorsClient({
 
         <div className="flex-1 overflow-y-auto px-4 py-4 lg:px-6">
           {portfolios.length === 0 && <EmptyNoPortfolios dict={dict} locale={locale} />}
-          {portfolios.length > 0 && tickers.length === 0 && (
+
+          {/* Show a skeleton until the holdings detail finishes
+              loading — without this gate, a portfolio with holdings
+              briefly flashes the "no holdings yet" empty state on
+              every navigation in. The portfolio summary already
+              carries `holdingsCount`, so the skeleton can match the
+              expected card count for the active portfolio (rather
+              than a generic fallback). */}
+          {portfolios.length > 0 && detailLoading && (() => {
+            const expectedCount =
+              portfolios.find((p) => p.id === activeId)?.holdingsCount ?? 4;
+            return tab === 'summary' ? (
+              <SummarySkeleton rows={Math.min(expectedCount, 6)} />
+            ) : (
+              <SkeletonCardGrid count={expectedCount} />
+            );
+          })()}
+
+          {/* "Empty portfolio" only renders once the detail fetch has
+              confirmed there genuinely are zero holdings — not while
+              the fetch is still in flight. */}
+          {portfolios.length > 0 && !detailLoading && tickers.length === 0 && (
             <EmptyEmptyPortfolio dict={dict} locale={locale} activeId={activeId} />
           )}
 

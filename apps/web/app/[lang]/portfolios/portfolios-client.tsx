@@ -21,6 +21,10 @@ import { useDictionary, useLocale } from '../../../components/i18n/dictionary-pr
 import { getLocalizedPath } from '../../../lib/i18n/paths';
 import { cn } from '../../../lib/utils';
 import { SymbolSearch, type SymbolHit } from '../../../components/portfolios/symbol-search';
+import {
+  resolveInitialActivePortfolioId,
+  writeLastActivePortfolioId,
+} from '../../../lib/active-portfolio';
 
 interface PortfolioListItem {
   id: string;
@@ -70,7 +74,20 @@ export function PortfoliosClient({
   const [sessionsLoading, setSessionsLoading] = React.useState(true);
 
   const [portfolios, setPortfolios] = React.useState<PortfolioListItem[]>(initialPortfolios);
-  const [activeId, setActiveId] = React.useState<string | null>(initialPortfolios[0]?.id ?? null);
+  // Prefer the last-active portfolio (from /indicators or a previous
+  // visit) so navigating between this page and /indicators preserves
+  // the user's mental "current portfolio." Falls back to the first
+  // portfolio when no stored selection is present or it's been
+  // deleted. See lib/active-portfolio.ts for the storage details.
+  const [activeId, setActiveId] = React.useState<string | null>(() =>
+    resolveInitialActivePortfolioId(initialPortfolios),
+  );
+
+  // Mirror activeId to localStorage so /indicators (and a future
+  // tab refresh of this page) pick up the latest selection.
+  React.useEffect(() => {
+    writeLastActivePortfolioId(activeId);
+  }, [activeId]);
   const [detail, setDetail] = React.useState<PortfolioDetail | null>(null);
   const [detailLoading, setDetailLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
