@@ -39,15 +39,28 @@ const OVERFLOW_KEEP_ROUNDS = 3;
  * we've passed this threshold.
  *
  * Vercel functions cap at 300 s. We want margin for:
- *   - the final LLM call in this chunk to complete (~10–20 s)
+ *   - the final LLM call in this chunk to complete
  *   - the SSE close + state persistence to Postgres (~1 s)
  *   - the client's auto-resume POST to start the next chunk
- * 230 s leaves ~70 s of headroom which empirically is enough.
+ *
+ * The headroom MUST cover the worst-case in-flight LLM call — not
+ * just the typical one. Long structured-output generations (e.g.,
+ * multi-KB OfficeCLI batch payloads) can take 75-115 s; the original
+ * 230 s budget left only 70 s of headroom and timed out when an
+ * iteration boundary landed deep into the budget AND the next LLM
+ * call was a heavy one. 200 s gives 100 s of headroom which covers
+ * ~95 s LLM calls — sufficient for the structured-output cases we've
+ * observed in production.
+ *
+ * If you see fresh 300 s timeouts in production, the next step is to
+ * track the max LLM-call duration observed in this chunk and yield
+ * continuation when `elapsed + observed_max > 280_000`, instead of
+ * the fixed threshold here. See chat with user 2026-05-23 for context.
  *
  * For non-chunked runs (jobId not provided), this is ignored — the
  * agent runs until completion or maxIterations regardless.
  */
-const CHUNK_BUDGET_MS = 230_000;
+const CHUNK_BUDGET_MS = 200_000;
 
 /**
  * Hard cap across all chunks of a single agent task. Stops runaway
