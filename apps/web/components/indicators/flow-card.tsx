@@ -12,6 +12,13 @@ import {
   type Bucket,
   type BucketSample,
 } from './card-shell';
+import {
+  HoverGuide,
+  HoverTooltip,
+  TooltipRow,
+  useTwoPaneChart,
+} from './chart-hover';
+import { localizedBucketLabels } from '../../lib/indicators/labels';
 
 interface FlowRow {
   daily: number | null;
@@ -34,12 +41,6 @@ interface FlowEntry {
 // volume × close. It does NOT read institutional / Level-2 order
 // flow. Earlier copy used 主力净流入 / 主力净流出 which implied real
 // "main force capital" data; relabeled to make clear we're showing
-// a quantitative estimate, not the China-market 主力资金 feed.
-const BUCKET_LABELS = {
-  bullish: { en: 'Bullish · est. inflow', zh: '看多 · 资金流入(估算)' },
-  bearish: { en: 'Bearish · est. outflow', zh: '看空 · 资金流出(估算)' },
-  neutral: { en: 'Neutral · choppy', zh: '震荡 · 方向不明' },
-} as const;
 
 export function FlowCard({ entry, dict }: { entry: FlowEntry; dict: any }) {
   if (entry.error || !entry.prices || !entry.indicator) {
@@ -65,25 +66,44 @@ export function FlowCard({ entry, dict }: { entry: FlowEntry; dict: any }) {
 
   const bucket = entry.bucket ?? 'neutral';
   const bucketLang = isZh ? 'zh' : 'en';
-  const bucketLabel = BUCKET_LABELS[bucket][bucketLang];
-  // Pre-localized labels for every bucket — the trail tooltip needs
-  // them so a past bearish day shows "Bearish · outflow" (Flow's
-  // dimension-specific phrasing) rather than just "bearish".
-  const bucketLabels = {
-    bullish: BUCKET_LABELS.bullish[bucketLang],
-    bearish: BUCKET_LABELS.bearish[bucketLang],
-    neutral: BUCKET_LABELS.neutral[bucketLang],
-  };
+  // Bucket label localisation goes through one helper in
+  // lib/indicators/labels — card pill + summary trail stay in lockstep.
+  const bucketLabels = localizedBucketLabels('flow', bucketLang);
+  const bucketLabel = bucketLabels[bucket];
 
-  const W = 420;
-  const TOP_H = 110;
-  const BOTTOM_H = 100;
-  const TOTAL_H = TOP_H + BOTTOM_H + 12;
-  const priceRange = rangeOf(closes);
+  // Flow uses a taller indicator pane (100) and shorter price pane
+  // (110) than the other two-pane cards (130/90) — the histogram
+  // needs the extra room. The hook accepts overrides for these.
+  const {
+    W,
+    TOP_H,
+    BOTTOM_H,
+    TOTAL_H,
+    PAD_X,
+    svgRef,
+    hoverIdx,
+    onPointerMove,
+    onPointerLeave,
+    priceRange,
+    stepX,
+    projectPriceY,
+  } = useTwoPaneChart(closes, { topH: 110, bottomH: 100 });
   const flowRange = rangeOf(daily, cum20);
-  const stepX = (W - 8) / Math.max(1, closes.length - 1);
   const zeroFrac = flowRange.max / Math.max(1e-9, flowRange.max - flowRange.min);
   const zeroY = BOTTOM_H * zeroFrac;
+
+  const hovered =
+    hoverIdx != null && closes[hoverIdx] != null
+      ? {
+          time: entry.prices[hoverIdx].time,
+          close: closes[hoverIdx] as number,
+          daily: daily[hoverIdx],
+          cum20: cum20[hoverIdx],
+          cum5: entry.indicator[hoverIdx]?.cum5 ?? null,
+          x: PAD_X + hoverIdx * stepX,
+          y: projectPriceY(closes[hoverIdx] as number),
+        }
+      : null;
 
   return (
     <CardShell
@@ -103,19 +123,28 @@ export function FlowCard({ entry, dict }: { entry: FlowEntry; dict: any }) {
         </>
       }
     >
-      <svg viewBox={`0 0 ${W} ${TOTAL_H}`} width="100%" preserveAspectRatio="none" className="block">
+      <div className="relative">
+      <svg
+        ref={svgRef}
+        viewBox={`0 0 ${W} ${TOTAL_H}`}
+        width="100%"
+        preserveAspectRatio="none"
+        className="block"
+        onPointerMove={onPointerMove}
+        onPointerLeave={onPointerLeave}
+      >
         <path
-          d={buildPath(closes, W, TOP_H, priceRange.min, priceRange.max, 4, 6)}
+          d={buildPath(closes, W, TOP_H, priceRange.min, priceRange.max, PAD_X, 6)}
           fill="none"
           stroke="currentColor"
           strokeWidth="1.5"
           className="text-foreground"
         />
         <g transform={`translate(0, ${TOP_H + 12})`}>
-          <line x1={4} x2={W - 4} y1={zeroY} y2={zeroY} stroke="currentColor" strokeWidth="0.5" className="text-muted-foreground opacity-40" />
+          <line x1={PAD_X} x2={W - PAD_X} y1={zeroY} y2={zeroY} stroke="currentColor" strokeWidth="0.5" className="text-muted-foreground opacity-40" />
           {daily.map((d, i) => {
             if (d == null) return null;
-            const x = 4 + i * stepX;
+            const x = PAD_X + i * stepX;
             const top = BOTTOM_H - ((d - flowRange.min) / Math.max(1e-9, flowRange.max - flowRange.min)) * BOTTOM_H;
             const y = Math.min(top, zeroY);
             const h = Math.max(0.5, Math.abs(zeroY - top));
@@ -123,13 +152,72 @@ export function FlowCard({ entry, dict }: { entry: FlowEntry; dict: any }) {
             return <rect key={i} x={x - stepX / 2.5} y={y} width={Math.max(1, stepX * 0.6)} height={h} fill={color} />;
           })}
           <path
-            d={buildPath(cum20, W, BOTTOM_H, flowRange.min, flowRange.max, 4, 2)}
+            d={buildPath(cum20, W, BOTTOM_H, flowRange.min, flowRange.max, PAD_X, 2)}
             fill="none"
             stroke="#3b82f6"
             strokeWidth="1.5"
           />
         </g>
+        <HoverGuide
+          hoverIdx={hoverIdx}
+          x={hovered?.x ?? 0}
+          y={hovered?.y ?? 0}
+          topY={0}
+          bottomY={TOTAL_H}
+        />
       </svg>
+      {hovered && (
+        <HoverTooltip
+          hoverIdx={hoverIdx}
+          xPct={(hovered.x / W) * 100}
+          yPct={(hovered.y / TOTAL_H) * 100}
+        >
+          <div className="mb-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+            {hovered.time}
+          </div>
+          <TooltipRow label="price" value={formatNum(hovered.close, 2)} />
+          <TooltipRow
+            label="daily"
+            value={formatNum(hovered.daily, 0)}
+            tone={
+              hovered.daily != null
+                ? hovered.daily > 0
+                  ? 'up'
+                  : hovered.daily < 0
+                    ? 'down'
+                    : 'muted'
+                : undefined
+            }
+          />
+          <TooltipRow
+            label="cum 5D"
+            value={formatNum(hovered.cum5, 0)}
+            tone={
+              hovered.cum5 != null
+                ? hovered.cum5 > 0
+                  ? 'up'
+                  : hovered.cum5 < 0
+                    ? 'down'
+                    : 'muted'
+                : undefined
+            }
+          />
+          <TooltipRow
+            label="cum 20D"
+            value={formatNum(hovered.cum20, 0)}
+            tone={
+              hovered.cum20 != null
+                ? hovered.cum20 > 0
+                  ? 'up'
+                  : hovered.cum20 < 0
+                    ? 'down'
+                    : 'muted'
+                : undefined
+            }
+          />
+        </HoverTooltip>
+      )}
+      </div>
       <p className="px-3 pb-1 pt-2 text-[10px] text-muted-foreground">
         {isZh
           ? '本视图基于量价代理估算主力资金,非真实盘口数据。'

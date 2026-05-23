@@ -12,6 +12,13 @@ import {
   type Bucket,
   type BucketSample,
 } from './card-shell';
+import {
+  HoverGuide,
+  HoverTooltip,
+  TooltipRow,
+  useTwoPaneChart,
+} from './chart-hover';
+import { localizedBucketLabels } from '../../lib/indicators/labels';
 
 interface MacdSeriesRow {
   dif: number | null;
@@ -30,11 +37,7 @@ interface MacdEntry {
   error?: string;
 }
 
-const BUCKET_LABELS = {
-  bullish: { en: 'Bullish · golden cross', zh: '看多 · 金叉/红柱放大' },
-  bearish: { en: 'Bearish · death cross', zh: '看空 · 死叉/绿柱放大' },
-  neutral: { en: 'Neutral', zh: '待观察' },
-} as const;
+
 
 export function MacdCard({ entry, dict }: { entry: MacdEntry; dict: any }) {
   if (entry.error || !entry.prices || !entry.indicator) {
@@ -55,26 +58,44 @@ export function MacdCard({ entry, dict }: { entry: MacdEntry; dict: any }) {
 
   const bucket = entry.bucket ?? 'neutral';
   const bucketLang = isZh ? 'zh' : 'en';
-  const bucketLabel = BUCKET_LABELS[bucket][bucketLang];
-  // Pre-localized labels for every bucket — the trail tooltip needs
-  // them so a past bearish day shows "Bearish · death cross" (MACD's
-  // dimension-specific phrasing) rather than just "bearish".
-  const bucketLabels = {
-    bullish: BUCKET_LABELS.bullish[bucketLang],
-    bearish: BUCKET_LABELS.bearish[bucketLang],
-    neutral: BUCKET_LABELS.neutral[bucketLang],
-  };
+  // Bucket label localisation goes through one helper in
+  // lib/indicators/labels — card pill + summary trail stay in lockstep.
+  const bucketLabels = localizedBucketLabels('macd', bucketLang);
+  const bucketLabel = bucketLabels[bucket];
 
-  // Two-pane chart: price line on top, MACD DIF/DEA + HIST below
-  const W = 420;
-  const TOP_H = 130;
-  const BOTTOM_H = 90;
-  const TOTAL_H = TOP_H + BOTTOM_H + 12;
-  const priceRange = rangeOf(closes);
+  // Two-pane chart: price line on top, MACD DIF/DEA + HIST below.
+  // Geometry + hover wiring come from the shared hook so every
+  // two-pane card has identical layout.
+  const {
+    W,
+    TOP_H,
+    BOTTOM_H,
+    TOTAL_H,
+    PAD_X,
+    svgRef,
+    hoverIdx,
+    onPointerMove,
+    onPointerLeave,
+    priceRange,
+    stepX,
+    projectPriceY,
+  } = useTwoPaneChart(closes);
   const macdRange = rangeOf(dif, dea, hist);
-  const stepX = (W - 8) / Math.max(1, closes.length - 1);
   // Histogram baseline (zero) in the bottom pane:
   const zeroY = TOP_H + 12 + (BOTTOM_H - 4 * 2) * (macdRange.max / (macdRange.max - macdRange.min)) + 4;
+
+  const hovered =
+    hoverIdx != null && closes[hoverIdx] != null
+      ? {
+          time: entry.prices[hoverIdx].time,
+          close: closes[hoverIdx] as number,
+          dif: dif[hoverIdx],
+          dea: dea[hoverIdx],
+          hist: hist[hoverIdx],
+          x: PAD_X + hoverIdx * stepX,
+          y: projectPriceY(closes[hoverIdx] as number),
+        }
+      : null;
 
   return (
     <CardShell
@@ -105,11 +126,20 @@ export function MacdCard({ entry, dict }: { entry: MacdEntry; dict: any }) {
         </>
       }
     >
-      <svg viewBox={`0 0 ${W} ${TOTAL_H}`} width="100%" preserveAspectRatio="none" className="block">
+      <div className="relative">
+      <svg
+        ref={svgRef}
+        viewBox={`0 0 ${W} ${TOTAL_H}`}
+        width="100%"
+        preserveAspectRatio="none"
+        className="block"
+        onPointerMove={onPointerMove}
+        onPointerLeave={onPointerLeave}
+      >
         {/* Top pane: price line */}
         <g>
           <path
-            d={buildPath(closes, W, TOP_H, priceRange.min, priceRange.max, 4, 6)}
+            d={buildPath(closes, W, TOP_H, priceRange.min, priceRange.max, PAD_X, 6)}
             fill="none"
             stroke="currentColor"
             strokeWidth="1.5"
@@ -151,7 +181,42 @@ export function MacdCard({ entry, dict }: { entry: MacdEntry; dict: any }) {
             strokeWidth="1.25"
           />
         </g>
+        <HoverGuide
+          hoverIdx={hoverIdx}
+          x={hovered?.x ?? 0}
+          y={hovered?.y ?? 0}
+          topY={0}
+          bottomY={TOTAL_H}
+        />
       </svg>
+      {hovered && (
+        <HoverTooltip
+          hoverIdx={hoverIdx}
+          xPct={(hovered.x / W) * 100}
+          yPct={(hovered.y / TOTAL_H) * 100}
+        >
+          <div className="mb-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+            {hovered.time}
+          </div>
+          <TooltipRow label="price" value={formatNum(hovered.close, 2)} />
+          <TooltipRow label="DIF" value={formatNum(hovered.dif, 3)} />
+          <TooltipRow label="DEA" value={formatNum(hovered.dea, 3)} />
+          <TooltipRow
+            label="HIST"
+            value={formatNum(hovered.hist, 3)}
+            tone={
+              hovered.hist != null
+                ? hovered.hist > 0
+                  ? 'up'
+                  : hovered.hist < 0
+                    ? 'down'
+                    : 'muted'
+                : undefined
+            }
+          />
+        </HoverTooltip>
+      )}
+      </div>
     </CardShell>
   );
 }

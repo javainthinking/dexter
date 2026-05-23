@@ -12,6 +12,13 @@ import {
   type Bucket,
   type BucketSample,
 } from './card-shell';
+import {
+  HoverGuide,
+  HoverTooltip,
+  TooltipRow,
+  useTwoPaneChart,
+} from './chart-hover';
+import { localizedBucketLabels } from '../../lib/indicators/labels';
 
 interface VolumeRow {
   avgVol20: number | null;
@@ -30,11 +37,7 @@ interface VolumeEntry {
   error?: string;
 }
 
-const BUCKET_LABELS = {
-  bullish: { en: 'Bullish · heavy buying', zh: '看多 · 放量上涨' },
-  bearish: { en: 'Bearish · heavy selling', zh: '看空 · 放量下跌' },
-  neutral: { en: 'Neutral · light volume', zh: '待观察 · 缩量整理' },
-} as const;
+
 
 export function VolumeCard({ entry, dict }: { entry: VolumeEntry; dict: any }) {
   if (entry.error || !entry.prices || !entry.indicator) {
@@ -61,23 +64,39 @@ export function VolumeCard({ entry, dict }: { entry: VolumeEntry; dict: any }) {
 
   const bucket = entry.bucket ?? 'neutral';
   const bucketLang = isZh ? 'zh' : 'en';
-  const bucketLabel = BUCKET_LABELS[bucket][bucketLang];
-  // Pre-localized labels for every bucket — the trail tooltip needs
-  // them so a past bearish day shows "Bearish · heavy selling"
-  // (Volume's dimension-specific phrasing) rather than just "bearish".
-  const bucketLabels = {
-    bullish: BUCKET_LABELS.bullish[bucketLang],
-    bearish: BUCKET_LABELS.bearish[bucketLang],
-    neutral: BUCKET_LABELS.neutral[bucketLang],
-  };
+  // Bucket label localisation goes through one helper in
+  // lib/indicators/labels — card pill + summary trail stay in lockstep.
+  const bucketLabels = localizedBucketLabels('volume', bucketLang);
+  const bucketLabel = bucketLabels[bucket];
 
-  const W = 420;
-  const TOP_H = 130;
-  const BOTTOM_H = 90;
-  const TOTAL_H = TOP_H + BOTTOM_H + 12;
-  const priceRange = rangeOf(closes);
+  const {
+    W,
+    TOP_H,
+    BOTTOM_H,
+    TOTAL_H,
+    PAD_X,
+    svgRef,
+    hoverIdx,
+    onPointerMove,
+    onPointerLeave,
+    priceRange,
+    stepX,
+    projectPriceY,
+  } = useTwoPaneChart(closes);
   const volRange = rangeOf(volumes);
-  const stepX = (W - 8) / Math.max(1, closes.length - 1);
+  const hovered =
+    hoverIdx != null && closes[hoverIdx] != null
+      ? {
+          time: entry.prices[hoverIdx].time,
+          close: closes[hoverIdx] as number,
+          volume: volumes[hoverIdx],
+          avgVol20: entry.indicator[hoverIdx]?.avgVol20 ?? null,
+          volRatio: entry.indicator[hoverIdx]?.volRatio ?? null,
+          direction: directions[hoverIdx] ?? 0,
+          x: PAD_X + hoverIdx * stepX,
+          y: projectPriceY(closes[hoverIdx] as number),
+        }
+      : null;
 
   return (
     <CardShell
@@ -97,9 +116,18 @@ export function VolumeCard({ entry, dict }: { entry: VolumeEntry; dict: any }) {
         </>
       }
     >
-      <svg viewBox={`0 0 ${W} ${TOTAL_H}`} width="100%" preserveAspectRatio="none" className="block">
+      <div className="relative">
+      <svg
+        ref={svgRef}
+        viewBox={`0 0 ${W} ${TOTAL_H}`}
+        width="100%"
+        preserveAspectRatio="none"
+        className="block"
+        onPointerMove={onPointerMove}
+        onPointerLeave={onPointerLeave}
+      >
         <path
-          d={buildPath(closes, W, TOP_H, priceRange.min, priceRange.max, 4, 6)}
+          d={buildPath(closes, W, TOP_H, priceRange.min, priceRange.max, PAD_X, 6)}
           fill="none"
           stroke="currentColor"
           strokeWidth="1.5"
@@ -108,14 +136,41 @@ export function VolumeCard({ entry, dict }: { entry: VolumeEntry; dict: any }) {
         <g transform={`translate(0, ${TOP_H + 12})`}>
           {volumes.map((v, i) => {
             if (v == null) return null;
-            const x = 4 + i * stepX;
+            const x = PAD_X + i * stepX;
             const h = ((v - volRange.min) / Math.max(1, volRange.max - volRange.min)) * (BOTTOM_H - 4);
             const y = BOTTOM_H - h;
             const color = directions[i] > 0 ? '#ef4444' : directions[i] < 0 ? '#22c55e' : '#94a3b8';
             return <rect key={i} x={x - stepX / 2.5} y={y} width={Math.max(1, stepX * 0.6)} height={h} fill={color} />;
           })}
         </g>
+        <HoverGuide
+          hoverIdx={hoverIdx}
+          x={hovered?.x ?? 0}
+          y={hovered?.y ?? 0}
+          topY={0}
+          bottomY={TOTAL_H}
+        />
       </svg>
+      {hovered && (
+        <HoverTooltip
+          hoverIdx={hoverIdx}
+          xPct={(hovered.x / W) * 100}
+          yPct={(hovered.y / TOTAL_H) * 100}
+        >
+          <div className="mb-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+            {hovered.time}
+          </div>
+          <TooltipRow label="price" value={formatNum(hovered.close, 2)} />
+          <TooltipRow label="vol" value={formatNum(hovered.volume, 0)} />
+          <TooltipRow label="avg20" value={formatNum(hovered.avgVol20, 0)} />
+          <TooltipRow
+            label="ratio"
+            value={formatNum(hovered.volRatio, 2)}
+            tone={hovered.volRatio != null && hovered.volRatio >= 1.5 ? 'up' : 'muted'}
+          />
+        </HoverTooltip>
+      )}
+      </div>
     </CardShell>
   );
 }

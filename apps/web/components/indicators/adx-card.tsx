@@ -11,6 +11,13 @@ import {
   type Bucket,
   type BucketSample,
 } from './card-shell';
+import {
+  HoverGuide,
+  HoverTooltip,
+  TooltipRow,
+  useTwoPaneChart,
+} from './chart-hover';
+import { localizedBucketLabels } from '../../lib/indicators/labels';
 
 interface AdxRow {
   plusDi: number | null;
@@ -29,11 +36,7 @@ interface AdxEntry {
   error?: string;
 }
 
-const BUCKET_LABELS = {
-  bullish: { en: 'Bullish · trending up', zh: '看多 · 上升趋势' },
-  bearish: { en: 'Bearish · trending down', zh: '看空 · 下降趋势' },
-  neutral: { en: 'Neutral · no trend', zh: '中性 · 无趋势' },
-} as const;
+
 
 export function AdxCard({ entry, dict }: { entry: AdxEntry; dict: any }) {
   if (entry.error || !entry.prices || !entry.indicator) {
@@ -54,18 +57,25 @@ export function AdxCard({ entry, dict }: { entry: AdxEntry; dict: any }) {
 
   const bucket = entry.bucket ?? 'neutral';
   const bucketLang = isZh ? 'zh' : 'en';
-  const bucketLabel = BUCKET_LABELS[bucket][bucketLang];
-  const bucketLabels = {
-    bullish: BUCKET_LABELS.bullish[bucketLang],
-    bearish: BUCKET_LABELS.bearish[bucketLang],
-    neutral: BUCKET_LABELS.neutral[bucketLang],
-  };
+  // Bucket label localisation goes through one helper in
+  // lib/indicators/labels — card pill + summary trail stay in lockstep.
+  const bucketLabels = localizedBucketLabels('adx', bucketLang);
+  const bucketLabel = bucketLabels[bucket];
 
-  const W = 420;
-  const TOP_H = 130;
-  const BOTTOM_H = 90;
-  const TOTAL_H = TOP_H + BOTTOM_H + 12;
-  const priceRange = rangeOf(closes);
+  const {
+    W,
+    TOP_H,
+    BOTTOM_H,
+    TOTAL_H,
+    PAD_X,
+    svgRef,
+    hoverIdx,
+    onPointerMove,
+    onPointerLeave,
+    priceRange,
+    stepX,
+    projectPriceY,
+  } = useTwoPaneChart(closes);
   // ADX/DI all sit in 0..~60 in practice; we cap at 0..60 so the 25
   // threshold line lands in a consistent spot across cards. Anything
   // above 60 (rare) just clips at the top — still clearly "very strong
@@ -73,6 +83,19 @@ export function AdxCard({ entry, dict }: { entry: AdxEntry; dict: any }) {
   const adxMin = 0;
   const adxMax = 60;
   const adxY = (v: number) => BOTTOM_H - ((v - adxMin) / (adxMax - adxMin)) * (BOTTOM_H - 4 * 2) - 4;
+
+  const hovered =
+    hoverIdx != null && closes[hoverIdx] != null
+      ? {
+          time: entry.prices[hoverIdx].time,
+          close: closes[hoverIdx] as number,
+          adx: adx[hoverIdx],
+          plusDi: plusDi[hoverIdx],
+          minusDi: minusDi[hoverIdx],
+          x: PAD_X + hoverIdx * stepX,
+          y: projectPriceY(closes[hoverIdx] as number),
+        }
+      : null;
 
   return (
     <CardShell
@@ -104,20 +127,28 @@ export function AdxCard({ entry, dict }: { entry: AdxEntry; dict: any }) {
         </>
       }
     >
-      <svg viewBox={`0 0 ${W} ${TOTAL_H}`} width="100%" preserveAspectRatio="none" className="block">
+      <div className="relative">
+      <svg
+        ref={svgRef}
+        viewBox={`0 0 ${W} ${TOTAL_H}`}
+        width="100%"
+        preserveAspectRatio="none"
+        className="block"
+        onPointerMove={onPointerMove}
+        onPointerLeave={onPointerLeave}
+      >
         <path
-          d={buildPath(closes, W, TOP_H, priceRange.min, priceRange.max, 4, 6)}
+          d={buildPath(closes, W, TOP_H, priceRange.min, priceRange.max, PAD_X, 6)}
           fill="none"
           stroke="currentColor"
           strokeWidth="1.5"
           className="text-foreground"
         />
         <g transform={`translate(0, ${TOP_H + 12})`}>
-          {/* 25 = "trend threshold" reference */}
-          <line x1={4} x2={W - 4} y1={adxY(25)} y2={adxY(25)} stroke="currentColor" strokeWidth="0.5" strokeDasharray="3 3" className="text-muted-foreground opacity-50" />
-          <path d={buildPath(plusDi, W, BOTTOM_H, adxMin, adxMax, 4, 4)} fill="none" stroke="#ef4444" strokeWidth="1.25" />
-          <path d={buildPath(minusDi, W, BOTTOM_H, adxMin, adxMax, 4, 4)} fill="none" stroke="#22c55e" strokeWidth="1.25" />
-          <path d={buildPath(adx, W, BOTTOM_H, adxMin, adxMax, 4, 4)} fill="none" stroke="#f59e0b" strokeWidth="1.5" />
+          <line x1={PAD_X} x2={W - PAD_X} y1={adxY(25)} y2={adxY(25)} stroke="currentColor" strokeWidth="0.5" strokeDasharray="3 3" className="text-muted-foreground opacity-50" />
+          <path d={buildPath(plusDi, W, BOTTOM_H, adxMin, adxMax, PAD_X, 4)} fill="none" stroke="#ef4444" strokeWidth="1.25" />
+          <path d={buildPath(minusDi, W, BOTTOM_H, adxMin, adxMax, PAD_X, 4)} fill="none" stroke="#22c55e" strokeWidth="1.25" />
+          <path d={buildPath(adx, W, BOTTOM_H, adxMin, adxMax, PAD_X, 4)} fill="none" stroke="#f59e0b" strokeWidth="1.5" />
           <g transform={`translate(${W - 130}, 12)`}>
             <text x="0" y="0" fontSize="9" fill="#ef4444">DI+</text>
             <text x="28" y="0" fontSize="9" fill="#22c55e">DI−</text>
@@ -125,7 +156,30 @@ export function AdxCard({ entry, dict }: { entry: AdxEntry; dict: any }) {
             <text x="92" y="0" fontSize="9" fill="currentColor" className="text-muted-foreground">·25</text>
           </g>
         </g>
+        <HoverGuide hoverIdx={hoverIdx} x={hovered?.x ?? 0} y={hovered?.y ?? 0} topY={0} bottomY={TOTAL_H} />
       </svg>
+      {hovered && (
+        <HoverTooltip hoverIdx={hoverIdx} xPct={(hovered.x / W) * 100} yPct={(hovered.y / TOTAL_H) * 100}>
+          <div className="mb-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{hovered.time}</div>
+          <TooltipRow label="price" value={formatNum(hovered.close, 2)} />
+          <TooltipRow
+            label="ADX"
+            value={formatNum(hovered.adx, 1)}
+            tone={hovered.adx != null ? (hovered.adx >= 25 ? 'up' : 'muted') : undefined}
+          />
+          <TooltipRow
+            label="DI+"
+            value={formatNum(hovered.plusDi, 1)}
+            tone={hovered.plusDi != null && hovered.minusDi != null ? (hovered.plusDi > hovered.minusDi ? 'up' : 'muted') : undefined}
+          />
+          <TooltipRow
+            label="DI−"
+            value={formatNum(hovered.minusDi, 1)}
+            tone={hovered.plusDi != null && hovered.minusDi != null ? (hovered.minusDi > hovered.plusDi ? 'down' : 'muted') : undefined}
+          />
+        </HoverTooltip>
+      )}
+      </div>
     </CardShell>
   );
 }

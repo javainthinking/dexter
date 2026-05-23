@@ -6,6 +6,11 @@ import { BucketBadge, type Bucket, type BucketSample } from './card-shell';
 import { TickerDetailSheet } from './ticker-detail-sheet';
 import { useDictionary } from '../i18n/dictionary-provider';
 import { cn } from '../../lib/utils';
+import {
+  DIMENSION_FALLBACK_LABEL,
+  DIMENSION_KEYS,
+  type DimensionKey,
+} from '../../lib/indicators/labels';
 
 /**
  * localStorage key used to remember that the user dismissed the
@@ -90,32 +95,10 @@ export interface SummaryEntry {
   flow: SummaryDimension;
 }
 
-/**
- * Dimension column keys for the summary table. The user-facing
- * labels are localised at render time via the `indicators.summaryColumns`
- * dict namespace — MACD stays as "MACD" everywhere (universal acronym),
- * but MA / Vol / Flow have local equivalents that matter for native
- * readers ("均线 / 量能 / 资金流" in zh-CN, "出来高" in ja, etc.).
- */
-const DIMENSION_KEYS = ['macd', 'ma', 'rsi', 'kdj', 'boll', 'adx', 'volume', 'flow'] as const;
-type DimensionKey = (typeof DIMENSION_KEYS)[number];
-
-/**
- * Fallback labels — used when the dict lookup misses (e.g. older
- * dictionary version deployed). English short forms because the
- * scenarios where the fallback fires are usually English-locale
- * dev/staging contexts.
- */
-const DIMENSION_FALLBACK_LABEL: Record<DimensionKey, string> = {
-  macd: 'MACD',
-  ma: 'MA',
-  rsi: 'RSI',
-  kdj: 'KDJ',
-  boll: 'BOLL',
-  adx: 'ADX',
-  volume: 'Vol',
-  flow: 'Flow',
-};
+// DIMENSION_KEYS + DIMENSION_FALLBACK_LABEL now live in
+// lib/indicators/labels.ts — see top-of-file imports. Localisation
+// still comes from the per-locale `indicators.summaryColumns` dict
+// at render time (see `labelFor` below).
 
 /**
  * Cross-dimension summary table. One row per ticker, four compact

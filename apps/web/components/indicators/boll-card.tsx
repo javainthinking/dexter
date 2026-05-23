@@ -12,6 +12,13 @@ import {
   type Bucket,
   type BucketSample,
 } from './card-shell';
+import {
+  HoverGuide,
+  HoverTooltip,
+  TooltipRow,
+  useChartHover,
+} from './chart-hover';
+import { localizedBucketLabels } from '../../lib/indicators/labels';
 
 interface BollRow {
   mid: number | null;
@@ -31,11 +38,7 @@ interface BollEntry {
   error?: string;
 }
 
-const BUCKET_LABELS = {
-  bullish: { en: 'Bullish · riding upper band', zh: '看多 · 突破上轨' },
-  bearish: { en: 'Bearish · piercing lower band', zh: '看空 · 跌破下轨' },
-  neutral: { en: 'Neutral · within bands', zh: '中性 · 通道内运行' },
-} as const;
+
 
 export function BollCard({ entry, dict }: { entry: BollEntry; dict: any }) {
   if (entry.error || !entry.prices || !entry.indicator) {
@@ -64,18 +67,42 @@ export function BollCard({ entry, dict }: { entry: BollEntry; dict: any }) {
 
   const bucket = entry.bucket ?? 'neutral';
   const bucketLang = isZh ? 'zh' : 'en';
-  const bucketLabel = BUCKET_LABELS[bucket][bucketLang];
-  const bucketLabels = {
-    bullish: BUCKET_LABELS.bullish[bucketLang],
-    bearish: BUCKET_LABELS.bearish[bucketLang],
-    neutral: BUCKET_LABELS.neutral[bucketLang],
-  };
+  // Bucket label localisation goes through one helper in
+  // lib/indicators/labels — card pill + summary trail stay in lockstep.
+  const bucketLabels = localizedBucketLabels('boll', bucketLang);
+  const bucketLabel = bucketLabels[bucket];
 
   // Single-pane like the MA card — the bands and the price line share
   // the same y-scale so we want them overlaid.
   const W = 420;
   const H = 230;
+  const PAD_X = 4;
+  const PAD_Y = 6;
   const range = rangeOf(closes, upper, lower);
+  const stepX = (W - PAD_X * 2) / Math.max(1, closes.length - 1);
+
+  const svgRef = React.useRef<SVGSVGElement | null>(null);
+  const { hoverIdx, onPointerMove, onPointerLeave } = useChartHover({
+    svgRef,
+    dataLength: closes.length,
+    viewBoxWidth: W,
+    padX: PAD_X,
+  });
+  const innerH = H - PAD_Y * 2;
+  const projectY = (v: number) =>
+    PAD_Y + innerH - ((v - range.min) / (range.max - range.min || 1)) * innerH;
+  const hovered =
+    hoverIdx != null && closes[hoverIdx] != null
+      ? {
+          time: entry.prices[hoverIdx].time,
+          close: closes[hoverIdx] as number,
+          upper: upper[hoverIdx],
+          mid: mid[hoverIdx],
+          lower: lower[hoverIdx],
+          x: PAD_X + hoverIdx * stepX,
+          y: projectY(closes[hoverIdx] as number),
+        }
+      : null;
 
   return (
     <CardShell
@@ -99,13 +126,20 @@ export function BollCard({ entry, dict }: { entry: BollEntry; dict: any }) {
         </>
       }
     >
-      <svg viewBox={`0 0 ${W} ${H}`} width="100%" preserveAspectRatio="none" className="block">
-        {/* Bands first so the price line draws on top of them. */}
-        <path d={buildPath(upper, W, H, range.min, range.max, 4, 6)} fill="none" stroke="#f59e0b" strokeWidth="1" strokeDasharray="2 2" />
-        <path d={buildPath(mid, W, H, range.min, range.max, 4, 6)} fill="none" stroke="#a78bfa" strokeWidth="1" />
-        <path d={buildPath(lower, W, H, range.min, range.max, 4, 6)} fill="none" stroke="#f59e0b" strokeWidth="1" strokeDasharray="2 2" />
-        <path d={buildPath(closes, W, H, range.min, range.max, 4, 6)} fill="none" stroke="currentColor" strokeWidth="1.5" className="text-foreground" />
-        {/* Legend */}
+      <div className="relative">
+      <svg
+        ref={svgRef}
+        viewBox={`0 0 ${W} ${H}`}
+        width="100%"
+        preserveAspectRatio="none"
+        className="block"
+        onPointerMove={onPointerMove}
+        onPointerLeave={onPointerLeave}
+      >
+        <path d={buildPath(upper, W, H, range.min, range.max, PAD_X, PAD_Y)} fill="none" stroke="#f59e0b" strokeWidth="1" strokeDasharray="2 2" />
+        <path d={buildPath(mid, W, H, range.min, range.max, PAD_X, PAD_Y)} fill="none" stroke="#a78bfa" strokeWidth="1" />
+        <path d={buildPath(lower, W, H, range.min, range.max, PAD_X, PAD_Y)} fill="none" stroke="#f59e0b" strokeWidth="1" strokeDasharray="2 2" />
+        <path d={buildPath(closes, W, H, range.min, range.max, PAD_X, PAD_Y)} fill="none" stroke="currentColor" strokeWidth="1.5" className="text-foreground" />
         <g transform={`translate(${W - 145}, 8)`}>
           <text x="0" y="0" fontSize="9" fill="currentColor" className="text-muted-foreground">price</text>
           <line x1="36" y1="-3" x2="50" y2="-3" stroke="currentColor" strokeWidth="1.5" className="text-foreground" />
@@ -113,7 +147,18 @@ export function BollCard({ entry, dict }: { entry: BollEntry; dict: any }) {
           <text x="78" y="0" fontSize="9" fill="#a78bfa">MID</text>
           <text x="105" y="0" fontSize="9" fill="#f59e0b">LO</text>
         </g>
+        <HoverGuide hoverIdx={hoverIdx} x={hovered?.x ?? 0} y={hovered?.y ?? 0} topY={PAD_Y} bottomY={H - PAD_Y} />
       </svg>
+      {hovered && (
+        <HoverTooltip hoverIdx={hoverIdx} xPct={(hovered.x / W) * 100} yPct={(hovered.y / H) * 100}>
+          <div className="mb-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{hovered.time}</div>
+          <TooltipRow label="price" value={formatNum(hovered.close, 2)} />
+          <TooltipRow label="upper" value={formatNum(hovered.upper, 2)} />
+          <TooltipRow label="mid" value={formatNum(hovered.mid, 2)} />
+          <TooltipRow label="lower" value={formatNum(hovered.lower, 2)} />
+        </HoverTooltip>
+      )}
+      </div>
     </CardShell>
   );
 }

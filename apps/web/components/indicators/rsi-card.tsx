@@ -12,6 +12,13 @@ import {
   type Bucket,
   type BucketSample,
 } from './card-shell';
+import {
+  HoverGuide,
+  HoverTooltip,
+  TooltipRow,
+  useTwoPaneChart,
+} from './chart-hover';
+import { localizedBucketLabels } from '../../lib/indicators/labels';
 
 interface RsiRow {
   rsi: number | null;
@@ -31,12 +38,6 @@ interface RsiEntry {
 // RSI's bucket semantics are mean-reversion: overbought ⇒ likely down
 // next ⇒ bearish; oversold ⇒ likely up next ⇒ bullish. The labels make
 // the "what does the call mean" explicit so users don't read it as a
-// momentum signal (RSI > 70 is "strong" momentum but a bearish setup).
-const BUCKET_LABELS = {
-  bullish: { en: 'Bullish · oversold', zh: '看多 · 超卖反弹' },
-  bearish: { en: 'Bearish · overbought', zh: '看空 · 超买回落' },
-  neutral: { en: 'Neutral · in range', zh: '中性 · 区间内' },
-} as const;
 
 export function RsiCard({ entry, dict }: { entry: RsiEntry; dict: any }) {
   if (entry.error || !entry.prices || !entry.indicator) {
@@ -54,28 +55,46 @@ export function RsiCard({ entry, dict }: { entry: RsiEntry; dict: any }) {
 
   const bucket = entry.bucket ?? 'neutral';
   const bucketLang = isZh ? 'zh' : 'en';
-  const bucketLabel = BUCKET_LABELS[bucket][bucketLang];
-  const bucketLabels = {
-    bullish: BUCKET_LABELS.bullish[bucketLang],
-    bearish: BUCKET_LABELS.bearish[bucketLang],
-    neutral: BUCKET_LABELS.neutral[bucketLang],
-  };
+  // Bucket label localisation goes through one helper in
+  // lib/indicators/labels — card pill + summary trail stay in lockstep.
+  const bucketLabels = localizedBucketLabels('rsi', bucketLang);
+  const bucketLabel = bucketLabels[bucket];
 
   // Two-pane layout: price on top, RSI oscillator below with the 30/70
   // reference lines drawn at fixed scale (0..100) so the eye can pick
   // out the overbought/oversold crossings without needing the y-axis
   // labels.
-  const W = 420;
-  const TOP_H = 130;
-  const BOTTOM_H = 90;
-  const TOTAL_H = TOP_H + BOTTOM_H + 12;
-  const priceRange = rangeOf(closes);
+  const {
+    W,
+    TOP_H,
+    BOTTOM_H,
+    TOTAL_H,
+    PAD_X,
+    svgRef,
+    hoverIdx,
+    onPointerMove,
+    onPointerLeave,
+    priceRange,
+    stepX,
+    projectPriceY,
+  } = useTwoPaneChart(closes);
   // Fixed 0..100 scale so 30 and 70 lines land at consistent y-coords
   // across cards — makes cross-ticker comparison instant.
   const rsiMin = 0;
   const rsiMax = 100;
   const rsiY = (v: number) => BOTTOM_H - ((v - rsiMin) / (rsiMax - rsiMin)) * (BOTTOM_H - 4 * 2) - 4;
   const zone = rsiNow == null ? null : rsiNow >= 70 ? 'OB' : rsiNow <= 30 ? 'OS' : '—';
+
+  const hovered =
+    hoverIdx != null && closes[hoverIdx] != null
+      ? {
+          time: entry.prices[hoverIdx].time,
+          close: closes[hoverIdx] as number,
+          rsi: rsi[hoverIdx],
+          x: PAD_X + hoverIdx * stepX,
+          y: projectPriceY(closes[hoverIdx] as number),
+        }
+      : null;
 
   return (
     <CardShell
@@ -99,10 +118,19 @@ export function RsiCard({ entry, dict }: { entry: RsiEntry; dict: any }) {
         </>
       }
     >
-      <svg viewBox={`0 0 ${W} ${TOTAL_H}`} width="100%" preserveAspectRatio="none" className="block">
+      <div className="relative">
+      <svg
+        ref={svgRef}
+        viewBox={`0 0 ${W} ${TOTAL_H}`}
+        width="100%"
+        preserveAspectRatio="none"
+        className="block"
+        onPointerMove={onPointerMove}
+        onPointerLeave={onPointerLeave}
+      >
         {/* Top: price */}
         <path
-          d={buildPath(closes, W, TOP_H, priceRange.min, priceRange.max, 4, 6)}
+          d={buildPath(closes, W, TOP_H, priceRange.min, priceRange.max, PAD_X, 6)}
           fill="none"
           stroke="currentColor"
           strokeWidth="1.5"
@@ -111,50 +139,32 @@ export function RsiCard({ entry, dict }: { entry: RsiEntry; dict: any }) {
         {/* Bottom: RSI oscillator */}
         <g transform={`translate(0, ${TOP_H + 12})`}>
           {/* Overbought 70 reference */}
-          <line
-            x1={4}
-            x2={W - 4}
-            y1={rsiY(70)}
-            y2={rsiY(70)}
-            stroke="#ef4444"
-            strokeWidth="0.5"
-            strokeDasharray="3 3"
-            opacity="0.5"
-          />
+          <line x1={PAD_X} x2={W - PAD_X} y1={rsiY(70)} y2={rsiY(70)} stroke="#ef4444" strokeWidth="0.5" strokeDasharray="3 3" opacity="0.5" />
           {/* Oversold 30 reference */}
-          <line
-            x1={4}
-            x2={W - 4}
-            y1={rsiY(30)}
-            y2={rsiY(30)}
-            stroke="#22c55e"
-            strokeWidth="0.5"
-            strokeDasharray="3 3"
-            opacity="0.5"
-          />
+          <line x1={PAD_X} x2={W - PAD_X} y1={rsiY(30)} y2={rsiY(30)} stroke="#22c55e" strokeWidth="0.5" strokeDasharray="3 3" opacity="0.5" />
           {/* 50 midline */}
-          <line
-            x1={4}
-            x2={W - 4}
-            y1={rsiY(50)}
-            y2={rsiY(50)}
-            stroke="currentColor"
-            strokeWidth="0.5"
-            className="text-muted-foreground opacity-30"
-          />
-          <path
-            d={buildPath(rsi, W, BOTTOM_H, rsiMin, rsiMax, 4, 4)}
-            fill="none"
-            stroke="#a78bfa"
-            strokeWidth="1.25"
-          />
+          <line x1={PAD_X} x2={W - PAD_X} y1={rsiY(50)} y2={rsiY(50)} stroke="currentColor" strokeWidth="0.5" className="text-muted-foreground opacity-30" />
+          <path d={buildPath(rsi, W, BOTTOM_H, rsiMin, rsiMax, PAD_X, 4)} fill="none" stroke="#a78bfa" strokeWidth="1.25" />
           {/* Legend */}
           <g transform={`translate(${W - 60}, 12)`}>
             <text x="0" y="0" fontSize="9" fill="#ef4444">70</text>
             <text x="22" y="0" fontSize="9" fill="#22c55e">30</text>
           </g>
         </g>
+        <HoverGuide hoverIdx={hoverIdx} x={hovered?.x ?? 0} y={hovered?.y ?? 0} topY={0} bottomY={TOTAL_H} />
       </svg>
+      {hovered && (
+        <HoverTooltip hoverIdx={hoverIdx} xPct={(hovered.x / W) * 100} yPct={(hovered.y / TOTAL_H) * 100}>
+          <div className="mb-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{hovered.time}</div>
+          <TooltipRow label="price" value={formatNum(hovered.close, 2)} />
+          <TooltipRow
+            label="RSI"
+            value={formatNum(hovered.rsi, 1)}
+            tone={hovered.rsi != null ? (hovered.rsi >= 70 ? 'down' : hovered.rsi <= 30 ? 'up' : 'muted') : undefined}
+          />
+        </HoverTooltip>
+      )}
+      </div>
     </CardShell>
   );
 }

@@ -20,6 +20,11 @@ import { KdjCard } from '../../../components/indicators/kdj-card';
 import { BollCard } from '../../../components/indicators/boll-card';
 import { AdxCard } from '../../../components/indicators/adx-card';
 import {
+  DIMENSION_BUCKET_LABELS,
+  DIMENSION_KEYS,
+  type DimensionKey,
+} from '../../../lib/indicators/labels';
+import {
   SummaryView,
   SummarySkeleton,
   type SummaryEntry,
@@ -85,72 +90,11 @@ const TABS: ReadonlyArray<{ id: Tab }> = [
   { id: 'flow' },
 ];
 
-/**
- * Per-dimension bucket-reason vocabulary. Currently duplicated from
- * the card files (macd-card.tsx etc) — they each define their own
- * BUCKET_LABELS map. We mirror them here so the summary view's
- * per-dot hover tooltips show the same dimension-specific phrasing
- * the headline pill uses on a single-dimension card. A future
- * cleanup could lift this into `lib/indicators/labels.ts` and have
- * the cards consume from there; out of scope for the summary feature.
- */
-const DIMENSION_BUCKET_LABELS = {
-  macd: {
-    bullish: { en: 'Bullish · golden cross', zh: '看多 · 金叉/红柱放大' },
-    bearish: { en: 'Bearish · death cross', zh: '看空 · 死叉/绿柱放大' },
-    neutral: { en: 'Neutral', zh: '待观察' },
-  },
-  ma: {
-    bullish: { en: 'Bullish · MA aligned up', zh: '看多 · 多头排列' },
-    bearish: { en: 'Bearish · MA aligned down', zh: '看空 · 空头排列' },
-    neutral: { en: 'Neutral · MA tangled', zh: '待观察 · 均线缠绕' },
-  },
-  volume: {
-    bullish: { en: 'Bullish · heavy buying', zh: '看多 · 放量上涨' },
-    bearish: { en: 'Bearish · heavy selling', zh: '看空 · 放量下跌' },
-    neutral: { en: 'Neutral · light volume', zh: '待观察 · 缩量整理' },
-  },
-  flow: {
-    // Mirrors the labels in flow-card.tsx — kept in sync so Summary
-    // trail tooltips and the dimension-card pill use identical
-    // phrasing. The "(估算)" suffix flags that this is a synthetic
-    // direction proxy, not the China-market 主力资金 Level-2 feed.
-    bullish: { en: 'Bullish · est. inflow', zh: '看多 · 资金流入(估算)' },
-    bearish: { en: 'Bearish · est. outflow', zh: '看空 · 资金流出(估算)' },
-    neutral: { en: 'Neutral · choppy', zh: '震荡 · 方向不明' },
-  },
-  rsi: {
-    bullish: { en: 'Bullish · oversold', zh: '看多 · 超卖反弹' },
-    bearish: { en: 'Bearish · overbought', zh: '看空 · 超买回落' },
-    neutral: { en: 'Neutral · in range', zh: '中性 · 区间内' },
-  },
-  kdj: {
-    bullish: { en: 'Bullish · golden cross/oversold', zh: '看多 · 金叉/超卖' },
-    bearish: { en: 'Bearish · death cross/overbought', zh: '看空 · 死叉/超买' },
-    neutral: { en: 'Neutral · mid-range', zh: '中性 · 中位区' },
-  },
-  boll: {
-    bullish: { en: 'Bullish · riding upper band', zh: '看多 · 突破上轨' },
-    bearish: { en: 'Bearish · piercing lower band', zh: '看空 · 跌破下轨' },
-    neutral: { en: 'Neutral · within bands', zh: '中性 · 通道内运行' },
-  },
-  adx: {
-    bullish: { en: 'Bullish · trending up', zh: '看多 · 上升趋势' },
-    bearish: { en: 'Bearish · trending down', zh: '看空 · 下降趋势' },
-    neutral: { en: 'Neutral · no trend', zh: '中性 · 无趋势' },
-  },
-} as const;
-
-const DIMENSION_TABS: ReadonlyArray<DimensionTab> = [
-  'macd',
-  'ma',
-  'rsi',
-  'kdj',
-  'boll',
-  'adx',
-  'volume',
-  'flow',
-];
+// `DIMENSION_TABS` is just the order in which we iterate dimensions
+// when rendering / fetching. It must match the canonical DIMENSION_KEYS
+// from lib/indicators/labels so that adding a new indicator there
+// surfaces a type error here if we forget to include it.
+const DIMENSION_TABS: ReadonlyArray<DimensionTab> = DIMENSION_KEYS satisfies ReadonlyArray<DimensionTab>;
 
 /**
  * Number of daily price bars to surface in the Summary view's
@@ -299,10 +243,31 @@ export function IndicatorsClient({
 
   const isZh = dict.indicators?._localeHint === 'zh';
 
+  // Per-(dim,tickers,days) response cache. Held in a ref so it
+  // survives renders without triggering re-fetches when its contents
+  // change. Cleared whenever the active portfolio changes, since the
+  // tickers list — and therefore the cache key — implicitly does
+  // too, but we still want the previous portfolio's responses garbage
+  // collected promptly.
+  //
+  // Before this cache, switching from Summary → MACD → Summary
+  // refetched all 8 dimensions twice. With it, the second visit to
+  // Summary serves from memory and only the first dim-tab open
+  // forces a single network round-trip.
+  const responseCacheRef = React.useRef<Map<string, IndicatorsResponse>>(
+    new Map(),
+  );
+  React.useEffect(() => {
+    responseCacheRef.current.clear();
+  }, [activeId]);
+
   // ─── indicator fetch ──────────────────────────────────────────────
   // Every remaining tab is portfolio-scoped (per-ticker technicals), so
   // we just bail out when the active portfolio has no holdings.
-  const fetchData = React.useCallback(async () => {
+  //
+  // `force` bypasses the cache — wired to the Refresh button so users
+  // can blow past stale data when an upstream provider has updated.
+  const fetchData = React.useCallback(async (force = false) => {
     if (tickers.length === 0) {
       setData(null);
       setSummaryEntries(null);
@@ -310,23 +275,35 @@ export function IndicatorsClient({
     }
     setLoading(true);
     setError(null);
+
+    // Cache-aware single-dim fetcher. The cache key includes the
+    // tickers list and `days` so a different portfolio (different
+    // tickers) doesn't accidentally serve cross-portfolio data. We
+    // join tickers with `|` which is illegal inside a ticker symbol
+    // so the key parses unambiguously.
+    const tickersStr = tickers.join(',');
+    const days = 140;
+    const fetchOneDim = async (dim: DimensionTab): Promise<IndicatorsResponse> => {
+      const cacheKey = `${dim}|${tickersStr}|${days}`;
+      const cached = responseCacheRef.current.get(cacheKey);
+      if (cached && !force) return cached;
+      const url = `/api/indicators/${dim}?tickers=${encodeURIComponent(tickersStr)}&days=${days}`;
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) {
+        const body = (await res.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(body?.error || `HTTP ${res.status}`);
+      }
+      const json = (await res.json()) as IndicatorsResponse;
+      responseCacheRef.current.set(cacheKey, json);
+      return json;
+    };
+
     try {
       if (tab === 'summary') {
-        // Parallel fan-out: one fetch per dimension, four round-trips
-        // in flight at once. Wall-clock latency = max(dim_i), not sum
-        // — the upstream fallback chain dominates, and parallel fetch
-        // makes 4 chains ~the same cost as 1.
-        const responses = await Promise.all(
-          DIMENSION_TABS.map(async (dim) => {
-            const url = `/api/indicators/${dim}?tickers=${encodeURIComponent(tickers.join(','))}&days=140`;
-            const res = await fetch(url, { cache: 'no-store' });
-            if (!res.ok) {
-              const body = (await res.json().catch(() => null)) as { error?: string } | null;
-              throw new Error(body?.error || `HTTP ${res.status}`);
-            }
-            return (await res.json()) as IndicatorsResponse;
-          }),
-        );
+        // Parallel fan-out across all dimensions. Cache hits resolve
+        // in microtasks so when the user revisits Summary after
+        // touching other tabs, this completes effectively instantly.
+        const responses = await Promise.all(DIMENSION_TABS.map(fetchOneDim));
 
         // Merge into one row per ticker. Tickers come from the
         // portfolio holdings array so the row order matches what the
@@ -416,13 +393,9 @@ export function IndicatorsClient({
         setSummaryEntries(entries);
         setData(null);
       } else {
-        const url = `/api/indicators/${tab}?tickers=${encodeURIComponent(tickers.join(','))}&days=140`;
-        const res = await fetch(url, { cache: 'no-store' });
-        if (!res.ok) {
-          const body = (await res.json().catch(() => null)) as { error?: string } | null;
-          throw new Error(body?.error || `HTTP ${res.status}`);
-        }
-        const json = (await res.json()) as IndicatorsResponse;
+        // Same cache path as Summary so opening MACD after Summary
+        // was just viewed is an in-memory read, not a network call.
+        const json = await fetchOneDim(tab as DimensionTab);
         setData(json);
         setSummaryEntries(null);
       }
@@ -486,7 +459,11 @@ export function IndicatorsClient({
           )}
           <button
             type="button"
-            onClick={fetchData}
+            // Refresh explicitly bypasses the in-memory response
+            // cache — that's the whole point of the button vs.
+            // navigating. Tab-switches and useEffect-driven loads
+            // still hit the cache.
+            onClick={() => fetchData(true)}
             disabled={loading || tickers.length === 0}
             className="ml-auto inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
             title={dict.indicators?.refresh ?? 'Refresh'}
@@ -535,7 +512,7 @@ export function IndicatorsClient({
           {tickers.length > 0 && loading && tab !== 'summary' && (
             <SkeletonCardGrid count={tickers.length} />
           )}
-          {error && <ErrorPanel message={error} onRetry={fetchData} dict={dict} />}
+          {error && <ErrorPanel message={error} onRetry={() => fetchData(true)} dict={dict} />}
 
           {!loading && tab === 'summary' && summaryEntries && (
             <SummaryView entries={summaryEntries} />

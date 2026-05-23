@@ -11,26 +11,20 @@ import {
   rangeOf,
   type Bucket,
 } from './card-shell';
+import {
+  HoverGuide,
+  HoverTooltip,
+  useChartHover,
+} from './chart-hover';
+import {
+  DIMENSION_FALLBACK_LABEL,
+  DIMENSION_KEYS,
+  type DimensionKey,
+} from '../../lib/indicators/labels';
 import { type SummaryEntry, type SummaryDimension } from './summary-view';
 
-/**
- * Dimension columns shown inside the detail timeline. Same order as
- * the summary table so the user's mental layout transfers directly
- * (MACD reads in the same row position on both surfaces).
- */
-const DIMENSION_KEYS = ['macd', 'ma', 'rsi', 'kdj', 'boll', 'adx', 'volume', 'flow'] as const;
-type DimensionKey = (typeof DIMENSION_KEYS)[number];
-
-const DIMENSION_FALLBACK_LABEL: Record<DimensionKey, string> = {
-  macd: 'MACD',
-  ma: 'MA',
-  rsi: 'RSI',
-  kdj: 'KDJ',
-  boll: 'BOLL',
-  adx: 'ADX',
-  volume: 'Vol',
-  flow: 'Flow',
-};
+// DimensionKey + DIMENSION_KEYS + DIMENSION_FALLBACK_LABEL now come
+// from lib/indicators/labels.ts — see top-of-file imports.
 
 /** Per-dimension bucket cell shown inside a single day's row. */
 interface SignalCell {
@@ -727,31 +721,16 @@ function PriceChart({
   const firstDate = prices[0]?.time ?? '';
   const lastDate = prices[prices.length - 1]?.time ?? '';
 
-  // Hover-tracking state: nearest-index of the bar the user is
-  // currently hovering. `null` = no hover. The chart projects the
-  // pointer's clientX into viewBox space, then rounds to the closest
-  // data bar — snapping to actual data is the standard chart-tooltip
-  // pattern and gives a much steadier read than a free-floating line.
-  const [hoverIdx, setHoverIdx] = React.useState<number | null>(null);
+  // Hover-tracking state via the shared hook — same pointer-to-index
+  // logic every indicator card uses, so the modal chart and the
+  // individual indicator charts feel identical to interact with.
   const svgRef = React.useRef<SVGSVGElement | null>(null);
-
-  const pointerToIndex = React.useCallback(
-    (clientX: number): number | null => {
-      const svg = svgRef.current;
-      if (!svg) return null;
-      const rect = svg.getBoundingClientRect();
-      if (rect.width === 0) return null;
-      // Map clientX → viewBox X. The SVG has width="100%" and a fixed
-      // viewBox, so the ratio of (clientX − left)/width gives the
-      // viewBox-normalised X directly.
-      const ratio = (clientX - rect.left) / rect.width;
-      const viewBoxX = Math.max(0, Math.min(1, ratio)) * W;
-      const dataX = viewBoxX - padX;
-      const idx = Math.round(dataX / stepX);
-      return Math.max(0, Math.min(prices.length - 1, idx));
-    },
-    [prices.length, stepX],
-  );
+  const { hoverIdx, onPointerMove, onPointerLeave } = useChartHover({
+    svgRef,
+    dataLength: prices.length,
+    viewBoxWidth: W,
+    padX,
+  });
 
   // The hovered bar (or null when not hovering / when close is null).
   const hovered =
@@ -772,11 +751,10 @@ function PriceChart({
         width="100%"
         preserveAspectRatio="none"
         className="block"
-        // Pointer events drive the hover-to-read-price flow. Using
-        // onPointerMove (not onMouseMove) means touch + stylus
-        // tracking work too without extra wiring.
-        onPointerMove={(e) => setHoverIdx(pointerToIndex(e.clientX))}
-        onPointerLeave={() => setHoverIdx(null)}
+        // Pointer events come from the shared useChartHover hook —
+        // same logic the indicator cards use.
+        onPointerMove={onPointerMove}
+        onPointerLeave={onPointerLeave}
       >
         {/* Price line — uses currentColor + a text-foreground class
             so the line follows the same tone as body text. No
@@ -850,58 +828,28 @@ function PriceChart({
           );
         })}
 
-        {/* Hover guide — vertical dashed rule that follows the
-            user's pointer across the chart. Drawn AFTER the recent
-            dots so it sits on top when the two overlap. Falls back
-            to no-op when hoverIdx is null. */}
-        {hovered && (
-          <g aria-hidden="true">
-            <line
-              x1={hovered.x}
-              x2={hovered.x}
-              y1={padTopY}
-              y2={H - padBottomY}
-              stroke="currentColor"
-              strokeWidth="0.75"
-              strokeDasharray="2 3"
-              className="text-muted-foreground opacity-60"
-            />
-            {/* Crosshair dot — neutral foreground tone so it reads as
-                "here is the pointer" rather than as a directional
-                signal that competes with the up/down recent dots. */}
-            <circle
-              cx={hovered.x}
-              cy={hovered.y}
-              r={3}
-              fill="currentColor"
-              stroke="var(--card)"
-              strokeWidth="1.5"
-              className="text-foreground"
-            />
-          </g>
-        )}
+        {/* Hover guide — uses the shared SVG fragment so the dashed
+            line + foreground crosshair dot look identical to every
+            indicator card. Drawn AFTER the recent-day dots so it
+            sits on top of them when they share an x. */}
+        <HoverGuide
+          hoverIdx={hoverIdx}
+          x={hovered?.x ?? 0}
+          y={hovered?.y ?? 0}
+          topY={padTopY}
+          bottomY={H - padBottomY}
+        />
       </svg>
 
-      {/* HTML tooltip overlay — positioned absolutely on top of the
-          chart wrapper. Using CSS percentages keeps the tooltip's
-          horizontal position synced to the viewBox X coordinate as
-          the chart scales (the SVG itself uses width="100%"), so we
-          don't have to read the SVG's actual pixel width on every
-          mousemove. The tooltip pins above the hover dot with an
-          8px gap and `pointer-events-none` so it can't intercept
-          the cursor itself. */}
+      {/* HTML tooltip via the shared component. Same pinning logic
+          (centred above the dot, 10px gap, pointer-events-none) as
+          every card. Content here is price-only since this is the
+          modal price sparkline — cards supply richer rows. */}
       {hovered && (
-        <div
-          aria-hidden="true"
-          className={cn(
-            'pointer-events-none absolute z-10 whitespace-nowrap',
-            'rounded-md border border-border bg-popover px-2 py-1 shadow-[var(--shadow-elev1)]',
-          )}
-          style={{
-            left: `${(hovered.x / W) * 100}%`,
-            top: `${(hovered.y / H) * 100}%`,
-            transform: 'translate(-50%, calc(-100% - 10px))',
-          }}
+        <HoverTooltip
+          hoverIdx={hoverIdx}
+          xPct={(hovered.x / W) * 100}
+          yPct={(hovered.y / H) * 100}
         >
           <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
             {formatDate(hovered.time, locale)}
@@ -909,7 +857,7 @@ function PriceChart({
           <div className="font-mono text-sm font-semibold tabular-nums text-foreground">
             {hovered.close.toFixed(2)}
           </div>
-        </div>
+        </HoverTooltip>
       )}
 
       {/* Tiny axis labels under the chart so a user can place the
