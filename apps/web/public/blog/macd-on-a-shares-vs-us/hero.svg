@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Hero for `macd-on-a-shares-vs-us`. Side-by-side comparison: an A-share
+  MACD pattern (stair-step from consecutive limit-up days) on the left,
+  a US MACD pattern (single explosive gap bar) on the right. Same total
+  move, different MACD shape.
+-->
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <text x="60" y="80" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">CROSS-MARKET · MACD COMPARISON</text>
+  <text x="60" y="170" font-family="Georgia, 'Times New Roman', serif" font-size="58" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Same formula.</text>
+  <text x="60" y="225" font-family="Georgia, 'Times New Roman', serif" font-size="58" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Different signal.</text>
+  <text x="60" y="280" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">A-share ±10% limits feed different</text>
+  <text x="60" y="304" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">close-price sequences into the same</text>
+  <text x="60" y="328" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">EMA. Output looks different.</text>
+
+  <text x="60" y="550" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="13" fill="#4FCBA8" letter-spacing="3" opacity="0.7">PICKSKILL.AI/INDICATORS</text>
+
+  <!-- A-SHARE chart (top right) -->
+  <g transform="translate(620,130)">
+    <text x="0" y="0" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="13" fill="#ef4444" letter-spacing="2" font-weight="700">A-SHARE · STAIR-STEP</text>
+    <text x="0" y="18" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#F4F4F5" opacity="0.55">+10% limit-up × 4 days, then +5%</text>
+
+    <!-- close-price stair (small line plot showing stepped price) -->
+    <g transform="translate(0,40)">
+      <line x1="0" y1="100" x2="500" y2="100" stroke="#F4F4F5" stroke-opacity="0.18"/>
+      <path d="M 10 90 L 110 70 L 210 50 L 310 30 L 410 15 L 460 8" fill="none" stroke="#F4F4F5" stroke-width="2" stroke-linejoin="round"/>
+      <!-- step markers -->
+      <circle cx="110" cy="70" r="3" fill="#ef4444"/>
+      <circle cx="210" cy="50" r="3" fill="#ef4444"/>
+      <circle cx="310" cy="30" r="3" fill="#ef4444"/>
+      <circle cx="410" cy="15" r="3" fill="#ef4444"/>
+      <text x="110" y="118" font-family="ui-monospace, monospace" font-size="9" fill="#ef4444" text-anchor="middle">limit</text>
+      <text x="210" y="118" font-family="ui-monospace, monospace" font-size="9" fill="#ef4444" text-anchor="middle">limit</text>
+      <text x="310" y="118" font-family="ui-monospace, monospace" font-size="9" fill="#ef4444" text-anchor="middle">limit</text>
+      <text x="410" y="118" font-family="ui-monospace, monospace" font-size="9" fill="#ef4444" text-anchor="middle">limit</text>
+    </g>
+
+    <!-- MACD lower pane: smooth, sustained DIF/DEA rise -->
+    <g transform="translate(0,180)">
+      <text x="0" y="14" font-family="ui-monospace, monospace" font-size="11" fill="#F4F4F5" opacity="0.5">MACD</text>
+      <line x1="0" y1="80" x2="500" y2="80" stroke="#F4F4F5" stroke-opacity="0.3"/>
+      <!-- DIF slowly rising through zero -->
+      <path d="M 10 100 L 60 95 L 110 88 L 160 80 L 210 70 L 260 58 L 310 44 L 360 32 L 410 22 L 460 18"
+            fill="none" stroke="#f59e0b" stroke-width="2"/>
+      <!-- DEA -->
+      <path d="M 10 100 L 60 98 L 110 94 L 160 88 L 210 80 L 260 70 L 310 58 L 360 46 L 410 36 L 460 30"
+            fill="none" stroke="#3b82f6" stroke-width="2"/>
+      <!-- Cross marker (delayed) -->
+      <circle cx="220" cy="75" r="6" fill="none" stroke="#4FCBA8" stroke-width="2"/>
+      <text x="240" y="79" font-family="Helvetica, sans-serif" font-size="11" fill="#4FCBA8" font-weight="600">cross delayed</text>
+    </g>
+  </g>
+
+  <!-- US chart (bottom right) -->
+  <g transform="translate(620,420)">
+    <text x="0" y="-6" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="13" fill="#22c55e" letter-spacing="2" font-weight="700">US STOCK · ONE-BAR SHOCK</text>
+    <text x="0" y="12" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#F4F4F5" opacity="0.55">+50% gap on earnings, then drift</text>
+
+    <!-- close-price gap chart -->
+    <g transform="translate(0,30)">
+      <line x1="0" y1="40" x2="500" y2="40" stroke="#F4F4F5" stroke-opacity="0.18"/>
+      <!-- flat baseline, then jump, then drift slightly down -->
+      <path d="M 10 38 L 90 38 L 170 36 L 200 35 L 200 8 L 280 8 L 360 12 L 440 16 L 480 14" fill="none" stroke="#F4F4F5" stroke-width="2" stroke-linejoin="miter"/>
+      <!-- gap marker -->
+      <circle cx="200" cy="22" r="5" fill="#22c55e"/>
+      <text x="200" y="60" font-family="ui-monospace, monospace" font-size="9" fill="#22c55e" text-anchor="middle">earnings gap</text>
+    </g>
+
+    <!-- mini "DIF spike, golden cross same day" hint -->
+    <text x="500" y="55" font-family="Helvetica, sans-serif" font-size="11" fill="#4FCBA8" text-anchor="end" font-weight="600">cross same day</text>
+  </g>
+</svg>

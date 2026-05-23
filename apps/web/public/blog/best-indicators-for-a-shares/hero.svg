@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Hero for `best-indicators-for-a-shares` — list-style. Right column
+  lists the 5 indicators as labeled cards, each with the one-liner role.
+-->
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <text x="60" y="80" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">EXPLAINER · A-SHARES (中国A股)</text>
+  <text x="60" y="170" font-family="Georgia, 'Times New Roman', serif" font-size="68" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Top 5 Indicators</text>
+  <text x="60" y="208" font-family="Georgia, 'Times New Roman', serif" font-size="32" fill="#F4F4F5" opacity="0.7" font-style="italic">for Chinese A-shares</text>
+  <text x="60" y="270" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">±10% daily limits, T+1 settlement,</text>
+  <text x="60" y="294" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">80%+ retail flow — the US toolkit</text>
+  <text x="60" y="318" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">breaks in specific ways.</text>
+
+  <text x="60" y="380" font-family="Helvetica, Arial, sans-serif" font-size="17" fill="#F4F4F5" opacity="0.85" font-weight="600">This is the set that actually works.</text>
+
+  <text x="60" y="550" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="13" fill="#4FCBA8" letter-spacing="3" opacity="0.7">PICKSKILL.AI/INDICATORS</text>
+
+  <!-- Right column: 5 indicator cards -->
+  <g transform="translate(620,130)">
+    <!-- Card 1 — KDJ -->
+    <g transform="translate(0,0)">
+      <rect x="0" y="0" width="500" height="62" rx="10" fill="#1b1913" stroke="#60a5fa" stroke-opacity="0.4"/>
+      <text x="20" y="32" font-family="Georgia, serif" font-size="22" font-weight="600" fill="#60a5fa">1.  KDJ(9, 3, 3)</text>
+      <text x="20" y="50" font-family="Helvetica, sans-serif" font-size="12" fill="#F4F4F5" opacity="0.65">Short-term swing entries · oversold zone golden cross</text>
+    </g>
+    <!-- Card 2 — MACD -->
+    <g transform="translate(0,76)">
+      <rect x="0" y="0" width="500" height="62" rx="10" fill="#1b1913" stroke="#f59e0b" stroke-opacity="0.4"/>
+      <text x="20" y="32" font-family="Georgia, serif" font-size="22" font-weight="600" fill="#f59e0b">2.  MACD(12, 26, 9)</text>
+      <text x="20" y="50" font-family="Helvetica, sans-serif" font-size="12" fill="#F4F4F5" opacity="0.65">Trend momentum · water-below golden cross</text>
+    </g>
+    <!-- Card 3 — MA60 -->
+    <g transform="translate(0,152)">
+      <rect x="0" y="0" width="500" height="62" rx="10" fill="#1b1913" stroke="#a78bfa" stroke-opacity="0.4"/>
+      <text x="20" y="32" font-family="Georgia, serif" font-size="22" font-weight="600" fill="#a78bfa">3.  MA60</text>
+      <text x="20" y="50" font-family="Helvetica, sans-serif" font-size="12" fill="#F4F4F5" opacity="0.65">Trend regime · quarter-aligned A-share standard</text>
+    </g>
+    <!-- Card 4 — Volume Ratio -->
+    <g transform="translate(0,228)">
+      <rect x="0" y="0" width="500" height="62" rx="10" fill="#1b1913" stroke="#ef4444" stroke-opacity="0.4"/>
+      <text x="20" y="32" font-family="Georgia, serif" font-size="22" font-weight="600" fill="#ef4444">4.  Volume Ratio</text>
+      <text x="20" y="50" font-family="Helvetica, sans-serif" font-size="12" fill="#F4F4F5" opacity="0.65">Participation · today vs 20-day average</text>
+    </g>
+    <!-- Card 5 — Capital Flow -->
+    <g transform="translate(0,304)">
+      <rect x="0" y="0" width="500" height="62" rx="10" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.5"/>
+      <text x="20" y="32" font-family="Georgia, serif" font-size="22" font-weight="600" fill="#4FCBA8">5.  Capital Flow</text>
+      <text x="20" y="50" font-family="Helvetica, sans-serif" font-size="12" fill="#F4F4F5" opacity="0.65">Direction · synthetic proxy when Level-2 unavailable</text>
+    </g>
+  </g>
+</svg>
