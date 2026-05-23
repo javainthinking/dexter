@@ -1,6 +1,6 @@
 ---
 title: Thèse haussière NVDA — framework Q2 2026
-description: Une thèse haussière travaillée sur Nvidia (NVDA) au Q2 2026 — les quatre hypothèses qui pilotent l'upside, la contre-thèse baissière, et le workflow PickSkill qui construit le DCF sous-jacent. Rafraîchi chaque trimestre.
+description: Un cadre de thèse pour Nvidia — quatre piliers, trois risques baissiers structurels, quatre hypothèses à suivre par trimestre. Mis à jour chaque publication.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:
@@ -98,3 +98,5 @@ Trimestriel, sur la cadence 10-Q / 10-K.
 
 **Et si je ne suis pas d'accord avec le cadre haussier ?**
 C'est la bonne réaction. Le framework est la *structure* de la thèse haussière, pas un claim sur sa justesse. PickSkill exécute aussi le scénario baissier depuis les mêmes financiers.
+
+> **Suivre NVDA dans PickSkill.** Ouvrez [/chat](/chat), collez NVDA, obtenez un cadre de thèse mis à jour chaque trimestre.

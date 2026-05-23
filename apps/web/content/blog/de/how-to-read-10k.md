@@ -1,6 +1,6 @@
 ---
 title: Ein 10-K in 30 Minuten lesen — was Wall Street tatsächlich liest
-description: Praxisleitfaden zum Lesen eines 10-K — die vier Abschnitte, die Investmententscheidungen bewegen, die 100+ Seiten, die man überspringen kann, und der 30-Minuten-Workflow professioneller Analysten.
+description: Was die Wall Street tatsächlich liest in einem SEC-10-K. Die 4 von 15 Items mit Signalwert, 30-Minuten-Lese-Workflow, YoY-Diff-Technik.
 publishedAt: 2026-05-22
 updatedAt: 2026-05-22
 author:
@@ -123,6 +123,17 @@ Chat öffnen und tippen:
 PickSkill zieht das aktuellste 10-K von [SEC EDGAR][edgar], extrahiert Items 7, 8 und 1A, rechnet den Risikofaktor-Diff gegen das Vorjahres-Filing, berechnet [FCF](/blog/what-is-fcf)- und [WACC](/blog/what-is-wacc)-Inputs (für ein [DCF](/blog/what-is-dcf), falls gewünscht) und liefert einen 90-Sekunden-Walkthrough, in dem jede Aussage zur Quellseite verlinkt ist. Insgesamt ~60 Sekunden.
 
 Das ersetzt das eigene Lesen des Filings bei wichtigen Entscheidungen nicht. Es ist ein Weg, vorab zu wissen, welche 4 Sektionen tiefes Lesen verdienen und welche 100+ Seiten überflogen werden können.
+
+## Die 4 Items, die wirklich Signal tragen
+
+| Item # | Abschnitt | Warum wichtig |
+|---|---|---|
+| 1 | Business | Verständliche Beschreibung dessen, was das Unternehmen tut und wie es Geld verdient |
+| 1A | Risk Factors | Juristische Liste der Dinge, die die These kippen könnten (YoY-Diff ist Gold) |
+| 7 | MD&A | Eigene Erklärung des Managements zu den Finanzen — lesen Sie, was nicht gesagt wird |
+| 8 | Bilanzen + Anhänge | Die Zahlen plus die Fußnoten, die Bilanzwahlen erklären |
+
+Die anderen 11 Items sind entweder Standardtext (Lebensläufe, Vorstand, Wirtschaftsprüfer) oder Neuformulierungen derselben Daten. Überfliegen, nicht lesen.
 
 ## FAQ
 

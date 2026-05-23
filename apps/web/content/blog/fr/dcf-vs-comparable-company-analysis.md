@@ -1,6 +1,6 @@
 ---
-title: DCF vs analyse de sociétés comparables — quelle méthode de valorisation utiliser ?
-description: Comparaison pratique des deux principales méthodes de valorisation actions — DCF (absolue) et analyse de sociétés comparables (relative). Quand chacune fonctionne le mieux, où chacune casse, et pourquoi les professionnels font tourner les deux.
+title: DCF vs Comparable Company Analysis — Quand utiliser quoi
+description: Le DCF valorise les cash flows futurs ; les Comps valorisent le multiple présent. Quand utiliser chaque, leurs failles, pourquoi trianguler les deux.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

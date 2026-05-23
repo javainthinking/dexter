@@ -1,6 +1,6 @@
 ---
-title: Was ist Free Cash Flow (FCF)? Die Zahl hinter jeder ehrlichen Bewertung
-description: Praxisleitfaden zum FCF — was er ist, warum er den Gewinn schlägt, wie man FCFF und FCFE aus der Kapitalflussrechnung herleitet, und die vier Fallstricke, die Tech-Modelle verzerren.
+title: Was ist Free Cash Flow (FCF)? Definition, FCFF vs FCFE
+description: FCF ist die Zahl hinter jeder ehrlichen Bewertung. FCFF vs FCFE, Berechnung aus dem Cashflow-Statement in 60 Sekunden, vier Tech-Fallstricke.
 publishedAt: 2026-05-22
 updatedAt: 2026-05-22
 author:

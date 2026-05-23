@@ -1,6 +1,6 @@
 ---
-title: ¿Qué es el WACC? La tasa de descuento que decide en silencio cada valoración
-description: Guía práctica del WACC — la fórmula, las cuatro variables que de verdad mueven el resultado, por qué 100 bp lo cambian un 8–15%, y cómo elegir un WACC que sobreviva a una revisión.
+title: Qué es el WACC — La tasa de descuento del DCF
+description: El WACC es la tasa de descuento que decide cada DCF. Fórmula, cuatro inputs clave, por qué 100pb mueven 8-15% el valor, workflow de triangulación.
 publishedAt: 2026-05-22
 updatedAt: 2026-05-22
 author:

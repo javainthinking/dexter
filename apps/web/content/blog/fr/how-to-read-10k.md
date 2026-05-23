@@ -1,6 +1,6 @@
 ---
 title: Lire un 10-K en 30 minutes — ce que Wall Street lit vraiment
-description: Guide pratique pour lire un 10-K — les quatre sections qui font bouger les décisions d'investissement, les 100+ pages qu'on peut sauter, et le flux de lecture en 30 minutes des analystes professionnels.
+description: Ce que Wall Street lit vraiment dans un 10-K SEC. Les 4 Items (sur 15) qui portent du signal, workflow de lecture 30 minutes, technique de diff YoY.
 publishedAt: 2026-05-22
 updatedAt: 2026-05-22
 author:
@@ -123,6 +123,17 @@ Ouvrez un chat et tapez :
 PickSkill récupère le dernier 10-K sur [SEC EDGAR][edgar], extrait les Items 7, 8 et 1A, exécute le diff des Facteurs de Risque contre le filing de l'an dernier, calcule les inputs de [FCF](/blog/what-is-fcf) et de [WACC](/blog/what-is-wacc) (pour un [DCF](/blog/what-is-dcf) si vous voulez), et restitue un walk-through de 90 secondes où chaque affirmation est liée à la page d'origine du filing. L'ensemble prend ~60 secondes.
 
 Ce n'est pas un substitut à la lecture du filing soi-même quand les enjeux sont élevés. C'est une façon de savoir à l'avance quelles 4 sections lire en profondeur et quelles 100+ pages survoler.
+
+## Les 4 Items qui portent vraiment du signal
+
+| Item # | Section | Pourquoi important |
+|---|---|---|
+| 1 | Business | Description claire de ce que fait l'entreprise et comment elle gagne de l'argent |
+| 1A | Risk Factors | Liste juridique des éléments pouvant faire dérailler la thèse (le diff YoY est en or) |
+| 7 | MD&A | Explication par le management des chiffres — lisez ce qu'ils ne disent pas |
+| 8 | États financiers + notes | Les chiffres, plus les notes expliquant les choix comptables |
+
+Les 11 autres Items sont soit du remplissage (bios des dirigeants, conseil d'administration, auditeurs), soit des reformulations des mêmes données. Survol, pas lecture détaillée.
 
 ## FAQ
 

@@ -1,6 +1,6 @@
 ---
-title: Wie man mit PickSkill in 60 Sekunden ein DCF baut — Schritt-für-Schritt-Tutorial
-description: 4-Schritte-Tutorial, um ein vollständiges DCF zu einem beliebigen US-, HK- oder A-Share-Titel in unter einer Minute zu bauen — jede Annahme mit Quelle, jede Position zum 10-K verlinkt, das Excel sofort downloadbar.
+title: Wie man ein DCF in 60 Sekunden mit PickSkill baut
+description: Chat öffnen, einen Prompt einfügen, ein 5-Jahres-DCF in Excel erhalten — jeder Input verlinkt, jede Annahme bearbeitbar. US, HK, A-Share Ticker.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

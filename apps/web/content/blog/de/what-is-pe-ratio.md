@@ -1,6 +1,6 @@
 ---
-title: Was ist das KGV? Der Multiplikator, den jeder zitiert (und die Hälfte falsch verwendet)
-description: Praxisleitfaden zum Kurs-Gewinn-Verhältnis (KGV) — was es tatsächlich misst, wann es lügt, die Varianten TTM/Forward/Shiller und die vier Fallstricke, die KGV-Vergleiche verzerren.
+title: Was ist das KGV (P/E-Ratio)? Trailing, Forward, Shiller
+description: KGV = Kurs / Gewinn je Aktie. Trailing-, Forward- und Shiller-Varianten; vier Vergleichsfallen; wie man gegen Peers, Eigenhistorie, Marktnorm ankert.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

@@ -1,6 +1,6 @@
 ---
 title: NVDA Bull Case — Q2 2026 Thesen-Framework
-description: Eine ausgearbeitete Bull-Case-Thesis zu Nvidia (NVDA) zum Q2 2026 — die vier Annahmen, die das Aufwärtspotenzial treiben, die Bear-Case-Gegenposition, und der PickSkill-Workflow, der das zugrundeliegende DCF baut. Quartalsweise aktualisiert.
+description: Ein durchgearbeiteter Bull-Case für Nvidia — vier Säulen, drei strukturelle Bear-Risiken, vier Quartalsannahmen. Jede Filing-Saison aktualisiert.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:
@@ -98,3 +98,5 @@ Quartalsweise, im 10-Q / 10-K-Veröffentlichungsrhythmus.
 
 **Was, wenn ich dem Bull-Frame nicht zustimme?**
 Das ist die richtige Reaktion. Das Framework ist die *Struktur* der Bull-Case-These, kein Anspruch auf ihre Richtigkeit. PickSkill führt auch das Bear-Case-Szenario aus denselben Financials aus.
+
+> **NVDA in PickSkill verfolgen.** Öffnen Sie [/chat](/chat), fügen Sie NVDA ein, erhalten Sie ein Quartalsupdate-Framework.

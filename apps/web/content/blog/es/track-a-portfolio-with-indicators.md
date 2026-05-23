@@ -1,6 +1,6 @@
 ---
-title: Cómo rastrear una cartera multi-acción con indicadores técnicos en PickSkill
-description: Tutorial de 5 pasos para configurar una cartera, superponer ocho dimensiones de indicadores técnicos, y usar dashboards generados por IA (MACD, KDJ, divergencia, flujo de capital) para detectar señales en segundos.
+title: Seguir una cartera con indicadores técnicos
+description: Tutorial en 5 pasos: crear cartera, superponer 8 dimensiones de indicadores, usar dashboards IA (MACD, KDJ, divergencia, flujo) para detectar señales.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

@@ -1,6 +1,6 @@
 ---
 title: Tesis alcista NVDA — framework Q2 2026
-description: Una tesis alcista trabajada sobre Nvidia (NVDA) en Q2 2026 — las cuatro hipótesis que mueven la subida, la contra-tesis bajista, y el workflow PickSkill que construye el DCF subyacente. Se refresca trimestralmente.
+description: Marco de tesis bull para Nvidia — cuatro pilares, tres riesgos estructurales bear, cuatro supuestos por trimestre. Actualizado cada publicación.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:
@@ -98,3 +98,5 @@ Trimestral, en cadencia 10-Q / 10-K.
 
 **¿Y si no estoy de acuerdo con el framing alcista?**
 Esa es la reacción correcta. El framework es la *estructura* de la tesis alcista, no claim sobre si es correcta. PickSkill corre el escenario bajista desde los mismos financials.
+
+> **Seguir NVDA en PickSkill.** Abre [/chat](/chat), pega NVDA, obtén un marco de tesis actualizado cada trimestre.

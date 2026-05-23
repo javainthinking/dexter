@@ -1,6 +1,6 @@
 ---
-title: DCF vs Comparable Company Analysis — Which Valuation Method Should You Use?
-description: A practical comparison of the two main equity valuation methods — DCF (absolute) and Comparable Company Analysis (relative) — when each works best, where each breaks, and why most professionals run both.
+title: DCF vs Comparable Company Analysis — Which to Use, When
+description: DCF prices the future cash; Comps price the present multiple. When to use each, the failure modes of each, why professionals triangulate both.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

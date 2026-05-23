@@ -209,6 +209,8 @@ number is sourced, and you can ask follow-up questions like *"raise
 revenue growth in year 2 to 25% and re-run the sensitivity"* without
 opening Excel.
 
+> **Build your first DCF.** Open [/chat](/chat) and ask for a DCF on any ticker — PickSkill returns a sourced Excel model in 60 seconds. See the [tutorial](/blog/build-dcf-in-60-seconds).
+
 ## FAQ
 
 **What's the difference between DCF and NPV?**

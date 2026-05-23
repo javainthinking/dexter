@@ -1,6 +1,6 @@
 ---
-title: Comment suivre un portefeuille multi-actions avec des indicateurs techniques dans PickSkill
-description: Tutoriel en 5 étapes pour configurer un portefeuille, superposer huit dimensions d'indicateurs techniques, et utiliser des dashboards générés par IA (MACD, KDJ, divergence, flux de capitaux) pour repérer des signaux en secondes.
+title: Suivre un portefeuille avec indicateurs techniques
+description: Tutoriel en 5 étapes : créer un portefeuille, superposer 8 dimensions d'indicateurs, utiliser des dashboards IA (MACD, KDJ, divergence, flux).
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

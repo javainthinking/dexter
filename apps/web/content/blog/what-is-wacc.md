@@ -1,6 +1,6 @@
 ---
 title: What Is WACC? The Discount Rate That Quietly Decides Every Valuation
-description: A practical guide to WACC — the formula, the four inputs that actually matter, why a 100 bp change moves valuation 8–15%, and how to pick one that survives review.
+description: WACC is the discount rate that decides every DCF. Formula, the four inputs that matter, why 100bp changes valuation 8-15%, and triangulation workflow.
 publishedAt: 2026-05-22
 updatedAt: 2026-05-22
 author:

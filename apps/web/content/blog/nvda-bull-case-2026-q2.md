@@ -1,6 +1,6 @@
 ---
 title: NVDA Bull Case — Q2 2026 Thesis Framework
-description: A worked bull-case thesis on Nvidia (NVDA) as of Q2 2026 — the four assumptions that drive the upside, the bear-case counter, and the PickSkill workflow that built the underlying DCF. Refreshes quarterly.
+description: A worked thesis framework for Nvidia — four pillars, three structural bear risks, and the four assumptions to track quarterly. Refreshed each filing.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

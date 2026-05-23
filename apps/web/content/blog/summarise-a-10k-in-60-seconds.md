@@ -1,6 +1,6 @@
 ---
 title: How to Summarise Any 10-K in 60 Seconds with PickSkill
-description: A 4-step tutorial that takes any US-listed company's most recent 10-K from EDGAR through MD&A + Financials + Risk Factor diff to a 90-second walk-through — all sourced, all editable.
+description: Paste one prompt → MD&A highlights, FCF, net debt, segment growth, year-over-year Risk Factor diff, and footnotes — every claim linked to EDGAR.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

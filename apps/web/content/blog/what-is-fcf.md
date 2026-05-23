@@ -1,6 +1,6 @@
 ---
 title: What Is Free Cash Flow (FCF)? The Number Behind Every Honest Valuation
-description: A practical guide to FCF — what it is, why it beats earnings, how to calculate FCFF and FCFE from the cash flow statement, and the four pitfalls that bend tech-company models.
+description: FCF is the number behind every honest valuation. FCFF vs FCFE, how to compute from a cash flow statement in 60 seconds, and four tech-company pitfalls.
 publishedAt: 2026-05-22
 updatedAt: 2026-05-22
 author:

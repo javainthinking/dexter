@@ -1,6 +1,6 @@
 ---
 title: Wie man jedes 10-K in 60 Sekunden mit PickSkill zusammenfasst
-description: 4-Schritte-Tutorial, das das aktuellste 10-K jeder US-notierten Firma von EDGAR durch MD&A + Abschluss + Risikofaktor-Diff zu einem 90-Sekunden-Walkthrough führt — alles quellenbelegt, alles editierbar.
+description: Einen Prompt einfügen → MD&A-Highlights, FCF, Nettoverschuldung, Segmentwachstum, YoY-Risiko-Diff, Fußnoten — jede Aussage mit EDGAR-Quelle verlinkt.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

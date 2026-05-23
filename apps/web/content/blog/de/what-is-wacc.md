@@ -1,6 +1,6 @@
 ---
-title: Was ist der WACC? Der Diskontsatz, der jede Bewertung leise entscheidet
-description: Praxisleitfaden zum WACC — die Formel, die vier Inputs, die wirklich Bewegung bringen, warum 100 bp die Bewertung um 8–15 % verschieben, und wie man einen WACC wählt, der die Prüfung übersteht.
+title: Was ist WACC? Der Diskontsatz, der jedes DCF entscheidet
+description: WACC ist der Diskontsatz, der jedes DCF entscheidet. Formel, vier wichtige Inputs, warum 100bp 8-15% Bewertung bewegen, Triangulations-Workflow.
 publishedAt: 2026-05-22
 updatedAt: 2026-05-22
 author:

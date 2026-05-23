@@ -1,6 +1,6 @@
 ---
-title: L'IA pour la recherche actions en 2026 — ce qui marche vraiment (et ce qui ne marche pas)
-description: Une carte des catégories d'usage de l'IA dans la recherche actions en 2026 — ce qui fonctionne, ce qui reste du hype, où convergent les workflows retail et pro. Inclut comment PickSkill s'intègre.
+title: IA pour la recherche actions 2026 — Une carte honnête
+description: Cartographie build-in-public. Cinq catégories d'usage de l'IA en recherche actions — trois résolues, deux avec input éditorial. Honnête sur les limites.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:
@@ -85,6 +85,8 @@ PickSkill cible les trois catégories résolues pour l'audience retail/semi-pro 
 - **Comparaison cross-marché**
 
 Si vous avez un gap de workflow spécifique, [dites-nous](/feedback).
+
+> **Essayez PickSkill.** Ouvrez [/chat](/chat) pour les outils IA discutés dans l'article — les trois catégories résolues sont accessibles via [/indicators](/indicators) et [/portfolios](/portfolios).
 
 ## FAQ
 

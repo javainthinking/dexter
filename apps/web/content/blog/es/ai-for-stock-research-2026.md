@@ -1,6 +1,6 @@
 ---
-title: IA para investigación bursátil en 2026 — qué funciona de verdad (y qué no)
-description: Un mapa de categorías de cómo la IA se está usando realmente en la investigación de equity en 2026 — qué funciona, qué sigue siendo hype, y dónde convergen los workflows retail y profesional. Incluye dónde encaja PickSkill.
+title: IA para investigación de acciones 2026 — Mapa honesto
+description: Mapa build-in-public. Cinco categorías de IA en investigación bursátil — tres resueltas, dos con input editorial. Honesto sobre los límites.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:
@@ -85,6 +85,8 @@ PickSkill apunta a las tres categorías resueltas para la audiencia retail/semi-
 - **Comparación cross-market**
 
 Si tienes un workflow gap específico, [dínoslo](/feedback).
+
+> **Prueba PickSkill.** Abre [/chat](/chat) para los herramientas IA discutidas en el artículo — las tres categorías resueltas están en [/indicators](/indicators) y [/portfolios](/portfolios).
 
 ## FAQ
 

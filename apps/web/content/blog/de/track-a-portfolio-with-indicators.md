@@ -1,6 +1,6 @@
 ---
-title: Wie man ein Multi-Aktien-Portfolio mit technischen Indikatoren in PickSkill verfolgt
-description: 5-Schritte-Tutorial zum Einrichten eines Portfolios, Überlagern von acht technischen Indikator-Dimensionen darüber, und Verwenden von KI-generierten Dashboards (MACD, KDJ, Divergenz, Kapitalfluss) zum Erkennen von Signalen über alle Positionen in Sekunden.
+title: Mehrwerte-Portfolio mit technischen Indikatoren tracken
+description: Ein 5-Schritte-Tutorial: Portfolio aufsetzen, 8 Indikatordimensionen darüberlegen, KI-Dashboards (MACD, KDJ, Divergenz, Kapitalfluss) für Signale nutzen.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

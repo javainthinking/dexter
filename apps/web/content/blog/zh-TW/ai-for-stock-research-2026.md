@@ -86,6 +86,8 @@ PickSkill 為零售和半職業受眾瞄準三個已解決類別,有三個刻意
 
 如果你有具體的工作流缺口想看到被解決,[告訴我們](/feedback)。
 
+> **試試 PickSkill。** 開啟 [/chat](/chat) 體驗本文討論的 AI 工具 — 已解決的三類(申報提取、模型生成、技術監控)在 [/indicators](/indicators) 和 [/portfolios](/portfolios) 可見。
+
 ## FAQ
 
 **AI 會完全取代人類股票分析師嗎?**

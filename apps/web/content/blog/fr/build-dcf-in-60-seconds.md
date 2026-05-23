@@ -1,6 +1,6 @@
 ---
-title: Comment construire un DCF en 60 secondes avec PickSkill — tutoriel pas à pas
-description: Tutoriel en 4 étapes pour construire un DCF complet sur n'importe quel titre US, HK ou A-share en moins d'une minute — chaque hypothèse sourcée, chaque ligne reliée au 10-K, et l'Excel prêt à télécharger.
+title: Construire un DCF en 60 secondes avec PickSkill
+description: Ouvrez un chat, collez un prompt, obtenez un DCF 5 ans en Excel — chaque input lié, chaque hypothèse modifiable. Marche sur US, HK, A-share.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

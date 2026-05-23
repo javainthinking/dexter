@@ -1,6 +1,6 @@
 ---
-title: Qu'est-ce que le free cash flow (FCF) ? Le chiffre derrière chaque valorisation honnête
-description: Guide pratique du FCF — qu'est-ce que c'est, pourquoi il bat le résultat comptable, comment calculer FCFF et FCFE depuis le tableau de flux, et les quatre pièges qui faussent les modèles tech.
+title: Qu'est-ce que le Free Cash Flow (FCF) ? FCFF vs FCFE
+description: FCF est le nombre derrière toute valorisation honnête. FCFF vs FCFE, calcul depuis le cash flow statement en 60 secondes, quatre pièges tech.
 publishedAt: 2026-05-22
 updatedAt: 2026-05-22
 author:

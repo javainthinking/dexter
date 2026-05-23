@@ -1,6 +1,6 @@
 ---
-title: Was ist EV/EBITDA? Der Multiplikator, der durch die Kapitalstruktur sieht
-description: Praxisleitfaden zu EV/EBITDA — was er misst, warum er den kapitalstrukturagnostischen Vergleich dominiert, wo er kapitalintensive Geschäfte schmeichelt, und wann ihn dem KGV vorzuziehen.
+title: Was ist EV/EBITDA? Das Multiple jenseits der Kapitalstruktur
+description: EV/EBITDA bewertet ein Unternehmen am operativen Gewinn vor Zinsen, Steuern, Abschreibungen. Formel, branchentypische Bänder, Vorteile, Fallstricke.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

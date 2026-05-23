@@ -1,6 +1,6 @@
 ---
 title: ¿Qué es el PER? El múltiplo que todos citan (y la mitad usa mal)
-description: Guía práctica del ratio precio/beneficio (PER) — qué mide realmente, cuándo miente, las variantes TTM/forward/Shiller, y las cuatro trampas que distorsionan las comparaciones de PER.
+description: PER = precio / beneficio por acción. Variantes trailing, forward y Shiller; las cuatro trampas; cómo anclar contra pares, historial e índice.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

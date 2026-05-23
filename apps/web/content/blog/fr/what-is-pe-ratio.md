@@ -1,6 +1,6 @@
 ---
-title: Qu'est-ce que le PER ? Le multiple que tout le monde cite (et que la moitié utilise mal)
-description: Guide pratique du PER (price-to-earnings) — ce qu'il mesure réellement, quand il ment, les variantes TTM/forward/Shiller, et les quatre pièges qui faussent les comparaisons PER.
+title: Qu'est-ce que le PER (P/E Ratio) ? Trailing, Forward, Shiller
+description: PER = cours / BPA. Les variantes trailing, forward et Shiller ; les quatre pièges ; comment ancrer contre pairs, historique, normes de marché.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

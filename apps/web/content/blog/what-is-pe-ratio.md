@@ -1,6 +1,6 @@
 ---
-title: What Is the P/E Ratio? The Multiple Everyone Quotes (and Half of Them Misuse)
-description: A practical guide to the price-to-earnings ratio — what it actually measures, when it lies, the trailing/forward/Shiller variants, and the four traps that bend P/E comparisons.
+title: What Is the P/E Ratio? Trailing, Forward, and Shiller Variants
+description: P/E = price / earnings per share. The trailing, forward, and Shiller forms; the 4 traps that bend comparisons; and how to anchor against peers.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

@@ -1,6 +1,6 @@
 ---
-title: ¿Qué es EV/EBITDA? El múltiplo que ve a través de la estructura de capital
-description: Guía práctica de EV/EBITDA — qué mide, por qué domina la comparación agnóstica de estructura de capital, cuándo favorece a las empresas capital-intensivas, y cuándo preferirlo al PER.
+title: Qué es EV/EBITDA — Múltiplo de estructura de capital
+description: EV/EBITDA valora una empresa según beneficio operativo antes de intereses, impuestos y depreciación. Fórmula, bandas sectoriales, ventajas, errores.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

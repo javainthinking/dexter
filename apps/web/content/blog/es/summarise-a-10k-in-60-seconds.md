@@ -1,6 +1,6 @@
 ---
 title: Cómo resumir cualquier 10-K en 60 segundos con PickSkill
-description: Tutorial de 4 pasos que lleva el último 10-K de cualquier empresa cotizada en EE. UU. desde EDGAR a través de MD&A + Estados financieros + diff de Riesgos a un walk-through de 90 segundos.
+description: Pega un prompt → MD&A, FCF, deuda neta, crecimiento por segmentos, diff YoY de Risk Factors, notas — cada afirmación enlazada a la fuente EDGAR.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

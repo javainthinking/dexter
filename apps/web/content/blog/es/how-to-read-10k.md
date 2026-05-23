@@ -1,6 +1,6 @@
 ---
 title: Cómo leer un 10-K en 30 minutos — lo que Wall Street realmente lee
-description: Guía práctica para leer un 10-K — las cuatro secciones que mueven las decisiones de inversión, las 100+ páginas que puedes saltar, y el flujo de lectura de 30 minutos que usan los analistas profesionales.
+description: Lo que Wall Street realmente lee en un 10-K SEC. Los 4 Items (de 15) con señal, workflow de lectura de 30 minutos, técnica de diff YoY.
 publishedAt: 2026-05-22
 updatedAt: 2026-05-22
 author:
@@ -123,6 +123,17 @@ Abre un chat y escribe:
 PickSkill saca el último 10-K de [SEC EDGAR][edgar], extrae los Items 7, 8 y 1A, ejecuta el diff de Factores de Riesgo contra el filing del año anterior, calcula los inputs de [FCF](/blog/what-is-fcf) y [WACC](/blog/what-is-wacc) (para un [DCF](/blog/what-is-dcf) si quieres), y devuelve un walk-through de 90 segundos con cada afirmación enlazada a la página de la fuente original. Todo el proceso tarda ~60 segundos.
 
 No reemplaza leer el filing por ti mismo cuando hay mucho en juego. Es la forma de saber por adelantado qué 4 secciones merecen lectura profunda y qué 100+ páginas pueden ir rápido.
+
+## Los 4 Items que realmente llevan señal
+
+| Item # | Sección | Por qué importa |
+|---|---|---|
+| 1 | Business | Descripción en lenguaje claro de qué hace la empresa y cómo gana dinero |
+| 1A | Risk Factors | Lista jurídica de cosas que podrían descarrilar la tesis (el diff YoY es oro) |
+| 7 | MD&A | Explicación de los números por la dirección — lee lo que no dicen |
+| 8 | Estados financieros + notas | Los números, más las notas que explican elecciones contables |
+
+Los otros 11 Items son fórmulas estándar (biografías de directivos, consejo, auditores) o reformulaciones de los mismos datos. Hojear, no leer en detalle.
 
 ## FAQ
 

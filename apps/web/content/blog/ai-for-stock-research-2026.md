@@ -1,6 +1,6 @@
 ---
 title: AI for Stock Research in 2026 — What Actually Works (and What Doesn't)
-description: A category map of how AI is actually being used in equity research as of 2026 — what's working, what's still hype, and where retail and pro workflows are converging. Includes how PickSkill fits in.
+description: A build-in-public category map of AI in equity research today. Five categories — three solved, two still working with editorial input.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

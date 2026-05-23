@@ -1,6 +1,6 @@
 ---
 title: How to Read a 10-K in 30 Minutes — What Wall Street Actually Reads
-description: A practical guide to reading a 10-K annual report — which four sections move investment decisions, which 100+ pages you can skip, and the 30-minute reading workflow professionals use.
+description: What Wall Street actually reads in an SEC 10-K. The 4 Items (of 15) that carry signal, a 30-minute reading workflow, and the year-over-year diff technique.
 publishedAt: 2026-05-22
 updatedAt: 2026-05-22
 author:
@@ -123,6 +123,17 @@ Open a chat and type:
 PickSkill pulls the latest 10-K from [SEC EDGAR][edgar], extracts Items 7, 8, and 1A, runs the Risk-Factor diff against the prior year's filing, computes [FCF](/blog/what-is-fcf), [WACC](/blog/what-is-wacc) inputs (for a [DCF](/blog/what-is-dcf) if you want one), and surfaces a 90-second walk-through with each claim linked back to the page of the source filing. The whole thing takes ~60 seconds.
 
 It's not a replacement for reading the filing yourself when the stakes are high. It's a way to know in advance which 4 sections to focus on and which 100+ pages to skim.
+
+## The 4 Items that actually carry signal
+
+| Item # | Section | Why it matters |
+|---|---|---|
+| 1 | Business | Plain-English description of what the company does and how it makes money |
+| 1A | Risk Factors | The legal-team list of things that could derail the thesis (year-over-year diff is gold) |
+| 7 | MD&A (Management's Discussion) | Management's own explanation of the financials — read for what they don't say |
+| 8 | Financial Statements + Notes | The numbers, plus the footnotes that explain accounting choices |
+
+The other 11 Items are either boilerplate (executive bios, board structure, accountants engaged) or restatements of the financials in a different format. Skim, don't read.
 
 ## FAQ
 

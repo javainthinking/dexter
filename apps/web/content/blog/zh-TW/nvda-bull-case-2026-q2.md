@@ -97,3 +97,5 @@ PickSkill 拉最新 10-K + 10-Q、共識前向預估、算 [WACC](/blog/what-is-
 
 **如果我不同意多頭框架?**
 那是正確反應。框架是論點*結構*,不是它對錯。PickSkill 同樣能跑空頭場景。
+
+> **在 PickSkill 中追蹤 NVDA。** 打開 [/chat](/chat),貼上 NVDA,獲得當季更新的論點框架。

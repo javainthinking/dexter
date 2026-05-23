@@ -1,6 +1,6 @@
 ---
-title: Qu'est-ce que le WACC ? Le taux d'actualisation qui décide en silence chaque valorisation
-description: Guide pratique du WACC — la formule, les quatre variables qui font vraiment bouger le résultat, pourquoi 100 bp déplacent la valorisation de 8 à 15 %, et comment choisir un WACC qui passe la revue.
+title: Qu'est-ce que le WACC ? Le taux d'actualisation
+description: Le WACC est le taux d'actualisation qui décide tout DCF. Formule, quatre inputs clés, pourquoi 100pb bougent 8-15% de valeur, workflow de triangulation.
 publishedAt: 2026-05-22
 updatedAt: 2026-05-22
 author:

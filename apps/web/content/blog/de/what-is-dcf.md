@@ -1,6 +1,6 @@
 ---
 title: Was ist DCF? Praktischer Leitfaden zum Discounted Cash Flow
-description: Praxisleitfaden zum DCF — die Formel, die vier Annahmen, die wirklich Bewegung in die Bewertung bringen, typische Fallstricke und wie man in unter einer Stunde modelliert.
+description: Praktischer DCF-Leitfaden — Formel, die vier Annahmen mit Bewertungs-Hebel, häufige Fallstricke, wie man sein erstes Modell in einer Stunde baut.
 publishedAt: 2026-05-21
 updatedAt: 2026-05-21
 author:
@@ -127,6 +127,8 @@ Schritt 7 ist es, was ein Modell, das eine Entscheidung informiert, von einem tr
 PickSkill zieht die Historie aus SEC-Filings + Marktdaten, wählt sinnvolle Defaults für jede der vier Annahmen oben (mit Quellen), führt die Rechnung aus, legt das Ergebnis in eine herunterladbare Excel-Datei und führt Sie im Chat durch die Annahmen. Das erste DCF dauert 60–90 Sekunden.
 
 Das Modell ist keine Blackbox — jede Annahme ist editierbar, jede Zahl ist mit Quelle versehen, und Sie können Folgefragen stellen wie *„heb das Umsatzwachstum in Jahr 2 auf 25% und lass die Sensitivität neu laufen"*, ohne Excel zu öffnen.
+
+> **Ihr erstes DCF bauen.** Öffnen Sie [/chat](/chat) und fragen Sie nach einem DCF für einen beliebigen Ticker — PickSkill liefert ein gequelltes Excel-Modell in 60 Sekunden. [Tutorial](/blog/build-dcf-in-60-seconds).
 
 ## FAQ
 

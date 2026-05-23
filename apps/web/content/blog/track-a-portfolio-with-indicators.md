@@ -1,6 +1,6 @@
 ---
-title: How to Track a Multi-Stock Portfolio with Technical Indicators in PickSkill
-description: A 5-step tutorial for setting up a portfolio, layering eight technical-indicator dimensions across it, and using AI-generated dashboards (MACD, KDJ, divergence, capital flow) to spot signals across positions in seconds.
+title: Track a Multi-Stock Portfolio with Technical Indicators
+description: A 5-step tutorial: set up a portfolio, layer 8 indicator dimensions, and use AI dashboards (MACD, KDJ, divergence, flow) to spot signals.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

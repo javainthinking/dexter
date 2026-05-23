@@ -128,6 +128,8 @@ PickSkill extrae los históricos de presentaciones SEC + datos de mercado, elige
 
 El modelo no es una caja negra — cada hipótesis es editable, cada número está referenciado, y puedes preguntar cosas como *"sube el crecimiento de ingresos en el año 2 al 25% y vuelve a correr la sensibilidad"* sin abrir Excel.
 
+> **Construye tu primer DCF.** Abre [/chat](/chat) y pide un DCF de cualquier ticker — PickSkill devuelve un modelo Excel con fuentes en 60 segundos. [Tutorial](/blog/build-dcf-in-60-seconds).
+
 ## FAQ
 
 **¿Cuál es la diferencia entre DCF y VAN?**

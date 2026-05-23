@@ -1,6 +1,6 @@
 ---
-title: ¿Qué es el Flujo de Caja Libre (FCF)? El número detrás de toda valoración honesta
-description: Guía práctica del FCF — qué es, por qué bate al beneficio, cómo calcular FCFF y FCFE desde el estado de flujos, y los cuatro errores que tuercen los modelos de tecnológicas.
+title: Qué es Free Cash Flow (FCF) — FCFF vs FCFE
+description: FCF es el número detrás de toda valoración honesta. FCFF vs FCFE, cálculo desde el estado de flujos en 60 segundos, cuatro trampas tech.
 publishedAt: 2026-05-22
 updatedAt: 2026-05-22
 author:

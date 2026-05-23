@@ -1,6 +1,6 @@
 ---
-title: DCF vs Multiplikatoren-Analyse — welche Bewertungsmethode sollten Sie verwenden?
-description: Praxisvergleich der beiden wichtigsten Eigenkapital-Bewertungsmethoden — DCF (absolut) und Multiplikatoren-Analyse (relativ). Wann jede am besten funktioniert, wo jede bricht, und warum die meisten Profis beide laufen lassen.
+title: DCF vs Comparable Company Analysis — Wann welche Methode
+description: DCF preist zukünftigen Cashflow; Comps preisen das aktuelle Multiple. Wann jede, ihre Fehlermodi, warum Profis triangulieren.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

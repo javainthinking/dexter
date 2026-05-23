@@ -1,6 +1,6 @@
 ---
-title: DCF vs análisis de compañías comparables — ¿qué método de valoración usar?
-description: Comparación práctica de los dos métodos principales de valoración de equity — DCF (absoluto) y análisis de compañías comparables (relativo). Cuándo funciona cada uno, dónde se rompe cada uno, y por qué los profesionales corren los dos.
+title: DCF vs Comparable Company Analysis — Cuándo usar cuál
+description: El DCF valora flujos futuros; los Comps valoran el múltiplo presente. Cuándo usar cada uno, modos de fallo, por qué los profesionales triangulan ambos.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

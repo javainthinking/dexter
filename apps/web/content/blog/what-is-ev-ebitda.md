@@ -1,6 +1,6 @@
 ---
 title: What Is EV/EBITDA? The Multiple That Sees Through Capital Structure
-description: A practical guide to EV/EBITDA — what it measures, why it dominates capital-structure-agnostic comparison, where it flatters capital-intensive businesses, and when to prefer it over P/E.
+description: EV/EBITDA values a firm on operating profit before interest, tax, depreciation. Formula, sector typical bands, when it beats P/E, and the pitfalls.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

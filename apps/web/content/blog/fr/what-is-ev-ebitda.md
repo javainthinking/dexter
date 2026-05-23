@@ -1,6 +1,6 @@
 ---
-title: Qu'est-ce que l'EV/EBITDA ? Le multiple qui voit à travers la structure de capital
-description: Guide pratique de l'EV/EBITDA — ce qu'il mesure, pourquoi il domine la comparaison agnostique à la structure de capital, quand il favorise les sociétés capitalistiques, et quand le préférer au PER.
+title: Qu'est-ce que EV/EBITDA ? Le multiple agnostique
+description: EV/EBITDA évalue une entreprise sur le profit opérationnel avant intérêts, impôts, amortissements. Formule, bandes sectorielles, pièges.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:

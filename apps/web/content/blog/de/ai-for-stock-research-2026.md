@@ -1,6 +1,6 @@
 ---
-title: AI für Aktien-Research 2026 — was tatsächlich funktioniert (und was nicht)
-description: Eine Kategorie-Karte, wie AI 2026 tatsächlich in der Aktien-Research eingesetzt wird — was funktioniert, was noch Hype ist, und wo Retail- und Profi-Workflows konvergieren. Inklusive wo PickSkill hineinpasst.
+title: KI für Aktienforschung 2026 — Eine ehrliche Kategorienkarte
+description: Build-in-public Kategorienkarte. Fünf KI-Anwendungen in der Aktienforschung — drei gelöst, zwei mit redaktioneller Unterstützung. Ehrlich über Grenzen.
 publishedAt: 2026-05-23
 updatedAt: 2026-05-23
 author:
@@ -85,6 +85,8 @@ PickSkill zielt auf die drei gelösten Kategorien für die Retail/Semi-Pro-Audie
 - **Marktübergreifender Vergleich**
 
 Wenn Sie eine konkrete Workflow-Lücke geschlossen sehen wollen, [sagen Sie es uns](/feedback).
+
+> **PickSkill ausprobieren.** Öffnen Sie [/chat](/chat) für die im Artikel besprochenen KI-Tools — die drei gelösten Kategorien finden Sie in [/indicators](/indicators) und [/portfolios](/portfolios).
 
 ## FAQ
 
