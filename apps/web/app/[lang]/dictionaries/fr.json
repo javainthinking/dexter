@@ -262,7 +262,7 @@
     "emptyPortfolioHint": "Ajoute quelques symboles pour voir les indicateurs.",
     "addHoldings": "Ajouter des positions",
     "tabs": {
-      "summary": "Synthèse",
+      "summary": "Synthèse 5J",
       "macd": "MACD",
       "ma": "Moyennes mobiles",
       "volume": "Volume",
@@ -279,7 +279,7 @@
     },
     "summaryColumns": {
       "ticker": "Symbole",
-      "dailyChange": "Var. quotid. %",
+      "dailyChange": "5J Var. %",
       "macd": "MACD",
       "ma": "MA",
       "volume": "Vol",

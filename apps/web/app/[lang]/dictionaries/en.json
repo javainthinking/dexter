@@ -262,7 +262,7 @@
     "emptyPortfolioHint": "Add a few tickers to see indicators.",
     "addHoldings": "Add holdings",
     "tabs": {
-      "summary": "Summary",
+      "summary": "5D Summary",
       "macd": "MACD",
       "ma": "Moving avg",
       "volume": "Volume",
@@ -279,7 +279,7 @@
     },
     "summaryColumns": {
       "ticker": "Ticker",
-      "dailyChange": "5D %",
+      "dailyChange": "5D Daily %",
       "macd": "MACD",
       "ma": "MA",
       "volume": "Vol",

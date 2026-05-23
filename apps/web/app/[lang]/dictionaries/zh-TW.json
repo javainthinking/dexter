@@ -262,7 +262,7 @@
     "emptyPortfolioHint": "新增幾檔標的即可查看指標。",
     "addHoldings": "新增標的",
     "tabs": {
-      "summary": "匯總",
+      "summary": "5日匯總",
       "macd": "MACD",
       "ma": "均線",
       "volume": "量價",
@@ -279,7 +279,7 @@
     },
     "summaryColumns": {
       "ticker": "代碼",
-      "dailyChange": "日漲跌 %",
+      "dailyChange": "五日連續漲跌",
       "macd": "MACD",
       "ma": "均線",
       "volume": "量能",
