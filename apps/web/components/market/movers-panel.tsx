@@ -48,12 +48,18 @@ export function MoversPanel({ data, dict }: { data: MoversData; dict: any }) {
 
       <div className="grid gap-4 lg:grid-cols-2">
         <MoversList
-          title={isZh ? '🔥 涨幅榜' : '🔥 Top Gainers'}
+          // Column titles include the "美股 / US" qualifier so the
+          // market scope reads on the column itself, not only on the
+          // H2 above. Future tabs (HK movers, A-share movers) will
+          // sit alongside and need their own disambiguators — keeping
+          // "US" inline now means we don't have to retrofit when
+          // those tabs land.
+          title={isZh ? '🔥 美股涨幅榜' : '🔥 US Top Gainers'}
           rows={data.gainers}
           accent="up"
         />
         <MoversList
-          title={isZh ? '❄️ 跌幅榜' : '❄️ Top Losers'}
+          title={isZh ? '❄️ 美股跌幅榜' : '❄️ US Top Losers'}
           rows={data.losers}
           accent="down"
         />
