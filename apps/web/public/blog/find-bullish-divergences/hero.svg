@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Infographic hero for `find-bullish-divergences`. Left column: title
+  + 4-step workflow card. Right column: a scan dashboard listing tickers
+  with their divergence type, oscillator agreement, and pivot age.
+-->
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">HOW-TO · SIGNALS</text>
+
+  <text x="60" y="200" font-family="Georgia, 'Times New Roman', serif" font-size="80" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Divergence Scan</text>
+
+  <text x="60" y="244" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="500" fill="#F4F4F5" opacity="0.85">4 types × 3 oscillators across every holding</text>
+
+  <text x="60" y="288" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">Confirmed pivots — no hindsight.</text>
+  <text x="60" y="314" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">Multi-oscillator agreement surfaced.</text>
+
+  <!-- Workflow card -->
+  <g transform="translate(60,360)">
+    <rect x="0" y="0" width="580" height="200" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">4 STEPS · 30s</text>
+
+    <text x="22" y="68" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8">1.</text>
+    <text x="48" y="68" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Open divergence view at /indicators</text>
+
+    <text x="22" y="100" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8">2.</text>
+    <text x="48" y="100" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Sort by multi-oscillator + freshness</text>
+
+    <text x="22" y="132" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8">3.</text>
+    <text x="48" y="132" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Drill into candidate · verify pivots</text>
+
+    <text x="22" y="164" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8">4.</text>
+    <text x="48" y="164" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Wait for confirming trigger before acting</text>
+  </g>
+
+  <!-- Right column: scan dashboard -->
+  <g transform="translate(680,140)">
+    <text x="0" y="-22" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="13" fill="#F4F4F5" opacity="0.55" letter-spacing="2">DIVERGENCE DASHBOARD</text>
+
+    <rect x="0" y="0" width="460" height="380" rx="10" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.35"/>
+
+    <!-- Header -->
+    <rect x="0" y="0" width="460" height="32" rx="10" fill="#14120b"/>
+    <rect x="0" y="22" width="460" height="10" fill="#14120b"/>
+    <text x="14" y="22" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#4FCBA8" letter-spacing="2">TICKER   TYPE         OSCILLATORS    AGE</text>
+
+    <g font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#F4F4F5">
+      <!-- High-conviction row (highlighted) -->
+      <rect x="0" y="38" width="460" height="42" fill="#4FCBA8" opacity="0.08"/>
+      <text x="14" y="54">NVDA</text>
+      <text x="90" y="54" fill="#4FCBA8" font-weight="600">reg bull</text>
+      <text x="180" y="54">MACD · RSI · KDJ</text>
+      <text x="380" y="54" fill="#4FCBA8">2 bars</text>
+      <text x="14" y="70" opacity="0.55" font-size="10">multi-osc agreement · ADX 32 · oversold confirm</text>
+
+      <!-- Standard rows -->
+      <line x1="0" y1="88" x2="460" y2="88" stroke="#F4F4F5" stroke-opacity="0.08"/>
+      <text x="14" y="106">AMD</text>
+      <text x="90" y="106" fill="#4FCBA8" font-weight="600">hidden bull</text>
+      <text x="180" y="106">MACD · RSI</text>
+      <text x="380" y="106" fill="#4FCBA8">3 bars</text>
+
+      <line x1="0" y1="120" x2="460" y2="120" stroke="#F4F4F5" stroke-opacity="0.08"/>
+      <text x="14" y="138">TSM</text>
+      <text x="90" y="138" fill="#ef4444" font-weight="600">reg bear</text>
+      <text x="180" y="138">RSI</text>
+      <text x="380" y="138">5 bars</text>
+
+      <line x1="0" y1="152" x2="460" y2="152" stroke="#F4F4F5" stroke-opacity="0.08"/>
+      <text x="14" y="170">MSFT</text>
+      <text x="90" y="170" fill="#4FCBA8" font-weight="600">hidden bull</text>
+      <text x="180" y="170">KDJ</text>
+      <text x="380" y="170">4 bars</text>
+
+      <line x1="0" y1="184" x2="460" y2="184" stroke="#F4F4F5" stroke-opacity="0.08"/>
+      <text x="14" y="202">AAPL</text>
+      <text x="90" y="202" fill="#ef4444" font-weight="600">reg bear</text>
+      <text x="180" y="202">MACD · RSI</text>
+      <text x="380" y="202">6 bars</text>
+
+      <line x1="0" y1="216" x2="460" y2="216" stroke="#F4F4F5" stroke-opacity="0.08"/>
+      <text x="14" y="234">GOOGL</text>
+      <text x="90" y="234" fill="#4FCBA8" font-weight="600">reg bull</text>
+      <text x="180" y="234">MACD</text>
+      <text x="380" y="234">7 bars</text>
+
+      <line x1="0" y1="248" x2="460" y2="248" stroke="#F4F4F5" stroke-opacity="0.08"/>
+      <text x="14" y="266">META</text>
+      <text x="90" y="266" fill="#4FCBA8" font-weight="600">hidden bull</text>
+      <text x="180" y="266">RSI · KDJ</text>
+      <text x="380" y="266">4 bars</text>
+
+      <line x1="0" y1="280" x2="460" y2="280" stroke="#F4F4F5" stroke-opacity="0.08"/>
+      <text x="14" y="298" opacity="0.4">…21 more candidates · sorted by edge</text>
+    </g>
+
+    <!-- Bottom legend -->
+    <g transform="translate(14,340)">
+      <rect x="0" y="0" width="12" height="12" fill="#4FCBA8" opacity="0.6"/>
+      <text x="18" y="10" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="10" fill="#F4F4F5" opacity="0.75">bullish</text>
+      <rect x="80" y="0" width="12" height="12" fill="#ef4444" opacity="0.6"/>
+      <text x="98" y="10" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="10" fill="#F4F4F5" opacity="0.75">bearish</text>
+      <text x="190" y="10" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="10" fill="#F4F4F5" opacity="0.55">3-osc agreement = highest edge</text>
+    </g>
+  </g>
+</svg>

@@ -1,11 +1,14 @@
 ---
 title: Technical vs Fundamental Analysis — Which One Actually Works?
-description: Technical analysis trades patterns in price and volume; fundamental analysis values the underlying business. Side-by-side comparison and how to combine them.
-publishedAt: 2026-05-25
-updatedAt: 2026-05-25
+description: >-
+  Technical analysis trades patterns in price and volume; fundamental analysis
+  values the underlying business. Side-by-side comparison and how to combine
+  them.
+publishedAt: 2026-05-25T00:00:00.000Z
+updatedAt: 2026-05-25T00:00:00.000Z
 author:
   name: PickSkill Team
-  url: https://pickskill.ai
+  url: 'https://pickskill.ai'
   bio: The PickSkill research team — building an AI analyst for retail investors.
 pillar: explainer
 tags:
@@ -13,6 +16,10 @@ tags:
   - fundamental-analysis
   - investing
   - comparison
+heroImage: /blog/technical-vs-fundamental-analysis/hero.png
+heroAlt: >-
+  Editorial infographic — two horizon bars showing TA dominance at short
+  timeframes (days to months) and FA dominance at long timeframes (years).
 ---
 
 **Technical analysis (TA) reads price and volume to forecast where price is going next. Fundamental analysis (FA) values the underlying business to decide whether the current price is too high or too low.** They are not opposing camps despite the marketing — they answer different questions over different time horizons, and the most durable investing frameworks use both. The unhelpful "TA vs FA" debate is a category error; the productive question is "which one when?"

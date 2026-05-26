@@ -1,11 +1,13 @@
 ---
 title: How to Screen Stocks for a Golden Cross in 60 Seconds
-description: Find every stock in your watchlist with a fresh 50/200 MA cross — and the higher-edge underwater variant. Workflow in 4 steps with PickSkill.
-publishedAt: 2026-05-25
-updatedAt: 2026-05-25
+description: >-
+  Find every stock in your watchlist with a fresh 50/200 MA cross — and the
+  higher-edge underwater variant. Workflow in 4 steps with PickSkill.
+publishedAt: 2026-05-25T00:00:00.000Z
+updatedAt: 2026-05-25T00:00:00.000Z
 author:
   name: PickSkill Team
-  url: https://pickskill.ai
+  url: 'https://pickskill.ai'
   bio: The PickSkill research team — building an AI analyst for retail investors.
 pillar: how-to
 tags:
@@ -14,6 +16,10 @@ tags:
   - moving-average
   - screening
   - workflow
+heroImage: /blog/screen-stocks-for-golden-cross/hero.png
+heroAlt: >-
+  Editorial infographic — a screener table listing tickers with their
+  fresh-cross status (UNDERWATER / standard / DEATH) and volume confirmation.
 ---
 
 **A golden cross is the 50-day moving average crossing above the 200-day moving average — one of the most-watched technical events in equities.** Scanning a portfolio or watchlist for fresh crosses by hand means checking every name's chart, which scales badly. PickSkill's MA dashboard runs the scan automatically and surfaces both the standard golden cross and the higher-edge *underwater* variant, where the 200-day is still sloping down at the moment of cross. This tutorial walks through using the screener as part of a real workflow — not just spotting crosses, but acting on them with the right filters.

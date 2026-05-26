@@ -1,11 +1,14 @@
 ---
 title: How to Share a Portfolio via Link (and Why You Should)
-description: PickSkill portfolios can be shared as a single URL — live indicator dashboards, latest signals, valuation snapshots — with no account required. 3 steps and 30 seconds.
-publishedAt: 2026-05-25
-updatedAt: 2026-05-25
+description: >-
+  PickSkill portfolios can be shared as a single URL — live indicator
+  dashboards, latest signals, valuation snapshots — with no account required. 3
+  steps and 30 seconds.
+publishedAt: 2026-05-25T00:00:00.000Z
+updatedAt: 2026-05-25T00:00:00.000Z
 author:
   name: PickSkill Team
-  url: https://pickskill.ai
+  url: 'https://pickskill.ai'
   bio: The PickSkill research team — building an AI analyst for retail investors.
 pillar: how-to
 tags:
@@ -13,6 +16,10 @@ tags:
   - portfolio
   - sharing
   - workflow
+heroImage: /blog/share-a-portfolio-via-link/hero.png
+heroAlt: >-
+  Editorial infographic — a portfolio share card with the unguessable share URL
+  displayed and a read-only banner across the top.
 ---
 
 **A PickSkill portfolio can be shared as a single URL — anyone with the link sees a live view of your holdings, the latest indicator dashboards, and the signal trail across every dimension.** They don't need a PickSkill account. They don't need to set anything up. The link is read-only by design, so your portfolio composition is visible but not editable. This tutorial walks through the share flow in 3 steps and explains why making your portfolio shareable is one of the highest-leverage habits you can build.

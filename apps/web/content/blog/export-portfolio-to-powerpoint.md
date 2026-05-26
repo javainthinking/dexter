@@ -1,11 +1,14 @@
 ---
 title: How to Export a Portfolio Analysis to PowerPoint in 60 Seconds
-description: Generate a presentation-ready PPTX from your PickSkill portfolio — every chart sourced, every slide editable. 4 steps, one prompt, designed for live presentation.
-publishedAt: 2026-05-25
-updatedAt: 2026-05-25
+description: >-
+  Generate a presentation-ready PPTX from your PickSkill portfolio — every chart
+  sourced, every slide editable. 4 steps, one prompt, designed for live
+  presentation.
+publishedAt: 2026-05-25T00:00:00.000Z
+updatedAt: 2026-05-25T00:00:00.000Z
 author:
   name: PickSkill Team
-  url: https://pickskill.ai
+  url: 'https://pickskill.ai'
   bio: The PickSkill research team — building an AI analyst for retail investors.
 pillar: how-to
 tags:
@@ -14,6 +17,11 @@ tags:
   - portfolio
   - export
   - workflow
+heroImage: /blog/export-portfolio-to-powerpoint/hero.png
+heroAlt: >-
+  Editorial infographic — a stack of slide thumbnails representing the
+  auto-generated 10-slide investor deck with a holdings summary table on the
+  cover slide.
 ---
 
 **A real PowerPoint deck from a portfolio analysis used to mean an hour in Excel pulling charts, an hour in PowerPoint laying out slides, and a third hour fixing formatting once anyone reviewed it.** This tutorial shows the same workflow in 60 seconds — every chart sourced from live data, every slide laid out with the design conventions used by professional research desks, and the `.pptx` file ready to download, edit, and present. The math behind the analysis is identical to what you would build by hand; what changes is the time you spend assembling versus the time you spend on the call.

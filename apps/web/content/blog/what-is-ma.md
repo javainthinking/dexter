@@ -1,11 +1,14 @@
 ---
-title: What Is a Moving Average? SMA, EMA, and the Trend Filter Everyone Uses
-description: A moving average is the rolling mean of close price over N bars. Formula, why 20/60/200 are the standard windows, and four pitfalls retail readers fall into.
-publishedAt: 2026-05-25
-updatedAt: 2026-05-25
+title: 'What Is a Moving Average? SMA, EMA, and the Trend Filter Everyone Uses'
+description: >-
+  A moving average is the rolling mean of close price over N bars. Formula, why
+  20/60/200 are the standard windows, and four pitfalls retail readers fall
+  into.
+publishedAt: 2026-05-25T00:00:00.000Z
+updatedAt: 2026-05-25T00:00:00.000Z
 author:
   name: PickSkill Team
-  url: https://pickskill.ai
+  url: 'https://pickskill.ai'
   bio: The PickSkill research team — building an AI analyst for retail investors.
 pillar: explainer
 tags:
@@ -13,6 +16,10 @@ tags:
   - technical-analysis
   - indicators
   - trend
+heroImage: /blog/what-is-ma/hero.png
+heroAlt: >-
+  Editorial infographic — three moving averages (20/60/200) drawn over a price
+  line, with a cross point highlighted as the trend turns up.
 ---
 
 **A moving average (MA) is the arithmetic mean of close price over the last N bars, recomputed on every new bar.** It is the foundation of every trend-following indicator — [MACD](/blog/what-is-macd), [Bollinger Bands](/blog/what-is-bollinger-bands), the Ichimoku cloud, golden / death crosses — all are constructed from one or more moving averages. Most retail guides treat MAs as standalone signals. They are not. MAs are filters; they answer "is there a trend?" so other tools can answer "what to do about it."

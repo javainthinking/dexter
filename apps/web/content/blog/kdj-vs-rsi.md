@@ -1,11 +1,13 @@
 ---
 title: KDJ vs RSI — Which Momentum Oscillator Should You Use?
-description: KDJ and RSI both measure momentum, but on different formulas and timeframes. Side-by-side comparison, when each one wins, and how to combine them.
-publishedAt: 2026-05-25
-updatedAt: 2026-05-25
+description: >-
+  KDJ and RSI both measure momentum, but on different formulas and timeframes.
+  Side-by-side comparison, when each one wins, and how to combine them.
+publishedAt: 2026-05-25T00:00:00.000Z
+updatedAt: 2026-05-25T00:00:00.000Z
 author:
   name: PickSkill Team
-  url: https://pickskill.ai
+  url: 'https://pickskill.ai'
   bio: The PickSkill research team — building an AI analyst for retail investors.
 pillar: explainer
 tags:
@@ -14,6 +16,11 @@ tags:
   - momentum
   - technical-analysis
   - comparison
+heroImage: /blog/kdj-vs-rsi/hero.png
+heroAlt: >-
+  Editorial infographic — RSI single line on top with 70/30 reference lines, KDJ
+  three-line (K/D/J) below with 80/20 references and the J-line overshoot
+  highlighted.
 ---
 
 **RSI and KDJ are both momentum oscillators, but they ask different questions. RSI measures the strength of recent price changes against their average size; KDJ measures where the close sits within the recent price range and then smooths that signal twice.** Most retail debates frame them as substitutes. They are complements — each has a distinct edge in a specific market regime, and the combination is more informative than either alone.

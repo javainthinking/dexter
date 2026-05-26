@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Infographic hero for `what-is-support-resistance`. Left column: title
+  + pivot-rule card. Right column: price line bouncing between two
+  horizontal levels with cluster pivots highlighted.
+-->
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">EXPLAINER · LEVELS</text>
+
+  <text x="60" y="220" font-family="Georgia, 'Times New Roman', serif" font-size="86" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Support &amp; Resistance</text>
+
+  <text x="60" y="262" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="500" fill="#F4F4F5" opacity="0.85">Where reversals cluster, not where they're guessed</text>
+
+  <text x="60" y="306" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">Bands, not lines. Confluence beats</text>
+  <text x="60" y="332" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">any single source. Polarity flips.</text>
+
+  <!-- Definition card -->
+  <g transform="translate(60,400)">
+    <rect x="0" y="0" width="580" height="155" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">PIVOT RULE</text>
+    <text x="22" y="64" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#F4F4F5">▸ Pivot = bar exceeding N bars on each side</text>
+    <text x="22" y="90" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#F4F4F5">▸ Cluster ≥ 3 pivots in a ±0.5–1.0% band</text>
+    <text x="22" y="116" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#F4F4F5">▸ Score by recency × test count × confluence</text>
+    <text x="22" y="140" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.55">Confluence = prior pivot + round number + MA + VWAP</text>
+  </g>
+
+  <!-- Right column: price bouncing between S/R levels -->
+  <g transform="translate(680,160)">
+    <text x="0" y="-22" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="13" fill="#F4F4F5" opacity="0.55" letter-spacing="2">PRICE · RESISTANCE · SUPPORT</text>
+
+    <!-- Resistance band -->
+    <rect x="0" y="60" width="460" height="20" fill="#ef4444" opacity="0.12"/>
+    <line x1="0" y1="70" x2="460" y2="70" stroke="#ef4444" stroke-width="2" stroke-dasharray="6 4" stroke-opacity="0.85"/>
+    <text x="466" y="74" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="12" fill="#ef4444" font-weight="600">R</text>
+    <text x="466" y="88" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#F4F4F5" opacity="0.55">$182</text>
+
+    <!-- Support band -->
+    <rect x="0" y="270" width="460" height="20" fill="#4FCBA8" opacity="0.12"/>
+    <line x1="0" y1="280" x2="460" y2="280" stroke="#4FCBA8" stroke-width="2" stroke-dasharray="6 4" stroke-opacity="0.85"/>
+    <text x="466" y="284" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="12" fill="#4FCBA8" font-weight="600">S</text>
+    <text x="466" y="298" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#F4F4F5" opacity="0.55">$162</text>
+
+    <!-- Price path bouncing between -->
+    <path d="M 0 150 L 30 130 L 60 90 L 90 75 L 120 100 L 150 150 L 180 220 L 210 265 L 240 282 L 270 270 L 300 230 L 330 180 L 360 120 L 390 80 L 420 70 L 450 90 L 460 100"
+          fill="none" stroke="#F4F4F5" stroke-width="2.5" stroke-opacity="0.9"/>
+
+    <!-- Bounce circles at resistance touches -->
+    <circle cx="90" cy="75" r="6" fill="none" stroke="#ef4444" stroke-width="2"/>
+    <circle cx="390" cy="80" r="6" fill="none" stroke="#ef4444" stroke-width="2"/>
+    <circle cx="420" cy="70" r="6" fill="none" stroke="#ef4444" stroke-width="2"/>
+    <!-- Bounce circles at support touches -->
+    <circle cx="210" cy="265" r="6" fill="none" stroke="#4FCBA8" stroke-width="2"/>
+    <circle cx="240" cy="282" r="6" fill="none" stroke="#4FCBA8" stroke-width="2"/>
+
+    <!-- Callout -->
+    <g transform="translate(0,360)">
+      <text x="0" y="0" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="12" fill="#F4F4F5" opacity="0.55" letter-spacing="2">TEST COUNT</text>
+      <text x="0" y="36" font-family="Georgia, serif" font-size="34" fill="#4FCBA8" font-weight="600">3+</text>
+      <text x="60" y="36" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#F4F4F5" opacity="0.7">confirmed pivots required</text>
+      <text x="60" y="52" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#F4F4F5" opacity="0.5">to qualify as a real level</text>
+    </g>
+  </g>
+</svg>

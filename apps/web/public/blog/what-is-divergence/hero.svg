@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Infographic hero for `what-is-divergence`. Left column: title + types
+  table. Right column: stylised divergence — price line making a higher
+  high while indicator (MACD-like) makes a lower high. Two pivot circles
+  visually anchor the disagreement.
+-->
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Section eyebrow -->
+  <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">EXPLAINER · MOMENTUM</text>
+
+  <!-- Title -->
+  <text x="60" y="220" font-family="Georgia, 'Times New Roman', serif" font-size="100" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Divergence</text>
+
+  <!-- Subtitle -->
+  <text x="60" y="262" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="500" fill="#F4F4F5" opacity="0.85">When price and the oscillator disagree</text>
+
+  <!-- Tagline -->
+  <text x="60" y="306" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">A condition, not a signal —</text>
+  <text x="60" y="332" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">filters lift base rates from coin-flip.</text>
+
+  <!-- Types card -->
+  <g transform="translate(60,400)">
+    <rect x="0" y="0" width="580" height="160" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">FOUR TYPES</text>
+    <text x="22" y="64" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5"><tspan font-weight="600">Regular bullish</tspan> — price LL, indicator HL — reversal</text>
+    <text x="22" y="88" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5"><tspan font-weight="600">Regular bearish</tspan> — price HH, indicator LH — reversal</text>
+    <text x="22" y="116" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5" opacity="0.85"><tspan font-weight="600" fill="#4FCBA8">Hidden bullish</tspan> — price HL, indicator LL — continuation</text>
+    <text x="22" y="140" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5" opacity="0.85"><tspan font-weight="600" fill="#4FCBA8">Hidden bearish</tspan> — price LH, indicator HH — continuation</text>
+  </g>
+
+  <!-- Right column: divergence visualization -->
+  <g transform="translate(680,150)">
+    <text x="0" y="-22" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="13" fill="#F4F4F5" opacity="0.55" letter-spacing="2">REGULAR BEARISH — PRICE HH · INDICATOR LH</text>
+
+    <!-- Top half: price -->
+    <text x="-14" y="20" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="12" fill="#F4F4F5" opacity="0.55" text-anchor="end">PRICE</text>
+    <path d="M 0 80 L 40 60 L 80 100 L 120 50 L 160 90 L 200 110 L 240 70 L 280 30 L 320 50 L 360 120 L 400 90 L 440 60 L 460 70"
+          fill="none" stroke="#F4F4F5" stroke-width="2.2" stroke-opacity="0.9"/>
+    <!-- Price pivots: HH -->
+    <g filter="url(#glow)">
+      <circle cx="120" cy="50" r="7" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+      <circle cx="280" cy="30" r="7" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+    </g>
+    <!-- Trendline through price pivots (rising) -->
+    <line x1="120" y1="50" x2="280" y2="30" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4 4" stroke-opacity="0.85"/>
+
+    <!-- Divider -->
+    <line x1="0" y1="180" x2="460" y2="180" stroke="#F4F4F5" stroke-opacity="0.15"/>
+
+    <!-- Lower half: oscillator -->
+    <text x="-14" y="220" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="12" fill="#F4F4F5" opacity="0.55" text-anchor="end">RSI</text>
+    <line x1="0" y1="290" x2="460" y2="290" stroke="#F4F4F5" stroke-opacity="0.18"/>
+    <path d="M 0 290 L 40 270 L 80 310 L 120 230 L 160 280 L 200 310 L 240 280 L 280 250 L 320 270 L 360 340 L 400 310 L 440 290 L 460 295"
+          fill="none" stroke="#60a5fa" stroke-width="2.2"/>
+    <!-- Indicator pivots: LH (price HH but indicator LH = bearish divergence) -->
+    <g filter="url(#glow)">
+      <circle cx="120" cy="230" r="7" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+      <circle cx="280" cy="250" r="7" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+    </g>
+    <!-- Trendline through indicator pivots (falling = divergence) -->
+    <line x1="120" y1="230" x2="280" y2="250" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4 4" stroke-opacity="0.85"/>
+
+    <!-- Divergence callout -->
+    <g transform="translate(0,380)">
+      <text x="0" y="0" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="12" fill="#ef4444" letter-spacing="2">↑ PRICE  ↓ RSI</text>
+      <text x="0" y="26" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#F4F4F5" opacity="0.8">Momentum fading under a rising tape —</text>
+      <text x="0" y="44" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#F4F4F5" opacity="0.8">wait for a confirming trigger before acting.</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Infographic hero for `export-portfolio-report-to-excel`. Left column:
+  title + 5-sheet workflow card. Right column: a stylised spreadsheet
+  grid with multiple tabs and conditional-formatted cells.
+-->
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">HOW-TO · EXPORT</text>
+
+  <text x="60" y="200" font-family="Georgia, 'Times New Roman', serif" font-size="90" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Portfolio → Excel</text>
+
+  <text x="60" y="244" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="500" fill="#F4F4F5" opacity="0.85">A working workbook, not a flat dump</text>
+
+  <text x="60" y="288" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">5 sheets, real formulas,</text>
+  <text x="60" y="314" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">cross-sheet references intact.</text>
+
+  <!-- Workflow card -->
+  <g transform="translate(60,360)">
+    <rect x="0" y="0" width="580" height="200" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">5 DEFAULT SHEETS</text>
+
+    <text x="22" y="66" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">▸ <tspan font-weight="600">Holdings</tspan> — ticker, weight, price, performance</text>
+    <text x="22" y="92" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">▸ <tspan font-weight="600">Indicators</tspan> — 8 dimensions × bucket × trail</text>
+    <text x="22" y="118" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">▸ <tspan font-weight="600">Signal Trail</tspan> — 5-day evolution per holding</text>
+    <text x="22" y="144" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">▸ <tspan font-weight="600">Valuation</tspan> — P/E, P/B, EV/EBITDA vs peers</text>
+    <text x="22" y="170" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">▸ <tspan font-weight="600">Trade Log</tspan> — your journaling sheet, pre-formatted</text>
+  </g>
+
+  <!-- Right column: spreadsheet mockup -->
+  <g transform="translate(680,140)">
+    <text x="0" y="-22" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="13" fill="#F4F4F5" opacity="0.55" letter-spacing="2">.XLSX OUTPUT</text>
+
+    <!-- Sheet tabs -->
+    <g>
+      <rect x="0" y="0" width="80" height="24" rx="4" fill="#4FCBA8" opacity="0.85"/>
+      <text x="40" y="16" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#14120b" text-anchor="middle" font-weight="700">Holdings</text>
+      <rect x="84" y="0" width="80" height="24" rx="4" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.35"/>
+      <text x="124" y="16" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#F4F4F5" opacity="0.7" text-anchor="middle">Indicators</text>
+      <rect x="168" y="0" width="90" height="24" rx="4" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.35"/>
+      <text x="213" y="16" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#F4F4F5" opacity="0.7" text-anchor="middle">Signal Trail</text>
+      <rect x="262" y="0" width="80" height="24" rx="4" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.35"/>
+      <text x="302" y="16" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#F4F4F5" opacity="0.7" text-anchor="middle">Valuation</text>
+      <rect x="346" y="0" width="80" height="24" rx="4" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.35"/>
+      <text x="386" y="16" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#F4F4F5" opacity="0.7" text-anchor="middle">Trade Log</text>
+    </g>
+
+    <!-- Spreadsheet body -->
+    <g transform="translate(0,30)">
+      <rect x="0" y="0" width="460" height="280" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.25"/>
+      <!-- Column headers row -->
+      <rect x="0" y="0" width="460" height="24" fill="#14120b"/>
+      <text x="14" y="16" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#4FCBA8" letter-spacing="1">TICKER</text>
+      <text x="100" y="16" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#4FCBA8" letter-spacing="1">WT</text>
+      <text x="150" y="16" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#4FCBA8" letter-spacing="1">PRICE</text>
+      <text x="220" y="16" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#4FCBA8" letter-spacing="1">5D</text>
+      <text x="280" y="16" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#4FCBA8" letter-spacing="1">MACD</text>
+      <text x="340" y="16" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#4FCBA8" letter-spacing="1">RSI</text>
+      <text x="395" y="16" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#4FCBA8" letter-spacing="1">FLOW</text>
+
+      <!-- Grid lines -->
+      <line x1="90" y1="0" x2="90" y2="280" stroke="#F4F4F5" stroke-opacity="0.1"/>
+      <line x1="140" y1="0" x2="140" y2="280" stroke="#F4F4F5" stroke-opacity="0.1"/>
+      <line x1="210" y1="0" x2="210" y2="280" stroke="#F4F4F5" stroke-opacity="0.1"/>
+      <line x1="270" y1="0" x2="270" y2="280" stroke="#F4F4F5" stroke-opacity="0.1"/>
+      <line x1="330" y1="0" x2="330" y2="280" stroke="#F4F4F5" stroke-opacity="0.1"/>
+      <line x1="385" y1="0" x2="385" y2="280" stroke="#F4F4F5" stroke-opacity="0.1"/>
+
+      <!-- Rows with conditional formatting -->
+      <g font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#F4F4F5">
+        <line x1="0" y1="48" x2="460" y2="48" stroke="#F4F4F5" stroke-opacity="0.08"/>
+        <text x="14" y="40">NVDA</text>
+        <text x="100" y="40">15%</text>
+        <text x="150" y="40">182.4</text>
+        <rect x="215" y="28" width="48" height="16" fill="#4FCBA8" opacity="0.25"/>
+        <text x="220" y="40" fill="#4FCBA8">+3.2%</text>
+        <rect x="275" y="28" width="48" height="16" fill="#4FCBA8" opacity="0.25"/>
+        <text x="280" y="40" fill="#4FCBA8">bull</text>
+        <text x="340" y="40">62</text>
+        <text x="395" y="40" fill="#4FCBA8">in</text>
+
+        <line x1="0" y1="72" x2="460" y2="72" stroke="#F4F4F5" stroke-opacity="0.08"/>
+        <text x="14" y="64">TSM</text>
+        <text x="100" y="64">12%</text>
+        <text x="150" y="64">198.7</text>
+        <rect x="215" y="52" width="48" height="16" fill="#4FCBA8" opacity="0.18"/>
+        <text x="220" y="64" fill="#4FCBA8">+1.8%</text>
+        <text x="280" y="64">neutral</text>
+        <text x="340" y="64">54</text>
+        <text x="395" y="64">flat</text>
+
+        <line x1="0" y1="96" x2="460" y2="96" stroke="#F4F4F5" stroke-opacity="0.08"/>
+        <text x="14" y="88">AAPL</text>
+        <text x="100" y="88">10%</text>
+        <text x="150" y="88">228.3</text>
+        <rect x="215" y="76" width="48" height="16" fill="#ef4444" opacity="0.2"/>
+        <text x="220" y="88" fill="#ef4444">-0.6%</text>
+        <text x="280" y="88">bear div</text>
+        <text x="340" y="88">71</text>
+        <rect x="390" y="76" width="50" height="16" fill="#ef4444" opacity="0.18"/>
+        <text x="395" y="88" fill="#ef4444">out</text>
+
+        <line x1="0" y1="120" x2="460" y2="120" stroke="#F4F4F5" stroke-opacity="0.08"/>
+        <text x="14" y="112">MSFT</text>
+        <text x="100" y="112">10%</text>
+        <text x="150" y="112">449.1</text>
+        <rect x="215" y="100" width="48" height="16" fill="#4FCBA8" opacity="0.2"/>
+        <text x="220" y="112" fill="#4FCBA8">+2.1%</text>
+        <text x="280" y="112">bull</text>
+        <text x="340" y="112">58</text>
+        <text x="395" y="112" fill="#4FCBA8">in</text>
+
+        <line x1="0" y1="144" x2="460" y2="144" stroke="#F4F4F5" stroke-opacity="0.08"/>
+        <text x="14" y="136">AMD</text>
+        <text x="100" y="136">8%</text>
+        <text x="150" y="136">152.0</text>
+        <rect x="215" y="124" width="48" height="16" fill="#4FCBA8" opacity="0.3"/>
+        <text x="220" y="136" fill="#4FCBA8">+5.4%</text>
+        <text x="280" y="136" fill="#4FCBA8">cross</text>
+        <text x="340" y="136">48</text>
+        <text x="395" y="136" fill="#4FCBA8">in</text>
+
+        <text x="14" y="180" fill="#F4F4F5" opacity="0.3">…7 more rows</text>
+      </g>
+    </g>
+  </g>
+</svg>

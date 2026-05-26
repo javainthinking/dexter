@@ -1,11 +1,14 @@
 ---
 title: How to Export a Portfolio Report to Excel in 60 Seconds
-description: Generate a multi-sheet Excel workbook from your PickSkill portfolio — holdings, indicators, valuation, signal trails. Real formulas, sortable tables, ready to share.
-publishedAt: 2026-05-25
-updatedAt: 2026-05-25
+description: >-
+  Generate a multi-sheet Excel workbook from your PickSkill portfolio —
+  holdings, indicators, valuation, signal trails. Real formulas, sortable
+  tables, ready to share.
+publishedAt: 2026-05-25T00:00:00.000Z
+updatedAt: 2026-05-25T00:00:00.000Z
 author:
   name: PickSkill Team
-  url: https://pickskill.ai
+  url: 'https://pickskill.ai'
   bio: The PickSkill research team — building an AI analyst for retail investors.
 pillar: how-to
 tags:
@@ -14,6 +17,11 @@ tags:
   - portfolio
   - export
   - workflow
+heroImage: /blog/export-portfolio-report-to-excel/hero.png
+heroAlt: >-
+  Editorial infographic — a spreadsheet mockup with multiple sheet tabs
+  (Holdings · Indicators · Signal Trail · Valuation · Trade Log) and
+  conditional-formatted cells.
 ---
 
 **A real Excel workbook with portfolio analysis used to mean an hour pulling tickers and prices, an hour cross-referencing indicators, and a third hour formatting the output so anyone else can use it.** This tutorial shows the same workflow in 60 seconds — every cell sourced from live data, every formula real, every sheet structured the way analysts actually share workbooks. The downloaded `.xlsx` is a working file: open it, sort any column, build pivots, share with a colleague. Nothing is a screenshot; nothing is a flat dump.

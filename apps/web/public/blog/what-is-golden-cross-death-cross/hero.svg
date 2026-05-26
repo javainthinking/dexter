@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Infographic hero for `what-is-golden-cross-death-cross`. Left column:
+  title + cross definition card. Right column: stylised SMA50/SMA200
+  crossing scene with the underwater variant highlighted.
+-->
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Section eyebrow -->
+  <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">EXPLAINER · CROSS</text>
+
+  <!-- Title -->
+  <text x="60" y="220" font-family="Georgia, 'Times New Roman', serif" font-size="100" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Golden Cross</text>
+
+  <!-- Subtitle -->
+  <text x="60" y="262" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="500" fill="#F4F4F5" opacity="0.85">50-day MA crosses above 200-day MA</text>
+
+  <!-- Tagline -->
+  <text x="60" y="306" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">The headline trade everyone sees,</text>
+  <text x="60" y="332" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">the underwater variant they don't.</text>
+
+  <!-- Definition card -->
+  <g transform="translate(60,400)">
+    <rect x="0" y="0" width="560" height="160" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">TWO VARIANTS</text>
+    <text x="22" y="66" font-family="Helvetica, Arial, sans-serif" font-size="17" fill="#F4F4F5">▸ <tspan font-weight="600">Standard</tspan> — 200-day MA already sloping <tspan fill="#4FCBA8">up</tspan></text>
+    <text x="22" y="92" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#F4F4F5" opacity="0.6">continuation signal · base-rate edge</text>
+    <text x="22" y="124" font-family="Helvetica, Arial, sans-serif" font-size="17" fill="#F4F4F5">▸ <tspan font-weight="600">Underwater</tspan> — 200-day still sloping <tspan fill="#f59e0b">down</tspan></text>
+    <text x="22" y="148" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#F4F4F5" opacity="0.6">regime change · higher-edge variant</text>
+  </g>
+
+  <!-- Right column: SMA50 crossing SMA200 visualisation -->
+  <g transform="translate(680,160)">
+    <text x="0" y="-22" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="13" fill="#F4F4F5" opacity="0.55" letter-spacing="2">SMA(50) · SMA(200) · CROSS POINT</text>
+
+    <!-- 200-day MA (amber, slow, slightly down then flattens) -->
+    <path d="M 0 200 L 60 195 L 120 195 L 180 200 L 240 205 L 300 200 L 360 190 L 420 175 L 460 165"
+          fill="none" stroke="#f59e0b" stroke-width="3"/>
+
+    <!-- 50-day MA (cyan, faster, crosses up through 200-day) -->
+    <path d="M 0 260 L 40 250 L 80 240 L 120 230 L 160 210 L 200 195 L 240 175 L 280 155 L 320 135 L 360 115 L 400 95 L 440 80 L 460 75"
+          fill="none" stroke="#60a5fa" stroke-width="3"/>
+
+    <!-- Cross point glow -->
+    <g filter="url(#glow)">
+      <circle cx="200" cy="195" r="11" fill="none" stroke="#4FCBA8" stroke-width="3"/>
+    </g>
+    <text x="200" y="280" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#4FCBA8" text-anchor="middle" font-weight="600">UNDERWATER</text>
+    <text x="200" y="298" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#F4F4F5" opacity="0.6" text-anchor="middle">long MA still sloping down</text>
+    <text x="200" y="314" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#F4F4F5" opacity="0.6" text-anchor="middle">at the moment of cross</text>
+
+    <!-- Callouts -->
+    <text x="460" y="55" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#60a5fa" text-anchor="end" font-weight="600">SMA(50)</text>
+    <text x="460" y="155" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#f59e0b" text-anchor="end" font-weight="600">SMA(200)</text>
+
+    <!-- Hit-rate annotation -->
+    <g transform="translate(0,380)">
+      <text x="0" y="0" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="12" fill="#F4F4F5" opacity="0.55" letter-spacing="2">UNDERWATER VARIANT</text>
+      <text x="0" y="32" font-family="Georgia, serif" font-size="36" fill="#4FCBA8" font-weight="600">2–4×</text>
+      <text x="80" y="32" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#F4F4F5" opacity="0.7">per decade on major indices</text>
+      <text x="80" y="48" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#F4F4F5" opacity="0.5">marks end of significant drawdowns</text>
+    </g>
+  </g>
+</svg>

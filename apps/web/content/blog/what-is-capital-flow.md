@@ -1,11 +1,14 @@
 ---
-title: What Is Capital Flow? Money-Flow Indicators, Explained
-description: Capital flow measures whether money is entering or exiting a stock on a given bar — using price-direction-weighted volume. MFI, CMF, OBV — formulas, uses, pitfalls.
-publishedAt: 2026-05-25
-updatedAt: 2026-05-25
+title: 'What Is Capital Flow? Money-Flow Indicators, Explained'
+description: >-
+  Capital flow measures whether money is entering or exiting a stock on a given
+  bar — using price-direction-weighted volume. MFI, CMF, OBV — formulas, uses,
+  pitfalls.
+publishedAt: 2026-05-25T00:00:00.000Z
+updatedAt: 2026-05-25T00:00:00.000Z
 author:
   name: PickSkill Team
-  url: https://pickskill.ai
+  url: 'https://pickskill.ai'
   bio: The PickSkill research team — building an AI analyst for retail investors.
 pillar: explainer
 tags:
@@ -14,6 +17,10 @@ tags:
   - volume
   - technical-analysis
   - indicators
+heroImage: /blog/what-is-capital-flow/hero.png
+heroAlt: >-
+  Editorial infographic — direction-coloured volume bars with a rising OBV
+  cumulative line beneath, illustrating accumulation under sideways price.
 ---
 
 **Capital-flow indicators combine price direction with volume to estimate whether money is entering a stock (accumulation) or exiting (distribution).** Plain volume tells you *how much* traded; capital-flow tools tell you *whose side* the volume was on. Done right, they catch the early stages of accumulation before price has moved enough for trend tools to register. Done casually, they are easy to over-trust — flow is one signal among several, not a verdict.

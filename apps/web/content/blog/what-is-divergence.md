@@ -1,11 +1,14 @@
 ---
-title: What Is Divergence? Bullish, Bearish, and the Hidden Variant Retail Misses
-description: Divergence is when price and an indicator disagree on direction. Definition, the 4 standard types, why most divergences fail, and how to filter the ones that don't.
-publishedAt: 2026-05-25
-updatedAt: 2026-05-25
+title: 'What Is Divergence? Bullish, Bearish, and the Hidden Variant Retail Misses'
+description: >-
+  Divergence is when price and an indicator disagree on direction. Definition,
+  the 4 standard types, why most divergences fail, and how to filter the ones
+  that don't.
+publishedAt: 2026-05-25T00:00:00.000Z
+updatedAt: 2026-05-25T00:00:00.000Z
 author:
   name: PickSkill Team
-  url: https://pickskill.ai
+  url: 'https://pickskill.ai'
   bio: The PickSkill research team — building an AI analyst for retail investors.
 pillar: explainer
 tags:
@@ -13,6 +16,10 @@ tags:
   - technical-analysis
   - momentum
   - indicators
+heroImage: /blog/what-is-divergence/hero.png
+heroAlt: >-
+  Editorial infographic — price making a higher high while the RSI indicator
+  makes a lower high, with both pivots circled to mark the divergence.
 ---
 
 **Divergence is the technical pattern where price and an oscillator (MACD, RSI, KDJ, OBV) move in opposite directions over the same swing.** Price makes a higher high while the indicator makes a lower high — or price makes a lower low while the indicator makes a higher low. The underlying message: the move you see on the chart is no longer being confirmed by the momentum (or volume, or breadth) that drove it. Most retail readers treat divergence as a reversal trigger. Backtests say that is the wrong framing — it is a *warning*, not a signal.

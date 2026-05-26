@@ -1,11 +1,13 @@
 ---
 title: How to Generate an Investor Deck from a Chat in 90 Seconds
-description: Turn a research chat into a slide-ready investor presentation — thesis, financials, comparables, risks. One prompt, one PPTX, every slide editable.
-publishedAt: 2026-05-25
-updatedAt: 2026-05-25
+description: >-
+  Turn a research chat into a slide-ready investor presentation — thesis,
+  financials, comparables, risks. One prompt, one PPTX, every slide editable.
+publishedAt: 2026-05-25T00:00:00.000Z
+updatedAt: 2026-05-25T00:00:00.000Z
 author:
   name: PickSkill Team
-  url: https://pickskill.ai
+  url: 'https://pickskill.ai'
   bio: The PickSkill research team — building an AI analyst for retail investors.
 pillar: how-to
 tags:
@@ -14,6 +16,10 @@ tags:
   - powerpoint
   - workflow
   - presentation
+heroImage: /blog/generate-investor-deck-from-chat/hero.png
+heroAlt: >-
+  Editorial infographic — a chat prompt bubble flowing via an arrow into a
+  finished investor-deck slide, showing the chat-to-deck workflow.
 ---
 
 **An investor deck distils a research thesis into 10–15 slides that another investor can read in 5 minutes and form an opinion on.** The slides need a clear thesis statement, a few well-chosen charts, a valuation summary, and an honest risk section. This tutorial walks through generating that deck directly from a PickSkill research conversation — every slide grounded in the work you already did in the chat, every chart sourced, the `.pptx` ready to download in 90 seconds.

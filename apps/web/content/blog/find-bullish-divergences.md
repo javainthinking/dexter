@@ -1,11 +1,14 @@
 ---
 title: How to Find Bullish Divergences Across a Portfolio in 30 Seconds
-description: PickSkill's divergence dashboard scans every holding for the 4 divergence types across MACD, RSI, and KDJ — surfacing only well-defined pivots. Workflow in 4 steps.
-publishedAt: 2026-05-25
-updatedAt: 2026-05-25
+description: >-
+  PickSkill's divergence dashboard scans every holding for the 4 divergence
+  types across MACD, RSI, and KDJ — surfacing only well-defined pivots. Workflow
+  in 4 steps.
+publishedAt: 2026-05-25T00:00:00.000Z
+updatedAt: 2026-05-25T00:00:00.000Z
 author:
   name: PickSkill Team
-  url: https://pickskill.ai
+  url: 'https://pickskill.ai'
   bio: The PickSkill research team — building an AI analyst for retail investors.
 pillar: how-to
 tags:
@@ -14,6 +17,10 @@ tags:
   - technical-analysis
   - workflow
   - portfolio
+heroImage: /blog/find-bullish-divergences/hero.png
+heroAlt: >-
+  Editorial infographic — a divergence dashboard listing tickers with type
+  (regular/hidden bullish/bearish), oscillator agreement, and pivot age.
 ---
 
 **Finding divergence by hand is slow — you draw pivots in price, draw matching pivots in MACD or RSI, check whether the two disagree, and repeat for every name in your portfolio.** Most retail investors give up after 3–5 names. PickSkill's divergence dashboard runs that scan across every holding in 30 seconds, applies confirmed-pivot rules (no hindsight bias), and surfaces only the names where the pattern is well-defined. This tutorial walks through using the dashboard productively — not just clicking through it, but turning the output into actual decisions.

@@ -1,11 +1,14 @@
 ---
 title: What Are Support and Resistance? The Levels That Actually Matter
-description: Support and resistance are price levels where reversals cluster. How to identify them objectively, why round numbers and prior highs work, and four pitfalls.
-publishedAt: 2026-05-25
-updatedAt: 2026-05-25
+description: >-
+  Support and resistance are price levels where reversals cluster. How to
+  identify them objectively, why round numbers and prior highs work, and four
+  pitfalls.
+publishedAt: 2026-05-25T00:00:00.000Z
+updatedAt: 2026-05-25T00:00:00.000Z
 author:
   name: PickSkill Team
-  url: https://pickskill.ai
+  url: 'https://pickskill.ai'
   bio: The PickSkill research team — building an AI analyst for retail investors.
 pillar: explainer
 tags:
@@ -13,6 +16,10 @@ tags:
   - technical-analysis
   - price-action
   - levels
+heroImage: /blog/what-is-support-resistance/hero.png
+heroAlt: >-
+  Editorial infographic — price oscillating between a horizontal resistance band
+  and a horizontal support band, with confirmed pivot touches at each level.
 ---
 
 **Support is a price level where buying pressure has repeatedly absorbed selling — preventing a further decline. Resistance is the mirror: a price level where selling has repeatedly capped advances.** They are not lines drawn from intuition; they are statistical clusters of reversal pivots that, once identified, become reference points the market itself acts on. The reason they "work" is reflexive — enough traders watch the same level that the level becomes self-reinforcing.

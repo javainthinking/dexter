@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Infographic hero for `share-a-portfolio-via-link`. Left column: title
+  + share rules card. Right column: a stylised portfolio card with the
+  share URL displayed and a "read-only" badge.
+-->
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">HOW-TO · PORTFOLIO</text>
+
+  <text x="60" y="200" font-family="Georgia, 'Times New Roman', serif" font-size="86" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Share via link</text>
+
+  <text x="60" y="244" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="500" fill="#F4F4F5" opacity="0.85">A live, read-only mirror of your book</text>
+
+  <text x="60" y="288" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">No account needed for viewers.</text>
+  <text x="60" y="314" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">Live data, not a snapshot.</text>
+
+  <!-- Rules card -->
+  <g transform="translate(60,360)">
+    <rect x="0" y="0" width="580" height="200" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">3 STEPS · 30s</text>
+
+    <text x="22" y="66" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8">1.</text>
+    <text x="48" y="66" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Open portfolio at /portfolios</text>
+
+    <text x="22" y="94" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8">2.</text>
+    <text x="48" y="94" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Click Share — link generated</text>
+
+    <text x="22" y="122" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8">3.</text>
+    <text x="48" y="122" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Send the URL — recipients view instantly</text>
+
+    <text x="22" y="160" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="12" fill="#F4F4F5" opacity="0.55" letter-spacing="2">RECIPIENT SEES</text>
+    <text x="22" y="184" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.75">✓ holdings + weights · ✓ live indicators · ✗ P&amp;L · ✗ trade log</text>
+  </g>
+
+  <!-- Right column: portfolio share card -->
+  <g transform="translate(680,140)">
+    <text x="0" y="-22" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="13" fill="#F4F4F5" opacity="0.55" letter-spacing="2">SHARED PORTFOLIO VIEW</text>
+
+    <!-- Card -->
+    <rect x="0" y="0" width="460" height="340" rx="12" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.45"/>
+
+    <!-- Banner -->
+    <rect x="0" y="0" width="460" height="32" rx="12" fill="#4FCBA8" opacity="0.15"/>
+    <rect x="0" y="22" width="460" height="10" fill="#4FCBA8" opacity="0.15"/>
+    <text x="16" y="22" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#4FCBA8" letter-spacing="2">SHARED · READ-ONLY</text>
+
+    <!-- Portfolio name -->
+    <text x="16" y="68" font-family="Georgia, serif" font-size="22" fill="#F4F4F5" font-weight="600">My Tech Portfolio</text>
+    <text x="16" y="90" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#F4F4F5" opacity="0.55">12 holdings · live as of 14:23 UTC</text>
+
+    <!-- URL -->
+    <g transform="translate(16,110)">
+      <rect x="0" y="0" width="428" height="32" rx="6" fill="#14120b" stroke="#4FCBA8" stroke-opacity="0.3"/>
+      <text x="10" y="20" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="12" fill="#F4F4F5" opacity="0.85">pickskill.ai/portfolios/k_8f3qvm9_az2w</text>
+      <rect x="362" y="6" width="60" height="20" rx="4" fill="#4FCBA8" opacity="0.85"/>
+      <text x="392" y="20" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="10" fill="#14120b" font-weight="700" text-anchor="middle">COPY</text>
+    </g>
+
+    <!-- Mini holdings table -->
+    <g transform="translate(16,165)" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#F4F4F5">
+      <text x="0" y="0" fill="#4FCBA8" letter-spacing="1" font-size="10">TICKER     WT     PRICE     SIGNAL</text>
+      <line x1="0" y1="8" x2="428" y2="8" stroke="#F4F4F5" stroke-opacity="0.15"/>
+
+      <text x="0" y="28">NVDA</text>
+      <text x="110" y="28">15%</text>
+      <text x="180" y="28">182.41</text>
+      <circle cx="270" cy="25" r="3" fill="#4FCBA8"/>
+      <text x="280" y="28" fill="#4FCBA8">bull</text>
+
+      <text x="0" y="48">TSM</text>
+      <text x="110" y="48">12%</text>
+      <text x="180" y="48">198.74</text>
+      <circle cx="270" cy="45" r="3" fill="#4FCBA8"/>
+      <text x="280" y="48" fill="#4FCBA8">bull</text>
+
+      <text x="0" y="68">AAPL</text>
+      <text x="110" y="68">10%</text>
+      <text x="180" y="68">228.30</text>
+      <circle cx="270" cy="65" r="3" fill="#ef4444"/>
+      <text x="280" y="68" fill="#ef4444">bear div</text>
+
+      <text x="0" y="88">MSFT</text>
+      <text x="110" y="88">10%</text>
+      <text x="180" y="88">449.12</text>
+      <circle cx="270" cy="85" r="3" fill="#4FCBA8"/>
+      <text x="280" y="88" fill="#4FCBA8">bull</text>
+
+      <text x="0" y="108" opacity="0.4">…8 more</text>
+    </g>
+  </g>
+</svg>

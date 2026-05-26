@@ -1,11 +1,14 @@
 ---
 title: What Is Volume Analysis? The Confirmation Layer Most Retail Skips
-description: Volume measures market participation behind every price move. Why volume confirms breakouts, the 4 volume patterns that matter, and how to read VROC and volume profile.
-publishedAt: 2026-05-25
-updatedAt: 2026-05-25
+description: >-
+  Volume measures market participation behind every price move. Why volume
+  confirms breakouts, the 4 volume patterns that matter, and how to read VROC
+  and volume profile.
+publishedAt: 2026-05-25T00:00:00.000Z
+updatedAt: 2026-05-25T00:00:00.000Z
 author:
   name: PickSkill Team
-  url: https://pickskill.ai
+  url: 'https://pickskill.ai'
   bio: The PickSkill research team — building an AI analyst for retail investors.
 pillar: explainer
 tags:
@@ -13,6 +16,10 @@ tags:
   - technical-analysis
   - indicators
   - participation
+heroImage: /blog/what-is-volume-analysis/hero.png
+heroAlt: >-
+  Editorial infographic — a 25-bar volume histogram with the 20-day average
+  drawn as a dashed line, and one 2.5× RVOL spike highlighted in emerald.
 ---
 
 **Volume is the number of shares (or contracts) traded in a given bar — and it is the single most under-used data point in retail technical analysis.** Price tells you where the market went; volume tells you how many people went with it. A move on heavy volume reflects broad conviction; a move on light volume reflects a handful of participants. The bare price chart can be unanimous about the direction and still mean very little if the volume underneath says nobody showed up.

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Infographic hero for `generate-investor-deck-from-chat`. Left column:
+  title + 5-step workflow card. Right column: chat bubble flowing into
+  a deck slide via an arrow.
+-->
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">HOW-TO · PRESENT</text>
+
+  <text x="60" y="200" font-family="Georgia, 'Times New Roman', serif" font-size="80" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Chat → Deck</text>
+
+  <text x="60" y="244" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="500" fill="#F4F4F5" opacity="0.85">A 12-slide investor deck in 90 seconds</text>
+
+  <text x="60" y="288" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">Every slide grounded in</text>
+  <text x="60" y="314" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">the conversation that produced it.</text>
+
+  <!-- Workflow card -->
+  <g transform="translate(60,360)">
+    <rect x="0" y="0" width="580" height="200" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">5 STEPS · 90s</text>
+
+    <text x="22" y="66" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8">1.</text>
+    <text x="48" y="66" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Build the thesis in /chat (DCF, 10-K, peers)</text>
+
+    <text x="22" y="94" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8">2.</text>
+    <text x="48" y="94" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Ask for the deck — proposed outline appears</text>
+
+    <text x="22" y="122" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8">3.</text>
+    <text x="48" y="122" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Refine outline · reorder · add · cut</text>
+
+    <text x="22" y="150" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8">4.</text>
+    <text x="48" y="150" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Wait ~60s while PickSkill assembles</text>
+
+    <text x="22" y="178" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8">5.</text>
+    <text x="48" y="178" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Edit any slide · present · iterate</text>
+  </g>
+
+  <!-- Right column: chat bubble → deck flow -->
+  <g transform="translate(680,140)">
+    <text x="0" y="-22" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="13" fill="#F4F4F5" opacity="0.55" letter-spacing="2">SOURCE → DELIVERABLE</text>
+
+    <!-- Chat bubble -->
+    <g transform="translate(0,20)">
+      <rect x="0" y="0" width="190" height="160" rx="12" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.4"/>
+      <text x="14" y="24" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="11" fill="#4FCBA8" letter-spacing="2">/chat</text>
+      <text x="14" y="50" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.85">Build 5y DCF on TSM.</text>
+      <text x="14" y="70" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.85">Compare to ASML on</text>
+      <text x="14" y="86" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.85">EV/EBITDA + FCF growth.</text>
+      <text x="14" y="106" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.85">Show MACD + RSI now.</text>
+      <text x="14" y="132" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#4FCBA8" font-weight="600">Generate 12-slide deck.</text>
+    </g>
+
+    <!-- Arrow -->
+    <g transform="translate(200,90)">
+      <line x1="0" y1="10" x2="50" y2="10" stroke="#4FCBA8" stroke-width="2"/>
+      <polygon points="50,4 60,10 50,16" fill="#4FCBA8"/>
+    </g>
+
+    <!-- Deck slide -->
+    <g transform="translate(270,20)">
+      <rect x="0" y="0" width="220" height="160" rx="8" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.5"/>
+      <text x="14" y="22" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="10" fill="#4FCBA8" letter-spacing="2">SLIDE 2 · THESIS</text>
+      <text x="14" y="48" font-family="Georgia, serif" font-size="14" fill="#F4F4F5" font-weight="600">TSM — Buy, $250 PT</text>
+      <text x="14" y="68" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#F4F4F5" opacity="0.65">3nm capacity sold out through 2027;</text>
+      <text x="14" y="82" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#F4F4F5" opacity="0.65">CoWoS bottleneck supports pricing;</text>
+      <text x="14" y="96" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#F4F4F5" opacity="0.65">FCF margin expanding to 22% by Y3.</text>
+      <!-- mini chart -->
+      <rect x="14" y="110" width="190" height="40" rx="3" fill="#14120b"/>
+      <polyline points="20,140 50,128 80,118 110,118 140,108 170,100 200,90" fill="none" stroke="#4FCBA8" stroke-width="1.5"/>
+    </g>
+
+    <!-- Slide count badge -->
+    <g transform="translate(0,210)">
+      <text x="0" y="0" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="12" fill="#F4F4F5" opacity="0.55" letter-spacing="2">DEFAULT STRUCTURE</text>
+      <text x="0" y="38" font-family="Georgia, serif" font-size="40" fill="#4FCBA8" font-weight="600">12</text>
+      <text x="78" y="32" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#F4F4F5" opacity="0.75">slides:</text>
+      <text x="78" y="50" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.55">cover · thesis · business · financials</text>
+      <text x="78" y="66" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.55">valuation × 2 · technical · scenarios</text>
+      <text x="78" y="82" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.55">risks × 2 · conclusion · appendix</text>
+    </g>
+
+    <!-- Bottom callout -->
+    <g transform="translate(0,330)">
+      <text x="0" y="0" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#4FCBA8" font-weight="600">Every slide cites the chat moment</text>
+      <text x="0" y="20" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#F4F4F5" opacity="0.75">that produced it — auditable, defensible.</text>
+    </g>
+  </g>
+</svg>

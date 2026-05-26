@@ -1,11 +1,14 @@
 ---
-title: What Is a Golden Cross (and Death Cross)? The 50/200 MA Signal, Explained
-description: A golden cross is the 50-day MA crossing above the 200-day MA. Formula, historical hit rates, why the cross alone is overrated, and how to use it properly.
-publishedAt: 2026-05-25
-updatedAt: 2026-05-25
+title: 'What Is a Golden Cross (and Death Cross)? The 50/200 MA Signal, Explained'
+description: >-
+  A golden cross is the 50-day MA crossing above the 200-day MA. Formula,
+  historical hit rates, why the cross alone is overrated, and how to use it
+  properly.
+publishedAt: 2026-05-25T00:00:00.000Z
+updatedAt: 2026-05-25T00:00:00.000Z
 author:
   name: PickSkill Team
-  url: https://pickskill.ai
+  url: 'https://pickskill.ai'
   bio: The PickSkill research team — building an AI analyst for retail investors.
 pillar: explainer
 tags:
@@ -13,6 +16,10 @@ tags:
   - death-cross
   - moving-average
   - technical-analysis
+heroImage: /blog/what-is-golden-cross-death-cross/hero.png
+heroAlt: >-
+  Editorial infographic — the 50-day MA crossing above the 200-day MA, with the
+  underwater variant highlighted while the long MA still slopes down.
 ---
 
 **A golden cross is the moment a short-term moving average (typically the 50-day) crosses above a long-term moving average (typically the 200-day). A death cross is the opposite — the short MA crossing below the long one.** Financial media love these crossings because they make great headlines. Backtests show the bare signal is closer to a coin flip than the headlines admit. The cross becomes useful only when you understand which version of it you are looking at and what state the underlying trend is in.

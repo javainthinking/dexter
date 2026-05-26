@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Infographic hero for `kdj-vs-rsi`. Left column: title + side-by-side
+  formula card. Right column: two oscillator panes — RSI single line vs
+  KDJ three-line (K, D, J).
+-->
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">COMPARISON · MOMENTUM</text>
+
+  <text x="60" y="220" font-family="Georgia, 'Times New Roman', serif" font-size="100" font-weight="600" fill="#F4F4F5" letter-spacing="-1">KDJ ∙ RSI</text>
+
+  <text x="60" y="262" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="500" fill="#F4F4F5" opacity="0.85">Two oscillators, two questions</text>
+
+  <text x="60" y="306" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">RSI = strength of change.</text>
+  <text x="60" y="332" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">KDJ = position in range.</text>
+
+  <!-- Comparison card -->
+  <g transform="translate(60,400)">
+    <rect x="0" y="0" width="580" height="160" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">WHEN EACH WINS</text>
+    <text x="22" y="66" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#F4F4F5"><tspan font-weight="600" fill="#60a5fa">RSI</tspan> — trending markets, smooth large-caps</text>
+    <text x="22" y="92" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.55">14-period, single line, 50 trend filter</text>
+    <text x="22" y="124" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#F4F4F5"><tspan font-weight="600" fill="#f59e0b">KDJ</tspan> — range-bound names, A-share daily bars</text>
+    <text x="22" y="150" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.55">(9, 3, 3), three lines, J-overshoot signal</text>
+  </g>
+
+  <!-- Right column: two oscillator panes -->
+  <g transform="translate(680,160)">
+    <!-- RSI pane top -->
+    <text x="0" y="-2" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="12" fill="#60a5fa" letter-spacing="2" font-weight="600">RSI · 14</text>
+    <!-- 70/30 reference lines -->
+    <line x1="0" y1="20" x2="460" y2="20" stroke="#ef4444" stroke-width="1" stroke-dasharray="3 4" stroke-opacity="0.4"/>
+    <line x1="0" y1="120" x2="460" y2="120" stroke="#4FCBA8" stroke-width="1" stroke-dasharray="3 4" stroke-opacity="0.4"/>
+    <text x="-6" y="24" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="10" fill="#ef4444" text-anchor="end" opacity="0.6">70</text>
+    <text x="-6" y="124" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="10" fill="#4FCBA8" text-anchor="end" opacity="0.6">30</text>
+    <!-- RSI single line -->
+    <path d="M 0 90 L 30 80 L 60 70 L 90 55 L 120 45 L 150 35 L 180 25 L 210 30 L 240 45 L 270 60 L 300 80 L 330 105 L 360 120 L 390 110 L 420 90 L 450 70 L 460 65"
+          fill="none" stroke="#60a5fa" stroke-width="2.5"/>
+
+    <!-- divider -->
+    <line x1="0" y1="180" x2="460" y2="180" stroke="#F4F4F5" stroke-opacity="0.1"/>
+
+    <!-- KDJ pane bottom -->
+    <text x="0" y="210" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="12" fill="#f59e0b" letter-spacing="2" font-weight="600">KDJ · (9,3,3)</text>
+    <!-- 80/20 reference lines -->
+    <line x1="0" y1="230" x2="460" y2="230" stroke="#ef4444" stroke-width="1" stroke-dasharray="3 4" stroke-opacity="0.4"/>
+    <line x1="0" y1="340" x2="460" y2="340" stroke="#4FCBA8" stroke-width="1" stroke-dasharray="3 4" stroke-opacity="0.4"/>
+    <text x="-6" y="234" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="10" fill="#ef4444" text-anchor="end" opacity="0.6">80</text>
+    <text x="-6" y="344" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="10" fill="#4FCBA8" text-anchor="end" opacity="0.6">20</text>
+    <!-- K line (orange) -->
+    <path d="M 0 300 L 30 290 L 60 280 L 90 260 L 120 240 L 150 235 L 180 230 L 210 245 L 240 270 L 270 290 L 300 310 L 330 330 L 360 345 L 390 320 L 420 290 L 450 260 L 460 255"
+          fill="none" stroke="#f59e0b" stroke-width="2.2"/>
+    <!-- D line (teal) -->
+    <path d="M 0 305 L 30 298 L 60 290 L 90 275 L 120 260 L 150 248 L 180 240 L 210 248 L 240 265 L 270 280 L 300 295 L 330 315 L 360 330 L 390 320 L 420 300 L 450 280 L 460 275"
+          fill="none" stroke="#4FCBA8" stroke-width="2.2"/>
+    <!-- J line (purple) — overshoots above 80 and below 20 -->
+    <path d="M 0 290 L 30 280 L 60 265 L 90 240 L 120 215 L 150 218 L 180 220 L 210 245 L 240 280 L 270 305 L 300 330 L 330 350 L 360 360 L 390 320 L 420 270 L 450 235 L 460 225"
+          fill="none" stroke="#a78bfa" stroke-width="2.2"/>
+
+    <!-- J overshoot callout -->
+    <circle cx="360" cy="360" r="6" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    <text x="360" y="395" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#a78bfa" text-anchor="middle" font-weight="600">J &lt; 20 overshoot</text>
+
+    <!-- Legend KDJ -->
+    <g transform="translate(0,425)">
+      <line x1="0" y1="-3" x2="20" y2="-3" stroke="#f59e0b" stroke-width="2.2"/>
+      <text x="26" y="1" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="12" fill="#F4F4F5" opacity="0.85">K</text>
+      <line x1="50" y1="-3" x2="70" y2="-3" stroke="#4FCBA8" stroke-width="2.2"/>
+      <text x="76" y="1" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="12" fill="#F4F4F5" opacity="0.85">D</text>
+      <line x1="100" y1="-3" x2="120" y2="-3" stroke="#a78bfa" stroke-width="2.2"/>
+      <text x="126" y="1" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="12" fill="#F4F4F5" opacity="0.85">J = 3K − 2D</text>
+    </g>
+  </g>
+</svg>

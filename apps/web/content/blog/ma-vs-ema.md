@@ -1,11 +1,14 @@
 ---
 title: SMA vs EMA — Which Moving Average Should You Use?
-description: SMA weighs every bar equally; EMA weighs recent bars more. Side-by-side comparison, when each one wins, and why the 200-day SMA matters more than its EMA cousin.
-publishedAt: 2026-05-25
-updatedAt: 2026-05-25
+description: >-
+  SMA weighs every bar equally; EMA weighs recent bars more. Side-by-side
+  comparison, when each one wins, and why the 200-day SMA matters more than its
+  EMA cousin.
+publishedAt: 2026-05-25T00:00:00.000Z
+updatedAt: 2026-05-25T00:00:00.000Z
 author:
   name: PickSkill Team
-  url: https://pickskill.ai
+  url: 'https://pickskill.ai'
   bio: The PickSkill research team — building an AI analyst for retail investors.
 pillar: explainer
 tags:
@@ -14,6 +17,10 @@ tags:
   - moving-average
   - technical-analysis
   - comparison
+heroImage: /blog/ma-vs-ema/hero.png
+heroAlt: >-
+  Editorial infographic — price line with SMA(20) and EMA(20) both drawn,
+  showing EMA tracking price more closely than the slower SMA.
 ---
 
 **SMA (simple moving average) is the arithmetic mean of close price over N bars — every bar weighted equally. EMA (exponential moving average) applies an exponentially decaying weight, so recent bars matter more.** The mathematical difference is small. The practical difference — which one reacts faster, which one is more stable, and which one institutions coordinate around — drives most of the editorial choice. There are right and wrong answers depending on what you are trying to do.
