@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <text x="60" y="92" font-family="ui-monospace, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">HOW-TO · WORKFLOW</text>
+
+  <text x="60" y="200" font-family="Georgia, serif" font-size="76" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Watchlist Built Right</text>
+
+  <text x="60" y="244" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="500" fill="#F4F4F5" opacity="0.85">8–15 names. Thesis. Levels. Weekly review.</text>
+
+  <text x="60" y="288" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">Focused beats sprawling.</text>
+  <text x="60" y="314" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">Cull aggressively. Review reliably.</text>
+
+  <g transform="translate(60,360)">
+    <rect x="0" y="0" width="580" height="200" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">4 STEPS · BUILT TO COMPOUND</text>
+
+    <text x="22" y="68" font-family="ui-monospace, monospace" font-size="14" fill="#4FCBA8">1.</text>
+    <text x="48" y="68" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Define thesis categories — active · buy-the-dip · follow</text>
+
+    <text x="22" y="100" font-family="ui-monospace, monospace" font-size="14" fill="#4FCBA8">2.</text>
+    <text x="48" y="100" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Each name = 1-sentence thesis · no thesis = no entry</text>
+
+    <text x="22" y="132" font-family="ui-monospace, monospace" font-size="14" fill="#4FCBA8">3.</text>
+    <text x="48" y="132" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Set entry / exit levels · don't chase, don't drift</text>
+
+    <text x="22" y="164" font-family="ui-monospace, monospace" font-size="14" fill="#4FCBA8">4.</text>
+    <text x="48" y="164" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Weekly 30-min review · cull broken theses</text>
+  </g>
+
+  <g transform="translate(680,160)">
+    <text x="0" y="-22" font-family="ui-monospace, monospace" font-size="13" fill="#F4F4F5" opacity="0.55" letter-spacing="2">A WORKING WATCHLIST</text>
+
+    <rect x="0" y="0" width="460" height="370" rx="10" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.35"/>
+
+    <!-- Header -->
+    <rect x="0" y="0" width="460" height="32" rx="10" fill="#14120b"/>
+    <rect x="0" y="22" width="460" height="10" fill="#14120b"/>
+    <text x="14" y="22" font-family="ui-monospace, monospace" font-size="11" fill="#4FCBA8" letter-spacing="2">TICKER   THESIS                              ENTRY</text>
+
+    <g font-family="ui-monospace, monospace" font-size="11" fill="#F4F4F5">
+      <!-- Active positions -->
+      <text x="14" y="56" fill="#4FCBA8" opacity="0.7" letter-spacing="1" font-size="10">ACTIVE POSITIONS</text>
+
+      <line x1="0" y1="68" x2="460" y2="68" stroke="#F4F4F5" stroke-opacity="0.08"/>
+      <text x="14" y="86">NVDA</text>
+      <text x="90" y="86" opacity="0.85" font-size="10">AI training cycle '26-'27</text>
+      <text x="380" y="86" opacity="0.55">held</text>
+
+      <line x1="0" y1="98" x2="460" y2="98" stroke="#F4F4F5" stroke-opacity="0.08"/>
+      <text x="14" y="116">MSFT</text>
+      <text x="90" y="116" opacity="0.85" font-size="10">Copilot inflection</text>
+      <text x="380" y="116" opacity="0.55">held</text>
+
+      <!-- Buy-the-dip -->
+      <text x="14" y="148" fill="#f59e0b" opacity="0.7" letter-spacing="1" font-size="10">BUY-THE-DIP</text>
+
+      <line x1="0" y1="160" x2="460" y2="160" stroke="#F4F4F5" stroke-opacity="0.08"/>
+      <text x="14" y="178">TSM</text>
+      <text x="90" y="178" opacity="0.85" font-size="10">3nm sold out '27</text>
+      <text x="380" y="178" fill="#f59e0b">$185</text>
+
+      <line x1="0" y1="190" x2="460" y2="190" stroke="#F4F4F5" stroke-opacity="0.08"/>
+      <text x="14" y="208">AMD</text>
+      <text x="90" y="208" opacity="0.85" font-size="10">Inst. AI share gain</text>
+      <text x="380" y="208" fill="#f59e0b">$140</text>
+
+      <!-- Follow-thesis -->
+      <text x="14" y="240" fill="#60a5fa" opacity="0.7" letter-spacing="1" font-size="10">FOLLOW-THE-THESIS</text>
+
+      <line x1="0" y1="252" x2="460" y2="252" stroke="#F4F4F5" stroke-opacity="0.08"/>
+      <text x="14" y="270">PLTR</text>
+      <text x="90" y="270" opacity="0.85" font-size="10">Gov pipeline maturing</text>
+      <text x="380" y="270" opacity="0.55">watch</text>
+
+      <line x1="0" y1="282" x2="460" y2="282" stroke="#F4F4F5" stroke-opacity="0.08"/>
+      <text x="14" y="300">SHOP</text>
+      <text x="90" y="300" opacity="0.85" font-size="10">FCF acceleration</text>
+      <text x="380" y="300" opacity="0.55">watch</text>
+
+      <text x="14" y="334" opacity="0.4">…5 more · 10 total</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">EXPLAINER · FUNDAMENTALS</text>
+
+  <text x="60" y="220" font-family="Georgia, serif" font-size="120" font-weight="600" fill="#F4F4F5" letter-spacing="-1">EPS</text>
+
+  <text x="60" y="260" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="500" fill="#F4F4F5" opacity="0.85">Earnings Per Share</text>
+
+  <text x="60" y="306" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">The line that defines beat vs miss,</text>
+  <text x="60" y="332" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">and drives every relative multiple.</text>
+
+  <g transform="translate(60,400)">
+    <rect x="0" y="0" width="560" height="155" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">FORMULAS</text>
+    <text x="22" y="66" font-family="ui-monospace, monospace" font-size="18" fill="#F4F4F5">EPS = Net Income / Diluted Shares</text>
+    <text x="22" y="96" font-family="ui-monospace, monospace" font-size="16" fill="#F4F4F5">P/E = Price / EPS</text>
+    <text x="22" y="128" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.55">GAAP · Adjusted · TTM · Forward — know which you read</text>
+  </g>
+
+  <g transform="translate(680,170)">
+    <text x="0" y="-22" font-family="ui-monospace, monospace" font-size="13" fill="#F4F4F5" opacity="0.55" letter-spacing="2">EPS GROWTH BEATS EPS LEVEL</text>
+    <line x1="0" y1="280" x2="460" y2="280" stroke="#F4F4F5" stroke-opacity="0.2"/>
+
+    <!-- Company A: flat 2% growth, starts at 5 -->
+    <text x="-12" y="38" font-family="ui-monospace, monospace" font-size="12" fill="#f59e0b" text-anchor="end" font-weight="600">$5.00</text>
+    <text x="-12" y="60" font-family="ui-monospace, monospace" font-size="10" fill="#F4F4F5" text-anchor="end" opacity="0.55">2% growth</text>
+    <path d="M 0 40 L 92 39 L 184 38 L 276 37 L 368 36 L 460 35" fill="none" stroke="#f59e0b" stroke-width="3"/>
+
+    <!-- Company B: 30% growth, starts at 1.20 -->
+    <text x="-12" y="240" font-family="ui-monospace, monospace" font-size="12" fill="#4FCBA8" text-anchor="end" font-weight="600">$1.20</text>
+    <text x="-12" y="262" font-family="ui-monospace, monospace" font-size="10" fill="#F4F4F5" text-anchor="end" opacity="0.55">30% growth</text>
+    <path d="M 0 240 L 92 210 L 184 170 L 276 122 L 368 70 L 460 30" fill="none" stroke="#4FCBA8" stroke-width="3"/>
+
+    <text x="0" y="320" font-family="ui-monospace, monospace" font-size="11" fill="#F4F4F5" opacity="0.55">Y0</text>
+    <text x="92" y="320" font-family="ui-monospace, monospace" font-size="11" fill="#F4F4F5" opacity="0.55" text-anchor="middle">Y1</text>
+    <text x="184" y="320" font-family="ui-monospace, monospace" font-size="11" fill="#F4F4F5" opacity="0.55" text-anchor="middle">Y2</text>
+    <text x="276" y="320" font-family="ui-monospace, monospace" font-size="11" fill="#F4F4F5" opacity="0.55" text-anchor="middle">Y3</text>
+    <text x="368" y="320" font-family="ui-monospace, monospace" font-size="11" fill="#F4F4F5" opacity="0.55" text-anchor="middle">Y4</text>
+    <text x="460" y="320" font-family="ui-monospace, monospace" font-size="11" fill="#F4F4F5" opacity="0.55" text-anchor="end">Y5</text>
+
+    <g transform="translate(0,360)">
+      <text x="0" y="0" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#F4F4F5" opacity="0.8">At Y5: $5.52 vs $4.46 — gap nearly closed.</text>
+      <text x="0" y="24" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#4FCBA8" font-weight="600">Growth compounds. Level does not.</text>
+    </g>
+  </g>
+</svg>

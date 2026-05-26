@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <text x="60" y="92" font-family="ui-monospace, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">EXPLAINER · QUALITY</text>
+
+  <text x="60" y="220" font-family="Georgia, serif" font-size="120" font-weight="600" fill="#F4F4F5" letter-spacing="-1">ROE</text>
+
+  <text x="60" y="260" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="500" fill="#F4F4F5" opacity="0.85">Return on Equity</text>
+
+  <text x="60" y="306" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">High and durable ROE = Buffett's</text>
+  <text x="60" y="332" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">most-quoted quality screen.</text>
+
+  <g transform="translate(60,400)">
+    <rect x="0" y="0" width="580" height="155" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">DUPONT DECOMPOSITION</text>
+    <text x="22" y="66" font-family="ui-monospace, monospace" font-size="16" fill="#F4F4F5">ROE = Net Income / Avg Equity</text>
+    <text x="22" y="96" font-family="ui-monospace, monospace" font-size="14" fill="#F4F4F5" opacity="0.85">    = Net Margin × Asset Turnover × Equity Mult.</text>
+    <text x="22" y="126" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.55">Three drivers · always check which one is doing the work</text>
+  </g>
+
+  <g transform="translate(680,160)">
+    <text x="0" y="-22" font-family="ui-monospace, monospace" font-size="13" fill="#F4F4F5" opacity="0.55" letter-spacing="2">SAME 15% ROE — DIFFERENT BUSINESSES</text>
+
+    <!-- Software bar -->
+    <text x="0" y="20" font-family="ui-monospace, monospace" font-size="12" fill="#4FCBA8" font-weight="600">SOFTWARE</text>
+    <rect x="0" y="30" width="200" height="22" fill="#4FCBA8" opacity="0.85"/>
+    <rect x="200" y="30" width="80" height="22" fill="#60a5fa" opacity="0.5"/>
+    <rect x="280" y="30" width="60" height="22" fill="#f59e0b" opacity="0.5"/>
+    <text x="345" y="46" font-family="ui-monospace, monospace" font-size="12" fill="#F4F4F5" opacity="0.85">ROE 30%</text>
+
+    <!-- Bank bar -->
+    <text x="0" y="80" font-family="ui-monospace, monospace" font-size="12" fill="#60a5fa" font-weight="600">BANK</text>
+    <rect x="0" y="90" width="50" height="22" fill="#4FCBA8" opacity="0.5"/>
+    <rect x="50" y="90" width="20" height="22" fill="#60a5fa" opacity="0.85"/>
+    <rect x="70" y="90" width="270" height="22" fill="#f59e0b" opacity="0.85"/>
+    <text x="345" y="106" font-family="ui-monospace, monospace" font-size="12" fill="#F4F4F5" opacity="0.85">ROE 15%</text>
+
+    <!-- Retailer bar -->
+    <text x="0" y="140" font-family="ui-monospace, monospace" font-size="12" fill="#f59e0b" font-weight="600">RETAILER</text>
+    <rect x="0" y="150" width="30" height="22" fill="#4FCBA8" opacity="0.5"/>
+    <rect x="30" y="150" width="200" height="22" fill="#60a5fa" opacity="0.85"/>
+    <rect x="230" y="150" width="110" height="22" fill="#f59e0b" opacity="0.5"/>
+    <text x="345" y="166" font-family="ui-monospace, monospace" font-size="12" fill="#F4F4F5" opacity="0.85">ROE 30%</text>
+
+    <!-- Legend -->
+    <g transform="translate(0,210)">
+      <rect x="0" y="0" width="14" height="14" fill="#4FCBA8" opacity="0.85"/>
+      <text x="22" y="11" font-family="ui-monospace, monospace" font-size="11" fill="#F4F4F5" opacity="0.85">Net Margin</text>
+      <rect x="110" y="0" width="14" height="14" fill="#60a5fa" opacity="0.85"/>
+      <text x="132" y="11" font-family="ui-monospace, monospace" font-size="11" fill="#F4F4F5" opacity="0.85">Asset Turnover</text>
+      <rect x="240" y="0" width="14" height="14" fill="#f59e0b" opacity="0.85"/>
+      <text x="262" y="11" font-family="ui-monospace, monospace" font-size="11" fill="#F4F4F5" opacity="0.85">Leverage</text>
+    </g>
+
+    <!-- Threshold callout -->
+    <g transform="translate(0,260)">
+      <text x="0" y="0" font-family="ui-monospace, monospace" font-size="12" fill="#F4F4F5" opacity="0.55" letter-spacing="2">DURABLE QUALITY THRESHOLD</text>
+      <text x="0" y="36" font-family="Georgia, serif" font-size="36" fill="#4FCBA8" font-weight="600">15%+</text>
+      <text x="80" y="32" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#F4F4F5" opacity="0.75">sustained over a full cycle</text>
+      <text x="80" y="50" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#F4F4F5" opacity="0.5">rare in the wild · top quartile</text>
+    </g>
+  </g>
+</svg>

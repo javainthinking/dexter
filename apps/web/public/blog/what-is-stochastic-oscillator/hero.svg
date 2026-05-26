@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <text x="60" y="92" font-family="ui-monospace, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">EXPLAINER · MOMENTUM</text>
+
+  <text x="60" y="220" font-family="Georgia, serif" font-size="84" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Stochastic</text>
+
+  <text x="60" y="262" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="500" fill="#F4F4F5" opacity="0.85">Where the close sits in the recent range</text>
+
+  <text x="60" y="306" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">The parent of KDJ. The Lane original.</text>
+  <text x="60" y="332" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">Range position, not change strength.</text>
+
+  <g transform="translate(60,400)">
+    <rect x="0" y="0" width="580" height="155" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">FORMULA</text>
+    <text x="22" y="68" font-family="ui-monospace, monospace" font-size="17" fill="#F4F4F5">%K = ((Close − Low(N)) / (High(N) − Low(N))) × 100</text>
+    <text x="22" y="98" font-family="ui-monospace, monospace" font-size="17" fill="#F4F4F5">%D = 3-period SMA of %K</text>
+    <text x="22" y="128" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.55">Default N = 14 · slow stochastic is the standard</text>
+  </g>
+
+  <g transform="translate(680,160)">
+    <text x="0" y="-22" font-family="ui-monospace, monospace" font-size="13" fill="#F4F4F5" opacity="0.55" letter-spacing="2">STOCHASTIC %K · %D</text>
+
+    <!-- 80 and 20 reference lines -->
+    <line x1="0" y1="40" x2="460" y2="40" stroke="#ef4444" stroke-width="1" stroke-dasharray="4 4" stroke-opacity="0.5"/>
+    <text x="-8" y="44" font-family="ui-monospace, monospace" font-size="11" fill="#ef4444" text-anchor="end" opacity="0.8">80</text>
+
+    <line x1="0" y1="200" x2="460" y2="200" stroke="#4FCBA8" stroke-width="1" stroke-dasharray="4 4" stroke-opacity="0.5"/>
+    <text x="-8" y="204" font-family="ui-monospace, monospace" font-size="11" fill="#4FCBA8" text-anchor="end" opacity="0.8">20</text>
+
+    <line x1="0" y1="120" x2="460" y2="120" stroke="#F4F4F5" stroke-opacity="0.15"/>
+    <text x="-8" y="124" font-family="ui-monospace, monospace" font-size="11" fill="#F4F4F5" opacity="0.4" text-anchor="end">50</text>
+
+    <!-- K line (orange) -->
+    <path d="M 0 60 L 30 80 L 60 110 L 90 150 L 120 190 L 150 215 L 180 230 L 210 210 L 240 175 L 270 130 L 300 80 L 330 40 L 360 25 L 390 50 L 420 80 L 450 110 L 460 115"
+          fill="none" stroke="#f59e0b" stroke-width="2.5"/>
+
+    <!-- D line (teal, smoother) -->
+    <path d="M 0 70 L 30 80 L 60 100 L 90 135 L 120 170 L 150 200 L 180 218 L 210 215 L 240 195 L 270 160 L 300 115 L 330 75 L 360 50 L 390 50 L 420 70 L 450 95 L 460 100"
+          fill="none" stroke="#4FCBA8" stroke-width="2.5"/>
+
+    <!-- Cross signal circles -->
+    <circle cx="180" cy="220" r="8" fill="none" stroke="#4FCBA8" stroke-width="2"/>
+    <text x="180" y="285" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#4FCBA8" text-anchor="middle" font-weight="600">Oversold cross</text>
+    <text x="180" y="300" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#F4F4F5" text-anchor="middle" opacity="0.55">K crosses D above 20</text>
+
+    <circle cx="360" cy="40" r="8" fill="none" stroke="#ef4444" stroke-width="2"/>
+    <text x="360" y="20" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#ef4444" text-anchor="middle" font-weight="600">Overbought</text>
+
+    <!-- Legend -->
+    <g transform="translate(0,330)">
+      <line x1="0" y1="-3" x2="20" y2="-3" stroke="#f59e0b" stroke-width="2.5"/>
+      <text x="26" y="1" font-family="ui-monospace, monospace" font-size="13" fill="#F4F4F5" opacity="0.85">%K (fast)</text>
+      <line x1="100" y1="-3" x2="120" y2="-3" stroke="#4FCBA8" stroke-width="2.5"/>
+      <text x="126" y="1" font-family="ui-monospace, monospace" font-size="13" fill="#F4F4F5" opacity="0.85">%D (signal, smoother)</text>
+    </g>
+  </g>
+</svg>

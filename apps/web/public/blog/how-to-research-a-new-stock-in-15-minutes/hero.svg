@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <text x="60" y="92" font-family="ui-monospace, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">HOW-TO · FLAGSHIP</text>
+
+  <text x="60" y="200" font-family="Georgia, serif" font-size="68" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Research in 15 min</text>
+
+  <text x="60" y="244" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="500" fill="#F4F4F5" opacity="0.85">Business → financials → valuation → technical → risk</text>
+
+  <text x="60" y="288" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">A first-pass framework that catches</text>
+  <text x="60" y="314" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">80% of dealbreakers in 15 minutes.</text>
+
+  <g transform="translate(60,360)">
+    <rect x="0" y="0" width="580" height="200" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.28"/>
+    <text x="22" y="34" font-family="ui-monospace, monospace" font-size="14" fill="#4FCBA8" letter-spacing="2" opacity="0.9">5 STEPS × 3 MIN EACH</text>
+
+    <text x="22" y="68" font-family="ui-monospace, monospace" font-size="14" fill="#4FCBA8">1.</text>
+    <text x="48" y="68" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Business model — 5 bullets, "the single most important Q?"</text>
+
+    <text x="22" y="98" font-family="ui-monospace, monospace" font-size="14" fill="#4FCBA8">2.</text>
+    <text x="48" y="98" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Financials — revenue, margins, FCF, debt, share count</text>
+
+    <text x="22" y="128" font-family="ui-monospace, monospace" font-size="14" fill="#4FCBA8">3.</text>
+    <text x="48" y="128" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Valuation — multiples + 5y DCF + peers</text>
+
+    <text x="22" y="158" font-family="ui-monospace, monospace" font-size="14" fill="#4FCBA8">4.</text>
+    <text x="48" y="158" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Technical setup — MA stack, MACD/RSI, S/R levels</text>
+
+    <text x="22" y="188" font-family="ui-monospace, monospace" font-size="14" fill="#4FCBA8">5.</text>
+    <text x="48" y="188" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#F4F4F5">Risks — 10-K risks + downside scenario</text>
+  </g>
+
+  <g transform="translate(680,170)">
+    <text x="0" y="-22" font-family="ui-monospace, monospace" font-size="13" fill="#F4F4F5" opacity="0.55" letter-spacing="2">OUTPUT: ONE-PAGE DECISION</text>
+
+    <rect x="0" y="0" width="460" height="340" rx="10" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.45"/>
+
+    <text x="20" y="32" font-family="ui-monospace, monospace" font-size="10" fill="#4FCBA8" letter-spacing="2">DECISION: WATCHLIST | DEEPER | PASS</text>
+
+    <line x1="20" y1="46" x2="440" y2="46" stroke="#F4F4F5" stroke-opacity="0.1"/>
+
+    <text x="20" y="76" font-family="Georgia, serif" font-size="20" fill="#F4F4F5" font-weight="600">TSM</text>
+    <text x="20" y="100" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.8">Foundry monopoly · 3nm sold out '27</text>
+
+    <text x="20" y="130" font-family="ui-monospace, monospace" font-size="10" fill="#4FCBA8" letter-spacing="2">FINANCIALS</text>
+    <text x="20" y="150" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.7">Rev growth 32% YoY · GM 60% · FCF $32B</text>
+
+    <text x="20" y="180" font-family="ui-monospace, monospace" font-size="10" fill="#4FCBA8" letter-spacing="2">VALUATION</text>
+    <text x="20" y="200" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.7">P/E 18 · DCF implies $245 base</text>
+
+    <text x="20" y="230" font-family="ui-monospace, monospace" font-size="10" fill="#4FCBA8" letter-spacing="2">TECHNICAL</text>
+    <text x="20" y="250" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.7">Above 200d MA · MACD bullish · S/R $185</text>
+
+    <text x="20" y="280" font-family="ui-monospace, monospace" font-size="10" fill="#ef4444" letter-spacing="2">DOWNSIDE</text>
+    <text x="20" y="300" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.7">Geo risk · capex cycle inversion</text>
+
+    <rect x="20" y="316" width="80" height="20" rx="4" fill="#4FCBA8" opacity="0.85"/>
+    <text x="60" y="330" font-family="ui-monospace, monospace" font-size="11" fill="#14120b" font-weight="700" text-anchor="middle">WATCHLIST</text>
+  </g>
+</svg>
