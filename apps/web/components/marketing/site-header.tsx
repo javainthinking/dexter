@@ -35,27 +35,31 @@ export async function SiteHeader({ lang }: { lang: Locale }) {
 
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5 lg:px-8">
-        <div className="flex items-center gap-7">
-          <Link
-            href={homeHref}
-            className="rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            aria-label="PickSkill"
-          >
-            <Logo />
-          </Link>
-          <nav className="hidden items-center gap-6 sm:flex" aria-label="Primary">
-            {navLinks.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:underline"
-              >
-                {l.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
+      <div className="relative mx-auto flex h-14 max-w-6xl items-center justify-between px-5 lg:px-8">
+        <Link
+          href={homeHref}
+          className="rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="PickSkill"
+        >
+          <Logo />
+        </Link>
+        {/* Absolutely centered so the nav sits in the middle of the header
+            regardless of the (asymmetric) logo and control-cluster widths.
+            Hidden below `sm`, where the footer carries the same links. */}
+        <nav
+          className="absolute inset-y-0 left-1/2 hidden -translate-x-1/2 items-center gap-6 sm:flex"
+          aria-label="Primary"
+        >
+          {navLinks.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:underline"
+            >
+              {l.label}
+            </Link>
+          ))}
+        </nav>
         <div className="flex items-center gap-1">
           <LanguageSwitcher />
           <ThemeToggle />
