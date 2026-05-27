@@ -24,7 +24,7 @@ import { createHash } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const VERSION = 'v1.0.100';
+const VERSION = 'v1.0.94';
 const BASE_URL = `https://github.com/iOfficeAI/OfficeCLI/releases/download/${VERSION}`;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const BIN_DIR = join(__dirname, '..', 'apps', 'web', 'bin');
