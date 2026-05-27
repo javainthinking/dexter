@@ -1,5 +1,5 @@
 import { getAllPosts } from '../../lib/blog';
-import { features } from '../../lib/features';
+import { featureList, getFeaturesContent } from '../../lib/features';
 
 /**
  * Dynamic /llms.txt — replaces the old static public/llms.txt that went
@@ -59,11 +59,12 @@ export function GET(): Response {
     )
     .join('\n');
 
-  const featureLines = features
-    .map(
-      (f) =>
-        `- [${f.name}](${SITE_URL}/features/${f.slug}): ${f.description}`,
-    )
+  const featureContent = getFeaturesContent('en');
+  const featureLines = featureList
+    .map((f) => {
+      const item = featureContent.items[f.slug];
+      return `- [${item.name}](${SITE_URL}/features/${f.slug}): ${item.description}`;
+    })
     .join('\n');
 
   const body = `${HEADER}

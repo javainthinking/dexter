@@ -12,7 +12,12 @@ import {
 } from '../../../../lib/i18n/locales';
 import { getLocalizedPath } from '../../../../lib/i18n/paths';
 import { generateAlternatesMetadata } from '../../../../lib/i18n/seo';
-import { features, getFeature, getFeatureSlugs } from '../../../../lib/features';
+import {
+  featureList,
+  featureSlugs,
+  getFeaturesContent,
+  type FeatureSlug,
+} from '../../../../lib/features';
 import { getDictionary } from '../../dictionaries';
 import { Button } from '../../../../components/ui/button';
 import { Breadcrumbs } from '../../../../components/blog/breadcrumbs';
@@ -22,9 +27,12 @@ import { SiteFooter } from '../../../../components/marketing/site-footer';
 const SITE_URL = 'https://pickskill.ai';
 const SITE_NAME = 'PickSkill';
 
+function isFeatureSlug(value: string): value is FeatureSlug {
+  return (featureSlugs as readonly string[]).includes(value);
+}
+
 export function generateStaticParams(): Array<{ lang: Locale; feature: string }> {
-  const slugs = getFeatureSlugs();
-  return locales.flatMap((lang) => slugs.map((feature) => ({ lang, feature })));
+  return locales.flatMap((lang) => featureSlugs.map((feature) => ({ lang, feature })));
 }
 
 export async function generateMetadata({
@@ -33,30 +41,31 @@ export async function generateMetadata({
   params: Promise<{ lang: string; feature: string }>;
 }): Promise<Metadata> {
   const { lang, feature: slug } = await params;
-  if (!isLocale(lang)) return {};
-  const feature = getFeature(slug);
-  if (!feature) return {};
+  if (!isLocale(lang) || !isFeatureSlug(slug)) return {};
+  const meta = featureList.find((f) => f.slug === slug);
+  const item = getFeaturesContent(lang).items[slug];
+  if (!meta) return {};
 
   return {
-    title: `${feature.name} — PickSkill`,
-    description: feature.description,
+    title: `${item.name} — PickSkill`,
+    description: item.description,
     alternates: generateAlternatesMetadata({ path: `/features/${slug}`, locale: lang as Locale }),
     robots: { index: true, follow: true, 'max-image-preview': 'large' },
     openGraph: {
-      title: `${feature.name} — PickSkill`,
-      description: feature.description,
+      title: `${item.name} — PickSkill`,
+      description: item.description,
       siteName: SITE_NAME,
       url: `${SITE_URL}${getLocalizedPath(`/features/${slug}`, lang as Locale)}`,
       locale: localeOg[lang as Locale],
       alternateLocale: locales.filter((l) => l !== lang).map((l) => localeOg[l]),
       type: 'website',
-      images: [{ url: `${SITE_URL}${feature.image}`, width: 1200, height: 630, alt: feature.imageAlt }],
+      images: [{ url: `${SITE_URL}${meta.image}`, width: 1200, height: 630, alt: item.imageAlt }],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${feature.name} — PickSkill`,
-      description: feature.description,
-      images: [`${SITE_URL}${feature.image}`],
+      title: `${item.name} — PickSkill`,
+      description: item.description,
+      images: [`${SITE_URL}${meta.image}`],
     },
   };
 }
@@ -67,16 +76,18 @@ export default async function FeaturePage({
   params: Promise<{ lang: string; feature: string }>;
 }) {
   const { lang, feature: slug } = await params;
-  if (!isLocale(lang)) notFound();
-  const feature = getFeature(slug);
-  if (!feature) notFound();
+  if (!isLocale(lang) || !isFeatureSlug(slug)) notFound();
+  const meta = featureList.find((f) => f.slug === slug);
+  if (!meta) notFound();
 
   const dict = await getDictionary(lang);
-  const ctaHref = getLocalizedPath(feature.cta.href, lang);
+  const content = getFeaturesContent(lang);
+  const item = content.items[slug];
+  const ctaHref = getLocalizedPath(meta.ctaHref, lang);
   const featuresHref = getLocalizedPath('/features', lang);
   const pageUrl = `${SITE_URL}${getLocalizedPath(`/features/${slug}`, lang as Locale)}`;
   const homeUrl = `${SITE_URL}${getLocalizedPath('/', lang as Locale)}`;
-  const otherFeatures = features.filter((f) => f.slug !== slug);
+  const otherFeatures = featureList.filter((f) => f.slug !== slug);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -85,10 +96,10 @@ export default async function FeaturePage({
         '@type': 'WebPage',
         '@id': `${pageUrl}#webpage`,
         url: pageUrl,
-        name: `${feature.name} — PickSkill`,
-        description: feature.description,
+        name: `${item.name} — PickSkill`,
+        description: item.description,
         inLanguage: localeBcp47[lang as Locale],
-        primaryImageOfPage: `${SITE_URL}${feature.image}`,
+        primaryImageOfPage: `${SITE_URL}${meta.image}`,
         isPartOf: { '@id': `${SITE_URL}/#website` },
       },
       {
@@ -96,12 +107,12 @@ export default async function FeaturePage({
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: dict.nav?.home ?? 'Home', item: homeUrl },
           { '@type': 'ListItem', position: 2, name: dict.nav?.features ?? 'Features', item: `${SITE_URL}${featuresHref}` },
-          { '@type': 'ListItem', position: 3, name: feature.name, item: pageUrl },
+          { '@type': 'ListItem', position: 3, name: item.name, item: pageUrl },
         ],
       },
       {
         '@type': 'FAQPage',
-        mainEntity: feature.faq.map((f) => ({
+        mainEntity: item.faq.map((f) => ({
           '@type': 'Question',
           name: f.q,
           acceptedAnswer: { '@type': 'Answer', text: f.a },
@@ -124,7 +135,7 @@ export default async function FeaturePage({
           items={[
             { label: dict.nav?.home ?? 'Home', href: '/' },
             { label: dict.nav?.features ?? 'Features', href: '/features' },
-            { label: feature.name },
+            { label: item.name },
           ]}
         />
       </div>
@@ -134,18 +145,18 @@ export default async function FeaturePage({
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 pb-14 pt-6 lg:grid-cols-2 lg:px-8 lg:pb-20">
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
-              {feature.eyebrow}
+              {item.eyebrow}
             </p>
             <h1 className="mt-3 font-serif text-3xl font-semibold leading-[1.06] tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-              {feature.headline}
+              {item.headline}
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              {feature.tagline}
+              {item.tagline}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Button asChild size="lg" variant="default">
                 <Link href={ctaHref}>
-                  {feature.cta.label}
+                  {item.ctaLabel}
                   <ArrowRight className="size-4" />
                 </Link>
               </Button>
@@ -156,8 +167,8 @@ export default async function FeaturePage({
           </div>
           <div className="relative aspect-[1200/630] w-full overflow-hidden rounded-xl border border-border bg-muted">
             <Image
-              src={feature.image}
-              alt={feature.imageAlt}
+              src={meta.image}
+              alt={item.imageAlt}
               fill
               sizes="(max-width: 1024px) 100vw, 560px"
               priority
@@ -171,10 +182,10 @@ export default async function FeaturePage({
       <section className="border-b border-border">
         <div className="mx-auto max-w-6xl px-5 py-16 lg:px-8">
           <h2 className="font-serif text-2xl font-semibold tracking-tight text-foreground">
-            What it does
+            {content.sections.whatItDoes}
           </h2>
           <div className="mt-8 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
-            {feature.capabilities.map((c) => (
+            {item.capabilities.map((c) => (
               <div key={c.title} className="bg-card p-6">
                 <h3 className="font-serif text-lg font-semibold leading-snug tracking-tight text-foreground">
                   {c.title}
@@ -190,10 +201,10 @@ export default async function FeaturePage({
       <section className="border-b border-border">
         <div className="mx-auto max-w-6xl px-5 py-16 lg:px-8">
           <h2 className="font-serif text-2xl font-semibold tracking-tight text-foreground">
-            How it works
+            {content.sections.howItWorks}
           </h2>
           <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {feature.howItWorks.map((s, i) => (
+            {item.howItWorks.map((s, i) => (
               <li key={s.step} className="rounded-lg border border-border bg-card p-5">
                 <span className="font-mono text-xs text-[color:var(--accent)]">
                   {String(i + 1).padStart(2, '0')}
@@ -210,10 +221,10 @@ export default async function FeaturePage({
       <section className="border-b border-border">
         <div className="mx-auto max-w-3xl px-5 py-16 lg:px-8">
           <h2 className="font-serif text-2xl font-semibold tracking-tight text-foreground">
-            Frequently asked questions
+            {content.sections.faqHeading}
           </h2>
           <dl className="mt-8 space-y-7">
-            {feature.faq.map((f) => (
+            {item.faq.map((f) => (
               <div key={f.q}>
                 <dt className="font-medium text-foreground">{f.q}</dt>
                 <dd className="mt-2 text-sm leading-relaxed text-muted-foreground">{f.a}</dd>
@@ -228,15 +239,15 @@ export default async function FeaturePage({
         <div className="mx-auto max-w-6xl px-5 py-16 lg:px-8">
           <div className="rounded-xl border border-border bg-card p-8 text-center sm:p-12">
             <h2 className="font-serif text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              {feature.headline}
+              {item.headline}
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
-              Free to try — 30 conversations a month, no card required.
+              {content.sections.ctaSubtitle}
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <Button asChild size="lg" variant="default">
                 <Link href={ctaHref}>
-                  {feature.cta.label}
+                  {item.ctaLabel}
                   <ArrowRight className="size-4" />
                 </Link>
               </Button>
@@ -245,22 +256,25 @@ export default async function FeaturePage({
 
           <div className="mt-12">
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
-              {dict.nav?.features ?? 'Features'}
+              {content.sections.moreFeatures}
             </p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              {otherFeatures.map((f) => (
-                <Link
-                  key={f.slug}
-                  href={getLocalizedPath(`/features/${f.slug}`, lang)}
-                  className="group flex items-start justify-between gap-4 rounded-lg border border-border bg-card p-5 transition-colors hover:border-border-strong hover:bg-muted/40"
-                >
-                  <span>
-                    <span className="font-serif text-base font-semibold text-foreground">{f.name}</span>
-                    <span className="mt-1 block text-sm text-muted-foreground">{f.tagline}</span>
-                  </span>
-                  <ArrowRight className="mt-1 size-4 shrink-0 text-subtle transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
-                </Link>
-              ))}
+              {otherFeatures.map((f) => {
+                const oi = content.items[f.slug];
+                return (
+                  <Link
+                    key={f.slug}
+                    href={getLocalizedPath(`/features/${f.slug}`, lang)}
+                    className="group flex items-start justify-between gap-4 rounded-lg border border-border bg-card p-5 transition-colors hover:border-border-strong hover:bg-muted/40"
+                  >
+                    <span>
+                      <span className="font-serif text-base font-semibold text-foreground">{oi.name}</span>
+                      <span className="mt-1 block text-sm text-muted-foreground">{oi.tagline}</span>
+                    </span>
+                    <ArrowRight className="mt-1 size-4 shrink-0 text-subtle transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>

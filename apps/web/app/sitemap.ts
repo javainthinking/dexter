@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { getAllPosts } from '../lib/blog';
-import { features } from '../lib/features';
+import { featureList } from '../lib/features';
 import { locales, defaultLocale, type Locale } from '../lib/i18n/locales';
 
 /**
@@ -89,7 +89,7 @@ const STATIC_PAGES: StaticEntry[] = [
   { path: '/features', priority: 0.9, changeFrequency: 'monthly' },
   // One entry per feature detail page (sourced from the catalogue so the
   // sitemap can't drift behind the /features/[feature] route).
-  ...features.map((f) => ({
+  ...featureList.map((f) => ({
     path: `/features/${f.slug}`,
     priority: 0.8,
     changeFrequency: 'monthly' as const,

@@ -12,7 +12,7 @@ import {
 } from '../../../lib/i18n/locales';
 import { getLocalizedPath } from '../../../lib/i18n/paths';
 import { generateAlternatesMetadata } from '../../../lib/i18n/seo';
-import { features } from '../../../lib/features';
+import { featureList, getFeaturesContent } from '../../../lib/features';
 import { getDictionary } from '../dictionaries';
 import { Button } from '../../../components/ui/button';
 import { SiteHeader } from '../../../components/marketing/site-header';
@@ -32,24 +32,22 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang } = await params;
   if (!isLocale(lang)) return {};
-  const title = 'Features — PickSkill';
-  const description =
-    'What PickSkill does: an AI analyst for research and valuation, an 8-dimension portfolio indicators dashboard, and investor-grade PowerPoint / Word / Excel generation.';
+  const c = getFeaturesContent(lang).index;
   return {
-    title,
-    description,
+    title: c.metaTitle,
+    description: c.metaDescription,
     alternates: generateAlternatesMetadata({ path: '/features', locale: lang as Locale }),
     robots: { index: true, follow: true, 'max-image-preview': 'large' },
     openGraph: {
-      title,
-      description,
+      title: c.metaTitle,
+      description: c.metaDescription,
       siteName: SITE_NAME,
       url: `${SITE_URL}${getLocalizedPath('/features', lang as Locale)}`,
       locale: localeOg[lang as Locale],
       alternateLocale: locales.filter((l) => l !== lang).map((l) => localeOg[l]),
       type: 'website',
     },
-    twitter: { card: 'summary_large_image', title, description },
+    twitter: { card: 'summary_large_image', title: c.metaTitle, description: c.metaDescription },
   };
 }
 
@@ -61,6 +59,7 @@ export default async function FeaturesIndexPage({
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
   const dict = await getDictionary(lang);
+  const content = getFeaturesContent(lang);
   const chatHref = getLocalizedPath('/chat', lang);
   const pageUrl = `${SITE_URL}${getLocalizedPath('/features', lang as Locale)}`;
 
@@ -74,10 +73,10 @@ export default async function FeaturesIndexPage({
     isPartOf: { '@id': `${SITE_URL}/#website` },
     mainEntity: {
       '@type': 'ItemList',
-      itemListElement: features.map((f, i) => ({
+      itemListElement: featureList.map((f, i) => ({
         '@type': 'ListItem',
         position: i + 1,
-        name: f.name,
+        name: content.items[f.slug].name,
         url: `${SITE_URL}${getLocalizedPath(`/features/${f.slug}`, lang as Locale)}`,
       })),
     },
@@ -95,20 +94,18 @@ export default async function FeaturesIndexPage({
       <section className="border-b border-border">
         <div className="mx-auto max-w-6xl px-5 pt-16 pb-12 sm:pt-20 lg:px-8">
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
-            {dict.nav?.features ?? 'Features'}
+            {content.index.eyebrow}
           </p>
           <h1 className="mt-3 font-serif text-3xl font-semibold leading-[1.05] tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-            An AI analyst, a signals dashboard, and a document factory.
+            {content.index.headline}
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            PickSkill researches, models, and drafts your equity work — then turns
-            the read into a deck, a report, or a live portfolio you can share. Here
-            is what each piece does.
+            {content.index.sub}
           </p>
           <div className="mt-8">
             <Button asChild size="lg" variant="default">
               <Link href={chatHref}>
-                Try it free
+                {content.index.tryFree}
                 <ArrowRight className="size-4" />
               </Link>
             </Button>
@@ -120,38 +117,41 @@ export default async function FeaturesIndexPage({
       <section className="border-b border-border">
         <div className="mx-auto max-w-6xl px-5 py-12 lg:px-8">
           <div className="space-y-4">
-            {features.map((f, i) => (
-              <Link
-                key={f.slug}
-                href={getLocalizedPath(`/features/${f.slug}`, lang)}
-                className="group grid items-center gap-6 overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-border-strong hover:bg-muted/30 lg:grid-cols-2"
-              >
-                <div className={`p-7 sm:p-9 ${i % 2 === 1 ? 'lg:order-2' : ''}`}>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
-                    {f.eyebrow}
-                  </p>
-                  <h2 className="mt-3 font-serif text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-                    {f.name}
-                  </h2>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-                    {f.tagline}
-                  </p>
-                  <span className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-[color:var(--accent)] transition-transform group-hover:translate-x-0.5">
-                    Explore {f.name} <ArrowRight className="size-4" />
-                  </span>
-                </div>
-                <div className={`relative aspect-[1200/630] w-full overflow-hidden bg-muted ${i % 2 === 1 ? 'lg:order-1' : ''}`}>
-                  <Image
-                    src={f.image}
-                    alt={f.imageAlt}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 560px"
-                    priority={i === 0}
-                    className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                  />
-                </div>
-              </Link>
-            ))}
+            {featureList.map((f, i) => {
+              const item = content.items[f.slug];
+              return (
+                <Link
+                  key={f.slug}
+                  href={getLocalizedPath(`/features/${f.slug}`, lang)}
+                  className="group grid items-center gap-6 overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-border-strong hover:bg-muted/30 lg:grid-cols-2"
+                >
+                  <div className={`p-7 sm:p-9 ${i % 2 === 1 ? 'lg:order-2' : ''}`}>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
+                      {item.eyebrow}
+                    </p>
+                    <h2 className="mt-3 font-serif text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+                      {item.name}
+                    </h2>
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                      {item.tagline}
+                    </p>
+                    <span className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-[color:var(--accent)] transition-transform group-hover:translate-x-0.5">
+                      {content.index.explore.replace('{name}', item.name)} <ArrowRight className="size-4" />
+                    </span>
+                  </div>
+                  <div className={`relative aspect-[1200/630] w-full overflow-hidden bg-muted ${i % 2 === 1 ? 'lg:order-1' : ''}`}>
+                    <Image
+                      src={f.image}
+                      alt={item.imageAlt}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 560px"
+                      priority={i === 0}
+                      className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                    />
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
