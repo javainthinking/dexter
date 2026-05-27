@@ -14,7 +14,7 @@
   <rect width="1200" height="630" fill="url(#bg)"/>
 
   <text x="60" y="80" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">EXPLAINER · A-SHARES (中国A股)</text>
-  <text x="60" y="170" font-family="Georgia, 'Times New Roman', serif" font-size="68" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Top 5 Indicators</text>
+  <text x="60" y="170" font-family="Georgia, 'Times New Roman', serif" font-size="55" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Top 5 Indicators</text>
   <text x="60" y="208" font-family="Georgia, 'Times New Roman', serif" font-size="32" fill="#F4F4F5" opacity="0.7" font-style="italic">for Chinese A-shares</text>
   <text x="60" y="270" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">±10% daily limits, T+1 settlement,</text>
   <text x="60" y="294" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">80%+ retail flow — the US toolkit</text>

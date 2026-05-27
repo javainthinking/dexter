@@ -23,7 +23,7 @@
   <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">EXPLAINER · MOMENTUM</text>
 
   <!-- Title -->
-  <text x="60" y="220" font-family="Georgia, 'Times New Roman', serif" font-size="100" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Divergence</text>
+  <text x="60" y="220" font-family="Georgia, 'Times New Roman', serif" font-size="89" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Divergence</text>
 
   <!-- Subtitle -->
   <text x="60" y="262" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="500" fill="#F4F4F5" opacity="0.85">When price and the oscillator disagree</text>

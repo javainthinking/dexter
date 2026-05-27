@@ -18,7 +18,7 @@
 
   <!-- Top eyebrow + title -->
   <text x="60" y="80" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">COMPARISON · TWO INDICATORS, TWO REGIMES</text>
-  <text x="60" y="160" font-family="Georgia, 'Times New Roman', serif" font-size="84" font-weight="600" fill="#F4F4F5" letter-spacing="-1">MACD vs RSI</text>
+  <text x="60" y="160" font-family="Georgia, 'Times New Roman', serif" font-size="65" font-weight="600" fill="#F4F4F5" letter-spacing="-1">MACD vs RSI</text>
   <text x="60" y="200" font-family="Helvetica, Arial, sans-serif" font-size="22" fill="#F4F4F5" opacity="0.55">Different math. Different failure modes. Use both, weighted by regime.</text>
 
   <!-- LEFT panel: MACD anatomy -->

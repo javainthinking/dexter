@@ -14,7 +14,7 @@
 
   <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">EXPLAINER · MULTIPLES</text>
 
-  <text x="60" y="220" font-family="Georgia, 'Times New Roman', serif" font-size="86" font-weight="600" fill="#F4F4F5" letter-spacing="-1">EV/EBITDA</text>
+  <text x="60" y="220" font-family="Georgia, 'Times New Roman', serif" font-size="84" font-weight="600" fill="#F4F4F5" letter-spacing="-1">EV/EBITDA</text>
   <text x="60" y="260" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="500" fill="#F4F4F5" opacity="0.85">The multiple that sees through capital structure</text>
   <text x="60" y="306" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">When P/E lies because of debt or taxes,</text>
   <text x="60" y="332" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">EV/EBITDA still tells the truth.</text>

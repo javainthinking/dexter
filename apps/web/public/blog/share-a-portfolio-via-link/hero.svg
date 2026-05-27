@@ -16,7 +16,7 @@
 
   <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">HOW-TO · PORTFOLIO</text>
 
-  <text x="60" y="200" font-family="Georgia, 'Times New Roman', serif" font-size="86" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Share via link</text>
+  <text x="60" y="200" font-family="Georgia, 'Times New Roman', serif" font-size="74" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Share via link</text>
 
   <text x="60" y="244" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="500" fill="#F4F4F5" opacity="0.85">A live, read-only mirror of your book</text>
 

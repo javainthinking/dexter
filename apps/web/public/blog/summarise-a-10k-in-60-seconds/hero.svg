@@ -19,7 +19,7 @@
   <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">TUTORIAL · FILINGS</text>
 
   <!-- Title -->
-  <text x="60" y="210" font-family="Georgia, 'Times New Roman', serif" font-size="78" font-weight="600" fill="#F4F4F5" letter-spacing="-0.5">Summarise a 10-K</text>
+  <text x="60" y="210" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="600" fill="#F4F4F5" letter-spacing="-0.5">Summarise a 10-K</text>
   <text x="60" y="282" font-family="Georgia, 'Times New Roman', serif" font-size="78" font-weight="600" fill="#4FCBA8" letter-spacing="-0.5">in 60 seconds.</text>
 
   <text x="60" y="332" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#F4F4F5" opacity="0.55">MD&amp;A · Financials · Risk Factor diff · Footnotes</text>

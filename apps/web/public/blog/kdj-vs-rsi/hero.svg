@@ -16,7 +16,7 @@
 
   <text x="60" y="92" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">COMPARISON · MOMENTUM</text>
 
-  <text x="60" y="220" font-family="Georgia, 'Times New Roman', serif" font-size="100" font-weight="600" fill="#F4F4F5" letter-spacing="-1">KDJ ∙ RSI</text>
+  <text x="60" y="220" font-family="Georgia, 'Times New Roman', serif" font-size="99" font-weight="600" fill="#F4F4F5" letter-spacing="-1">KDJ ∙ RSI</text>
 
   <text x="60" y="262" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="500" fill="#F4F4F5" opacity="0.85">Two oscillators, two questions</text>
 

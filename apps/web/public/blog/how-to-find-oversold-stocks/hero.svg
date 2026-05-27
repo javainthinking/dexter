@@ -10,7 +10,7 @@
 
   <text x="60" y="92" font-family="ui-monospace, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">HOW-TO · SCREENING</text>
 
-  <text x="60" y="200" font-family="Georgia, serif" font-size="76" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Oversold Scan</text>
+  <text x="60" y="200" font-family="Georgia, serif" font-size="70" font-weight="600" fill="#F4F4F5" letter-spacing="-1">Oversold Scan</text>
 
   <text x="60" y="244" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="500" fill="#F4F4F5" opacity="0.85">RSI dashboard + filters = real candidates</text>
 
