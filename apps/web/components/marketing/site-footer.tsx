@@ -30,6 +30,11 @@ export function SiteFooter({ lang, dict }: { lang: Locale; dict: Dictionary }) {
     { href: '/pricing', label: dict.footer?.product?.pricing ?? 'Pricing' },
   ];
   const resourceLinks = [
+    // Reuse the localized nav.features label (added for the header) so the
+    // footer doesn't need its own dictionary key. Gives mobile users —
+    // who don't see the header nav below the `sm` breakpoint — a path to
+    // the features pages.
+    { href: '/features', label: dict.nav?.features ?? 'Features' },
     { href: '/blog', label: dict.footer?.resources?.blog ?? 'Blog' },
     { href: '/feedback', label: dict.footer?.resources?.feedback ?? 'Feedback' },
   ];

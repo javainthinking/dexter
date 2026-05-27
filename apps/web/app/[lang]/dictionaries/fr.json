@@ -171,7 +171,9 @@
     "portfolios": "Portefeuilles",
     "blog": "Blog",
     "feedback": "Retours",
-    "home": "Accueil"
+    "home": "Accueil",
+    "features": "Fonctionnalités",
+    "pricing": "Tarifs"
   },
   "portfolios": {
     "title": "Portefeuilles",

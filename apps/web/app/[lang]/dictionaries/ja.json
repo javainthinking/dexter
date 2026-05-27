@@ -171,7 +171,9 @@
     "portfolios": "ポートフォリオ",
     "blog": "ブログ",
     "feedback": "フィードバック",
-    "home": "ホーム"
+    "home": "ホーム",
+    "features": "機能",
+    "pricing": "料金"
   },
   "portfolios": {
     "title": "ポートフォリオ",

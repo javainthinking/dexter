@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Product mockup: the AI analyst chat — question, sourced answer with chart + citations + memory. -->
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <text x="60" y="84" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">AI ANALYST</text>
+  <text x="60" y="140" font-family="Georgia, serif" font-size="46" font-weight="600" fill="#F4F4F5">Research, modelling, drafting.</text>
+  <text x="60" y="174" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#F4F4F5" opacity="0.6">Sourced answers from live filings + market data · memory across sessions</text>
+
+  <!-- Chat panel -->
+  <g transform="translate(60,206)">
+    <rect x="0" y="0" width="700" height="364" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.3"/>
+
+    <!-- user bubble -->
+    <g transform="translate(360,24)">
+      <rect x="0" y="0" width="316" height="50" rx="12" fill="#14120b" stroke="#4FCBA8" stroke-opacity="0.25"/>
+      <text x="18" y="30" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#F4F4F5">Build a 5-year DCF on TSMC.</text>
+    </g>
+
+    <!-- assistant answer -->
+    <g transform="translate(24,92)">
+      <text x="0" y="0" font-family="ui-monospace, monospace" font-size="11" fill="#4FCBA8" letter-spacing="2">ANALYST</text>
+      <text x="0" y="26" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#F4F4F5">Pulled the latest 20-F + 4 quarters. FCF margin</text>
+      <text x="0" y="46" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#F4F4F5">expanding to 22% by Y3; WACC 9.1%.</text>
+
+      <!-- mini chart -->
+      <g transform="translate(0,66)">
+        <rect x="0" y="0" width="320" height="120" rx="8" fill="#14120b" stroke="#4FCBA8" stroke-opacity="0.18"/>
+        <polyline points="20,96 70,84 120,72 170,56 220,40 280,24" fill="none" stroke="#4FCBA8" stroke-width="2.5"/>
+        <text x="20" y="112" font-family="ui-monospace, monospace" font-size="10" fill="#F4F4F5" opacity="0.5">discounted FCF, Y1–Y5</text>
+      </g>
+
+      <!-- citations -->
+      <g transform="translate(0,202)" font-family="ui-monospace, monospace" font-size="11">
+        <rect x="0" y="-14" width="120" height="22" rx="11" fill="#4FCBA8" opacity="0.14"/>
+        <text x="12" y="1" fill="#4FCBA8">SEC · 20-F p.62</text>
+        <rect x="132" y="-14" width="120" height="22" rx="11" fill="#4FCBA8" opacity="0.14"/>
+        <text x="144" y="1" fill="#4FCBA8">Damodaran ERP</text>
+        <rect x="264" y="-14" width="92" height="22" rx="11" fill="#4FCBA8" opacity="0.14"/>
+        <text x="276" y="1" fill="#4FCBA8">10-year UST</text>
+      </g>
+
+      <text x="0" y="234" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.55">Implied $245 base · download as Excel?</text>
+    </g>
+  </g>
+
+  <!-- Right rail: memory + coverage -->
+  <g transform="translate(800,206)">
+    <!-- memory -->
+    <rect x="0" y="0" width="340" height="170" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.3"/>
+    <text x="20" y="34" font-family="ui-monospace, monospace" font-size="11" fill="#4FCBA8" letter-spacing="2">MEMORY · PERSISTS</text>
+    <g font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.8">
+      <circle cx="26" cy="62" r="3" fill="#4FCBA8"/><text x="40" y="66">Thesis: TSM foundry monopoly</text>
+      <circle cx="26" cy="92" r="3" fill="#4FCBA8"/><text x="40" y="96">Watchlist: NVDA, AMD, ASML</text>
+      <circle cx="26" cy="122" r="3" fill="#4FCBA8"/><text x="40" y="126">Prefers DCF over comps</text>
+      <circle cx="26" cy="152" r="3" fill="#4FCBA8"/><text x="40" y="156">Market: US + A-share</text>
+    </g>
+
+    <!-- coverage -->
+    <rect x="0" y="190" width="340" height="174" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.3"/>
+    <text x="20" y="224" font-family="ui-monospace, monospace" font-size="11" fill="#4FCBA8" letter-spacing="2">DOES THE WORK</text>
+    <g font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#F4F4F5" opacity="0.8">
+      <text x="20" y="254">▸ DCF + comparables</text>
+      <text x="20" y="282">▸ 10-K read + risk-factor diff</text>
+      <text x="20" y="310">▸ Multi-source web research</text>
+      <text x="20" y="338">▸ US / HK / A-share filings</text>
+    </g>
+  </g>
+</svg>

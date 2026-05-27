@@ -171,7 +171,9 @@
     "portfolios": "Carteras",
     "blog": "Blog",
     "feedback": "Comentarios",
-    "home": "Inicio"
+    "home": "Inicio",
+    "features": "Funciones",
+    "pricing": "Precios"
   },
   "portfolios": {
     "title": "Carteras",

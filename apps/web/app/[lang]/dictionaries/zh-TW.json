@@ -171,7 +171,9 @@
     "portfolios": "持倉",
     "blog": "部落格",
     "feedback": "回饋",
-    "home": "首頁"
+    "home": "首頁",
+    "features": "功能",
+    "pricing": "定價"
   },
   "portfolios": {
     "title": "持倉",

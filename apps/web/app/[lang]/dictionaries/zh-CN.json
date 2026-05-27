@@ -171,7 +171,9 @@
     "portfolios": "持仓",
     "blog": "博客",
     "feedback": "反馈",
-    "home": "首页"
+    "home": "首页",
+    "features": "功能",
+    "pricing": "定价"
   },
   "portfolios": {
     "title": "持仓",

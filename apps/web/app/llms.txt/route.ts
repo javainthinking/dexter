@@ -1,4 +1,5 @@
 import { getAllPosts } from '../../lib/blog';
+import { features } from '../../lib/features';
 
 /**
  * Dynamic /llms.txt — replaces the old static public/llms.txt that went
@@ -58,7 +59,19 @@ export function GET(): Response {
     )
     .join('\n');
 
+  const featureLines = features
+    .map(
+      (f) =>
+        `- [${f.name}](${SITE_URL}/features/${f.slug}): ${f.description}`,
+    )
+    .join('\n');
+
   const body = `${HEADER}
+## Features
+
+- [Features overview](${SITE_URL}/features): What PickSkill does — the AI analyst, the indicators dashboard, and document generation.
+${featureLines}
+
 ## Blog
 
 ${blogLines}

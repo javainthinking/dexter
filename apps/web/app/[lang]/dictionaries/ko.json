@@ -171,7 +171,9 @@
     "portfolios": "포트폴리오",
     "blog": "블로그",
     "feedback": "피드백",
-    "home": "홈"
+    "home": "홈",
+    "features": "기능",
+    "pricing": "요금"
   },
   "portfolios": {
     "title": "포트폴리오",

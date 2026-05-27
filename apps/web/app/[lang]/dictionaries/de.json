@@ -171,7 +171,9 @@
     "portfolios": "Portfolios",
     "blog": "Blog",
     "feedback": "Feedback",
-    "home": "Startseite"
+    "home": "Startseite",
+    "features": "Funktionen",
+    "pricing": "Preise"
   },
   "portfolios": {
     "title": "Portfolios",

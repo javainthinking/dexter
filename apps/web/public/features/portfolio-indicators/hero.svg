@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Product mockup: the indicators dashboard — holdings × 8 signal dimensions + 5-day trail. -->
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14120b"/>
+      <stop offset="100%" stop-color="#1b1913"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <text x="60" y="84" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#4FCBA8" letter-spacing="3" opacity="0.85">PORTFOLIO INDICATORS</text>
+  <text x="60" y="140" font-family="Georgia, serif" font-size="46" font-weight="600" fill="#F4F4F5">Every holding, eight ways.</text>
+  <text x="60" y="174" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#F4F4F5" opacity="0.6">8 technical dimensions · 5-day signal trail · US / HK / A-share</text>
+
+  <!-- Dashboard panel -->
+  <g transform="translate(60,210)">
+    <rect x="0" y="0" width="1080" height="360" rx="14" fill="#1b1913" stroke="#4FCBA8" stroke-opacity="0.3"/>
+
+    <!-- Header row -->
+    <rect x="0" y="0" width="1080" height="44" rx="14" fill="#14120b"/>
+    <rect x="0" y="30" width="1080" height="14" fill="#14120b"/>
+    <g font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="13" fill="#4FCBA8" letter-spacing="1">
+      <text x="24" y="28">TICKER</text>
+      <text x="150" y="28">MACD</text>
+      <text x="248" y="28">RSI</text>
+      <text x="330" y="28">KDJ</text>
+      <text x="412" y="28">BOLL</text>
+      <text x="500" y="28">ADX</text>
+      <text x="582" y="28">VOL</text>
+      <text x="664" y="28">FLOW</text>
+      <text x="800" y="28" fill="#F4F4F5" opacity="0.55">5-DAY TRAIL</text>
+    </g>
+
+    <!-- Rows -->
+    <!-- helper colours: bull #4FCBA8, neutral #6b7280, bear #ef4444 -->
+    <!-- Row 1 NVDA (mostly bull) -->
+    <g font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="14" fill="#F4F4F5">
+      <line x1="0" y1="92" x2="1080" y2="92" stroke="#F4F4F5" stroke-opacity="0.07"/>
+      <text x="24" y="78">NVDA</text>
+      <circle cx="165" cy="73" r="6" fill="#4FCBA8"/>
+      <circle cx="258" cy="73" r="6" fill="#4FCBA8"/>
+      <circle cx="345" cy="73" r="6" fill="#4FCBA8"/>
+      <circle cx="430" cy="73" r="6" fill="#6b7280"/>
+      <circle cx="512" cy="73" r="6" fill="#4FCBA8"/>
+      <circle cx="595" cy="73" r="6" fill="#4FCBA8"/>
+      <circle cx="678" cy="73" r="6" fill="#4FCBA8"/>
+      <g transform="translate(800,73)">
+        <circle cx="0" r="5" fill="#6b7280"/><circle cx="22" r="5" fill="#6b7280"/><circle cx="44" r="5" fill="#4FCBA8"/><circle cx="66" r="5" fill="#4FCBA8"/><circle cx="88" r="5" fill="#4FCBA8"/>
+        <text x="120" y="5" font-size="12" fill="#4FCBA8">↑ stable bull</text>
+      </g>
+
+      <!-- Row 2 TSM (mixed) -->
+      <line x1="0" y1="146" x2="1080" y2="146" stroke="#F4F4F5" stroke-opacity="0.07"/>
+      <text x="24" y="132">TSM</text>
+      <circle cx="165" cy="127" r="6" fill="#4FCBA8"/>
+      <circle cx="258" cy="127" r="6" fill="#6b7280"/>
+      <circle cx="345" cy="127" r="6" fill="#4FCBA8"/>
+      <circle cx="430" cy="127" r="6" fill="#6b7280"/>
+      <circle cx="512" cy="127" r="6" fill="#4FCBA8"/>
+      <circle cx="595" cy="127" r="6" fill="#6b7280"/>
+      <circle cx="678" cy="127" r="6" fill="#4FCBA8"/>
+      <g transform="translate(800,127)">
+        <circle cx="0" r="5" fill="#4FCBA8"/><circle cx="22" r="5" fill="#6b7280"/><circle cx="44" r="5" fill="#4FCBA8"/><circle cx="66" r="5" fill="#6b7280"/><circle cx="88" r="5" fill="#4FCBA8"/>
+        <text x="120" y="5" font-size="12" fill="#F4F4F5" opacity="0.6">~ flickering</text>
+      </g>
+
+      <!-- Row 3 AAPL (bear div) -->
+      <line x1="0" y1="200" x2="1080" y2="200" stroke="#F4F4F5" stroke-opacity="0.07"/>
+      <text x="24" y="186">AAPL</text>
+      <circle cx="165" cy="181" r="6" fill="#ef4444"/>
+      <circle cx="258" cy="181" r="6" fill="#ef4444"/>
+      <circle cx="345" cy="181" r="6" fill="#6b7280"/>
+      <circle cx="430" cy="181" r="6" fill="#ef4444"/>
+      <circle cx="512" cy="181" r="6" fill="#4FCBA8"/>
+      <circle cx="595" cy="181" r="6" fill="#6b7280"/>
+      <circle cx="678" cy="181" r="6" fill="#ef4444"/>
+      <g transform="translate(800,181)">
+        <circle cx="0" r="5" fill="#4FCBA8"/><circle cx="22" r="5" fill="#6b7280"/><circle cx="44" r="5" fill="#6b7280"/><circle cx="66" r="5" fill="#ef4444"/><circle cx="88" r="5" fill="#ef4444"/>
+        <text x="120" y="5" font-size="12" fill="#ef4444">↓ flipping bear</text>
+      </g>
+
+      <!-- Row 4 600519.SS (A-share, limit day neutral) -->
+      <line x1="0" y1="254" x2="1080" y2="254" stroke="#F4F4F5" stroke-opacity="0.07"/>
+      <text x="24" y="240">600519</text>
+      <circle cx="165" cy="235" r="6" fill="#4FCBA8"/>
+      <circle cx="258" cy="235" r="6" fill="#4FCBA8"/>
+      <circle cx="345" cy="235" r="6" fill="#4FCBA8"/>
+      <circle cx="430" cy="235" r="6" fill="#4FCBA8"/>
+      <circle cx="512" cy="235" r="6" fill="#6b7280"/>
+      <circle cx="595" cy="235" r="6" fill="#4FCBA8"/>
+      <circle cx="678" cy="235" r="6" fill="#4FCBA8"/>
+      <g transform="translate(800,235)">
+        <rect x="-7" y="-6" width="12" height="12" rx="2" fill="none" stroke="#6b7280" stroke-width="1.5"/>
+        <circle cx="22" r="5" fill="#4FCBA8"/><circle cx="44" r="5" fill="#4FCBA8"/><circle cx="66" r="5" fill="#4FCBA8"/><circle cx="88" r="5" fill="#4FCBA8"/>
+        <text x="120" y="5" font-size="12" fill="#F4F4F5" opacity="0.6">limit-day masked</text>
+      </g>
+
+      <!-- Row 5 AMD (golden cross) -->
+      <line x1="0" y1="308" x2="1080" y2="308" stroke="#F4F4F5" stroke-opacity="0.07"/>
+      <text x="24" y="294">AMD</text>
+      <circle cx="165" cy="289" r="6" fill="#4FCBA8"/>
+      <circle cx="258" cy="289" r="6" fill="#4FCBA8"/>
+      <circle cx="345" cy="289" r="6" fill="#6b7280"/>
+      <circle cx="430" cy="289" r="6" fill="#4FCBA8"/>
+      <circle cx="512" cy="289" r="6" fill="#4FCBA8"/>
+      <circle cx="595" cy="289" r="6" fill="#4FCBA8"/>
+      <circle cx="678" cy="289" r="6" fill="#4FCBA8"/>
+      <g transform="translate(800,289)">
+        <circle cx="0" r="5" fill="#6b7280"/><circle cx="22" r="5" fill="#6b7280"/><circle cx="44" r="5" fill="#6b7280"/><circle cx="66" r="5" fill="#4FCBA8"/><circle cx="88" r="5" fill="#4FCBA8"/>
+        <text x="120" y="5" font-size="12" fill="#4FCBA8">↑ fresh cross</text>
+      </g>
+    </g>
+
+    <!-- Legend -->
+    <g transform="translate(24,338)" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="12">
+      <circle cx="0" cy="-4" r="5" fill="#4FCBA8"/><text x="12" y="0" fill="#F4F4F5" opacity="0.7">bullish</text>
+      <circle cx="92" cy="-4" r="5" fill="#6b7280"/><text x="104" y="0" fill="#F4F4F5" opacity="0.7">neutral</text>
+      <circle cx="190" cy="-4" r="5" fill="#ef4444"/><text x="202" y="0" fill="#F4F4F5" opacity="0.7">bearish</text>
+      <rect x="280" y="-10" width="12" height="12" rx="2" fill="none" stroke="#6b7280" stroke-width="1.5"/><text x="298" y="0" fill="#F4F4F5" opacity="0.7">limit / halt masked</text>
+    </g>
+  </g>
+</svg>
