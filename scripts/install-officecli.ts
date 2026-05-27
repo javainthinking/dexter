@@ -24,7 +24,7 @@ import { createHash } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const VERSION = 'v1.0.94';
+const VERSION = 'v1.0.100';
 const BASE_URL = `https://github.com/iOfficeAI/OfficeCLI/releases/download/${VERSION}`;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const BIN_DIR = join(__dirname, '..', 'apps', 'web', 'bin');
@@ -106,9 +106,13 @@ async function downloadAsset(asset: Asset, expectedHash: string | undefined, des
  *
  * Source-of-truth: https://github.com/iOfficeAI/OfficeCLI/tree/main/styles
  */
-const STYLES_REPO_API = 'https://api.github.com/repos/iOfficeAI/OfficeCLI/contents/styles';
-const STYLES_RAW_BASE = 'https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/main/styles';
-const REPO_RAW_BASE = 'https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/main';
+// Pin skills + styles to the SAME release tag as the binary (VERSION) so
+// the design bibles never drift ahead of the binary that executes them —
+// upstream enforces this lockstep with a skill-parity CI check. (Was
+// floating `main`, which risked skill/binary skew on re-install.)
+const STYLES_REPO_API = `https://api.github.com/repos/iOfficeAI/OfficeCLI/contents/styles?ref=${VERSION}`;
+const STYLES_RAW_BASE = `https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/${VERSION}/styles`;
+const REPO_RAW_BASE = `https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/${VERSION}`;
 
 /**
  * Upstream's `skills/` directory holds the actual design bibles —
