@@ -9,6 +9,71 @@ import { SiteHeader } from '../../components/marketing/site-header';
 import { SiteFooter } from '../../components/marketing/site-footer';
 import Link from 'next/link';
 
+const SITE_URL = 'https://pickskill.ai';
+
+/**
+ * Homepage structured data. The highest-authority page on the site had
+ * no JSON-LD; these three nodes anchor the brand entity for Google rich
+ * results and AI knowledge graphs:
+ *   - Organization — the brand, logo, contact
+ *   - WebSite — the site entity (publisher relationship)
+ *   - SoftwareApplication — the product + its pricing offers, so the
+ *     plans surface in AI answers to "how much does PickSkill cost?"
+ * Locale-independent on purpose (the entity is the same in every
+ * language); only emitted once, on the homepage.
+ */
+function buildHomeJsonLd(description: string) {
+  const org = {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: 'PickSkill',
+    url: SITE_URL,
+    logo: `${SITE_URL}/icon.svg`,
+    description,
+  };
+  const website = {
+    '@type': 'WebSite',
+    '@id': `${SITE_URL}/#website`,
+    url: SITE_URL,
+    name: 'PickSkill',
+    description,
+    publisher: { '@id': `${SITE_URL}/#organization` },
+    inLanguage: ['en', 'fr', 'de', 'es', 'ja', 'ko', 'zh-CN', 'zh-TW'],
+  };
+  const offer = (
+    name: string,
+    price: string,
+    description: string,
+  ) => ({
+    '@type': 'Offer',
+    name,
+    price,
+    priceCurrency: 'USD',
+    description,
+    url: `${SITE_URL}/pricing`,
+  });
+  const application = {
+    '@type': 'SoftwareApplication',
+    '@id': `${SITE_URL}/#software`,
+    name: 'PickSkill',
+    applicationCategory: 'FinanceApplication',
+    operatingSystem: 'Web',
+    url: SITE_URL,
+    description,
+    publisher: { '@id': `${SITE_URL}/#organization` },
+    offers: [
+      offer('Free', '0', '30 conversations/month, 1 portfolio — no card required'),
+      offer('Starter', '15', '200 conversations/month, 3 portfolios, 8 files/month'),
+      offer('Pro', '39', 'Advanced model, 1,000 conversations, 10 portfolios, auto-refresh quotes'),
+      offer('Power', '129', 'Unlimited conversations, 100+ files/month, real-time quotes'),
+    ],
+  };
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [org, website, application],
+  };
+}
+
 export default async function HomePage({
   params,
 }: {
@@ -18,9 +83,14 @@ export default async function HomePage({
   if (!isLocale(lang)) notFound();
   const dict = await getDictionary(lang);
   const chatHref = getLocalizedPath('/chat', lang);
+  const jsonLd = buildHomeJsonLd(dict.common.openGraphDescription);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <SiteHeader lang={lang as Locale} />
       <Hero dict={dict} chatHref={chatHref} />
       <Features dict={dict} />

@@ -49,10 +49,12 @@ function localePath(canonicalPath: string, locale: Locale): string {
 
 function localeUrl(canonicalPath: string, locale: Locale): string {
   const tail = localePath(canonicalPath, locale);
-  // Avoid an empty URL for the homepage in the default locale
-  // (`${SITE_URL}` alone has no trailing slash; Google prefers the
-  // explicit slash for the homepage canonical).
-  return tail === '' ? `${SITE_URL}/` : `${SITE_URL}${tail}`;
+  // Homepage in the default locale: emit the bare origin (no trailing
+  // slash) so the sitemap matches the canonical tag the page itself
+  // renders (`<link rel="canonical" href="https://pickskill.ai">`) and
+  // the head hreflang alternates. Consistency across all three avoids
+  // mixed-signal canonicalization.
+  return tail === '' ? SITE_URL : `${SITE_URL}${tail}`;
 }
 
 /**
@@ -83,6 +85,7 @@ interface StaticEntry {
 const STATIC_PAGES: StaticEntry[] = [
   { path: '/', priority: 1.0, changeFrequency: 'weekly' },
   { path: '/chat', priority: 0.9, changeFrequency: 'weekly' },
+  { path: '/pricing', priority: 0.9, changeFrequency: 'monthly' },
   { path: '/blog', priority: 0.8, changeFrequency: 'weekly' },
 ];
 

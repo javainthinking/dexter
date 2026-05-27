@@ -27,6 +27,7 @@ export function SiteFooter({ lang, dict }: { lang: Locale; dict: Dictionary }) {
     { href: '/chat', label: dict.footer?.product?.chat ?? 'Chat' },
     { href: '/portfolios', label: dict.footer?.product?.portfolios ?? 'Portfolios' },
     { href: '/indicators', label: dict.footer?.product?.indicators ?? 'Indicators' },
+    { href: '/pricing', label: dict.footer?.product?.pricing ?? 'Pricing' },
   ];
   const resourceLinks = [
     { href: '/blog', label: dict.footer?.resources?.blog ?? 'Blog' },

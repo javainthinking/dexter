@@ -53,6 +53,27 @@ const nextConfig: NextConfig = {
     // Lets us import from outside the app dir (workspace root).
     externalDir: true,
   },
+  // Security headers applied to every response. Deliberately the
+  // zero-risk set — a full Content-Security-Policy is omitted because the
+  // app ships inline scripts (market-colour prepaint, GA init) plus
+  // external GA/font origins, and a mis-scoped CSP would break rendering;
+  // it needs its own allowlist-tested change.
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()',
+          },
+        ],
+      },
+    ];
+  },
   // TypeScript ESM .js extension trick: the root package writes imports
   // like `from './foo.js'` even when the file is `foo.ts`. Bun/Node strip
   // the extension at runtime; webpack needs to be told explicitly.
