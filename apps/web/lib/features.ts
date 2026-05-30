@@ -108,14 +108,13 @@ const en: FeaturesContent = {
         { title: 'The 5-day signal trail', body: 'Every dimension ships a 5-day bucket trail so you see whether a bullish call is stable, flipping, or flickering — not a single noisy bar masquerading as a signal.' },
         { title: 'Built for US, HK and A-shares', body: 'Limit-up / limit-down / halt bars are detected and masked as neutral, so a string of ±10% limit days never fakes a strong-trend bucket. The same math, market-aware.' },
         { title: 'Cross-indicator at a glance', body: 'Hover any holding to line up every dimension at once. The disciplined multi-signal read — trend filter + momentum trigger + participation — in one scan instead of eight tabs.' },
-        { title: 'Export to chat, then to a deck', body: 'Send the dashboard view into a chat and turn it into a PowerPoint or Excel in one click — the indicator read becomes a shareable artefact.' },
-        { title: 'Share read-only with a link', body: 'Share a live portfolio view with a single URL — holdings, signals, and the trail — no account required for the viewer.' },
+        { title: 'Export to chat, then to a deck', body: 'Send the dashboard view into a chat and turn it into a PowerPoint, Word, or Excel in one click — the indicator read becomes a shareable artefact.' },
       ],
       howItWorks: [
-        { step: 'Add your holdings', detail: 'Build a portfolio of US, HK, or A-share tickers — or import a watchlist.' },
+        { step: 'Add your holdings', detail: 'Build a portfolio of US, HK, or A-share tickers, added by symbol.' },
         { step: 'Read the signals + trail', detail: 'Open the indicators dashboard. Every holding shows all 8 dimensions plus the 5-day bucket trail.' },
         { step: 'Filter with the multi-signal view', detail: 'Use ADX as the regime filter, MACD/RSI/KDJ as triggers, volume + flow as confirmation.' },
-        { step: 'Export or share', detail: 'Turn the read into a deck/Excel, or share a read-only link for a second opinion.' },
+        { step: 'Export to a deck', detail: 'Turn the read into a PowerPoint, Word, or Excel for a second opinion or a client.' },
       ],
       faq: [
         { q: 'Which indicators are included?', a: 'All eight dimensions on every plan: MACD, moving averages (20/60/200), RSI(14), KDJ(9,3,3), Bollinger Bands(20,2), ADX/DMI(14), volume/price relationship, and a capital-flow proxy — plus divergence and support/resistance scans. Any new dimension we add is included for everyone.' },
@@ -150,7 +149,7 @@ const en: FeaturesContent = {
       faq: [
         { q: 'Are the files real Office documents?', a: 'Yes — native .pptx, .docx, and .xlsx generated via OfficeCLI, not screenshots or PDFs. They open and edit in PowerPoint, Keynote, Word, Excel, Google Workspace, and LibreOffice. Every shape, table, and formula is a real Office object.' },
         { q: 'Where does the data come from?', a: 'Live sources at generation time: SEC EDGAR filings (and HKEx / Cninfo for HK / A-shares), market-data feeds, and the indicators computed on the latest close. The model composes from sourced primitives rather than its training data, which is why the numbers are current and traceable.' },
-        { q: 'How many files can I generate?', a: 'Depends on plan: Free 2/month, Starter 8, Pro 30, Power 100+. File generation always uses the Advanced AI model regardless of plan, so output quality stays high. Download links are retained for 7 days.' },
+        { q: 'How many files can I generate?', a: 'Depends on plan: Free 2/month, Starter 8, Pro 30, Power 100+. Output quality is the same on every plan. Download links are retained for 7 days.' },
       ],
     },
     'ai-analyst': {
@@ -167,7 +166,7 @@ const en: FeaturesContent = {
         { title: 'Valuation on demand', body: 'Full discounted-cash-flow models with sensitivity tables, comparable-company analysis, and reverse DCFs — sourced inputs, editable assumptions, in seconds.' },
         { title: 'Reads filings for you', body: 'Summarises a 10-K in 60 seconds, diffs Risk Factors year-over-year, surfaces MD&A signal and footnotes to chase — every claim linked to the page on EDGAR.' },
         { title: 'Multi-source research', body: 'Pulls web, filings, and market data in one turn, then answers with citations — not a confident guess. Honest about what it can and can’t verify.' },
-        { title: 'Long-term memory', body: 'Remembers your thesis, watchlist, and preferences across sessions, so you pick up where you left off instead of re-explaining context every time.' },
+        { title: 'Long-term memory', body: 'Remembers your thesis, the tickers you track, and your preferences across sessions, so you pick up where you left off instead of re-explaining context every time.' },
         { title: 'US, HK and A-share coverage', body: 'Recognises NYSE/NASDAQ, HKEx, and SSE/SZSE tickers and pulls the right filing set and market conventions per market.' },
       ],
       howItWorks: [
@@ -178,7 +177,7 @@ const en: FeaturesContent = {
       ],
       faq: [
         { q: 'How is this different from asking ChatGPT?', a: 'PickSkill grounds every answer in live data — it pulls the actual 10-K, computes the DCF, runs the indicators, and cites sources at query time. Generic chatbots answer from training data and routinely fabricate financial figures. The grounding is the difference, especially for valuation and filings work.' },
-        { q: 'What does "memory" actually remember?', a: 'Your investment thesis, watchlist, preferences, and prior conversation context — persisted across sessions and scoped to your account. You can review and edit memory entries, and they’re unlimited on every plan.' },
+        { q: 'What does "memory" actually remember?', a: 'Your investment thesis, the tickers you track, preferences, and prior conversation context — persisted across sessions and scoped to your account. You can review and edit memory entries, and they’re unlimited on every plan.' },
         { q: 'Which markets are covered?', a: 'US (NYSE / NASDAQ), Hong Kong (HKEx), and Chinese A-shares (SSE / SZSE). The analyst pulls market-appropriate filings — 10-K/10-Q for US, interim/annual for HK, and the 扣非 net-income line for A-shares.' },
       ],
     },

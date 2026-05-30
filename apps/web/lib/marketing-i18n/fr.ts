@@ -35,14 +35,13 @@ export const features: FeaturesContent = {
         { title: 'L’historique de signal sur 5 jours', body: 'Chaque dimension est accompagnée d’un historique de paliers sur 5 jours, pour voir si un signal haussier est stable, en train de basculer ou clignotant — pas une seule bougie bruitée qui se fait passer pour un signal.' },
         { title: 'Conçu pour les actions américaines, hongkongaises et A', body: 'Les bougies de limite haute / limite basse / suspension sont détectées et masquées en neutre, pour qu’une série de séances à ±10% ne simule jamais un palier de forte tendance. Les mêmes calculs, adaptés à chaque marché.' },
         { title: 'Vue croisée des indicateurs en un coup d’œil', body: 'Survolez une position pour aligner toutes les dimensions d’un coup. La lecture multi-signaux disciplinée — filtre de tendance + déclencheur de momentum + participation — en un seul regard plutôt qu’en huit onglets.' },
-        { title: 'Exporter vers le chat, puis vers une présentation', body: 'Envoyez la vue du tableau de bord dans un chat et transformez-la en PowerPoint ou en Excel en un clic — la lecture des indicateurs devient un livrable partageable.' },
-        { title: 'Partager en lecture seule via un lien', body: 'Partagez une vue de portefeuille vivante avec une seule URL — positions, signaux et historique — sans compte requis pour le destinataire.' },
+        { title: 'Exporter vers le chat, puis vers une présentation', body: 'Envoyez la vue du tableau de bord dans un chat et transformez-la en PowerPoint, Word ou Excel en un clic — la lecture des indicateurs devient un livrable partageable.' },
       ],
       howItWorks: [
-        { step: 'Ajoutez vos positions', detail: 'Composez un portefeuille de tickers américains, hongkongais ou en actions A — ou importez une watchlist.' },
+        { step: 'Ajoutez vos positions', detail: 'Composez un portefeuille de tickers américains, hongkongais ou en actions A, et ajoutez des positions par symbole.' },
         { step: 'Lisez les signaux + l’historique', detail: 'Ouvrez le tableau de bord d’indicateurs. Chaque position affiche les 8 dimensions et l’historique de paliers sur 5 jours.' },
         { step: 'Filtrez avec la vue multi-signaux', detail: 'Utilisez l’ADX comme filtre de régime, MACD/RSI/KDJ comme déclencheurs, volume + flux comme confirmation.' },
-        { step: 'Exportez ou partagez', detail: 'Transformez la lecture en présentation/Excel, ou partagez un lien en lecture seule pour un second avis.' },
+        { step: 'Exportez vers une présentation', detail: 'Transformez l’analyse en PowerPoint, Word ou Excel pour un deuxième avis ou un client.' },
       ],
       faq: [
         { q: 'Quels indicateurs sont inclus ?', a: 'Les huit dimensions sur tous les plans : MACD, moyennes mobiles (20/60/200), RSI(14), KDJ(9,3,3), bandes de Bollinger(20,2), ADX/DMI(14), relation volume/prix, et un proxy de flux de capitaux — plus les analyses de divergence et de support/résistance. Toute nouvelle dimension que nous ajoutons est incluse pour tout le monde.' },
@@ -77,7 +76,7 @@ export const features: FeaturesContent = {
       faq: [
         { q: 'Les fichiers sont-ils de vrais documents Office ?', a: 'Oui — des .pptx, .docx et .xlsx natifs générés via OfficeCLI, pas des captures d’écran ni des PDF. Ils s’ouvrent et se modifient dans PowerPoint, Keynote, Word, Excel, Google Workspace et LibreOffice. Chaque forme, tableau et formule est un véritable objet Office.' },
         { q: 'D’où proviennent les données ?', a: 'De sources en direct au moment de la génération : dépôts SEC EDGAR (et HKEx / Cninfo pour les actions hongkongaises / A), flux de données de marché, et indicateurs calculés sur le dernier cours de clôture. Le modèle compose à partir de primitives sourcées plutôt que de ses données d’entraînement, ce qui explique pourquoi les chiffres sont actuels et traçables.' },
-        { q: 'Combien de fichiers puis-je générer ?', a: 'Selon le plan : Free 2/mois, Starter 8, Pro 30, Power 100+. La génération de fichiers utilise toujours le modèle IA avancé quel que soit le plan, pour que la qualité reste élevée. Les liens de téléchargement sont conservés 7 jours.' },
+        { q: 'Combien de fichiers puis-je générer ?', a: 'Selon le plan : Free 2/mois, Starter 8, Pro 30, Power 100+. La qualité de sortie est la même sur tous les plans. Les liens de téléchargement sont conservés 7 jours.' },
       ],
     },
     'ai-analyst': {
@@ -94,7 +93,7 @@ export const features: FeaturesContent = {
         { title: 'Valorisation à la demande', body: 'Des modèles de flux de trésorerie actualisés complets avec tables de sensibilité, analyse de sociétés comparables et DCF inversés — entrées sourcées, hypothèses modifiables, en quelques secondes.' },
         { title: 'Lit les dépôts pour vous', body: 'Résume un 10-K en 60 secondes, compare les facteurs de risque d’une année sur l’autre, fait ressortir le signal du MD&A et les notes de bas de page à creuser — chaque affirmation reliée à sa page sur EDGAR.' },
         { title: 'Recherche multi-sources', body: 'Croise le web, les dépôts et les données de marché en un seul tour, puis répond avec citations — pas une supposition confiante. Honnête sur ce qu’il peut et ne peut pas vérifier.' },
-        { title: 'Mémoire à long terme', body: 'Retient votre thèse, votre watchlist et vos préférences d’une session à l’autre, pour que vous reprenniez là où vous vous étiez arrêté au lieu de réexpliquer le contexte à chaque fois.' },
+        { title: 'Mémoire à long terme', body: 'Retient votre thèse, les tickers que vous suivez et vos préférences d’une session à l’autre, pour que vous reprenniez là où vous vous étiez arrêté au lieu de réexpliquer le contexte à chaque fois.' },
         { title: 'Couverture des actions américaines, hongkongaises et A', body: 'Reconnaît les tickers NYSE/NASDAQ, HKEx et SSE/SZSE et récupère le bon jeu de dépôts et les conventions de marché propres à chaque place.' },
       ],
       howItWorks: [
@@ -105,7 +104,7 @@ export const features: FeaturesContent = {
       ],
       faq: [
         { q: 'En quoi est-ce différent de demander à ChatGPT ?', a: 'PickSkill ancre chaque réponse dans des données en direct — il récupère le 10-K réel, calcule le DCF, exécute les indicateurs et cite ses sources au moment de la requête. Les chatbots génériques répondent à partir de leurs données d’entraînement et fabriquent régulièrement des chiffres financiers. L’ancrage fait toute la différence, surtout pour le travail de valorisation et sur les dépôts.' },
-        { q: 'Que retient réellement la « mémoire » ?', a: 'Votre thèse d’investissement, votre watchlist, vos préférences et le contexte des conversations précédentes — persistés d’une session à l’autre et limités à votre compte. Vous pouvez consulter et modifier les entrées de mémoire, et elles sont illimitées sur tous les plans.' },
+        { q: 'Que retient réellement la « mémoire » ?', a: 'Votre thèse d’investissement, les tickers que vous suivez, vos préférences et le contexte des conversations précédentes — persistés d’une session à l’autre et limités à votre compte. Vous pouvez consulter et modifier les entrées de mémoire, et elles sont illimitées sur tous les plans.' },
         { q: 'Quels marchés sont couverts ?', a: 'Les États-Unis (NYSE / NASDAQ), Hong Kong (HKEx) et les actions A chinoises (SSE / SZSE). L’analyste récupère les dépôts adaptés à chaque marché — 10-K/10-Q pour les États-Unis, rapports intérimaires/annuels pour Hong Kong, et la ligne de résultat net 扣非 pour les actions A.' },
       ],
     },
@@ -115,15 +114,23 @@ export const features: FeaturesContent = {
 export const pricing: PricingContent = {
   metaTitle: 'Tarifs — PickSkill',
   metaDescription:
-    'Plans PickSkill : Free, Starter 15 $/mois, Pro 39 $/mois, Power 129 $/mois. La facturation annuelle fait économiser 20 %. Essai Pro de 7 jours, sans carte. Annulable à tout moment.',
+    'Plans PickSkill : Free, Starter 15 $/mois, Pro 39 $/mois, Power 129 $/mois. La facturation annuelle fait économiser 20 %. Annulable à tout moment.',
   heroEyebrow: 'Plans & tarifs',
   heroHeadline: 'Un analyste IA pour le prix de quelques cafés.',
   heroSub:
-    'Recherchez, modélisez et rédigez votre travail sur actions en langage clair. Les plans annuels font économiser 20 %. Chaque nouveau compte bénéficie d’un essai Pro de 7 jours — sans carte bancaire.',
+    'Recherchez, modélisez et rédigez votre travail sur actions en langage clair. Les plans annuels font économiser 20 %. Annulable à tout moment.',
   perMonth: '/mois',
   mostPopular: 'Le plus populaire',
   everyPlanNote:
     'Les 8 dimensions d’indicateurs et la mémoire à long terme illimitée sont incluses dans tous les plans.',
+  comparisonHeading: 'Comparer les plans',
+  billing: {
+    monthly: 'Mensuel',
+    annual: 'Annuel',
+    save: '-20%',
+    billedAnnually: 'facturé annuellement',
+    overage: '+ dépassement à l’usage',
+  },
   faqHeading: 'Questions fréquentes',
   plans: {
     free: {
@@ -134,7 +141,7 @@ export const pricing: PricingContent = {
         '30 conversations / mois',
         '5 tours de recherche approfondie / mois',
         '1 portefeuille · 10 positions',
-        '2 fichiers / mois (PPT / Word / Excel)',
+        '2 fichiers générés / mois (PPT / Word / Excel)',
         'Les 8 dimensions d’indicateurs',
         'Mémoire à long terme illimitée',
       ],
@@ -147,9 +154,8 @@ export const pricing: PricingContent = {
         '200 conversations / mois',
         '50 tours de recherche approfondie / mois',
         '3 portefeuilles · 25 positions chacun',
-        '8 fichiers / mois',
-        '1 watchlist · jusqu’à 20 symboles',
-        'Support par e-mail sous 48 h',
+        '8 fichiers générés / mois (PPT / Word / Excel)',
+        'Support par e-mail',
       ],
     },
     pro: {
@@ -157,14 +163,11 @@ export const pricing: PricingContent = {
       annualNote: '32 $/mois facturé annuellement (384 $/an)',
       cta: 'Passer à Pro',
       features: [
-        'Modèle IA avancé',
         '1 000 conversations / mois',
         '300 tours de recherche approfondie / mois',
         '10 portefeuilles · 50 positions chacun',
-        '30 fichiers / mois',
-        'Actualisation automatique des cours toutes les 15 min',
-        'Export du tableau de bord vers une présentation',
-        'Support par e-mail sous 24 h',
+        '30 fichiers générés / mois (PPT / Word / Excel)',
+        'Support par e-mail',
       ],
     },
     power: {
@@ -175,17 +178,61 @@ export const pricing: PricingContent = {
         'Tout ce qui est inclus dans Pro, plus :',
         'Conversations & recherche illimitées',
         'Portefeuilles illimités · 100 positions',
-        '100+ fichiers / mois',
-        'Cours en temps réel à la demande (auto 5 min)',
-        'Exports de tableau de bord illimités',
-        'Support via canal Slack partagé',
+        '100+ fichiers générés / mois (PPT / Word / Excel)',
+        'Support e-mail prioritaire',
       ],
     },
   },
+  comparison: [
+    {
+      title: 'L’assistant IA',
+      rows: [
+        { label: 'Conversations / mois', values: ['30', '200', '1 000', 'Illimitées'] },
+        { label: 'Tours de recherche approfondie / mois', values: ['5', '50', '300', 'Illimités'] },
+        { label: 'Workflows spécialisés (DCF, recherche X)', values: [true, true, true, true] },
+        { label: 'Mémoire à long terme', values: ['Illimitée', 'Illimitée', 'Illimitée', 'Illimitée'] },
+      ],
+    },
+    {
+      title: 'Documents',
+      rows: [
+        { label: 'Fichiers / mois (PPT · Word · Excel)', values: ['2', '8', '30', '100+'] },
+        { label: 'Liens de téléchargement conservés', values: ['7 jours', '7 jours', '7 jours', '7 jours'] },
+      ],
+    },
+    {
+      title: 'Portefeuilles',
+      rows: [
+        { label: 'Portefeuilles', values: ['1', '3', '10', 'Illimités'] },
+        { label: 'Positions par portefeuille', values: ['10', '25', '50', '100'] },
+        { label: 'Actualisation des cours', values: ['À la demande', 'À la demande', 'À la demande', 'À la demande'] },
+      ],
+    },
+    {
+      title: 'Tableau de bord d’indicateurs',
+      rows: [
+        { label: 'Dimensions d’indicateurs', values: ['Les 8', 'Les 8', 'Les 8', 'Les 8'] },
+        { label: 'Export du tableau de bord (PPT / Word / Excel)', values: [true, true, true, true] },
+      ],
+    },
+    {
+      title: 'Marchés & langues',
+      rows: [
+        { label: 'Couverture des marchés (US · HK · actions A)', values: [true, true, true, true] },
+        { label: 'Langues de sortie', values: ['8', '8', '8', '8'] },
+      ],
+    },
+    {
+      title: 'Support',
+      rows: [
+        { label: 'Support', values: ['Communauté', 'E-mail', 'E-mail', 'E-mail prioritaire'] },
+        { label: 'Annulable à tout moment', values: [true, true, true, true] },
+      ],
+    },
+  ],
   faq: [
-    { q: 'Y a-t-il un essai gratuit de Pro ?', a: 'Chaque nouveau compte bénéficie de 7 jours d’accès Pro complet dès l’inscription — sans carte bancaire. À la fin de l’essai, vous choisissez votre plan ou restez sur Free.' },
     { q: 'Qu’est-ce qui compte comme une « conversation » ?', a: 'Un échange aller-retour avec l’IA sur un sujet — y compris les relances et les appels d’outils au sein de ce fil. Nous comptons l’ensemble du fil comme une seule conversation au regard de votre quota mensuel.' },
-    { q: 'Comment fonctionne la génération de fichiers ?', a: 'Demandez à l’IA de créer un fichier PowerPoint, Word ou Excel. Nous le générons, l’hébergeons sur Cloudflare R2 et vous donnons un lien de téléchargement valable 7 jours dans le chat. Chaque fichier compte pour un au regard de votre quota mensuel quelle que soit sa longueur, et utilise toujours le modèle IA avancé.' },
+    { q: 'Comment fonctionne la génération de fichiers ?', a: 'Demandez à l’IA de créer un fichier PowerPoint, Word ou Excel. Nous le générons, l’hébergeons sur Cloudflare R2 et vous donnons un lien de téléchargement valable 7 jours dans le chat. Chaque fichier compte pour un au regard de votre quota mensuel quelle que soit sa longueur.' },
     { q: 'Puis-je basculer entre facturation mensuelle et annuelle ?', a: 'Oui, à tout moment. Mensuel → annuel facture un montant annuel au prorata et décale votre date de renouvellement. Annuel → mensuel prend effet à votre prochain renouvellement.' },
     { q: 'Mes données sont-elles conservées si je change de plan ?', a: 'Oui. Portefeuilles, positions, entrées de mémoire et historique des conversations suivent votre compte. Si vous passez sous une limite, les données plus anciennes deviennent en lecture seule jusqu’à ce que vous en supprimiez ou que vous montiez de plan — rien n’est supprimé.' },
     { q: 'Quels moyens de paiement acceptez-vous ?', a: 'Les principales cartes bancaires via Stripe. Les méthodes locales (Alipay, WeChat Pay) pour les régions prises en charge sont prévues dans la feuille de route.' },

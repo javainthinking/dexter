@@ -27,16 +27,20 @@ export interface PlanMeta {
   name: string;
   /** Monthly price string, e.g. "$15" — not translated. */
   monthly: string;
-  /** Numeric price for schema offers. */
+  /** Per-month price when billed annually, e.g. "$12" — not translated. */
+  annualMonthly: string;
+  /** Total billed once per year, e.g. "$144". Null for Free (nothing billed). */
+  annualTotal: string | null;
+  /** Numeric monthly price for schema offers. */
   priceValue: string;
   featured?: boolean;
 }
 
 export const planMeta: PlanMeta[] = [
-  { id: 'free', name: 'Free', monthly: '$0', priceValue: '0' },
-  { id: 'starter', name: 'Starter', monthly: '$15', priceValue: '15' },
-  { id: 'pro', name: 'Pro', monthly: '$39', priceValue: '39', featured: true },
-  { id: 'power', name: 'Power', monthly: '$129', priceValue: '129' },
+  { id: 'free', name: 'Free', monthly: '$0', annualMonthly: '$0', annualTotal: null, priceValue: '0' },
+  { id: 'starter', name: 'Starter', monthly: '$15', annualMonthly: '$12', annualTotal: '$144', priceValue: '15' },
+  { id: 'pro', name: 'Pro', monthly: '$39', annualMonthly: '$32', annualTotal: '$384', priceValue: '39', featured: true },
+  { id: 'power', name: 'Power', monthly: '$129', annualMonthly: '$104', annualTotal: '$1,248', priceValue: '129' },
 ];
 
 export interface PlanCopy {
@@ -44,6 +48,25 @@ export interface PlanCopy {
   annualNote: string;
   cta: string;
   features: string[];
+}
+
+/**
+ * One cell value in the plan-comparison matrix. `true` renders a check,
+ * `false` renders a dash, a string renders verbatim (e.g. "30", "Unlimited",
+ * "Priority email"). Numbers are kept as strings so locales can localize words
+ * like "Unlimited" while leaving digits untouched.
+ */
+export type ComparisonValue = string | boolean;
+
+export interface ComparisonRow {
+  label: string;
+  /** Exactly four values, ordered Free, Starter, Pro, Power. */
+  values: ComparisonValue[];
+}
+
+export interface ComparisonGroup {
+  title: string;
+  rows: ComparisonRow[];
 }
 
 export interface PricingContent {
@@ -55,23 +78,46 @@ export interface PricingContent {
   perMonth: string;
   mostPopular: string;
   everyPlanNote: string;
+  comparisonHeading: string;
   faqHeading: string;
+  /** Monthly/annual billing toggle labels + the annual sub-line phrasing. */
+  billing: {
+    /** Toggle label for monthly billing. */
+    monthly: string;
+    /** Toggle label for annual billing. */
+    annual: string;
+    /** Savings badge on the annual toggle, e.g. "Save 20%". */
+    save: string;
+    /** Suffix after the annual total, e.g. "$144 billed annually". */
+    billedAnnually: string;
+    /** Power-only annual sub-line addendum, e.g. "+ usage overage". */
+    overage: string;
+  };
   plans: Record<PlanId, PlanCopy>;
+  comparison: ComparisonGroup[];
   faq: { q: string; a: string }[];
 }
 
 const en: PricingContent = {
   metaTitle: 'Pricing — PickSkill',
   metaDescription:
-    'PickSkill plans: Free, Starter $15/mo, Pro $39/mo, Power $129/mo. Annual billing saves 20%. 7-day Pro trial, no card. Cancel anytime.',
+    'PickSkill plans: Free, Starter $15/mo, Pro $39/mo, Power $129/mo. Annual billing saves 20%. Cancel anytime.',
   heroEyebrow: 'Plans & pricing',
   heroHeadline: 'An AI analyst for the price of a few coffees.',
   heroSub:
-    'Research, model, and draft equity work in plain English. Annual plans save 20%. Every new account gets a 7-day Pro trial — no card required.',
+    'Research, model, and draft equity work in plain English. Annual plans save 20%. Cancel anytime.',
   perMonth: '/mo',
   mostPopular: 'Most popular',
   everyPlanNote:
     'All 8 indicator dimensions and unlimited long-term memory are included on every plan.',
+  comparisonHeading: 'Compare plans',
+  billing: {
+    monthly: 'Monthly',
+    annual: 'Annual',
+    save: 'Save 20%',
+    billedAnnually: 'billed annually',
+    overage: '+ usage overage',
+  },
   faqHeading: 'Frequently asked questions',
   plans: {
     free: {
@@ -82,7 +128,7 @@ const en: PricingContent = {
         '30 conversations / month',
         '5 deep-research turns / month',
         '1 portfolio · 10 holdings',
-        '2 files / month (PPT / Word / Excel)',
+        '2 generated files / month (PPT / Word / Excel)',
         'All 8 indicator dimensions',
         'Unlimited long-term memory',
       ],
@@ -95,9 +141,8 @@ const en: PricingContent = {
         '200 conversations / month',
         '50 deep-research turns / month',
         '3 portfolios · 25 holdings each',
-        '8 files / month',
-        '1 watchlist · up to 20 symbols',
-        'Email support within 48h',
+        '8 generated files / month (PPT / Word / Excel)',
+        'Email support',
       ],
     },
     pro: {
@@ -105,14 +150,11 @@ const en: PricingContent = {
       annualNote: '$32/mo billed annually ($384/yr)',
       cta: 'Go Pro',
       features: [
-        'Advanced AI model',
         '1,000 conversations / month',
         '300 deep-research turns / month',
         '10 portfolios · 50 holdings each',
-        '30 files / month',
-        'Auto-refresh quotes every 15 min',
-        'Export dashboard to a deck',
-        'Email support within 24h',
+        '30 generated files / month (PPT / Word / Excel)',
+        'Email support',
       ],
     },
     power: {
@@ -123,17 +165,61 @@ const en: PricingContent = {
         'Everything in Pro, plus:',
         'Unlimited conversations & research',
         'Unlimited portfolios · 100 holdings',
-        '100+ files / month',
-        'Real-time quotes on demand (5-min auto)',
-        'Unlimited dashboard exports',
-        'Shared Slack channel support',
+        '100+ generated files / month (PPT / Word / Excel)',
+        'Priority email support',
       ],
     },
   },
+  comparison: [
+    {
+      title: 'The AI assistant',
+      rows: [
+        { label: 'Conversations / month', values: ['30', '200', '1,000', 'Unlimited'] },
+        { label: 'Deep-research turns / month', values: ['5', '50', '300', 'Unlimited'] },
+        { label: 'Specialised workflows (DCF, X research)', values: [true, true, true, true] },
+        { label: 'Long-term memory', values: ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited'] },
+      ],
+    },
+    {
+      title: 'Documents',
+      rows: [
+        { label: 'Files / month (PPT · Word · Excel)', values: ['2', '8', '30', '100+'] },
+        { label: 'Download links retained', values: ['7 days', '7 days', '7 days', '7 days'] },
+      ],
+    },
+    {
+      title: 'Portfolios',
+      rows: [
+        { label: 'Portfolios', values: ['1', '3', '10', 'Unlimited'] },
+        { label: 'Holdings per portfolio', values: ['10', '25', '50', '100'] },
+        { label: 'Quote refresh', values: ['On-demand', 'On-demand', 'On-demand', 'On-demand'] },
+      ],
+    },
+    {
+      title: 'Indicators dashboard',
+      rows: [
+        { label: 'Technical dimensions', values: ['All 8', 'All 8', 'All 8', 'All 8'] },
+        { label: 'Export dashboard (PPT / Word / Excel)', values: [true, true, true, true] },
+      ],
+    },
+    {
+      title: 'Markets & languages',
+      rows: [
+        { label: 'Market coverage (US · HK · A-share)', values: [true, true, true, true] },
+        { label: 'Output languages', values: ['8', '8', '8', '8'] },
+      ],
+    },
+    {
+      title: 'Support',
+      rows: [
+        { label: 'Support', values: ['Community', 'Email', 'Email', 'Priority email'] },
+        { label: 'Cancel anytime', values: [true, true, true, true] },
+      ],
+    },
+  ],
   faq: [
-    { q: 'Is there a free trial of Pro?', a: 'Every new account gets 7 days of full Pro access on signup — no credit card required. After the trial you choose your plan or stay on Free.' },
     { q: 'What counts as one "conversation"?', a: 'One back-and-forth thread with the AI on a topic — including follow-ups and tool calls inside that thread. We count the whole thread as one conversation against your monthly quota.' },
-    { q: 'How does file generation work?', a: 'Ask the AI to make a PowerPoint, Word, or Excel file. We generate it, host it on Cloudflare R2, and give you a 7-day download link in chat. Each file counts as one against your monthly quota regardless of length, and always uses the Advanced AI model.' },
+    { q: 'How does file generation work?', a: 'Ask the AI to make a PowerPoint, Word, or Excel file. We generate it, host it on Cloudflare R2, and give you a 7-day download link in chat. Each file counts as one against your monthly quota regardless of how many slides, pages, or rows it contains.' },
     { q: 'Can I switch between monthly and annual billing?', a: 'Yes, any time. Monthly → annual charges a prorated annual amount and shifts your renewal date. Annual → monthly takes effect at your next renewal.' },
     { q: 'Will my data carry over if I upgrade or downgrade?', a: 'Yes. Portfolios, holdings, memory entries, and conversation history move with your account. If you downgrade past a limit, older data becomes read-only until you remove some or upgrade — nothing is deleted.' },
     { q: 'What payment methods do you accept?', a: 'Major credit cards via Stripe. Local methods (Alipay, WeChat Pay) for supported regions are on the roadmap.' },

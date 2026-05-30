@@ -1,14 +1,13 @@
 import type { Metadata } from 'next';
+import { Fragment } from 'react';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { Check } from 'lucide-react';
+import { Check, Minus } from 'lucide-react';
 import { isLocale, locales, localeOg, type Locale } from '../../../lib/i18n/locales';
 import { getLocalizedPath } from '../../../lib/i18n/paths';
 import { generateAlternatesMetadata } from '../../../lib/i18n/seo';
 import { planMeta, getPricingContent } from '../../../lib/pricing';
 import { getDictionary } from '../dictionaries';
-import { Button } from '../../../components/ui/button';
-import { Badge } from '../../../components/ui/badge';
+import { PricingCards } from '../../../components/marketing/pricing-cards';
 import { SiteHeader } from '../../../components/marketing/site-header';
 import { SiteFooter } from '../../../components/marketing/site-footer';
 
@@ -117,50 +116,77 @@ export default async function PricingPage({
       {/* Plan cards */}
       <section className="border-b border-border">
         <div className="mx-auto max-w-6xl px-5 py-12 lg:px-8">
-          <div className="grid gap-4 lg:grid-cols-4">
-            {planMeta.map((plan) => {
-              const copy = c.plans[plan.id];
-              return (
-                <div
-                  key={plan.id}
-                  className={`relative flex flex-col rounded-xl border bg-card p-6 ${
-                    plan.featured ? 'border-[color:var(--accent)]' : 'border-border'
-                  }`}
-                >
-                  {plan.featured && (
-                    <div className="absolute -top-3 left-6">
-                      <Badge variant="accent" size="default">
-                        {c.mostPopular}
-                      </Badge>
-                    </div>
-                  )}
-                  <h2 className="font-serif text-lg font-semibold tracking-tight text-foreground">
-                    {plan.name}
-                  </h2>
-                  <p className="mt-1 text-sm text-muted-foreground">{copy.blurb}</p>
-                  <div className="mt-5 flex items-baseline gap-1">
-                    <span className="font-serif text-4xl font-semibold tracking-tight text-foreground">
-                      {plan.monthly}
-                    </span>
-                    <span className="text-sm text-subtle">{c.perMonth}</span>
-                  </div>
-                  <p className="mt-1 text-xs text-subtle">{copy.annualNote}</p>
-                  <Button asChild size="default" variant={plan.featured ? 'default' : 'outline'} className="mt-5">
-                    <Link href={chatHref}>{copy.cta}</Link>
-                  </Button>
-                  <ul className="mt-6 space-y-2.5">
-                    {copy.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2 text-sm text-muted-foreground">
-                        <Check className="mt-0.5 size-4 shrink-0 text-[color:var(--accent)]" />
-                        <span>{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            })}
-          </div>
+          <PricingCards plans={planMeta} copy={c} chatHref={chatHref} />
           <p className="mt-6 text-center text-xs text-subtle">{c.everyPlanNote}</p>
+        </div>
+      </section>
+
+      {/* Plan comparison matrix */}
+      <section className="border-b border-border">
+        <div className="mx-auto max-w-6xl px-5 py-16 lg:px-8">
+          <h2 className="font-serif text-2xl font-semibold tracking-tight text-foreground">
+            {c.comparisonHeading}
+          </h2>
+          <div className="mt-8 overflow-x-auto">
+            <table className="w-full min-w-[640px] border-collapse text-sm">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="w-2/5 py-3 pr-4 text-left font-medium text-subtle" />
+                  {planMeta.map((plan) => (
+                    <th
+                      key={plan.id}
+                      className={`px-3 py-3 text-center font-serif text-base font-semibold ${
+                        plan.featured ? 'text-[color:var(--accent)]' : 'text-foreground'
+                      }`}
+                    >
+                      {plan.name}
+                      <span className="mt-0.5 block font-sans text-xs font-normal text-subtle">
+                        {plan.monthly}
+                        {plan.priceValue !== '0' && c.perMonth}
+                      </span>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {c.comparison.map((group) => (
+                  <Fragment key={group.title}>
+                    <tr>
+                      <td
+                        colSpan={planMeta.length + 1}
+                        className="pt-6 pb-2 font-mono text-[10px] uppercase tracking-[0.16em] text-subtle"
+                      >
+                        {group.title}
+                      </td>
+                    </tr>
+                    {group.rows.map((row) => (
+                      <tr key={row.label} className="border-b border-border/60">
+                        <td className="py-3 pr-4 text-left text-muted-foreground">{row.label}</td>
+                        {row.values.map((value, i) => (
+                          <td
+                            key={planMeta[i]?.id ?? i}
+                            className={`px-3 py-3 text-center ${
+                              planMeta[i]?.featured ? 'bg-muted/30' : ''
+                            }`}
+                          >
+                            {typeof value === 'boolean' ? (
+                              value ? (
+                                <Check className="mx-auto size-4 text-[color:var(--accent)]" />
+                              ) : (
+                                <Minus className="mx-auto size-4 text-subtle" />
+                              )
+                            ) : (
+                              <span className="text-foreground">{value}</span>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </Fragment>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 

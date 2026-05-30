@@ -54,7 +54,7 @@ Annual plans save 20%. Cancel anytime.
 | Technical & analytical dimensions | All 8 *(plus any new ones we add)* | All 8 *(plus any new ones we add)* | All 8 *(plus any new ones we add)* | All 8 *(plus any new ones we add)* |
 | Export dashboard to a deck | — | — | ✓ *(uses your file-gen quota)* | ✓ Unlimited |
 | **Other** | | | | |
-| Support | Community | Email reply within 48h | Email reply within 24h | Shared Slack channel |
+| Support | Community | Email support | Email support | Priority email support |
 | Cancel anytime | ✓ | ✓ | ✓ | ✓ |
 
 ### Power tier — usage overage
