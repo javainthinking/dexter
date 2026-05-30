@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
 import { PostgresWebSessionStore } from '@dexter/core/adapters/storage/postgres/web-session-store';
 import { getCurrentUser } from '../../../../lib/auth/session';
+import { hydrateSessionDeliverables } from '../../../../lib/session-deliverables';
 
 /**
  * GET /api/sessions/current — return the full session record (including
@@ -37,7 +38,10 @@ export async function GET(_request: NextRequest): Promise<Response> {
     if (session && session.userId && session.userId !== user.id) {
       return NextResponse.json({ session: null });
     }
-    return NextResponse.json({ session });
+    // Re-sign each turn's persisted deliverable keys into fresh download
+    // URLs (presigned URLs expire, so we never store them).
+    const hydrated = await hydrateSessionDeliverables(session);
+    return NextResponse.json({ session: hydrated });
   } catch (err) {
     console.error(
       JSON.stringify({

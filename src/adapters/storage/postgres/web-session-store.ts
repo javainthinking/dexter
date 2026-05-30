@@ -46,6 +46,7 @@ export class PostgresWebSessionStore implements WebSessionStore {
       answer: r.answer ?? null,
       summary: r.summary ?? null,
       tokenCount: r.tokenCount ?? null,
+      deliverables: r.deliverables ?? null,
       createdAt: r.createdAt.getTime(),
       updatedAt: r.updatedAt.getTime(),
     }));
@@ -90,6 +91,7 @@ export class PostgresWebSessionStore implements WebSessionStore {
         answer: turn.answer ?? null,
         summary: turn.summary ?? null,
         tokenCount: turn.tokenCount ?? null,
+        deliverables: turn.deliverables ?? null,
       })
       .returning({ turnIndex: webMessages.turnIndex });
 

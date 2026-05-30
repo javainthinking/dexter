@@ -120,6 +120,12 @@ export async function POST(request: NextRequest): Promise<Response> {
   // streaming the right job (defensive — the client already sent it).
   sink.emit({ type: 'job_registered', jobId } as never);
 
+  // Whether the agent reached a terminal `done` this hop. A chunked run
+  // can span several resume invocations; only the one that completes the
+  // task persists the turn (query + final answer + deliverables). Earlier
+  // hops yield another `continuation_required` and persist nothing.
+  let turnCompleted = false;
+
   void withUser(
     { userId: user.id, email: user.email ?? undefined },
     () =>
@@ -153,6 +159,7 @@ export async function POST(request: NextRequest): Promise<Response> {
           }
         },
         onDone: async (answer) => {
+          turnCompleted = true;
           try {
             await markDone(jobId, answer);
           } catch (err) {
@@ -188,11 +195,30 @@ export async function POST(request: NextRequest): Promise<Response> {
       await markError(jobId, message).catch(() => {});
     })
     .finally(async () => {
-      // session.flush() is intentionally NOT called here. The original
-      // /api/agent invocation owns the dexter_web_messages turn and
-      // will flush its final answer when the agent emits `done` (which
-      // for chunked runs happens in whichever chunk completes the
-      // task). The resume route's session is read-only for context.
+      // Persist the turn IFF this hop completed it. The original
+      // /api/agent invocation returned at `continuation_required` without
+      // flushing, so for a chunked run the turn (query + final answer +
+      // deliverables) is only ever durably written here. No partial row
+      // exists upstream, so this appends exactly one complete turn.
+      if (turnCompleted) {
+        try {
+          await session.flush();
+        } catch (err) {
+          const message = err instanceof Error ? err.message : String(err);
+          console.error(
+            JSON.stringify({
+              level: 'error',
+              surface: 'web',
+              route: '/api/agent/resume',
+              requestId,
+              jobId,
+              sessionId: session.sessionId,
+              msg: 'session_flush_error',
+              error: message,
+            }),
+          );
+        }
+      }
       const durationMs = Date.now() - startedAt;
       console.log(
         JSON.stringify({

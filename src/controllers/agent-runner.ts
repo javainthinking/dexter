@@ -484,6 +484,18 @@ export class AgentRunnerController {
         if (done.answer) {
           await this.inMemoryChatHistory.saveAnswer(done.answer).catch(() => {});
         }
+        // Attach this turn's files to history so they persist alongside the
+        // answer. Store only the durable subset (key + metadata) — the
+        // presigned URL is re-minted on read. No-op when there are none.
+        if (done.deliverables && done.deliverables.length > 0) {
+          this.inMemoryChatHistory.saveDeliverables(
+            done.deliverables.map((d) => ({
+              filename: d.filename,
+              key: d.key,
+              byteLength: d.byteLength,
+            })),
+          );
+        }
         this.updateLastItem((last) => ({
           ...last,
           answer: done.answer,

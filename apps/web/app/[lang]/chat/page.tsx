@@ -12,6 +12,7 @@ import {
   AssistantMessage,
   UserMessage,
   type ChatTurn,
+  type TurnDeliverable,
 } from '../../../components/chat/message';
 import type { ToolCardEvent, ToolStatus } from '../../../components/chat/tool-card';
 import { Separator } from '../../../components/ui/separator';
@@ -27,6 +28,19 @@ import {
 } from '../../../components/i18n/dictionary-provider';
 import { cn } from '../../../lib/utils';
 import { readAndClearChatSeed } from '../../../lib/chat-seed';
+
+// Shape of a persisted session as returned by /api/sessions/current and
+// /api/sessions/switch. Deliverables arrive already re-signed (download
+// URL + expiry) by the server from the stored R2 keys.
+interface PersistedTurn {
+  turnIndex: number;
+  query: string;
+  answer: string | null;
+  deliverables?: TurnDeliverable[];
+}
+interface PersistedSession {
+  turns: PersistedTurn[];
+}
 
 export default function ChatRoute() {
   return (
@@ -123,24 +137,24 @@ function ChatPage() {
   // Map persisted WebChatTurn rows into the client-side ChatTurn shape used
   // by the thread. Historical turns have no tool-call records (we don't
   // persist tool events yet) and are always considered 'done' for status.
-  const hydrateFromRecord = useCallback(
-    (record: { turns: Array<{ turnIndex: number; query: string; answer: string | null }> } | null) => {
-      if (!record) {
-        setTurns([]);
-        return;
-      }
-      setTurns(
-        record.turns.map((t) => ({
-          id: `turn-${t.turnIndex}`,
-          question: t.query,
-          answer: t.answer ?? '',
-          status: 'done' as const,
-          tools: [],
-        })),
-      );
-    },
-    [],
-  );
+  // Deliverables carry presigned download URLs the server re-minted from
+  // the stored R2 keys, so reopened conversations show working chips.
+  const hydrateFromRecord = useCallback((record: PersistedSession | null) => {
+    if (!record) {
+      setTurns([]);
+      return;
+    }
+    setTurns(
+      record.turns.map((t) => ({
+        id: `turn-${t.turnIndex}`,
+        question: t.query,
+        answer: t.answer ?? '',
+        status: 'done' as const,
+        tools: [],
+        deliverables: t.deliverables ?? [],
+      })),
+    );
+  }, []);
 
   useEffect(() => {
     void refreshSessions();
@@ -164,9 +178,7 @@ function ChatPage() {
       try {
         const res = await fetch('/api/sessions/current', { cache: 'no-store' });
         if (!res.ok) return;
-        const data = (await res.json()) as {
-          session: { turns: Array<{ turnIndex: number; query: string; answer: string | null }> } | null;
-        };
+        const data = (await res.json()) as { session: PersistedSession | null };
         if (!cancelled) hydrateFromRecord(data.session);
       } catch {
         /* ignore */
@@ -326,11 +338,7 @@ function ChatPage() {
           body: JSON.stringify({ sessionId }),
         });
         if (res.ok) {
-          const data = (await res.json()) as {
-            session: {
-              turns: Array<{ turnIndex: number; query: string; answer: string | null }>;
-            } | null;
-          };
+          const data = (await res.json()) as { session: PersistedSession | null };
           hydrateFromRecord(data.session);
           void refreshSessions();
           setSidebarOpen(false);

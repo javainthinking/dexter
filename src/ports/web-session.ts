@@ -9,6 +9,8 @@
  *   - adapters/storage/memory/web-session-store    (Phase 2 / tests)
  */
 
+import type { StoredDeliverable } from '../agent/types.js';
+
 export interface WebChatTurn {
   /** Stable per-session turn index, monotonically increasing from 0. */
   turnIndex: number;
@@ -18,6 +20,13 @@ export interface WebChatTurn {
   /** LLM-generated brief summary used for context compression. */
   summary: string | null;
   tokenCount?: number | null;
+  /**
+   * Files the agent produced this turn (R2 keys + metadata). Null/absent
+   * for turns that produced no files and for turns persisted before this
+   * column existed. Read surfaces re-sign each key into a fresh download
+   * URL via runtime/r2.ts#presignDownloadForKey.
+   */
+  deliverables?: StoredDeliverable[] | null;
   createdAt: number;
   updatedAt?: number;
 }

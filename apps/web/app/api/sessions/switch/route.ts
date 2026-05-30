@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
 import { PostgresWebSessionStore } from '@dexter/core/adapters/storage/postgres/web-session-store';
 import { getCurrentUser } from '../../../../lib/auth/session';
+import { hydrateSessionDeliverables } from '../../../../lib/session-deliverables';
 
 /**
  * POST /api/sessions/switch — set the session cookie to an existing session id
@@ -52,17 +53,21 @@ export async function POST(request: NextRequest): Promise<Response> {
       maxAge: 60 * 60 * 24 * 30,
     });
 
+    // Re-sign each turn's persisted deliverable keys into fresh download
+    // URLs so reopened conversations show working download chips.
+    const hydrated = await hydrateSessionDeliverables(session);
+
     console.log(
       JSON.stringify({
         level: 'info',
         route: '/api/sessions/switch',
         requestId,
         sessionId,
-        turnCount: session?.turns.length ?? 0,
+        turnCount: hydrated?.turns.length ?? 0,
         msg: 'session_switched',
       }),
     );
-    return NextResponse.json({ sessionId, session });
+    return NextResponse.json({ sessionId, session: hydrated });
   } catch (err) {
     console.error(
       JSON.stringify({

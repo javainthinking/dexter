@@ -117,6 +117,14 @@ export async function POST(request: NextRequest): Promise<Response> {
     jobId: job.jobId,
   } as never);
 
+  // Whether the agent reached a terminal `done` this invocation. We only
+  // persist the turn when it actually completed — a run that yields
+  // `continuation_required` finishes in a later /api/agent/resume hop,
+  // and THAT invocation owns the flush. Flushing a half-run here would
+  // write a turn with answer=null (and no deliverables), which is exactly
+  // the orphan row that rendered as an empty assistant bubble.
+  let turnCompleted = false;
+
   // Kick off the agent run asynchronously. The sink is what streams events
   // out to the client; runQuery() flushes the sink in its own `finally`.
   // The withUser scope makes user.id readable from tools (e.g. the office
@@ -146,6 +154,7 @@ export async function POST(request: NextRequest): Promise<Response> {
           }
         },
         onDone: async (answer) => {
+          turnCompleted = true;
           try {
             await markDone(job.jobId, answer);
           } catch (err) {
@@ -182,22 +191,27 @@ export async function POST(request: NextRequest): Promise<Response> {
       await markError(job.jobId, message).catch(() => {});
     })
     .finally(async () => {
-      // Persist the new turn(s) into durable storage. No-op in local mode.
-      try {
-        await session.flush();
-      } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
-        console.error(
-          JSON.stringify({
-            level: 'error',
-            surface: 'web',
-            route: '/api/agent',
-            requestId,
-            sessionId: session.sessionId,
-            msg: 'session_flush_error',
-            error: message,
-          }),
-        );
+      // Persist the completed turn into durable storage. No-op in local
+      // mode. Skip when the run yielded a continuation — the resume hop
+      // that reaches `done` owns the flush, so we never write an
+      // answerless orphan turn here.
+      if (turnCompleted) {
+        try {
+          await session.flush();
+        } catch (err) {
+          const message = err instanceof Error ? err.message : String(err);
+          console.error(
+            JSON.stringify({
+              level: 'error',
+              surface: 'web',
+              route: '/api/agent',
+              requestId,
+              sessionId: session.sessionId,
+              msg: 'session_flush_error',
+              error: message,
+            }),
+          );
+        }
       }
       const durationMs = Date.now() - startedAt;
       console.log(

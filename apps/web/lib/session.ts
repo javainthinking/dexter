@@ -128,6 +128,7 @@ async function resolveCloud({
           query: msg.query,
           answer: msg.answer,
           summary: msg.summary,
+          deliverables: msg.deliverables ?? null,
         });
       }
     },

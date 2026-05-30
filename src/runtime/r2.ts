@@ -125,15 +125,11 @@ export async function uploadFileForUser(
     throw new Error(`R2 upload failed: ${message}`);
   }
 
-  const ttl = opts.ttlSeconds ?? DEFAULT_TTL_SECONDS;
-  const expiresAt = new Date(Date.now() + ttl * 1000).toISOString();
   // Presign a GET so the user can download. Presigning PUT would
   // hand back an upload URL — the wrong direction for delivery.
-  const downloadUrl = await getSignedUrl(
-    client,
-    new GetObjectCommand({ Bucket: bucket, Key: key }),
-    { expiresIn: ttl },
-  );
+  const { downloadUrl, expiresAt } = await presignDownloadForKey(key, {
+    ttlSeconds: opts.ttlSeconds,
+  });
 
   return {
     key,
@@ -141,6 +137,45 @@ export async function uploadFileForUser(
     expiresAt,
     byteLength: bytes.byteLength,
   };
+}
+
+export interface PresignedDownloadResult {
+  /** Presigned GET URL the user can download from. */
+  downloadUrl: string;
+  /** ISO 8601 expiry; the URL becomes invalid after this. */
+  expiresAt: string;
+}
+
+/**
+ * Mint a fresh presigned download URL for an object already in R2,
+ * identified by its key. Used when re-rendering a past chat session:
+ * we persist only the durable object key, then re-sign on read because
+ * presigned URLs expire (7-day max) and would 403 if stored verbatim.
+ *
+ * Throws if R2 isn't configured. Does NOT verify the object exists —
+ * a dangling key yields a URL that 404s on GET, which is the correct
+ * surface for a since-deleted file.
+ */
+export async function presignDownloadForKey(
+  key: string,
+  opts: { ttlSeconds?: number } = {},
+): Promise<PresignedDownloadResult> {
+  if (!isR2Configured()) {
+    throw new Error('R2 is not configured (missing R2_* env vars)');
+  }
+  const client = getClient();
+  if (!client) {
+    throw new Error('R2 client unavailable despite env vars set');
+  }
+  const bucket = process.env.R2_BUCKET_NAME as string;
+  const ttl = opts.ttlSeconds ?? DEFAULT_TTL_SECONDS;
+  const expiresAt = new Date(Date.now() + ttl * 1000).toISOString();
+  const downloadUrl = await getSignedUrl(
+    client,
+    new GetObjectCommand({ Bucket: bucket, Key: key }),
+    { expiresIn: ttl },
+  );
+  return { downloadUrl, expiresAt };
 }
 
 export interface PresignedPutResult {

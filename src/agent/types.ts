@@ -263,6 +263,19 @@ export interface Deliverable {
 }
 
 /**
+ * The durable subset of a Deliverable persisted with a chat turn. We keep
+ * only the R2 object key plus display metadata — never the presigned
+ * `downloadUrl`/`expiresAt`, which are short-lived (7-day max TTL) and
+ * would 403 once expired. Read paths re-sign the key into a fresh URL via
+ * runtime/r2.ts#presignDownloadForKey.
+ */
+export interface StoredDeliverable {
+  filename: string;
+  key: string;
+  byteLength: number;
+}
+
+/**
  * Agent reached the per-invocation time budget and needs another
  * function call to keep going. The controller persists state and
  * closes the SSE stream; the client immediately POSTs /api/agent/resume

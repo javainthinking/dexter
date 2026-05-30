@@ -4,8 +4,9 @@
  * module-scope `Map` that apps/web used in Phase 2.
  */
 
-import { pgTable, uuid, text, timestamp, bigserial, integer, index } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, timestamp, bigserial, integer, index, jsonb } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
+import type { StoredDeliverable } from '../../agent/types.js';
 import { users } from './auth.js';
 
 export const webSessions = pgTable('dexter_web_sessions', {
@@ -35,6 +36,10 @@ export const webMessages = pgTable(
     answer: text('answer'),
     summary: text('summary'),
     tokenCount: integer('token_count'),
+    // Files the agent produced this turn (R2 keys + metadata). Null for
+    // turns persisted before this column existed and for turns that
+    // produced no files. Read paths re-sign each key into a download URL.
+    deliverables: jsonb('deliverables').$type<StoredDeliverable[]>(),
     createdAt: timestamp('created_at', { withTimezone: true })
       .default(sql`now()`)
       .notNull(),

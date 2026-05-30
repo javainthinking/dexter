@@ -1,5 +1,6 @@
 import { HumanMessage, AIMessage, type BaseMessage } from '@langchain/core/messages';
 import { callLlm, DEFAULT_MODEL } from '../model/llm.js';
+import type { StoredDeliverable } from '../agent/types.js';
 
 const DEFAULT_HISTORY_LIMIT = 10;
 const FULL_ANSWER_TURNS = 3;
@@ -12,6 +13,13 @@ export interface Message {
   query: string;
   answer: string | null;   // null until answer completes
   summary: string | null;  // LLM-generated summary, null until answer arrives
+  /**
+   * Files the agent produced this turn (R2 keys + metadata), set at
+   * done-time via saveDeliverables(). Undefined for turns with no files
+   * and for turns restored from before file persistence existed. Carried
+   * through to durable storage by the Web entrypoint's flush().
+   */
+  deliverables?: StoredDeliverable[];
 }
 
 /**
@@ -86,6 +94,21 @@ Generate a brief 1-2 sentence summary of this answer.`;
 
     lastMessage.answer = answer;
     lastMessage.summary = await this.generateSummary(lastMessage.query, answer);
+  }
+
+  /**
+   * Attaches the agent's end-of-run deliverables to the most recent turn
+   * so they flow through the same persistence path as the answer. Stores
+   * only the durable subset (key + metadata); the volatile presigned URL
+   * is re-minted on read. No-op when the list is empty so non-file turns
+   * stay clean. Safe to call independently of saveAnswer ordering — it
+   * targets the last message regardless of answer state.
+   */
+  saveDeliverables(deliverables: StoredDeliverable[]): void {
+    if (deliverables.length === 0) return;
+    const lastMessage = this.messages[this.messages.length - 1];
+    if (!lastMessage) return;
+    lastMessage.deliverables = deliverables;
   }
 
   /**
