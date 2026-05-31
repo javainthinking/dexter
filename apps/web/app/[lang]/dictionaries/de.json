@@ -10,10 +10,10 @@
     "hero": {
       "title": "Tiefgehende Finanzanalyse,",
       "titleEmphasis": "auf Abruf.",
-      "subtitle": "PickSkill ist dein Portfolio-Research-Agent. Verfolge US-, HK- und A-Aktien-Positionen in Echtzeit, scanne MACD, gleitende Durchschnitte, Volumen und Kapitalfluss über das gesamte Portfolio und chatte mit einem KI-Analysten, der deine Investmentthese über Sitzungen hinweg behält.",
+      "subtitle": "Ein KI-Analyst, der den Markt recherchiert, Bewertungen modelliert und die Arbeit in eine versandfertige PowerPoint-Präsentation, einen Word-Bericht oder ein Excel-Modell verwandelt — gespeist aus Live-Daten zu US-, HK- und A-Aktien, beim Download bearbeitbar.",
       "primaryCta": "Arbeitsbereich öffnen",
-      "secondaryCta": "Auf GitHub ansehen",
-      "tagline": "Live · Streaming · Mit Gedächtnis"
+      "secondaryCta": "Sehen, was es erstellt",
+      "tagline": "Live-Daten · PPT / Word / Excel · Mit Gedächtnis verankert"
     },
     "features": {
       "reasoning": {
@@ -42,6 +42,37 @@
       "pitchDeck": "Erstelle ein Investoren-Pitchdeck zu TSMC — Thesis, Pricing-Macht in der Foundry, KI-Umsatzmix und eine 3-Jahres-Umsatzprognose.",
       "researchNote": "Verfasse eine 2-seitige Equity-Research-Note zu Apple und gib sie als Word-Dokument aus — Thesis, wichtigste Treiber, Risiken, Bewertung, Empfehlung.",
       "dcfModel": "Erstelle ein DCF-Modell für NVDA in Excel — Annahmenblatt, 5-Jahres-FCF-Prognose, WACC + Sensitivität, Bewertungsübersicht."
+    },
+    "heroScenes": {
+      "generating": "wird erstellt",
+      "documentsPrompt": "Erstelle ein Investoren-Pitchdeck zu NVDA",
+      "documentsCaption": "Live-Daten · belegt · bearbeitbar",
+      "indicatorsTrail": "5-Tage-Verlauf",
+      "legendBull": "bullish",
+      "legendNeutral": "neutral",
+      "legendBear": "bearish",
+      "analystPrompt": "Was hat sich bei den Risikofaktoren von NVDA geändert?",
+      "analystSourced": "Belegt · 10-K, S. 27",
+      "analystMemory": "Merkt sich deine These"
+    },
+    "showcase": {
+      "eyebrow": "Was es leistet",
+      "title": "Recherchieren, modellieren und das Ergebnis ausliefern.",
+      "subtitle": "Drei Dinge, die PickSkill durchgängig erledigt — von der ersten Frage bis zur versandfertigen Datei.",
+      "learnMore": "{name} entdecken",
+      "tryItCta": "Kostenlos ausprobieren"
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "Fragen, beantwortet.",
+      "items": [
+        { "q": "Was ist PickSkill?", "a": "PickSkill ist ein KI-Analyst für Aktienresearch. Sie stellen eine Frage in einfacher Sprache — zu einer Aktie, einem Geschäftsbericht, einer Bewertung oder Ihrem Portfolio — und PickSkill recherchiert Live-Marktdaten, führt die Analyse durch und kann das Ergebnis in eine PowerPoint-Präsentation, einen Word-Bericht oder ein Excel-Modell verwandeln, das Sie herunterladen und bearbeiten können. Abgedeckt werden die Märkte für US-, Hongkong- und chinesische A-Aktien." },
+        { "q": "Kann PickSkill PowerPoint-, Word- und Excel-Dateien erzeugen?", "a": "Ja. PickSkill erzeugt native .pptx-Präsentationen, .docx-Berichte und .xlsx-Modelle — keine Screenshots oder PDFs. Bitten Sie um \"eine 12-seitige Investorenpräsentation zu NVDA\" oder \"ein 5-Jahres-DCF in Excel\", und PickSkill erstellt die Datei aus Live-Geschäftsberichten und Marktdaten, mit Quellenangaben und bearbeitbar. Die Dateien werden als Download-Link im Chat bereitgestellt und öffnen sich in PowerPoint, Word, Excel, Keynote, Google Workspace oder LibreOffice." },
+        { "q": "Welche Märkte und Daten nutzt PickSkill?", "a": "PickSkill ruft Live-Kurse, Fundamentaldaten und SEC-Filings ab (sowie HKEx- und Cninfo-Veröffentlichungen für Hongkong und A-Aktien) und berechnet anschließend technische Indikatoren auf Basis des jüngsten Schlusskurses. Jede Zahl lässt sich zum Abfragezeitpunkt auf eine Quelle zurückführen, sodass die Analyse aktuelle Daten widerspiegelt und nicht den Trainingsstand eines Modells." },
+        { "q": "Wie unterscheidet sich PickSkill davon, ChatGPT für Aktienresearch zu nutzen?", "a": "Ein allgemeiner Chatbot antwortet aus Trainingsdaten und erfindet oft Finanzkennzahlen. PickSkill verankert jede Antwort in Live-Daten — es ruft den tatsächlichen 10-K ab, berechnet das DCF, führt die Indikatoren aus und nennt seine Quellen. Außerdem merkt es sich Ihre These und Ihre Watchlist über Sitzungen hinweg und erstellt echte Office-Dateien statt reinen Text." },
+        { "q": "Welche technischen Indikatoren und Portfolio-Werkzeuge sind enthalten?", "a": "Alle Tarife umfassen acht technische Dimensionen — MACD, gleitende Durchschnitte (20/60/200), RSI, KDJ, Bollinger-Bänder, ADX, Volumen und einen Kapitalfluss-Proxy — plus Divergenz- sowie Unterstützungs- und Widerstands-Scans, jeweils mit einem 5-Tage-Signalverlauf. Sie können mehrere Portfolios verfolgen und das Dashboard in eine Präsentation, einen Bericht oder eine Arbeitsmappe exportieren." },
+        { "q": "Ist PickSkill kostenlos, und handelt es sich um Anlageberatung?", "a": "Es gibt einen kostenlosen Tarif mit 30 Unterhaltungen pro Monat, ohne Kreditkarte; kostenpflichtige Tarife beginnen bei $15/Monat. PickSkill ist ein Research-Werkzeug, kein lizenzierter Berater — seine Ausgaben dienen ausschließlich der Information und Bildung und stellen keine Anlageberatung dar. Führen Sie stets Ihre eigene Sorgfaltsprüfung durch." }
+      ]
     },
     "footer": {
       "disclaimer": "Keine Anlageberatung"

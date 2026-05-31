@@ -10,10 +10,10 @@
     "hero": {
       "title": "Recherche financière approfondie,",
       "titleEmphasis": "à la demande.",
-      "subtitle": "PickSkill, c'est votre agent de recherche de portefeuille. Suivez en direct vos positions US, HK et A-shares, scannez MACD, moyennes mobiles, volume et flux de capitaux sur tout le portefeuille, et discutez avec un analyste IA qui se souvient de votre thèse d'une session à l'autre.",
+      "subtitle": "Un analyste IA qui étudie le marché, modélise les valorisations et transforme le travail en une présentation PowerPoint, un rapport Word ou un modèle Excel prêts à envoyer — à partir de données en direct des marchés américain, hongkongais et des actions A, modifiables au téléchargement.",
       "primaryCta": "Ouvrir le poste de travail",
-      "secondaryCta": "Voir sur GitHub",
-      "tagline": "Temps réel · Streaming · Mémoire intégrée"
+      "secondaryCta": "Voir ce qu'il produit",
+      "tagline": "Données en direct · PPT / Word / Excel · Ancré dans la mémoire"
     },
     "features": {
       "reasoning": {
@@ -42,6 +42,37 @@
       "pitchDeck": "Construis un pitch deck investisseur sur TSMC — thèse, pricing power dans la fonderie, mix de revenus IA et une projection de revenus à 3 ans.",
       "researchNote": "Rédige une note d'equity research de 2 pages sur Apple, livrée sous forme de document Word — thèse, drivers clés, risques, valorisation, recommandation.",
       "dcfModel": "Construis un modèle DCF NVDA dans Excel — feuille d'hypothèses, projection de FCF sur 5 ans, WACC et sensibilité, synthèse de valorisation."
+    },
+    "heroScenes": {
+      "generating": "génération en cours",
+      "documentsPrompt": "Construis un pitch deck investisseur sur NVDA",
+      "documentsCaption": "données en direct · sourcé · modifiable",
+      "indicatorsTrail": "5 jours",
+      "legendBull": "haussier",
+      "legendNeutral": "neutre",
+      "legendBear": "baissier",
+      "analystPrompt": "Qu’est-ce qui a changé dans les facteurs de risque de NVDA ?",
+      "analystSourced": "Sourcé · 10-K, p. 27",
+      "analystMemory": "Se souvient de votre thèse"
+    },
+    "showcase": {
+      "eyebrow": "Ce qu'il fait",
+      "title": "Recherchez, modélisez et livrez le livrable.",
+      "subtitle": "Trois choses que PickSkill réalise de bout en bout — de la première question à un fichier prêt à envoyer.",
+      "learnMore": "Découvrir {name}",
+      "tryItCta": "Essayer gratuitement"
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "Vos questions, nos réponses.",
+      "items": [
+        { "q": "Qu'est-ce que PickSkill ?", "a": "PickSkill est un analyste IA spécialisé en recherche actions. Vous posez une question en langage clair — sur une action, une publication, une valorisation ou votre portefeuille — et il analyse des données de marché en direct, exécute l'analyse et peut transformer le résultat en une présentation PowerPoint, un rapport Word ou un modèle Excel que vous pouvez télécharger et modifier. Il couvre les marchés américain, hongkongais et des actions A chinoises." },
+        { "q": "PickSkill peut-il générer des fichiers PowerPoint, Word et Excel ?", "a": "Oui. PickSkill génère des présentations .pptx, des rapports .docx et des modèles .xlsx natifs — pas des captures d'écran ni des PDF. Demandez « une présentation investisseur de 12 diapositives sur NVDA » ou « un DCF sur 5 ans dans Excel » et il construit le fichier à partir de publications et de données de marché en direct, sourcées et modifiables. Les fichiers sont livrés sous forme de lien de téléchargement dans le chat et s'ouvrent dans PowerPoint, Word, Excel, Keynote, Google Workspace ou LibreOffice." },
+        { "q": "Quels marchés et quelles données PickSkill utilise-t-il ?", "a": "PickSkill récupère les cours, les fondamentaux et les dépôts SEC en direct (ainsi que les publications de la HKEx et de Cninfo pour Hong Kong et les actions A), puis calcule les indicateurs techniques sur la dernière clôture. Chaque chiffre est rattaché à une source au moment de la requête, de sorte que l'analyse reflète les données actuelles plutôt que la date limite d'entraînement d'un modèle." },
+        { "q": "En quoi PickSkill se distingue-t-il de l'utilisation de ChatGPT pour la recherche boursière ?", "a": "Un chatbot généraliste répond à partir de ses données d'entraînement et invente souvent des chiffres financiers. PickSkill fonde chaque réponse sur des données en direct — il extrait le 10-K réel, calcule le DCF, exécute les indicateurs et cite ses sources. Il mémorise aussi votre thèse et votre liste de suivi d'une session à l'autre, et produit de vrais fichiers Office au lieu de simple texte." },
+        { "q": "Quels indicateurs techniques et outils de portefeuille inclut-il ?", "a": "Tous les forfaits incluent huit dimensions techniques — MACD, moyennes mobiles (20/60/200), RSI, KDJ, bandes de Bollinger, ADX, volume et un indicateur de flux de capitaux — ainsi que des analyses de divergence et de support/résistance, chacune accompagnée d'un historique de signaux sur 5 jours. Vous pouvez suivre plusieurs portefeuilles et exporter le tableau de bord vers une présentation, un rapport ou un classeur." },
+        { "q": "PickSkill est-il gratuit, et s'agit-il de conseils en investissement ?", "a": "Il existe un forfait gratuit avec 30 conversations par mois, sans carte bancaire ; les forfaits payants démarrent à $15/mois. PickSkill est un outil de recherche, pas un conseiller agréé — ses résultats sont fournis à titre d'information et d'éducation uniquement et ne constituent pas un conseil en investissement. Faites toujours vos propres vérifications." }
+      ]
     },
     "footer": {
       "disclaimer": "Ne constitue pas un conseil en investissement"

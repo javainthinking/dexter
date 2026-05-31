@@ -10,10 +10,10 @@
     "hero": {
       "title": "Deep financial research,",
       "titleEmphasis": "on demand.",
-      "subtitle": "PickSkill is your portfolio research agent. Track US, HK, and A-share holdings in real time, scan MACD, moving averages, volume, and capital-flow signals across your whole portfolio, and chat with an AI analyst that remembers your thesis between sessions.",
+      "subtitle": "An AI analyst that researches the market, models valuations, and turns the work into a ready-to-send PowerPoint deck, Word report, or Excel model — sourced from live US, HK, and A-share data, editable on download.",
       "primaryCta": "Open the workbench",
-      "secondaryCta": "View on GitHub",
-      "tagline": "Live · Streaming · Memory-grounded"
+      "secondaryCta": "See what it builds",
+      "tagline": "Live data · PPT / Word / Excel · Memory-grounded"
     },
     "features": {
       "reasoning": {
@@ -42,6 +42,55 @@
       "pitchDeck": "Build an investor pitch deck for TSMC — thesis, foundry pricing power, AI revenue mix, and a 3-year revenue forecast.",
       "researchNote": "Write a 2-page equity research note on Apple as a Word document — thesis, key drivers, risks, valuation, recommendation.",
       "dcfModel": "Build a DCF model for NVDA in Excel — assumptions sheet, 5-year FCF projection, WACC + sensitivity, valuation summary."
+    },
+    "heroScenes": {
+      "generating": "generating",
+      "documentsPrompt": "Build an investor deck on NVDA",
+      "documentsCaption": "live data · sourced · editable",
+      "indicatorsTrail": "5-day trail",
+      "legendBull": "bullish",
+      "legendNeutral": "neutral",
+      "legendBear": "bearish",
+      "analystPrompt": "What changed in NVDA's risk factors?",
+      "analystSourced": "Sourced · 10-K, p.27",
+      "analystMemory": "Remembers your thesis"
+    },
+    "showcase": {
+      "eyebrow": "What it does",
+      "title": "Research, model, and ship the deliverable.",
+      "subtitle": "Three things PickSkill does end to end — from the first question to a file you can send.",
+      "learnMore": "Explore {name}",
+      "tryItCta": "Try it free"
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "Questions, answered.",
+      "items": [
+        {
+          "q": "What is PickSkill?",
+          "a": "PickSkill is an AI equity-research analyst. You ask a question in plain English — about a stock, a filing, a valuation, or your portfolio — and it researches live market data, runs the analysis, and can turn the result into a PowerPoint deck, Word report, or Excel model you can download and edit. It covers US, Hong Kong, and China A-share markets."
+        },
+        {
+          "q": "Can PickSkill generate PowerPoint, Word, and Excel files?",
+          "a": "Yes. PickSkill generates native .pptx decks, .docx reports, and .xlsx models — not screenshots or PDFs. Ask for \"a 12-slide investor deck on NVDA\" or \"a 5-year DCF in Excel\" and it builds the file from live filings and market data, sourced and editable. Files are delivered as a download link in chat and open in PowerPoint, Word, Excel, Keynote, Google Workspace, or LibreOffice."
+        },
+        {
+          "q": "What markets and data does PickSkill use?",
+          "a": "PickSkill pulls live prices, fundamentals, and SEC filings (plus HKEx and Cninfo disclosures for Hong Kong and A-shares), then computes technical indicators on the latest close. Every number traces to a source at query time, so the analysis reflects current data rather than a model's training cutoff."
+        },
+        {
+          "q": "How is PickSkill different from using ChatGPT for stock research?",
+          "a": "A general chatbot answers from training data and often invents financial figures. PickSkill grounds every answer in live data — it pulls the actual 10-K, computes the DCF, runs the indicators, and cites its sources. It also remembers your thesis and watchlist across sessions, and produces real Office files instead of plain text."
+        },
+        {
+          "q": "What technical indicators and portfolio tools does it include?",
+          "a": "All plans include eight technical dimensions — MACD, moving averages (20/60/200), RSI, KDJ, Bollinger Bands, ADX, volume, and a capital-flow proxy — plus divergence and support/resistance scans, each with a 5-day signal trail. You can track multiple portfolios and export the dashboard to a deck, report, or workbook."
+        },
+        {
+          "q": "Is PickSkill free, and is it investment advice?",
+          "a": "There is a free plan with 30 conversations a month, no card required; paid plans start at $15/month. PickSkill is a research tool, not a licensed advisor — its output is for information and education only and is not investment advice. Always do your own due diligence."
+        }
+      ]
     },
     "footer": {
       "disclaimer": "Not investment advice"

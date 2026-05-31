@@ -3,6 +3,7 @@ import { Logo } from '../logo';
 import { LanguageSwitcher } from '../i18n/language-switcher';
 import { ThemeToggle } from '../theme-toggle';
 import { UserMenu } from '../auth/user-menu';
+import { MobileMenu } from './mobile-menu';
 import { getLocalizedPath } from '../../lib/i18n/paths';
 import type { Locale } from '../../lib/i18n/locales';
 import { getDictionary } from '../../app/[lang]/dictionaries';
@@ -17,10 +18,10 @@ import { getDictionary } from '../../app/[lang]/dictionaries';
  * control widgets (LanguageSwitcher / ThemeToggle / UserMenu), which
  * already manage their own client boundaries.
  *
- * Layout: Logo (links home) + primary nav (Features / Blog / Pricing) on
- * the left, control cluster on the right. Nav links are visible from the
- * `sm` breakpoint up; on mobile the same destinations live in the footer
- * (no client-side hamburger needed). Sticky so the brand + nav stay
+ * Layout: Logo (links home) + centered primary nav (Features / Blog /
+ * Pricing), control cluster on the right. The nav is visible from the
+ * `sm` breakpoint up; below `sm` it collapses into a hamburger
+ * (<MobileMenu>) in the control cluster. Sticky so the brand + nav stay
  * accessible while reading a long blog post.
  */
 export async function SiteHeader({ lang }: { lang: Locale }) {
@@ -45,7 +46,7 @@ export async function SiteHeader({ lang }: { lang: Locale }) {
         </Link>
         {/* Absolutely centered so the nav sits in the middle of the header
             regardless of the (asymmetric) logo and control-cluster widths.
-            Hidden below `sm`, where the footer carries the same links. */}
+            Hidden below `sm`, where <MobileMenu> exposes the same links. */}
         <nav
           className="absolute inset-y-0 left-1/2 hidden -translate-x-1/2 items-center gap-6 sm:flex"
           aria-label="Primary"
@@ -64,6 +65,7 @@ export async function SiteHeader({ lang }: { lang: Locale }) {
           <LanguageSwitcher />
           <ThemeToggle />
           <UserMenu />
+          <MobileMenu links={navLinks} />
         </div>
       </div>
     </header>

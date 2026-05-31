@@ -10,10 +10,10 @@
     "hero": {
       "title": "深度金融研究,",
       "titleEmphasis": "随取随用。",
-      "subtitle": "PickSkill 是你的持仓研究智能体。实时跟踪美股、港股、A 股持仓,按 MACD、均线、量价、资金流量等维度一键扫描整组标的,再用一位会记住你投资逻辑的 AI 分析师对话深挖。",
+      "subtitle": "一位 AI 分析师,帮你研究市场、构建估值模型,并把成果直接生成可发送的 PowerPoint 演示文稿、Word 报告或 Excel 模型 — 数据源自美股、港股与 A 股的实时行情,下载后即可编辑。",
       "primaryCta": "进入工作台",
-      "secondaryCta": "在 GitHub 查看",
-      "tagline": "实时 · 流式 · 带长期记忆"
+      "secondaryCta": "看看它能做出什么",
+      "tagline": "实时数据 · PPT / Word / Excel · 基于记忆"
     },
     "features": {
       "reasoning": {
@@ -42,6 +42,37 @@
       "pitchDeck": "做一份 TSMC 投资路演 PPT — 投资逻辑、晶圆代工定价权、AI 收入结构,以及未来 3 年营收预测。",
       "researchNote": "写一份 2 页的 Apple 公司研究报告,并输出到 Word 文档中 — 投资逻辑、关键驱动、风险、估值和评级。",
       "dcfModel": "在 Excel 里搭一个 NVDA 的 DCF 估值模型 — 假设条件页、5 年自由现金流预测、WACC 及敏感性分析、估值汇总。"
+    },
+    "heroScenes": {
+      "generating": "生成中",
+      "documentsPrompt": "制作一份 NVDA 投资路演 PPT",
+      "documentsCaption": "实时数据 · 有据可溯 · 可编辑",
+      "indicatorsTrail": "5日轨迹",
+      "legendBull": "看多",
+      "legendNeutral": "中性",
+      "legendBear": "看空",
+      "analystPrompt": "NVDA 的风险因素有哪些变化?",
+      "analystSourced": "来源 · 10-K,第 27 页",
+      "analystMemory": "记住你的投资逻辑"
+    },
+    "showcase": {
+      "eyebrow": "它能做什么",
+      "title": "做研究、建模型,直接交付成品。",
+      "subtitle": "PickSkill 端到端搞定的三件事 — 从你提出的第一个问题,到一份可以直接发送的文件。",
+      "learnMore": "了解 {name}",
+      "tryItCta": "免费试用"
+    },
+    "faq": {
+      "eyebrow": "常见问题",
+      "title": "你的疑问,这里有答案。",
+      "items": [
+        { "q": "PickSkill 是什么?", "a": "PickSkill 是一位 AI 股票研究分析师。你用日常语言提出问题 — 关于某只股票、某份公告、某个估值或你的持仓组合 — 它便会研究实时行情数据、完成分析,并能把结果生成可下载、可编辑的 PowerPoint 演示文稿、Word 报告或 Excel 模型。覆盖美股、港股与 A 股市场。" },
+        { "q": "PickSkill 能生成 PowerPoint、Word 和 Excel 文件吗?", "a": "可以。PickSkill 生成的是原生 .pptx 演示文稿、.docx 报告和 .xlsx 模型 — 而不是截图或 PDF。你只需说\"做一份关于 NVDA 的 12 页投资人路演 PPT\"或\"在 Excel 里搭一个 5 年期 DCF 模型\",它就会基于实时公告和行情数据生成文件,数据有据可查、可自由编辑。文件会以聊天中的下载链接形式交付,可在 PowerPoint、Word、Excel、Keynote、Google Workspace 或 LibreOffice 中打开。" },
+        { "q": "PickSkill 使用哪些市场和数据?", "a": "PickSkill 调取实时价格、基本面和 SEC 备案文件(港股与 A 股则另加港交所及巨潮资讯的披露信息),并基于最新收盘价计算技术指标。每一个数字都能在查询时追溯到来源,因此分析反映的是当前数据,而非模型训练截止时的旧信息。" },
+        { "q": "PickSkill 和用 ChatGPT 做股票研究有什么不同?", "a": "通用聊天机器人只能依据训练数据作答,常常编造财务数字。PickSkill 则把每个回答都锚定在实时数据上 — 它会调取真实的 10-K、计算 DCF、运行各项指标,并标注数据来源。它还能跨会话记住你的投资逻辑和关注列表,并产出真正的 Office 文件,而非纯文本。" },
+        { "q": "它包含哪些技术指标和组合工具?", "a": "所有套餐都包含八个技术维度 — MACD、均线(20/60/200)、RSI、KDJ、布林带、ADX、成交量,以及资金流量代理指标 — 外加背离与支撑/压力扫描,每项都附带 5 日信号轨迹。你可以跟踪多个持仓组合,并将看板导出为演示文稿、报告或工作簿。" },
+        { "q": "PickSkill 免费吗?它构成投资建议吗?", "a": "有免费套餐,每月 30 次对话,无需绑定银行卡;付费套餐起价 $15/月。PickSkill 是一款研究工具,而非持牌投资顾问 — 其输出仅供信息参考与学习之用,不构成投资建议。请务必自行做好尽职调查。" }
+      ]
     },
     "footer": {
       "disclaimer": "不构成投资建议"
