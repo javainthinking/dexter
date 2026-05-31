@@ -129,7 +129,6 @@ export const pricing: PricingContent = {
     annual: '年付',
     save: '省 20%',
     billedAnnually: '按年计费',
-    overage: '+ 用量超额',
   },
   faqHeading: '常见问题',
   plans: {
@@ -172,7 +171,7 @@ export const pricing: PricingContent = {
     },
     power: {
       blurb: '为重度用户和专业人士而设。',
-      annualNote: '年付 $104/月 · + 用量超额',
+      annualNote: '年付 $104/月(全年 $1,248)',
       cta: '升级 Power',
       features: [
         'Pro 的全部功能,另加:',

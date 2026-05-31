@@ -129,7 +129,6 @@ export const pricing: PricingContent = {
     annual: '年払い',
     save: '20% お得',
     billedAnnually: '年払い',
-    overage: '+ 使用量超過分',
   },
   faqHeading: 'よくある質問',
   plans: {
@@ -172,7 +171,7 @@ export const pricing: PricingContent = {
     },
     power: {
       blurb: 'パワーユーザーとプロフェッショナル向け。',
-      annualNote: '年払いで月 $104・+ 使用量超過分',
+      annualNote: '年払いで月 $104($1,248/年)',
       cta: 'Power にする',
       features: [
         'Pro のすべて、さらに:',

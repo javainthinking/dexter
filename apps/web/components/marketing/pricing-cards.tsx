@@ -135,14 +135,11 @@ export function PricingCards({
         {plans.map((plan) => {
           const planCopy = copy.plans[plan.id];
           const amount = annual ? plan.annualMonthly : plan.monthly;
-          // Annual mode: show the yearly total + "billed annually" (Power adds
-          // its usage-overage note). Monthly mode (and Free, which has no
-          // annual total): keep the per-plan annualNote hint.
+          // Annual mode: yearly total + "billed annually". Monthly mode (and
+          // Free, which has no annual total): keep the per-plan annualNote.
           const subline =
             annual && plan.annualTotal
-              ? `${plan.annualTotal} ${copy.billing.billedAnnually}${
-                  plan.id === 'power' ? ` · ${copy.billing.overage}` : ''
-                }`
+              ? `${plan.annualTotal} ${copy.billing.billedAnnually}`
               : planCopy.annualNote;
           return (
             <div

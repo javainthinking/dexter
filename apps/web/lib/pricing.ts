@@ -90,8 +90,6 @@ export interface PricingContent {
     save: string;
     /** Suffix after the annual total, e.g. "$144 billed annually". */
     billedAnnually: string;
-    /** Power-only annual sub-line addendum, e.g. "+ usage overage". */
-    overage: string;
   };
   plans: Record<PlanId, PlanCopy>;
   comparison: ComparisonGroup[];
@@ -116,7 +114,6 @@ const en: PricingContent = {
     annual: 'Annual',
     save: 'Save 20%',
     billedAnnually: 'billed annually',
-    overage: '+ usage overage',
   },
   faqHeading: 'Frequently asked questions',
   plans: {
@@ -159,7 +156,7 @@ const en: PricingContent = {
     },
     power: {
       blurb: 'For power users and pros.',
-      annualNote: '$104/mo billed annually · + usage overage',
+      annualNote: '$104/mo billed annually ($1,248/yr)',
       cta: 'Go Power',
       features: [
         'Everything in Pro, plus:',

@@ -129,7 +129,6 @@ export const pricing: PricingContent = {
     annual: 'Annuel',
     save: '-20%',
     billedAnnually: 'facturé annuellement',
-    overage: '+ dépassement à l’usage',
   },
   faqHeading: 'Questions fréquentes',
   plans: {
@@ -172,7 +171,7 @@ export const pricing: PricingContent = {
     },
     power: {
       blurb: 'Pour les utilisateurs avancés et les pros.',
-      annualNote: '104 $/mois facturé annuellement · + dépassement à l’usage',
+      annualNote: '104 $/mois facturé annuellement (1 248 $/an)',
       cta: 'Passer à Power',
       features: [
         'Tout ce qui est inclus dans Pro, plus :',

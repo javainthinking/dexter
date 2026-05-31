@@ -129,7 +129,6 @@ export const pricing: PricingContent = {
     annual: 'Anual',
     save: 'Ahorra 20%',
     billedAnnually: 'facturación anual',
-    overage: '+ excedente de uso',
   },
   faqHeading: 'Preguntas frecuentes',
   plans: {
@@ -172,7 +171,7 @@ export const pricing: PricingContent = {
     },
     power: {
       blurb: 'Para usuarios avanzados y profesionales.',
-      annualNote: '$104/mes con facturación anual · + excedente de uso',
+      annualNote: '$104/mes con facturación anual ($1,248/año)',
       cta: 'Pásate a Power',
       features: [
         'Todo lo de Pro, y además:',

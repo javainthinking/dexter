@@ -129,7 +129,6 @@ export const pricing: PricingContent = {
     annual: 'Jährlich',
     save: '20% sparen',
     billedAnnually: 'jährlich abgerechnet',
-    overage: '+ Nutzungsüberschreitung',
   },
   faqHeading: 'Häufig gestellte Fragen',
   plans: {
@@ -172,7 +171,7 @@ export const pricing: PricingContent = {
     },
     power: {
       blurb: 'Für Power-User und Profis.',
-      annualNote: '$104/Mon. bei jährlicher Abrechnung · + Nutzungsüberschreitung',
+      annualNote: '$104/Mon. bei jährlicher Abrechnung ($1,248/Jahr)',
       cta: 'Auf Power wechseln',
       features: [
         'Alles aus Pro, plus:',
