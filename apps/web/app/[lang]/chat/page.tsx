@@ -53,7 +53,7 @@ export default function ChatRoute() {
 function ChatPage() {
   const searchParams = useSearchParams();
   const dict = useDictionary();
-  const _locale = useLocale();
+  const locale = useLocale();
   // Capture the deep-link prompt once on mount via a ref. We DON'T want
   // this to be reactive: after we strip ?prompt= from the URL,
   // useSearchParams() will re-render with an empty value, which used to
@@ -85,6 +85,9 @@ function ChatPage() {
   const [turns, setTurns] = useState<ChatTurn[]>([]);
   const [input, setInput] = useState('');
   const [pending, setPending] = useState(false);
+  // Set when /api/agent returns 402 (monthly quota reached) — drives the
+  // upgrade notice above the composer.
+  const [paywall, setPaywall] = useState<{ message?: string; limit?: number; plan?: string } | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const threadRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<ComposerHandle>(null);
@@ -237,6 +240,18 @@ function ChatPage() {
           body: JSON.stringify({ query: q }),
           signal: controller.signal,
         });
+        // Monthly quota reached — drop the optimistic turn and show the
+        // upgrade notice instead of streaming.
+        if (res.status === 402) {
+          const info = (await res.json().catch(() => ({}))) as {
+            message?: string;
+            limit?: number;
+            plan?: string;
+          };
+          setPaywall(info);
+          setTurns((prev) => prev.filter((t) => t.id !== turnId));
+          return;
+        }
         while (true) {
           if (!res.ok || !res.body) {
             throw new Error(`agent_failed_${res.status}`);
@@ -465,6 +480,29 @@ function ChatPage() {
 
         <div className="shrink-0 border-t border-border bg-background px-3 pb-4 pt-3 sm:px-6">
           <div className="mx-auto w-full max-w-3xl">
+            {paywall && (
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[color:var(--accent)]/40 bg-[color:var(--accent)]/10 px-4 py-3 text-sm">
+                <span className="text-foreground">
+                  {paywall.message ?? 'You have reached your monthly limit.'}
+                </span>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={`/${locale}/pricing`}
+                    className="inline-flex items-center rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background hover:opacity-90"
+                  >
+                    {dict.nav?.pricing ?? 'View plans'}
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => setPaywall(null)}
+                    className="text-xs text-muted-foreground hover:text-foreground"
+                    aria-label="Dismiss"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+            )}
             <Composer
               ref={composerRef}
               value={input}

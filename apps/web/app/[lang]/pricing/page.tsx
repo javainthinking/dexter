@@ -116,7 +116,7 @@ export default async function PricingPage({
       {/* Plan cards */}
       <section className="border-b border-border">
         <div className="mx-auto max-w-6xl px-5 py-12 lg:px-8">
-          <PricingCards plans={planMeta} copy={c} chatHref={chatHref} />
+          <PricingCards plans={planMeta} copy={c} chatHref={chatHref} locale={lang} />
           <p className="mt-6 text-center text-xs text-subtle">{c.everyPlanNote}</p>
         </div>
       </section>

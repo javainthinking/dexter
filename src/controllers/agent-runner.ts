@@ -66,8 +66,11 @@ export interface ChunkRunOpts {
   onContinuation?: (
     snapshot: ContinuationSnapshot & { touchedFiles: string[] },
   ) => Promise<void>;
-  /** Called when the agent emits a terminal `done` event. */
-  onDone?: (finalAnswer: string) => Promise<void>;
+  /**
+   * Called when the agent emits a terminal `done` event. `deliverableCount`
+   * is the number of files produced this turn (for usage metering).
+   */
+  onDone?: (finalAnswer: string, deliverableCount: number) => Promise<void>;
 }
 
 /**
@@ -317,7 +320,7 @@ export class AgentRunnerController {
           const finalEvent = { ...event, deliverables } as DoneEvent;
           if (chunkOpts?.onDone) {
             try {
-              await chunkOpts.onDone(finalEvent.answer);
+              await chunkOpts.onDone(finalEvent.answer, deliverables.length);
             } catch {
               /* persistence failure shouldn't block delivery */
             }

@@ -22,6 +22,7 @@ import {
   text,
   timestamp,
   integer,
+  boolean,
   index,
   primaryKey,
   uniqueIndex,
@@ -38,11 +39,24 @@ export const users = pgTable(
     email: text('email'),
     emailVerified: timestamp('email_verified', { withTimezone: true, mode: 'date' }),
     image: text('image'),
+    // Billing — mirrored from Stripe via webhook (Stripe is source of truth).
+    // `plan` is the entitlement read on every metered request; the rest is
+    // bookkeeping for the billing portal + reconciliation.
+    plan: text('plan').notNull().default('free'),
+    billingInterval: text('billing_interval'), // 'month' | 'year' | null
+    stripeCustomerId: text('stripe_customer_id'),
+    stripeSubscriptionId: text('stripe_subscription_id'),
+    stripePriceId: text('stripe_price_id'),
+    stripeStatus: text('stripe_status'),
+    stripeCurrentPeriodEnd: timestamp('stripe_current_period_end', { withTimezone: true }),
+    stripeCancelAtPeriodEnd: boolean('stripe_cancel_at_period_end').notNull().default(false),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
   },
   (t) => ({
     emailUq: uniqueIndex('dexter_users_email_uq').on(t.email),
+    stripeCustomerUq: uniqueIndex('dexter_users_stripe_customer_uq').on(t.stripeCustomerId),
+    stripeSubscriptionUq: uniqueIndex('dexter_users_stripe_subscription_uq').on(t.stripeSubscriptionId),
   }),
 );
 

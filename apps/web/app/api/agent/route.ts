@@ -8,6 +8,7 @@ import { withUser } from '@dexter/core/runtime/user-context';
 
 import { resolveSession } from '../../../lib/session';
 import { getCurrentUser } from '../../../lib/auth/session';
+import { getUserPlan, checkQuota, incrementUsage } from '../../../lib/billing';
 import {
   createJob,
   persistChunk,
@@ -56,6 +57,26 @@ export async function POST(request: NextRequest): Promise<Response> {
   const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
+  }
+
+  // Quota gate — block a new turn when the user is over their monthly
+  // conversation limit. Stripe-mirrored plan + per-month usage; 402 carries
+  // the numbers so the client can show an upgrade prompt.
+  const { plan } = await getUserPlan(user.id);
+  const quota = await checkQuota(user.id, plan, 'conversations');
+  if (!quota.allowed) {
+    return NextResponse.json(
+      {
+        error: 'quota_exceeded',
+        code: 'CONVERSATIONS_LIMIT',
+        metric: 'conversations',
+        plan,
+        used: quota.used,
+        limit: quota.limit,
+        message: `You've used all ${quota.limit} conversations on the ${plan} plan this month.`,
+      },
+      { status: 402 },
+    );
   }
 
   const session = await resolveSession({ model: body.model, userId: user.id });
@@ -124,6 +145,7 @@ export async function POST(request: NextRequest): Promise<Response> {
   // write a turn with answer=null (and no deliverables), which is exactly
   // the orphan row that rendered as an empty assistant bubble.
   let turnCompleted = false;
+  let fileCount = 0;
 
   // Kick off the agent run asynchronously. The sink is what streams events
   // out to the client; runQuery() flushes the sink in its own `finally`.
@@ -153,8 +175,9 @@ export async function POST(request: NextRequest): Promise<Response> {
             );
           }
         },
-        onDone: async (answer) => {
+        onDone: async (answer, deliverableCount) => {
           turnCompleted = true;
+          fileCount = deliverableCount;
           try {
             await markDone(job.jobId, answer);
           } catch (err) {
@@ -209,6 +232,25 @@ export async function POST(request: NextRequest): Promise<Response> {
               sessionId: session.sessionId,
               msg: 'session_flush_error',
               error: message,
+            }),
+          );
+        }
+        // Meter usage: one conversation per completed turn, plus any files
+        // produced. Counted here only when the turn finished in THIS
+        // invocation (single-chunk runs); chunked runs count in the resume
+        // hop that completes them. Best-effort — never block delivery.
+        try {
+          await incrementUsage(user.id, 'conversations', 1);
+          if (fileCount > 0) await incrementUsage(user.id, 'files', fileCount);
+        } catch (err) {
+          console.error(
+            JSON.stringify({
+              level: 'error',
+              surface: 'web',
+              route: '/api/agent',
+              requestId,
+              msg: 'usage_increment_failed',
+              error: err instanceof Error ? err.message : String(err),
             }),
           );
         }

@@ -24,12 +24,62 @@ export function PricingCards({
   plans,
   copy,
   chatHref,
+  locale,
 }: {
   plans: PlanMeta[];
   copy: PricingContent;
   chatHref: string;
+  locale: string;
 }) {
   const [annual, setAnnual] = React.useState(false);
+  const [busy, setBusy] = React.useState<string | null>(null);
+
+  async function openPortal() {
+    try {
+      const res = await fetch('/api/stripe/portal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ locale }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { url?: string };
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+    } catch {
+      /* fall through */
+    }
+    setBusy(null);
+  }
+
+  // Paid CTA → Stripe Checkout. Signed out → sign-in; already subscribed
+  // (409) → billing portal.
+  async function startCheckout(planId: string) {
+    setBusy(planId);
+    try {
+      const res = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: planId, interval: annual ? 'year' : 'month', locale }),
+      });
+      if (res.status === 401) {
+        window.location.href = `/${locale}/sign-in?callbackUrl=${encodeURIComponent(`/${locale}/pricing`)}`;
+        return;
+      }
+      if (res.status === 409) {
+        await openPortal();
+        return;
+      }
+      const data = (await res.json().catch(() => ({}))) as { url?: string };
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+      setBusy(null);
+    } catch {
+      setBusy(null);
+    }
+  }
 
   return (
     <>
@@ -125,10 +175,23 @@ export function PricingCards({
                 </div>
                 <p className="mt-1 text-xs text-subtle">{subline}</p>
               </div>
-              {/* Track 3 — CTA. */}
-              <Button asChild size="default" variant={plan.featured ? 'default' : 'outline'}>
-                <Link href={chatHref}>{planCopy.cta}</Link>
-              </Button>
+              {/* Track 3 — CTA. Free links to the app; paid tiers go through
+                  Stripe Checkout (or the billing portal if already subscribed). */}
+              {plan.id === 'free' ? (
+                <Button asChild size="default" variant="outline">
+                  <Link href={chatHref}>{planCopy.cta}</Link>
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  size="default"
+                  variant={plan.featured ? 'default' : 'outline'}
+                  disabled={busy !== null}
+                  onClick={() => startCheckout(plan.id)}
+                >
+                  {busy === plan.id ? '…' : planCopy.cta}
+                </Button>
+              )}
               {/* Track 4 — feature list. */}
               <ul className="space-y-2.5">
                 {planCopy.features.map((f) => (

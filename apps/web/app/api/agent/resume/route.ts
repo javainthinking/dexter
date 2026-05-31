@@ -8,6 +8,7 @@ import { withUser } from '@dexter/core/runtime/user-context';
 
 import { resolveSession } from '../../../../lib/session';
 import { getCurrentUser } from '../../../../lib/auth/session';
+import { incrementUsage } from '../../../../lib/billing';
 import {
   claimForResume,
   persistChunk,
@@ -125,6 +126,7 @@ export async function POST(request: NextRequest): Promise<Response> {
   // task persists the turn (query + final answer + deliverables). Earlier
   // hops yield another `continuation_required` and persist nothing.
   let turnCompleted = false;
+  let fileCount = 0;
 
   void withUser(
     { userId: user.id, email: user.email ?? undefined },
@@ -158,8 +160,9 @@ export async function POST(request: NextRequest): Promise<Response> {
             );
           }
         },
-        onDone: async (answer) => {
+        onDone: async (answer, deliverableCount) => {
           turnCompleted = true;
+          fileCount = deliverableCount;
           try {
             await markDone(jobId, answer);
           } catch (err) {
@@ -215,6 +218,24 @@ export async function POST(request: NextRequest): Promise<Response> {
               sessionId: session.sessionId,
               msg: 'session_flush_error',
               error: message,
+            }),
+          );
+        }
+        // A chunked turn completes here — meter it once (one conversation +
+        // any files). The originating /api/agent hop returned at
+        // continuation without counting, so there's no double-count.
+        try {
+          await incrementUsage(user.id, 'conversations', 1);
+          if (fileCount > 0) await incrementUsage(user.id, 'files', fileCount);
+        } catch (err) {
+          console.error(
+            JSON.stringify({
+              level: 'error',
+              surface: 'web',
+              route: '/api/agent/resume',
+              requestId,
+              msg: 'usage_increment_failed',
+              error: err instanceof Error ? err.message : String(err),
             }),
           );
         }
