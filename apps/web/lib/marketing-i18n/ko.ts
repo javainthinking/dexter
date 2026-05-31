@@ -173,7 +173,7 @@ export const pricing: PricingContent = {
     power: {
       blurb: '파워 유저와 전문가를 위한 요금제.',
       annualNote: '연간 결제 시 월 $104 · + 사용량 초과분',
-      cta: '문의하기',
+      cta: 'Power로 전환',
       features: [
         'Pro의 모든 기능, 그리고:',
         '무제한 대화 & 리서치',

@@ -173,7 +173,7 @@ export const pricing: PricingContent = {
     power: {
       blurb: '为重度用户和专业人士而设。',
       annualNote: '年付 $104/月 · + 用量超额',
-      cta: '联系我们',
+      cta: '升级 Power',
       features: [
         'Pro 的全部功能,另加:',
         '不限量对话与研究',

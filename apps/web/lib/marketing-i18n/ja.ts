@@ -173,7 +173,7 @@ export const pricing: PricingContent = {
     power: {
       blurb: 'パワーユーザーとプロフェッショナル向け。',
       annualNote: '年払いで月 $104・+ 使用量超過分',
-      cta: 'お問い合わせ',
+      cta: 'Power にする',
       features: [
         'Pro のすべて、さらに:',
         '無制限の会話とリサーチ',

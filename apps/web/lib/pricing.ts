@@ -160,7 +160,7 @@ const en: PricingContent = {
     power: {
       blurb: 'For power users and pros.',
       annualNote: '$104/mo billed annually · + usage overage',
-      cta: 'Talk to us',
+      cta: 'Go Power',
       features: [
         'Everything in Pro, plus:',
         'Unlimited conversations & research',

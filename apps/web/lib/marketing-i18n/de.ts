@@ -173,7 +173,7 @@ export const pricing: PricingContent = {
     power: {
       blurb: 'Für Power-User und Profis.',
       annualNote: '$104/Mon. bei jährlicher Abrechnung · + Nutzungsüberschreitung',
-      cta: 'Kontaktieren Sie uns',
+      cta: 'Auf Power wechseln',
       features: [
         'Alles aus Pro, plus:',
         'Unbegrenzte Konversationen & Research',

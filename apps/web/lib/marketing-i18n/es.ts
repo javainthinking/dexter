@@ -173,7 +173,7 @@ export const pricing: PricingContent = {
     power: {
       blurb: 'Para usuarios avanzados y profesionales.',
       annualNote: '$104/mes con facturación anual · + excedente de uso',
-      cta: 'Habla con nosotros',
+      cta: 'Pásate a Power',
       features: [
         'Todo lo de Pro, y además:',
         'Conversaciones e investigación ilimitadas',
