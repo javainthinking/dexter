@@ -31,7 +31,9 @@ export function PricingCards({
   chatHref: string;
   locale: string;
 }) {
-  const [annual, setAnnual] = React.useState(false);
+  // Default to annual: it's the better deal and the struck-through monthly
+  // price makes the 20% saving obvious the moment the page loads.
+  const [annual, setAnnual] = React.useState(true);
   const [busy, setBusy] = React.useState<string | null>(null);
 
   async function openPortal() {
@@ -149,7 +151,7 @@ export function PricingCards({
               }`}
             >
               {plan.featured && (
-                <div className="absolute -top-3 left-6">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                   <Badge variant="accent" size="default">
                     {copy.mostPopular}
                   </Badge>
@@ -162,9 +164,20 @@ export function PricingCards({
                 </h2>
                 <p className="mt-1 text-sm text-muted-foreground">{planCopy.blurb}</p>
               </div>
-              {/* Track 2 — price + billing sub-line. */}
+              {/* Track 2 — price + billing sub-line. In annual mode the
+                  regular monthly price is struck through next to the lower
+                  effective monthly price so the discount reads at a glance.
+                  Only for paid plans (Free has no annual total / discount). */}
               <div>
-                <div className="flex items-baseline gap-1">
+                <div className="flex items-baseline gap-1.5">
+                  {annual && plan.annualTotal && (
+                    <span
+                      className="font-serif text-xl font-medium text-subtle line-through"
+                      aria-hidden="true"
+                    >
+                      {plan.monthly}
+                    </span>
+                  )}
                   <span className="font-serif text-4xl font-semibold tracking-tight text-foreground">
                     {amount}
                   </span>
