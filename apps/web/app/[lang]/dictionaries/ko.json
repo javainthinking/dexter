@@ -503,5 +503,20 @@
     },
     "copyright": "© {year} PickSkill",
     "disclaimer": "PickSkill은 AI 리서치 에이전트입니다. 투자에는 위험이 따릅니다 — 분석은 신중한 참고 자료로 활용하세요."
+  },
+  "account": {
+    "metaTitle": "계정 — PickSkill",
+    "title": "계정",
+    "planHeading": "현재 플랜",
+    "renews": "{date}에 갱신",
+    "cancels": "{date}에 해지",
+    "freeNote": "무료 플랜을 이용 중입니다.",
+    "usageHeading": "이번 달 사용량",
+    "resets": "매월 초에 초기화됩니다.",
+    "unlimited": "무제한",
+    "manage": "구독 관리",
+    "upgrade": "플랜 업그레이드",
+    "conversations": "대화",
+    "files": "생성된 파일"
   }
 }

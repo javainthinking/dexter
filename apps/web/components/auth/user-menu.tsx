@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useSession, signOut } from 'next-auth/react';
-import { BrainCircuit, LogOut, Palette, User as UserIcon } from 'lucide-react';
+import { BrainCircuit, CreditCard, LogOut, Palette, User as UserIcon } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -95,6 +95,12 @@ export function UserMenu({ variant = 'compact', className }: UserMenuProps) {
             PickSkill remember about me'), not a section like
             Portfolios or Indicators. The dropdown grouping fits the
             mental model and keeps the global nav lean. */}
+        <DropdownMenuItem asChild>
+          <LocalizedLink href="/account">
+            <CreditCard className="size-4" />
+            {dict.account.title}
+          </LocalizedLink>
+        </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <LocalizedLink href="/memory">
             <BrainCircuit className="size-4" />

@@ -503,5 +503,20 @@
     },
     "copyright": "© {year} PickSkill",
     "disclaimer": "PickSkill 是一個 AI 研究助手。投資有風險,其分析僅供謹慎參考。"
+  },
+  "account": {
+    "metaTitle": "帳戶 — PickSkill",
+    "title": "帳戶",
+    "planHeading": "你的方案",
+    "renews": "於 {date} 續訂",
+    "cancels": "於 {date} 取消",
+    "freeNote": "你目前使用的是免費方案。",
+    "usageHeading": "本月使用量",
+    "resets": "每月月初重置。",
+    "unlimited": "無上限",
+    "manage": "管理訂閱",
+    "upgrade": "升級方案",
+    "conversations": "對話",
+    "files": "已產生的檔案"
   }
 }

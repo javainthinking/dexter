@@ -503,5 +503,20 @@
     },
     "copyright": "© {year} PickSkill",
     "disclaimer": "PickSkill est un agent de recherche IA. Investir comporte des risques — utilisez ses analyses comme une référence, avec prudence."
+  },
+  "account": {
+    "metaTitle": "Compte — PickSkill",
+    "title": "Compte",
+    "planHeading": "Votre forfait",
+    "renews": "Se renouvelle le {date}",
+    "cancels": "Prend fin le {date}",
+    "freeNote": "Vous êtes sur le forfait Free.",
+    "usageHeading": "Utilisation ce mois-ci",
+    "resets": "Réinitialisé au début de chaque mois.",
+    "unlimited": "Illimité",
+    "manage": "Gérer l'abonnement",
+    "upgrade": "Changer de forfait",
+    "conversations": "Conversations",
+    "files": "Fichiers générés"
   }
 }

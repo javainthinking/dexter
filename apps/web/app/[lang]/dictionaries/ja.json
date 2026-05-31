@@ -503,5 +503,20 @@
     },
     "copyright": "© {year} PickSkill",
     "disclaimer": "PickSkill は AI リサーチエージェントです。投資にはリスクがあります。分析は慎重な参考としてご利用ください。"
+  },
+  "account": {
+    "metaTitle": "アカウント — PickSkill",
+    "title": "アカウント",
+    "planHeading": "ご利用中のプラン",
+    "renews": "{date}に更新",
+    "cancels": "{date}に解約",
+    "freeNote": "現在、無料プランをご利用中です。",
+    "usageHeading": "今月の利用状況",
+    "resets": "毎月初めにリセットされます。",
+    "unlimited": "無制限",
+    "manage": "サブスクリプションを管理",
+    "upgrade": "プランをアップグレード",
+    "conversations": "会話数",
+    "files": "生成ファイル数"
   }
 }

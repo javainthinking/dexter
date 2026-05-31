@@ -503,5 +503,20 @@
     },
     "copyright": "© {year} PickSkill",
     "disclaimer": "PickSkill es un agente de investigación con IA. Invertir conlleva riesgos: usa su análisis como una referencia prudente."
+  },
+  "account": {
+    "metaTitle": "Cuenta — PickSkill",
+    "title": "Cuenta",
+    "planHeading": "Tu plan",
+    "renews": "Se renueva el {date}",
+    "cancels": "Se cancela el {date}",
+    "freeNote": "Estás en el plan Free.",
+    "usageHeading": "Uso de este mes",
+    "resets": "Se reinicia al comienzo de cada mes.",
+    "unlimited": "Ilimitado",
+    "manage": "Gestionar suscripción",
+    "upgrade": "Mejorar plan",
+    "conversations": "Conversaciones",
+    "files": "Archivos generados"
   }
 }

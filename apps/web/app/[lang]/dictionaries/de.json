@@ -503,5 +503,20 @@
     },
     "copyright": "© {year} PickSkill",
     "disclaimer": "PickSkill ist ein KI-Research-Agent. Investieren ist mit Risiken verbunden — nutze die Analysen als sorgfältige Orientierung."
+  },
+  "account": {
+    "metaTitle": "Konto — PickSkill",
+    "title": "Konto",
+    "planHeading": "Dein Tarif",
+    "renews": "Verlängert sich am {date}",
+    "cancels": "Endet am {date}",
+    "freeNote": "Du nutzt den Free-Tarif.",
+    "usageHeading": "Nutzung diesen Monat",
+    "resets": "Wird zu Beginn jedes Monats zurückgesetzt.",
+    "unlimited": "Unbegrenzt",
+    "manage": "Abo verwalten",
+    "upgrade": "Tarif upgraden",
+    "conversations": "Konversationen",
+    "files": "Erstellte Dateien"
   }
 }
