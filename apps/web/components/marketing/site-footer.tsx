@@ -88,7 +88,7 @@ export function SiteFooter({ lang, dict }: { lang: Locale; dict: Dictionary }) {
           <p className="max-w-md sm:text-right">
             {dict.footer?.disclaimer ??
               dict.landing?.footer?.disclaimer ??
-              'Not investment advice. For research and education only.'}
+              'PickSkill is an AI research agent. Investing involves risk — use its analysis as a careful reference.'}
           </p>
         </div>
       </div>
