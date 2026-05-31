@@ -135,6 +135,7 @@ const en: PricingContent = {
       annualNote: '$12/mo billed annually ($144/yr)',
       cta: 'Start with Starter',
       features: [
+        'Everything in Free, plus:',
         '200 conversations / month',
         '50 deep-research turns / month',
         '3 portfolios · 25 holdings each',
@@ -147,11 +148,11 @@ const en: PricingContent = {
       annualNote: '$32/mo billed annually ($384/yr)',
       cta: 'Go Pro',
       features: [
+        'Everything in Starter, plus:',
         '1,000 conversations / month',
         '300 deep-research turns / month',
         '10 portfolios · 50 holdings each',
         '30 generated files / month (PPT / Word / Excel)',
-        'Email support',
       ],
     },
     power: {
@@ -195,7 +196,14 @@ const en: PricingContent = {
     {
       title: 'Indicators dashboard',
       rows: [
-        { label: 'Technical dimensions', values: ['All 8', 'All 8', 'All 8', 'All 8'] },
+        { label: 'MACD (trend)', values: [true, true, true, true] },
+        { label: 'Moving averages — MA', values: [true, true, true, true] },
+        { label: 'RSI (momentum)', values: [true, true, true, true] },
+        { label: 'KDJ (stochastic)', values: [true, true, true, true] },
+        { label: 'Bollinger Bands — BOLL', values: [true, true, true, true] },
+        { label: 'ADX (trend strength)', values: [true, true, true, true] },
+        { label: 'Volume', values: [true, true, true, true] },
+        { label: 'Money flow (est.)', values: [true, true, true, true] },
         { label: 'Export dashboard (PPT / Word / Excel)', values: [true, true, true, true] },
       ],
     },

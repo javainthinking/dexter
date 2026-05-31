@@ -150,6 +150,7 @@ export const pricing: PricingContent = {
       annualNote: '연간 결제 시 월 $12 ($144/년)',
       cta: 'Starter로 시작',
       features: [
+        'Free의 모든 기능, 그리고:',
         '월 200회 대화',
         '월 50회 심층 리서치 턴',
         '포트폴리오 3개 · 각 보유 종목 25개',
@@ -162,11 +163,11 @@ export const pricing: PricingContent = {
       annualNote: '연간 결제 시 월 $32 ($384/년)',
       cta: 'Pro로 전환',
       features: [
+        'Starter의 모든 기능, 그리고:',
         '월 1,000회 대화',
         '월 300회 심층 리서치 턴',
         '포트폴리오 10개 · 각 보유 종목 50개',
         '월 30개 파일 생성 (PPT / Word / Excel)',
-        '이메일 지원',
       ],
     },
     power: {
@@ -210,7 +211,14 @@ export const pricing: PricingContent = {
     {
       title: '지표 대시보드',
       rows: [
-        { label: '지표 차원', values: ['8개 전체', '8개 전체', '8개 전체', '8개 전체'] },
+        { label: 'MACD (추세)', values: [true, true, true, true] },
+        { label: '이동평균 — MA', values: [true, true, true, true] },
+        { label: 'RSI (모멘텀)', values: [true, true, true, true] },
+        { label: 'KDJ (스토캐스틱)', values: [true, true, true, true] },
+        { label: '볼린저 밴드 — BOLL', values: [true, true, true, true] },
+        { label: 'ADX (추세 강도)', values: [true, true, true, true] },
+        { label: '거래량', values: [true, true, true, true] },
+        { label: '자금 흐름 (추정)', values: [true, true, true, true] },
         { label: '대시보드 내보내기 (PPT / Word / Excel)', values: [true, true, true, true] },
       ],
     },

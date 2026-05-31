@@ -150,6 +150,7 @@ export const pricing: PricingContent = {
       annualNote: '$12/mes con facturación anual ($144/año)',
       cta: 'Empieza con Starter',
       features: [
+        'Todo lo de Free, y además:',
         '200 conversaciones / mes',
         '50 turnos de investigación profunda / mes',
         '3 carteras · 25 posiciones cada una',
@@ -162,11 +163,11 @@ export const pricing: PricingContent = {
       annualNote: '$32/mes con facturación anual ($384/año)',
       cta: 'Pásate a Pro',
       features: [
+        'Todo lo de Starter, y además:',
         '1.000 conversaciones / mes',
         '300 turnos de investigación profunda / mes',
         '10 carteras · 50 posiciones cada una',
         '30 archivos generados / mes (PPT / Word / Excel)',
-        'Soporte por correo',
       ],
     },
     power: {
@@ -210,7 +211,14 @@ export const pricing: PricingContent = {
     {
       title: 'Panel de indicadores',
       rows: [
-        { label: 'Dimensiones de indicadores', values: ['Las 8', 'Las 8', 'Las 8', 'Las 8'] },
+        { label: 'MACD (tendencia)', values: [true, true, true, true] },
+        { label: 'Medias móviles — MA', values: [true, true, true, true] },
+        { label: 'RSI (momentum)', values: [true, true, true, true] },
+        { label: 'KDJ (estocástico)', values: [true, true, true, true] },
+        { label: 'Bandas de Bollinger — BOLL', values: [true, true, true, true] },
+        { label: 'ADX (fuerza de tendencia)', values: [true, true, true, true] },
+        { label: 'Volumen', values: [true, true, true, true] },
+        { label: 'Flujo de capital (est.)', values: [true, true, true, true] },
         { label: 'Exporta el panel (PPT / Word / Excel)', values: [true, true, true, true] },
       ],
     },

@@ -150,6 +150,7 @@ export const pricing: PricingContent = {
       annualNote: '年払いで月 $12($144/年)',
       cta: 'Starter で始める',
       features: [
+        'Free のすべて、さらに:',
         '月 200 会話',
         '月 50 回のディープリサーチ',
         'ポートフォリオ 3 件・各 25 銘柄',
@@ -162,11 +163,11 @@ export const pricing: PricingContent = {
       annualNote: '年払いで月 $32($384/年)',
       cta: 'Pro にする',
       features: [
+        'Starter のすべて、さらに:',
         '月 1,000 会話',
         '月 300 回のディープリサーチ',
         'ポートフォリオ 10 件・各 50 銘柄',
         '月 30 ファイル生成(PPT / Word / Excel)',
-        'メールサポート',
       ],
     },
     power: {
@@ -210,7 +211,14 @@ export const pricing: PricingContent = {
     {
       title: '指標ダッシュボード',
       rows: [
-        { label: '指標次元', values: ['8 つすべて', '8 つすべて', '8 つすべて', '8 つすべて'] },
+        { label: 'MACD(トレンド)', values: [true, true, true, true] },
+        { label: '移動平均 — MA', values: [true, true, true, true] },
+        { label: 'RSI(モメンタム)', values: [true, true, true, true] },
+        { label: 'KDJ(ストキャスティクス)', values: [true, true, true, true] },
+        { label: 'ボリンジャーバンド — BOLL', values: [true, true, true, true] },
+        { label: 'ADX(トレンドの強さ)', values: [true, true, true, true] },
+        { label: '出来高', values: [true, true, true, true] },
+        { label: '資金フロー(推定)', values: [true, true, true, true] },
         { label: 'ダッシュボードをエクスポート(PPT / Word / Excel)', values: [true, true, true, true] },
       ],
     },

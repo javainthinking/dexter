@@ -150,6 +150,7 @@ export const pricing: PricingContent = {
       annualNote: '年繳每月 $12($144/年)',
       cta: '從 Starter 開始',
       features: [
+        'Free 的全部功能,外加:',
         '每月 200 次對話',
         '每月 50 次深度研究輪次',
         '3 個投資組合 · 每個 25 檔持股',
@@ -162,11 +163,11 @@ export const pricing: PricingContent = {
       annualNote: '年繳每月 $32($384/年)',
       cta: '升級 Pro',
       features: [
+        'Starter 的全部功能,外加:',
         '每月 1,000 次對話',
         '每月 300 次深度研究輪次',
         '10 個投資組合 · 每個 50 檔持股',
         '每月生成 30 個檔案(PPT / Word / Excel)',
-        '電子郵件支援',
       ],
     },
     power: {
@@ -210,7 +211,14 @@ export const pricing: PricingContent = {
     {
       title: '指標儀表板',
       rows: [
-        { label: '技術指標維度', values: ['全部 8 個', '全部 8 個', '全部 8 個', '全部 8 個'] },
+        { label: 'MACD(趨勢)', values: [true, true, true, true] },
+        { label: '均線 — MA', values: [true, true, true, true] },
+        { label: 'RSI(動量)', values: [true, true, true, true] },
+        { label: 'KDJ(隨機指標)', values: [true, true, true, true] },
+        { label: '布林通道 — BOLL', values: [true, true, true, true] },
+        { label: 'ADX(趨勢強度)', values: [true, true, true, true] },
+        { label: '成交量', values: [true, true, true, true] },
+        { label: '資金流(估算)', values: [true, true, true, true] },
         { label: '儀表板匯出(PPT / Word / Excel)', values: [true, true, true, true] },
       ],
     },

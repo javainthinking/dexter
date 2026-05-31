@@ -150,6 +150,7 @@ export const pricing: PricingContent = {
       annualNote: '$12/Mon. bei jährlicher Abrechnung ($144/Jahr)',
       cta: 'Mit Starter beginnen',
       features: [
+        'Alles aus Free, plus:',
         '200 Konversationen / Monat',
         '50 Deep-Research-Durchläufe / Monat',
         '3 Portfolios · je 25 Positionen',
@@ -162,11 +163,11 @@ export const pricing: PricingContent = {
       annualNote: '$32/Mon. bei jährlicher Abrechnung ($384/Jahr)',
       cta: 'Auf Pro wechseln',
       features: [
+        'Alles aus Starter, plus:',
         '1.000 Konversationen / Monat',
         '300 Deep-Research-Durchläufe / Monat',
         '10 Portfolios · je 50 Positionen',
         '30 generierte Dateien / Monat (PPT / Word / Excel)',
-        'E-Mail-Support',
       ],
     },
     power: {
@@ -210,7 +211,14 @@ export const pricing: PricingContent = {
     {
       title: 'Indikator-Dashboard',
       rows: [
-        { label: 'Indikator-Dimensionen', values: ['Alle 8', 'Alle 8', 'Alle 8', 'Alle 8'] },
+        { label: 'MACD (Trend)', values: [true, true, true, true] },
+        { label: 'Gleitende Durchschnitte — MA', values: [true, true, true, true] },
+        { label: 'RSI (Momentum)', values: [true, true, true, true] },
+        { label: 'KDJ (Stochastik)', values: [true, true, true, true] },
+        { label: 'Bollinger-Bänder — BOLL', values: [true, true, true, true] },
+        { label: 'ADX (Trendstärke)', values: [true, true, true, true] },
+        { label: 'Volumen', values: [true, true, true, true] },
+        { label: 'Kapitalfluss (geschätzt)', values: [true, true, true, true] },
         { label: 'Dashboard exportieren (PPT / Word / Excel)', values: [true, true, true, true] },
       ],
     },

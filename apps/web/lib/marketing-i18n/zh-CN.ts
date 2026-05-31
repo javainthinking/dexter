@@ -150,6 +150,7 @@ export const pricing: PricingContent = {
       annualNote: '年付 $12/月(全年 $144)',
       cta: '从 Starter 开始',
       features: [
+        'Free 的全部功能,另加:',
         '每月 200 次对话',
         '每月 50 次深度研究轮次',
         '3 个组合 · 每个 25 只持仓',
@@ -162,11 +163,11 @@ export const pricing: PricingContent = {
       annualNote: '年付 $32/月(全年 $384)',
       cta: '升级 Pro',
       features: [
+        'Starter 的全部功能,另加:',
         '每月 1,000 次对话',
         '每月 300 次深度研究轮次',
         '10 个组合 · 每个 50 只持仓',
         '每月生成 30 个文件(PPT / Word / Excel)',
-        '邮件支持',
       ],
     },
     power: {
@@ -210,7 +211,14 @@ export const pricing: PricingContent = {
     {
       title: '指标看板',
       rows: [
-        { label: '技术指标维度', values: ['全部 8 个', '全部 8 个', '全部 8 个', '全部 8 个'] },
+        { label: 'MACD(趋势)', values: [true, true, true, true] },
+        { label: '均线 — MA', values: [true, true, true, true] },
+        { label: 'RSI(动量)', values: [true, true, true, true] },
+        { label: 'KDJ(随机指标)', values: [true, true, true, true] },
+        { label: '布林带 — BOLL', values: [true, true, true, true] },
+        { label: 'ADX(趋势强度)', values: [true, true, true, true] },
+        { label: '成交量', values: [true, true, true, true] },
+        { label: '资金流(估算)', values: [true, true, true, true] },
         { label: '看板导出(PPT / Word / Excel)', values: [true, true, true, true] },
       ],
     },
