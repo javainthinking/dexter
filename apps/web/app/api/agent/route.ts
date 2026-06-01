@@ -100,6 +100,12 @@ export async function POST(request: NextRequest): Promise<Response> {
     );
   }
 
+  // File quota is a soft gate: over the monthly file limit, the turn still
+  // runs and answers — it just can't generate new documents. We withhold the
+  // office_edit tool rather than blocking the turn (the user can be out of
+  // files but still have conversations left).
+  const filesBlocked = !(await checkQuota(user.id, plan, 'files')).allowed;
+
   const session = await resolveSession({ model: body.model, userId: user.id });
 
   console.log(
@@ -130,7 +136,7 @@ export async function POST(request: NextRequest): Promise<Response> {
   // Construct the controller. AgentConfig stays small here; Phase 3 lets
   // tenants pick their own model via UI.
   const controller = new AgentRunnerController(
-    { model: body.model, memoryEnabled: true },
+    { model: body.model, memoryEnabled: true, disableFileGeneration: filesBlocked },
     session.history,
     undefined,
     ports,

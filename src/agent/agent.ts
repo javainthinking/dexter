@@ -233,7 +233,11 @@ export class Agent {
 
   static async create(config: AgentConfig = {}): Promise<Agent> {
     const model = config.model ?? DEFAULT_MODEL;
-    const tools = getTools(model);
+    // Over the file quota → withhold the document-mutation tool so no new
+    // file can be produced this turn. office_read (read-only) stays.
+    const tools = config.disableFileGeneration
+      ? getTools(model).filter((t) => t.name !== 'office_edit')
+      : getTools(model);
     const concurrencyMap = getToolConcurrencyMap(model);
     const soulContent = await loadSoulDocument();
     const rulesContent = await loadRulesDocument();
@@ -249,7 +253,7 @@ export class Agent {
       }
     }
 
-    const systemPrompt = buildSystemPrompt(
+    let systemPrompt = buildSystemPrompt(
       model,
       soulContent,
       config.channel,
@@ -258,6 +262,11 @@ export class Agent {
       memoryContext,
       rulesContent,
     );
+    if (config.disableFileGeneration) {
+      systemPrompt +=
+        '\n\n## File generation unavailable\n' +
+        "The user has reached their monthly document-generation limit on their current plan, so the PowerPoint/Word/Excel generation tool is disabled for this turn. Answer the rest of the request normally. If the user asked you to create or edit a document or file, briefly tell them they've hit their monthly file limit and can upgrade their plan to generate more — do not attempt to produce the file.";
+    }
     return new Agent(config, tools, systemPrompt, concurrencyMap);
   }
 

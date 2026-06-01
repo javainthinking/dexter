@@ -8,7 +8,7 @@ import { withUser } from '@dexter/core/runtime/user-context';
 
 import { resolveSession } from '../../../../lib/session';
 import { getCurrentUser } from '../../../../lib/auth/session';
-import { incrementUsage } from '../../../../lib/billing';
+import { incrementUsage, getUserPlan, checkQuota } from '../../../../lib/billing';
 import {
   claimForResume,
   persistChunk,
@@ -110,8 +110,14 @@ export async function POST(request: NextRequest): Promise<Response> {
     events: sink,
   });
 
+  // Mirror /api/agent's file gate so a turn that began over the file quota
+  // keeps generation disabled across chunk boundaries. Usage is only
+  // incremented at turn completion, so this reads the same as turn start.
+  const { plan } = await getUserPlan(user.id);
+  const filesBlocked = !(await checkQuota(user.id, plan, 'files')).allowed;
+
   const controller = new AgentRunnerController(
-    { model: resumeState.model ?? undefined, memoryEnabled: true },
+    { model: resumeState.model ?? undefined, memoryEnabled: true, disableFileGeneration: filesBlocked },
     session.history,
     undefined,
     ports,

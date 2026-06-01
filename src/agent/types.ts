@@ -58,6 +58,13 @@ export interface AgentConfig {
   memoryEnabled?: boolean;
   /** Message queue for mid-run injection of new user messages. */
   messageQueue?: MessageQueue;
+  /**
+   * When true, the document-generation tool (office_edit) is withheld for
+   * this run and the system prompt tells the model that file generation is
+   * unavailable. Set when the user is over their monthly file quota — the
+   * turn still runs and answers, it just can't produce PPT/Word/Excel files.
+   */
+  disableFileGeneration?: boolean;
 }
 
 /**
