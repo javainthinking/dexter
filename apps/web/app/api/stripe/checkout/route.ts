@@ -88,21 +88,41 @@ export async function POST(request: NextRequest): Promise<Response> {
       return NextResponse.json({ error: 'already_subscribed', code: 'ALREADY_SUBSCRIBED' }, { status: 409 });
     }
 
+    const newPriceId = getStripePriceId(plan, interval);
+    const upgradeCustomerId = await ensureStripeCustomer(user);
+
+    // Primary: a Stripe-hosted confirmation scoped to exactly this price
+    // change — it shows the prorated difference, collects payment (incl. any
+    // SCA), updates the subscription, and returns to the account page.
     try {
-      await stripe.subscriptions.update(sub.id, {
-        items: [{ id: item.id, price: getStripePriceId(plan, interval) }],
-        // Upgrade takes effect immediately; the prorated difference lands on
-        // the next invoice rather than charging a separate invoice now.
-        proration_behavior: 'create_prorations',
-        metadata: { userId: user.id, plan, interval },
+      const flow = await stripe.billingPortal.sessions.create({
+        customer: upgradeCustomerId,
+        return_url: `${APP_URL}/${locale}/account?billing=success`,
+        flow_data: {
+          type: 'subscription_update_confirm',
+          subscription_update_confirm: {
+            subscription: sub.id,
+            items: [{ id: item.id, price: newPriceId }],
+          },
+        },
       });
-      await syncUserFromStripe(user.id);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'subscription update failed';
-      return NextResponse.json({ error: 'upgrade_failed', message }, { status: 500 });
+      return NextResponse.json({ url: flow.url });
+    } catch {
+      // Fallback (e.g. portal flow unavailable): invoice the prorated
+      // difference to the card on file immediately, then land on /account.
+      try {
+        await stripe.subscriptions.update(sub.id, {
+          items: [{ id: item.id, price: newPriceId }],
+          proration_behavior: 'always_invoice',
+          metadata: { userId: user.id, plan, interval },
+        });
+        await syncUserFromStripe(user.id);
+        return NextResponse.json({ url: `${APP_URL}/${locale}/account?billing=success` });
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'upgrade failed';
+        return NextResponse.json({ error: 'upgrade_failed', message }, { status: 500 });
+      }
     }
-    // Land on the account page, which re-syncs and shows the new plan.
-    return NextResponse.json({ url: `${APP_URL}/${locale}/account?billing=success` });
   }
 
   const customerId = await ensureStripeCustomer(user);
