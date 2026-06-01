@@ -79,6 +79,27 @@ export async function POST(request: NextRequest): Promise<Response> {
     );
   }
 
+  // Deep-research gate. A turn can't declare upfront whether it'll search,
+  // so once the monthly deep-research quota is spent we block the turn
+  // entirely (the user chose a hard block over silently disabling search).
+  // Only enforced on turn start (/api/agent); resume hops continue an
+  // already-admitted turn.
+  const researchQuota = await checkQuota(user.id, plan, 'deep_research');
+  if (!researchQuota.allowed) {
+    return NextResponse.json(
+      {
+        error: 'quota_exceeded',
+        code: 'RESEARCH_LIMIT',
+        metric: 'deep_research',
+        plan,
+        used: researchQuota.used,
+        limit: researchQuota.limit,
+        message: `You've used all ${researchQuota.limit} deep-research turns on the ${plan} plan this month.`,
+      },
+      { status: 402 },
+    );
+  }
+
   const session = await resolveSession({ model: body.model, userId: user.id });
 
   console.log(
