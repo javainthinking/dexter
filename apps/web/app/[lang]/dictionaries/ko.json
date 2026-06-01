@@ -511,12 +511,18 @@
     "renews": "{date}에 갱신",
     "cancels": "{date}에 해지",
     "freeNote": "무료 플랜을 이용 중입니다.",
-    "usageHeading": "이번 달 사용량",
-    "resets": "매월 초에 초기화됩니다.",
+    "usageHeading": "사용량 및 한도",
+    "resets": "대화, 리서치, 파일 수는 매월 초에 초기화됩니다.",
     "unlimited": "무제한",
     "manage": "구독 관리",
     "upgrade": "플랜 업그레이드",
     "conversations": "대화",
-    "files": "생성된 파일"
+    "files": "생성된 파일",
+    "deepResearch": "심층 리서치 횟수",
+    "portfolios": "포트폴리오",
+    "holdings": "포트폴리오당 보유 종목",
+    "unlockHeading": "{plan}(으)로 업그레이드하여 잠금 해제",
+    "unlockNote": "모든 할당량에서 더 높은 한도와 더 많은 여유를 제공합니다.",
+    "seePlans": "모든 플랜 보기"
   }
 }

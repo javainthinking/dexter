@@ -511,12 +511,18 @@
     "renews": "{date}に更新",
     "cancels": "{date}に解約",
     "freeNote": "現在、無料プランをご利用中です。",
-    "usageHeading": "今月の利用状況",
-    "resets": "毎月初めにリセットされます。",
+    "usageHeading": "利用状況と上限",
+    "resets": "会話数、リサーチ数、ファイル数は毎月初めにリセットされます。",
     "unlimited": "無制限",
     "manage": "サブスクリプションを管理",
     "upgrade": "プランをアップグレード",
     "conversations": "会話数",
-    "files": "生成ファイル数"
+    "files": "生成ファイル数",
+    "deepResearch": "ディープリサーチ実行回数",
+    "portfolios": "ポートフォリオ数",
+    "holdings": "ポートフォリオあたりの保有銘柄数",
+    "unlockHeading": "{plan}にアップグレードして利用可能",
+    "unlockNote": "すべての上限が引き上げられ、より多くの余裕が生まれます。",
+    "seePlans": "すべてのプランを見る"
   }
 }

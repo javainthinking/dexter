@@ -529,12 +529,18 @@
     "renews": "Renews {date}",
     "cancels": "Cancels {date}",
     "freeNote": "You are on the Free plan.",
-    "usageHeading": "This month's usage",
-    "resets": "Resets at the start of each month.",
+    "usageHeading": "Usage & limits",
+    "resets": "Conversation, research, and file counts reset at the start of each month.",
     "unlimited": "Unlimited",
     "manage": "Manage subscription",
     "upgrade": "Upgrade plan",
     "conversations": "Conversations",
-    "files": "Files generated"
+    "deepResearch": "Deep-research turns",
+    "files": "Files generated",
+    "portfolios": "Portfolios",
+    "holdings": "Holdings per portfolio",
+    "unlockHeading": "Upgrade to {plan} to unlock",
+    "unlockNote": "Higher limits and more headroom on every quota.",
+    "seePlans": "See all plans"
   }
 }

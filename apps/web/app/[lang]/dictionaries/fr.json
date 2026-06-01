@@ -511,12 +511,18 @@
     "renews": "Se renouvelle le {date}",
     "cancels": "Prend fin le {date}",
     "freeNote": "Vous êtes sur le forfait Free.",
-    "usageHeading": "Utilisation ce mois-ci",
-    "resets": "Réinitialisé au début de chaque mois.",
+    "usageHeading": "Utilisation et limites",
+    "resets": "Le nombre de conversations, de recherches et de fichiers est réinitialisé au début de chaque mois.",
     "unlimited": "Illimité",
     "manage": "Gérer l'abonnement",
     "upgrade": "Changer de forfait",
     "conversations": "Conversations",
-    "files": "Fichiers générés"
+    "files": "Fichiers générés",
+    "deepResearch": "Recherches approfondies",
+    "portfolios": "Portefeuilles",
+    "holdings": "Positions par portefeuille",
+    "unlockHeading": "Passez à {plan} pour débloquer",
+    "unlockNote": "Des limites plus élevées et plus de marge sur chaque quota.",
+    "seePlans": "Voir tous les forfaits"
   }
 }

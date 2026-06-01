@@ -511,12 +511,18 @@
     "renews": "Se renueva el {date}",
     "cancels": "Se cancela el {date}",
     "freeNote": "Estás en el plan Free.",
-    "usageHeading": "Uso de este mes",
-    "resets": "Se reinicia al comienzo de cada mes.",
+    "usageHeading": "Uso y límites",
+    "resets": "Los recuentos de conversaciones, investigación y archivos se reinician al comienzo de cada mes.",
     "unlimited": "Ilimitado",
     "manage": "Gestionar suscripción",
     "upgrade": "Mejorar plan",
     "conversations": "Conversaciones",
-    "files": "Archivos generados"
+    "files": "Archivos generados",
+    "deepResearch": "Turnos de investigación profunda",
+    "portfolios": "Carteras",
+    "holdings": "Posiciones por cartera",
+    "unlockHeading": "Mejora a {plan} para desbloquear",
+    "unlockNote": "Límites más altos y más margen en cada cuota.",
+    "seePlans": "Ver todos los planes"
   }
 }

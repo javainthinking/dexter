@@ -511,12 +511,18 @@
     "renews": "於 {date} 續訂",
     "cancels": "於 {date} 取消",
     "freeNote": "你目前使用的是免費方案。",
-    "usageHeading": "本月使用量",
-    "resets": "每月月初重置。",
+    "usageHeading": "用量與額度",
+    "resets": "對話、研究與檔案數量於每月月初重置。",
     "unlimited": "無上限",
     "manage": "管理訂閱",
     "upgrade": "升級方案",
     "conversations": "對話",
-    "files": "已產生的檔案"
+    "files": "已產生的檔案",
+    "deepResearch": "深度研究輪次",
+    "portfolios": "投資組合",
+    "holdings": "每個組合持倉數",
+    "unlockHeading": "升級至 {plan} 解鎖",
+    "unlockNote": "更高的額度，每項配額都有更多餘裕。",
+    "seePlans": "查看所有方案"
   }
 }

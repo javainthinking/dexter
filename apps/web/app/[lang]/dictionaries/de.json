@@ -511,12 +511,18 @@
     "renews": "Verlängert sich am {date}",
     "cancels": "Endet am {date}",
     "freeNote": "Du nutzt den Free-Tarif.",
-    "usageHeading": "Nutzung diesen Monat",
-    "resets": "Wird zu Beginn jedes Monats zurückgesetzt.",
+    "usageHeading": "Nutzung & Limits",
+    "resets": "Konversations-, Recherche- und Dateizähler werden zu Beginn jedes Monats zurückgesetzt.",
     "unlimited": "Unbegrenzt",
     "manage": "Abo verwalten",
     "upgrade": "Tarif upgraden",
     "conversations": "Konversationen",
-    "files": "Erstellte Dateien"
+    "files": "Erstellte Dateien",
+    "deepResearch": "Deep-Research-Durchläufe",
+    "portfolios": "Portfolios",
+    "holdings": "Positionen pro Portfolio",
+    "unlockHeading": "Upgrade auf {plan}, um freizuschalten",
+    "unlockNote": "Höhere Limits und mehr Spielraum bei jedem Kontingent.",
+    "seePlans": "Alle Tarife ansehen"
   }
 }
