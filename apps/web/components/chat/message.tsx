@@ -9,6 +9,7 @@ import { Logo } from '../logo';
 import { useDictionary, format } from '../i18n/dictionary-provider';
 import { cn } from '../../lib/utils';
 import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
 
 export interface TurnDeliverable {
   filename: string;
@@ -34,6 +35,13 @@ export interface ChatTurn {
    * deliverables.
    */
   deliverables?: TurnDeliverable[];
+  /**
+   * Set when the agent couldn't generate a requested file because the user
+   * is over their monthly file quota. Renders an inline upgrade card under
+   * the answer (a persistent, clickable prompt — more reliable than a
+   * transient modal).
+   */
+  fileLimit?: { plan?: string; limit?: number };
 }
 
 export function UserMessage({ text }: { text: string }) {
@@ -139,7 +147,13 @@ function initialsFor(user: { name?: string | null; email?: string | null } | und
     .toUpperCase();
 }
 
-export function AssistantMessage({ turn }: { turn: ChatTurn }) {
+export function AssistantMessage({
+  turn,
+  onUpgrade,
+}: {
+  turn: ChatTurn;
+  onUpgrade?: (fl: { plan?: string; limit?: number }) => void;
+}) {
   const dict = useDictionary();
   const showAnswer = turn.answer.length > 0;
   return (
@@ -186,6 +200,19 @@ export function AssistantMessage({ turn }: { turn: ChatTurn }) {
             )}
           >
             <Markdown>{turn.answer}</Markdown>
+          </div>
+        )}
+
+        {/* File-quota upgrade card — the agent couldn't produce the file.
+            Persistent + clickable (opens the upgrade dialog). */}
+        {turn.fileLimit && (
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[color:var(--accent)]/40 bg-[color:var(--accent)]/10 px-4 py-3">
+            <span className="text-sm text-foreground">
+              {format(dict.upgrade.reasons.files, { limit: turn.fileLimit.limit ?? '' })}
+            </span>
+            <Button size="sm" onClick={() => onUpgrade?.(turn.fileLimit!)}>
+              {dict.account.upgrade}
+            </Button>
           </div>
         )}
 

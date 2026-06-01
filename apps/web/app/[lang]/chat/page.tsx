@@ -262,9 +262,6 @@ function ChatPage() {
           setTurns((prev) => prev.filter((t) => t.id !== turnId));
           return;
         }
-        // Captured if the agent refused a file generation mid-stream (over
-        // the file quota) — we pop the upgrade dialog once the turn settles.
-        let fileLimit: { plan?: string; limit?: number } | undefined;
         while (true) {
           if (!res.ok || !res.body) {
             throw new Error(`agent_failed_${res.status}`);
@@ -275,20 +272,12 @@ function ChatPage() {
             setTurns,
             dict,
           );
-          if (result.fileLimit) fileLimit = result.fileLimit;
           if (!result.continueWith) break;
           res = await fetch('/api/agent/resume', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ jobId: result.continueWith.jobId }),
             signal: controller.signal,
-          });
-        }
-        if (fileLimit) {
-          openUpgrade({
-            plan: fileLimit.plan as PlanId | undefined,
-            metric: 'files',
-            limit: fileLimit.limit,
           });
         }
 
@@ -490,7 +479,16 @@ function ChatPage() {
                 {turns.map((turn, idx) => (
                   <div key={turn.id} className="space-y-4">
                     <UserMessage text={turn.question} />
-                    <AssistantMessage turn={turn} />
+                    <AssistantMessage
+                      turn={turn}
+                      onUpgrade={(fl) =>
+                        openUpgrade({
+                          plan: fl.plan as PlanId | undefined,
+                          metric: 'files',
+                          limit: fl.limit,
+                        })
+                      }
+                    />
                     {idx < turns.length - 1 && <Separator className="my-7" />}
                   </div>
                 ))}
@@ -616,15 +614,11 @@ async function streamSseInto(
   turnId: string,
   setTurns: React.Dispatch<React.SetStateAction<ChatTurn[]>>,
   dict: ReturnType<typeof useDictionary>,
-): Promise<{
-  continueWith?: { jobId: string };
-  fileLimit?: { plan?: string; limit?: number };
-}> {
+): Promise<{ continueWith?: { jobId: string } }> {
   const reader = body.getReader();
   const decoder = new TextDecoder();
   let buf = '';
   let continueWith: { jobId: string } | undefined;
-  let fileLimit: { plan?: string; limit?: number } | undefined;
   while (true) {
     const { value, done } = await reader.read();
     if (done) break;
@@ -645,18 +639,18 @@ async function streamSseInto(
         if (jobId) continueWith = { jobId };
       } else if (evType === 'file_limit_reached') {
         const payload = peekSseData(record);
-        fileLimit = {
+        const fl = {
           plan: typeof payload?.plan === 'string' ? payload.plan : undefined,
           limit: typeof payload?.limit === 'number' ? payload.limit : undefined,
         };
+        // Attach to the turn so AssistantMessage renders a persistent
+        // inline upgrade card under the answer.
+        setTurns((prev) => prev.map((t) => (t.id === turnId ? { ...t, fileLimit: fl } : t)));
       }
       applyRecord(turnId, record, setTurns, dict);
     }
   }
-  return {
-    ...(continueWith ? { continueWith } : {}),
-    ...(fileLimit ? { fileLimit } : {}),
-  };
+  return continueWith ? { continueWith } : {};
 }
 
 function reduceEvent(
