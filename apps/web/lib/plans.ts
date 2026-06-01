@@ -70,3 +70,24 @@ export function planFromStripePrice(
   }
   return null;
 }
+
+/** Plan tiers low → high, for upgrade/downgrade comparison. */
+export const PLAN_RANK_ORDER: PlanId[] = ['free', 'starter', 'pro', 'power'];
+
+/**
+ * Is moving from `current` to `target` an allowed in-place upgrade?
+ *
+ * Allowed: a higher plan tier, and/or month→year billing. Blocked: a lower
+ * tier (downgrade), year→month (interval downgrade), or no change at all.
+ * Blocked transitions are routed to the Stripe billing portal instead.
+ */
+export function isPlanUpgrade(
+  current: { plan: PlanId; interval: BillingInterval },
+  target: { plan: PlanId; interval: BillingInterval },
+): boolean {
+  const planDowngrade =
+    PLAN_RANK_ORDER.indexOf(target.plan) < PLAN_RANK_ORDER.indexOf(current.plan);
+  const intervalDowngrade = current.interval === 'year' && target.interval === 'month';
+  const noChange = target.plan === current.plan && target.interval === current.interval;
+  return !planDowngrade && !intervalDowngrade && !noChange;
+}

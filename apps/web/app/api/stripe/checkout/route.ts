@@ -3,8 +3,15 @@ import { eq } from 'drizzle-orm';
 import { getDb } from '@dexter/core/db/client';
 import { users } from '@dexter/core/db/schema/auth';
 import { getCurrentUser } from '@/lib/auth/session';
-import { ensureStripeCustomer, stripe } from '@/lib/stripe';
-import { getStripePriceId, type BillingInterval, type PaidPlan } from '@/lib/plans';
+import { ensureStripeCustomer, stripe, syncUserFromStripe } from '@/lib/stripe';
+import {
+  getStripePriceId,
+  planFromStripePrice,
+  isPlanUpgrade,
+  type BillingInterval,
+  type PaidPlan,
+  type PlanId,
+} from '@/lib/plans';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -59,9 +66,43 @@ export async function POST(request: NextRequest): Promise<Response> {
     .limit(1);
   if (!user) return NextResponse.json({ error: 'user not found' }, { status: 404 });
 
-  // Already paying → Checkout would create a parallel sub. Send to portal.
+  // Already paying → don't create a parallel sub. Upgrade the existing one
+  // in place when the requested change is an upgrade; otherwise (downgrade,
+  // annual→monthly, or no change) send the client to the billing portal.
   if (user.stripeSubscriptionId && user.stripeStatus === 'active') {
-    return NextResponse.json({ error: 'already_subscribed', code: 'ALREADY_SUBSCRIBED' }, { status: 409 });
+    let sub: Awaited<ReturnType<typeof stripe.subscriptions.retrieve>>;
+    try {
+      sub = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
+    } catch {
+      return NextResponse.json({ error: 'already_subscribed', code: 'ALREADY_SUBSCRIBED' }, { status: 409 });
+    }
+    const item = sub.items.data[0];
+    const parsed = item?.price?.id ? planFromStripePrice(item.price.id) : null;
+    const currentPlan: PlanId = parsed?.plan ?? 'free';
+    const currentInterval: BillingInterval =
+      parsed?.interval ?? (item?.price?.recurring?.interval === 'year' ? 'year' : 'month');
+
+    // Only true upgrades happen in place: a higher tier, or month→year.
+    // Downgrades and annual→monthly are sent to the billing portal.
+    if (!item || !isPlanUpgrade({ plan: currentPlan, interval: currentInterval }, { plan, interval })) {
+      return NextResponse.json({ error: 'already_subscribed', code: 'ALREADY_SUBSCRIBED' }, { status: 409 });
+    }
+
+    try {
+      await stripe.subscriptions.update(sub.id, {
+        items: [{ id: item.id, price: getStripePriceId(plan, interval) }],
+        // Upgrade takes effect immediately; the prorated difference lands on
+        // the next invoice rather than charging a separate invoice now.
+        proration_behavior: 'create_prorations',
+        metadata: { userId: user.id, plan, interval },
+      });
+      await syncUserFromStripe(user.id);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'subscription update failed';
+      return NextResponse.json({ error: 'upgrade_failed', message }, { status: 500 });
+    }
+    // Land on the account page, which re-syncs and shows the new plan.
+    return NextResponse.json({ url: `${APP_URL}/${locale}/account?billing=success` });
   }
 
   const customerId = await ensureStripeCustomer(user);
