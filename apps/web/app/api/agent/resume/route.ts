@@ -9,6 +9,7 @@ import { withUser } from '@dexter/core/runtime/user-context';
 import { resolveSession } from '../../../../lib/session';
 import { getCurrentUser } from '../../../../lib/auth/session';
 import { incrementUsage, getUserPlan, checkQuota } from '../../../../lib/billing';
+import { PLAN_LIMITS } from '../../../../lib/plans';
 import {
   claimForResume,
   persistChunk,
@@ -167,10 +168,17 @@ export async function POST(request: NextRequest): Promise<Response> {
             );
           }
         },
-        onDone: async (answer, deliverableCount, deepResearch) => {
+        onDone: async (answer, deliverableCount, deepResearch, fileLimitHit) => {
           turnCompleted = true;
           fileCount = deliverableCount;
           usedDeepResearch = deepResearch;
+          if (fileLimitHit) {
+            sink.emit({
+              type: 'file_limit_reached',
+              plan,
+              limit: PLAN_LIMITS[plan].files,
+            } as never);
+          }
           try {
             await markDone(jobId, answer);
           } catch (err) {

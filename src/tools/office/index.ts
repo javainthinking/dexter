@@ -23,7 +23,11 @@ import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { formatToolResult } from '../types.js';
 import { runOfficeCli, OfficeCliError, findOfficeCliBinary } from './spawn.js';
-import { recordOfficeTouch } from '../../runtime/office-run.js';
+import {
+  recordOfficeTouch,
+  isFileGenerationBlocked,
+  recordBlockedFileAttempt,
+} from '../../runtime/office-run.js';
 
 const READ_SUBCOMMANDS = [
   'view',
@@ -671,6 +675,17 @@ export const officeEditTool = new DynamicStructuredTool({
     "Verbs: create/new (start), add, set (use for /theme + element properties), remove, move, swap, raw-set, add-part, import (CSV/TSV → sheet), refresh (TOC etc.), batch (JSON array on stdin — strongly preferred for multi-slide authoring), merge (template fill).",
   schema: EDIT_INPUT,
   func: async (input) => {
+    // Over the monthly file quota: refuse without producing a file, and
+    // record the attempt so the web layer can prompt an upgrade. Do not
+    // retry — this is a hard limit, not a transient error.
+    if (isFileGenerationBlocked()) {
+      recordBlockedFileAttempt();
+      return JSON.stringify({
+        error: 'file_quota_exceeded',
+        message:
+          "The user has reached their monthly file-generation limit on their current plan. No file was created. Do NOT retry office_edit. Tell the user they've hit their file limit and can upgrade their plan to generate more documents, then continue answering the rest of their request in chat.",
+      });
+    }
     return invoke(input.subcommand, input.file, input.args ?? [], input.options, input.stdin);
   },
 });

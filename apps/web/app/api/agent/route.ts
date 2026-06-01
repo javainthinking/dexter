@@ -9,6 +9,7 @@ import { withUser } from '@dexter/core/runtime/user-context';
 import { resolveSession } from '../../../lib/session';
 import { getCurrentUser } from '../../../lib/auth/session';
 import { getUserPlan, checkQuota, incrementUsage } from '../../../lib/billing';
+import { PLAN_LIMITS } from '../../../lib/plans';
 import {
   createJob,
   persistChunk,
@@ -203,10 +204,19 @@ export async function POST(request: NextRequest): Promise<Response> {
             );
           }
         },
-        onDone: async (answer, deliverableCount, deepResearch) => {
+        onDone: async (answer, deliverableCount, deepResearch, fileLimitHit) => {
           turnCompleted = true;
           fileCount = deliverableCount;
           usedDeepResearch = deepResearch;
+          // The user asked for a file but was over quota — tell the client
+          // to pop the upgrade dialog (emitted before the `done` event).
+          if (fileLimitHit) {
+            sink.emit({
+              type: 'file_limit_reached',
+              plan,
+              limit: PLAN_LIMITS[plan].files,
+            } as never);
+          }
           try {
             await markDone(job.jobId, answer);
           } catch (err) {

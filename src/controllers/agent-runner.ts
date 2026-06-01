@@ -16,6 +16,7 @@ import {
   drainOfficeRun,
   peekTouchedFiles,
   restoreOfficeTouches,
+  officeRunBlockedFileAttempt,
 } from '../runtime/office-run.js';
 import type { ContinuationSnapshot } from '../agent/agent.js';
 import type { BaseMessage } from '@langchain/core/messages';
@@ -92,6 +93,7 @@ export interface ChunkRunOpts {
     finalAnswer: string,
     deliverableCount: number,
     usedDeepResearch: boolean,
+    fileLimitHit: boolean,
   ) => Promise<void>;
 }
 
@@ -250,7 +252,9 @@ export class AgentRunnerController {
       }
       return this.runQueryInner(query, chunkOpts);
     };
-    return withOfficeRun(wrapped);
+    return withOfficeRun(wrapped, {
+      fileGenerationBlocked: this.agentConfig.disableFileGeneration ?? false,
+    });
   }
 
   private async runQueryInner(
@@ -351,8 +355,14 @@ export class AgentRunnerController {
             // completes in a resume hop).
             const usedDeepResearch =
               this.runUsedDeepResearch || messagesUsedSearch(chunkOpts.resume?.messages);
+            const fileLimitHit = officeRunBlockedFileAttempt();
             try {
-              await chunkOpts.onDone(finalEvent.answer, deliverables.length, usedDeepResearch);
+              await chunkOpts.onDone(
+                finalEvent.answer,
+                deliverables.length,
+                usedDeepResearch,
+                fileLimitHit,
+              );
             } catch {
               /* persistence failure shouldn't block delivery */
             }

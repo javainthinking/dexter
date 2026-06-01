@@ -40,6 +40,15 @@ export interface OfficeRunState {
    * don't multiply the final upload work.
    */
   touchedFiles: Set<string>;
+  /**
+   * When true, the user is over their monthly file quota for this run:
+   * `office_edit` refuses (produces no file) and records a blocked attempt
+   * instead. Set by the caller via `withOfficeRun(fn, { fileGenerationBlocked })`.
+   */
+  fileGenerationBlocked: boolean;
+  /** Set by `office_edit` when it refused due to the quota — the signal the
+   *  web layer uses to pop an upgrade prompt. */
+  blockedFileAttempt: boolean;
 }
 
 export interface DeliverableFile {
@@ -57,10 +66,33 @@ const storage = new AsyncLocalStorage<OfficeRunState>();
  * `recordOfficeTouch` adds files to the set; `drainOfficeRun` reads
  * + uploads them.
  */
-export function withOfficeRun<R>(fn: () => R | Promise<R>): Promise<R> {
-  const state: OfficeRunState = { touchedFiles: new Set() };
-  log('[office-run] scope opened');
+export function withOfficeRun<R>(
+  fn: () => R | Promise<R>,
+  opts?: { fileGenerationBlocked?: boolean },
+): Promise<R> {
+  const state: OfficeRunState = {
+    touchedFiles: new Set(),
+    fileGenerationBlocked: opts?.fileGenerationBlocked ?? false,
+    blockedFileAttempt: false,
+  };
+  log(`[office-run] scope opened (fileGenerationBlocked=${state.fileGenerationBlocked})`);
   return Promise.resolve(storage.run(state, fn));
+}
+
+/** True when this run is over the file quota — office_edit should refuse. */
+export function isFileGenerationBlocked(): boolean {
+  return storage.getStore()?.fileGenerationBlocked ?? false;
+}
+
+/** office_edit calls this when it refuses due to the quota. */
+export function recordBlockedFileAttempt(): void {
+  const state = storage.getStore();
+  if (state) state.blockedFileAttempt = true;
+}
+
+/** Did office_edit refuse a file generation this run? Read at run end. */
+export function officeRunBlockedFileAttempt(): boolean {
+  return storage.getStore()?.blockedFileAttempt ?? false;
 }
 
 /**

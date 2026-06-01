@@ -262,6 +262,9 @@ function ChatPage() {
           setTurns((prev) => prev.filter((t) => t.id !== turnId));
           return;
         }
+        // Captured if the agent refused a file generation mid-stream (over
+        // the file quota) — we pop the upgrade dialog once the turn settles.
+        let fileLimit: { plan?: string; limit?: number } | undefined;
         while (true) {
           if (!res.ok || !res.body) {
             throw new Error(`agent_failed_${res.status}`);
@@ -272,12 +275,20 @@ function ChatPage() {
             setTurns,
             dict,
           );
+          if (result.fileLimit) fileLimit = result.fileLimit;
           if (!result.continueWith) break;
           res = await fetch('/api/agent/resume', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ jobId: result.continueWith.jobId }),
             signal: controller.signal,
+          });
+        }
+        if (fileLimit) {
+          openUpgrade({
+            plan: fileLimit.plan as PlanId | undefined,
+            metric: 'files',
+            limit: fileLimit.limit,
           });
         }
 
@@ -605,11 +616,15 @@ async function streamSseInto(
   turnId: string,
   setTurns: React.Dispatch<React.SetStateAction<ChatTurn[]>>,
   dict: ReturnType<typeof useDictionary>,
-): Promise<{ continueWith?: { jobId: string } }> {
+): Promise<{
+  continueWith?: { jobId: string };
+  fileLimit?: { plan?: string; limit?: number };
+}> {
   const reader = body.getReader();
   const decoder = new TextDecoder();
   let buf = '';
   let continueWith: { jobId: string } | undefined;
+  let fileLimit: { plan?: string; limit?: number } | undefined;
   while (true) {
     const { value, done } = await reader.read();
     if (done) break;
@@ -623,15 +638,25 @@ async function streamSseInto(
       // doesn't have a case for it. The render side ignores
       // continuation_required (it shouldn't visibly affect the turn
       // — UX stays in the 'streaming' state through the resume hop).
-      if (peekSseEventType(record) === 'continuation_required') {
+      const evType = peekSseEventType(record);
+      if (evType === 'continuation_required') {
         const payload = peekSseData(record);
         const jobId = typeof payload?.jobId === 'string' ? payload.jobId : null;
         if (jobId) continueWith = { jobId };
+      } else if (evType === 'file_limit_reached') {
+        const payload = peekSseData(record);
+        fileLimit = {
+          plan: typeof payload?.plan === 'string' ? payload.plan : undefined,
+          limit: typeof payload?.limit === 'number' ? payload.limit : undefined,
+        };
       }
       applyRecord(turnId, record, setTurns, dict);
     }
   }
-  return continueWith ? { continueWith } : {};
+  return {
+    ...(continueWith ? { continueWith } : {}),
+    ...(fileLimit ? { fileLimit } : {}),
+  };
 }
 
 function reduceEvent(
