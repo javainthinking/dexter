@@ -8,7 +8,7 @@ import { withUser } from '@dexter/core/runtime/user-context';
 
 import { resolveSession } from '../../../../lib/session';
 import { getCurrentUser } from '../../../../lib/auth/session';
-import { incrementUsage, getUserPlan, checkQuota } from '../../../../lib/billing';
+import { incrementUsage, getUserPlan, checkQuota, looksLikeFileRequest } from '../../../../lib/billing';
 import { PLAN_LIMITS } from '../../../../lib/plans';
 import {
   claimForResume,
@@ -116,6 +116,7 @@ export async function POST(request: NextRequest): Promise<Response> {
   // incremented at turn completion, so this reads the same as turn start.
   const { plan } = await getUserPlan(user.id);
   const filesBlocked = !(await checkQuota(user.id, plan, 'files')).allowed;
+  const fileIntentBlocked = filesBlocked && looksLikeFileRequest(resumeState.query);
 
   const controller = new AgentRunnerController(
     { model: resumeState.model ?? undefined, memoryEnabled: true, disableFileGeneration: filesBlocked },
@@ -172,7 +173,7 @@ export async function POST(request: NextRequest): Promise<Response> {
           turnCompleted = true;
           fileCount = deliverableCount;
           usedDeepResearch = deepResearch;
-          if (fileLimitHit) {
+          if (fileLimitHit || fileIntentBlocked) {
             sink.emit({
               type: 'file_limit_reached',
               plan,

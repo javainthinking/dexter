@@ -118,6 +118,27 @@ export async function getHoldingCount(portfolioId: string): Promise<number> {
   return row?.n ?? 0;
 }
 
+/**
+ * Heuristic: does this user message ask the agent to generate a document?
+ * Used as a deterministic fallback to pop the upgrade dialog when the user
+ * is over the file quota — the model sometimes declines a repeat file
+ * request in-text without calling office_edit (so the tool-refusal signal
+ * never fires). Errs toward catching file requests; a stray match only pops
+ * a dismissible dialog. Covers English + Chinese file/doc vocabulary.
+ */
+export function looksLikeFileRequest(query: string): boolean {
+  const s = query.toLowerCase();
+  if (
+    /\b(powerpoint|pptx?|slide ?deck|slideshow|slides?|deck|keynote|word ?doc(ument)?|document|docx|excel|xlsx|spread ?sheet|workbook)\b/.test(
+      s,
+    )
+  ) {
+    return true;
+  }
+  // Chinese file/document vocabulary (no word boundaries for CJK).
+  return /(幻灯片|演示文稿|演示稿|演示文档|ppt|word|文档|excel|电子表格|表格)/i.test(query);
+}
+
 export interface QuotaCheck {
   allowed: boolean;
   used: number;

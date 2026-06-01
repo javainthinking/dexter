@@ -8,7 +8,7 @@ import { withUser } from '@dexter/core/runtime/user-context';
 
 import { resolveSession } from '../../../lib/session';
 import { getCurrentUser } from '../../../lib/auth/session';
-import { getUserPlan, checkQuota, incrementUsage } from '../../../lib/billing';
+import { getUserPlan, checkQuota, incrementUsage, looksLikeFileRequest } from '../../../lib/billing';
 import { PLAN_LIMITS } from '../../../lib/plans';
 import {
   createJob,
@@ -106,6 +106,10 @@ export async function POST(request: NextRequest): Promise<Response> {
   // office_edit tool rather than blocking the turn (the user can be out of
   // files but still have conversations left).
   const filesBlocked = !(await checkQuota(user.id, plan, 'files')).allowed;
+  // Over the file limit AND the user asked for a document → pop the upgrade
+  // dialog at turn end even if the model declined in-text without calling
+  // the (refusing) office_edit tool.
+  const fileIntentBlocked = filesBlocked && looksLikeFileRequest(query);
 
   const session = await resolveSession({ model: body.model, userId: user.id });
 
@@ -210,7 +214,7 @@ export async function POST(request: NextRequest): Promise<Response> {
           usedDeepResearch = deepResearch;
           // The user asked for a file but was over quota — tell the client
           // to pop the upgrade dialog (emitted before the `done` event).
-          if (fileLimitHit) {
+          if (fileLimitHit || fileIntentBlocked) {
             sink.emit({
               type: 'file_limit_reached',
               plan,
