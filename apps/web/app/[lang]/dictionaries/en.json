@@ -542,5 +542,17 @@
     "unlockHeading": "Upgrade to {plan} to unlock",
     "unlockNote": "Higher limits and more headroom on every quota.",
     "seePlans": "See all plans"
+  },
+  "upgrade": {
+    "title": "Upgrade your plan",
+    "subtitle": "Pick a plan to keep going — cancel anytime.",
+    "comparePlans": "Compare all plans",
+    "reasons": {
+      "conversations": "You've used all {limit} conversations on your plan this month.",
+      "deepResearch": "You've used all {limit} deep-research turns on your plan this month.",
+      "files": "You've used all {limit} generated files on your plan this month.",
+      "portfolios": "Your plan includes {limit} portfolio(s). Upgrade to add more.",
+      "holdings": "Your plan allows {limit} holdings per portfolio. Upgrade for more."
+    }
   }
 }

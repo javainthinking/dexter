@@ -524,5 +524,17 @@
     "unlockHeading": "升级到 {plan} 解锁",
     "unlockNote": "更高的额度，每项配额都更充裕。",
     "seePlans": "查看所有套餐"
+  },
+  "upgrade": {
+    "title": "升级您的套餐",
+    "subtitle": "选择一个套餐继续使用 — 随时可取消。",
+    "comparePlans": "比较所有套餐",
+    "reasons": {
+      "conversations": "本月您已用完套餐内的全部 {limit} 次对话。",
+      "deepResearch": "本月您已用完套餐内的全部 {limit} 次深度研究轮次。",
+      "files": "本月您已用完套餐内的全部 {limit} 个生成文件。",
+      "portfolios": "您的套餐包含 {limit} 个组合。升级可添加更多。",
+      "holdings": "您的套餐允许每个组合 {limit} 个持仓。升级可获得更多。"
+    }
   }
 }

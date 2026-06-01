@@ -524,5 +524,17 @@
     "unlockHeading": "Upgrade auf {plan}, um freizuschalten",
     "unlockNote": "Höhere Limits und mehr Spielraum bei jedem Kontingent.",
     "seePlans": "Alle Tarife ansehen"
+  },
+  "upgrade": {
+    "title": "Upgrade deinen Tarif",
+    "subtitle": "Wähle einen Tarif, um weiterzumachen — jederzeit kündbar.",
+    "comparePlans": "Alle Tarife vergleichen",
+    "reasons": {
+      "conversations": "Du hast diesen Monat alle {limit} Konversationen deines Tarifs aufgebraucht.",
+      "deepResearch": "Du hast diesen Monat alle {limit} Deep-Research-Durchläufe deines Tarifs aufgebraucht.",
+      "files": "Du hast diesen Monat alle {limit} erstellten Dateien deines Tarifs aufgebraucht.",
+      "portfolios": "Dein Tarif umfasst {limit} Portfolio(s). Upgrade, um weitere hinzuzufügen.",
+      "holdings": "Dein Tarif erlaubt {limit} Positionen pro Portfolio. Upgrade für mehr."
+    }
   }
 }

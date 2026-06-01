@@ -524,5 +524,17 @@
     "unlockHeading": "Mejora a {plan} para desbloquear",
     "unlockNote": "Límites más altos y más margen en cada cuota.",
     "seePlans": "Ver todos los planes"
+  },
+  "upgrade": {
+    "title": "Mejora tu plan",
+    "subtitle": "Elige un plan para seguir adelante — cancela cuando quieras.",
+    "comparePlans": "Comparar todos los planes",
+    "reasons": {
+      "conversations": "Has usado todas las {limit} conversaciones de tu plan este mes.",
+      "deepResearch": "Has usado todos los {limit} turnos de investigación profunda de tu plan este mes.",
+      "files": "Has usado todos los {limit} archivos generados de tu plan este mes.",
+      "portfolios": "Tu plan incluye {limit} cartera(s). Mejóralo para añadir más.",
+      "holdings": "Tu plan permite {limit} posiciones por cartera. Mejóralo para tener más."
+    }
   }
 }

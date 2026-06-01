@@ -18,6 +18,8 @@ import { Button } from '../../../components/ui/button';
 import { TopBar } from '../../../components/nav/top-bar';
 import { Skeleton } from '../../../components/ui/skeleton';
 import { useDictionary, useLocale } from '../../../components/i18n/dictionary-provider';
+import { useUpgradeDialog } from '../../../components/upgrade/upgrade-dialog-provider';
+import type { PlanId } from '../../../lib/pricing';
 import { getLocalizedPath } from '../../../lib/i18n/paths';
 import { cn } from '../../../lib/utils';
 import { SymbolSearch, type SymbolHit } from '../../../components/portfolios/symbol-search';
@@ -69,6 +71,20 @@ export function PortfoliosClient({
   const dict = useDictionary();
   const locale = useLocale();
   const router = useRouter();
+  const { openUpgrade } = useUpgradeDialog();
+
+  // When a create/add hits the plan cap the API returns 402; pop the upgrade
+  // dialog and report it as handled so callers stop without a generic error.
+  async function handledQuota(res: Response): Promise<boolean> {
+    if (res.status !== 402) return false;
+    const info = (await res.json().catch(() => ({}))) as {
+      plan?: string;
+      metric?: 'portfolios' | 'holdings';
+      limit?: number;
+    };
+    openUpgrade({ plan: info.plan as PlanId | undefined, metric: info.metric, limit: info.limit });
+    return true;
+  }
 
   const [sessions, setSessions] = React.useState<SessionSummary[]>([]);
   const [sessionsLoading, setSessionsLoading] = React.useState(true);
@@ -259,6 +275,11 @@ export function PortfoliosClient({
         },
       }),
     });
+    if (await handledQuota(res)) {
+      setCreateStage('idle');
+      setNewName('');
+      return;
+    }
     if (!res.ok) {
       const body = (await res.json().catch(() => null)) as { error?: string } | null;
       throw new Error(translateError(body?.error ?? 'server_error', dict));
@@ -319,6 +340,7 @@ export function PortfoliosClient({
         weight,
       }),
     });
+    if (await handledQuota(res)) return;
     if (!res.ok) {
       const body = (await res.json().catch(() => null)) as { error?: string } | null;
       throw new Error(translateError(body?.error ?? 'server_error', dict));

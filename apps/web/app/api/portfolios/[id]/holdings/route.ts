@@ -1,6 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { getCurrentUser } from '../../../../../lib/auth/session';
 import { PortfolioHttpError, addHolding } from '../../../../../lib/portfolios';
+import { getUserPlan, getHoldingCount } from '../../../../../lib/billing';
+import { PLAN_LIMITS } from '../../../../../lib/plans';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -30,6 +32,30 @@ export async function POST(
   if (weight === 'invalid') {
     return NextResponse.json({ error: 'invalid_weight' }, { status: 400 });
   }
+
+  // Plan gate: block adding past the plan's per-portfolio holdings cap.
+  // addHolding already scopes the portfolio to the user; the count here is
+  // for this portfolio specifically (the limit is per-portfolio).
+  const { plan } = await getUserPlan(user.id);
+  const holdingLimit = PLAN_LIMITS[plan].holdings;
+  if (Number.isFinite(holdingLimit)) {
+    const used = await getHoldingCount(id);
+    if (used >= holdingLimit) {
+      return NextResponse.json(
+        {
+          error: 'quota_exceeded',
+          code: 'HOLDINGS_LIMIT',
+          metric: 'holdings',
+          plan,
+          used,
+          limit: holdingLimit,
+          message: `Your ${plan} plan allows ${holdingLimit} holdings per portfolio.`,
+        },
+        { status: 402 },
+      );
+    }
+  }
+
   try {
     const row = await addHolding(user.id, id, {
       ticker: body.ticker,

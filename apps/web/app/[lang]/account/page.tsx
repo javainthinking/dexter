@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { Lock } from 'lucide-react';
 import { isLocale, type Locale } from '../../../lib/i18n/locales';
@@ -9,10 +8,10 @@ import { getCurrentUser } from '../../../lib/auth/session';
 import { getUserPlan, getUsage, getResourceUsage } from '../../../lib/billing';
 import { PLAN_LIMITS, type PlanId } from '../../../lib/plans';
 import { planMeta, planIds } from '../../../lib/pricing';
-import { Button } from '../../../components/ui/button';
 import { SiteHeader } from '../../../components/marketing/site-header';
 import { SiteFooter } from '../../../components/marketing/site-footer';
 import { ManageSubscriptionButton } from '../../../components/account/manage-subscription-button';
+import { AccountUpgradeCta } from '../../../components/account/account-upgrade-cta';
 
 export const dynamic = 'force-dynamic';
 
@@ -131,9 +130,7 @@ export default async function AccountPage({
             {isPaid ? (
               <ManageSubscriptionButton locale={lang} label={a.manage} />
             ) : (
-              <Button asChild size="default" variant="default">
-                <Link href={getLocalizedPath('/pricing', lang)}>{a.upgrade}</Link>
-              </Button>
+              <AccountUpgradeCta plan={plan} label={a.upgrade} />
             )}
           </div>
         </div>
@@ -196,9 +193,7 @@ export default async function AccountPage({
               ))}
             </ul>
             <div className="mt-5">
-              <Button asChild size="default" variant="default">
-                <Link href={getLocalizedPath('/pricing', lang)}>{a.seePlans}</Link>
-              </Button>
+              <AccountUpgradeCta plan={plan} label={a.seePlans} />
             </div>
           </div>
         )}

@@ -28,6 +28,8 @@ import {
 } from '../../../components/i18n/dictionary-provider';
 import { cn } from '../../../lib/utils';
 import { readAndClearChatSeed } from '../../../lib/chat-seed';
+import { useUpgradeDialog } from '../../../components/upgrade/upgrade-dialog-provider';
+import type { PlanId } from '../../../lib/pricing';
 
 // Shape of a persisted session as returned by /api/sessions/current and
 // /api/sessions/switch. Deliverables arrive already re-signed (download
@@ -88,6 +90,7 @@ function ChatPage() {
   // Set when /api/agent returns 402 (monthly quota reached) — drives the
   // upgrade notice above the composer.
   const [paywall, setPaywall] = useState<{ message?: string; limit?: number; plan?: string } | null>(null);
+  const { openUpgrade } = useUpgradeDialog();
   const abortRef = useRef<AbortController | null>(null);
   const threadRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<ComposerHandle>(null);
@@ -247,8 +250,15 @@ function ChatPage() {
             message?: string;
             limit?: number;
             plan?: string;
+            metric?: 'conversations' | 'deep_research';
           };
           setPaywall(info);
+          // Pop the upgrade dialog with the tiers above the user's plan.
+          openUpgrade({
+            plan: info.plan as PlanId | undefined,
+            metric: info.metric,
+            limit: info.limit,
+          });
           setTurns((prev) => prev.filter((t) => t.id !== turnId));
           return;
         }

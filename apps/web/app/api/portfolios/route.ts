@@ -6,6 +6,8 @@ import {
   listPortfolios,
   type AddHoldingInput,
 } from '../../../lib/portfolios';
+import { getUserPlan, getResourceUsage } from '../../../lib/billing';
+import { PLAN_LIMITS } from '../../../lib/plans';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -42,6 +44,28 @@ export async function POST(request: NextRequest): Promise<Response> {
   if (weight === 'invalid') {
     return NextResponse.json({ error: 'invalid_weight' }, { status: 400 });
   }
+  // Plan gate: block creating a portfolio past the plan's portfolio cap.
+  // 402 carries the plan + numbers so the client can open the upgrade dialog.
+  const { plan } = await getUserPlan(user.id);
+  const portfolioLimit = PLAN_LIMITS[plan].portfolios;
+  if (Number.isFinite(portfolioLimit)) {
+    const { portfolios: used } = await getResourceUsage(user.id);
+    if (used >= portfolioLimit) {
+      return NextResponse.json(
+        {
+          error: 'quota_exceeded',
+          code: 'PORTFOLIOS_LIMIT',
+          metric: 'portfolios',
+          plan,
+          used,
+          limit: portfolioLimit,
+          message: `Your ${plan} plan includes ${portfolioLimit} portfolio${portfolioLimit === 1 ? '' : 's'}.`,
+        },
+        { status: 402 },
+      );
+    }
+  }
+
   const holding: AddHoldingInput = {
     ticker: holdingInput.ticker,
     displayName: typeof holdingInput.displayName === 'string' ? holdingInput.displayName : null,

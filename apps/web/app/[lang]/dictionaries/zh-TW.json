@@ -524,5 +524,17 @@
     "unlockHeading": "升級至 {plan} 解鎖",
     "unlockNote": "更高的額度，每項配額都有更多餘裕。",
     "seePlans": "查看所有方案"
+  },
+  "upgrade": {
+    "title": "升級你的方案",
+    "subtitle": "選擇一個方案繼續使用 — 可隨時取消。",
+    "comparePlans": "比較所有方案",
+    "reasons": {
+      "conversations": "你本月已用完方案提供的全部 {limit} 次對話。",
+      "deepResearch": "你本月已用完方案提供的全部 {limit} 次深度研究輪次。",
+      "files": "你本月已用完方案提供的全部 {limit} 個已產生的檔案。",
+      "portfolios": "你的方案包含 {limit} 個投資組合。升級即可新增更多。",
+      "holdings": "你的方案允許每個組合 {limit} 個持倉。升級可獲得更多。"
+    }
   }
 }

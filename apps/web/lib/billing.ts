@@ -108,6 +108,16 @@ export async function getResourceUsage(
   return { portfolios: pf?.n ?? 0, maxHoldings };
 }
 
+/** Count the holdings in a single portfolio (for the per-portfolio cap). */
+export async function getHoldingCount(portfolioId: string): Promise<number> {
+  const db = getDb();
+  const [row] = await db
+    .select({ n: sql<number>`count(*)::int` })
+    .from(portfolioHoldings)
+    .where(eq(portfolioHoldings.portfolioId, portfolioId));
+  return row?.n ?? 0;
+}
+
 export interface QuotaCheck {
   allowed: boolean;
   used: number;
