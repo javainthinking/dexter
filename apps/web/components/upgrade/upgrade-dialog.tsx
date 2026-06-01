@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { Check } from 'lucide-react';
+import { Check, Minus } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -49,7 +49,12 @@ export function UpgradeDialog({
 
   // Only the tiers strictly above the current plan, paid only.
   const idx = planIds.indexOf(plan);
-  const tiers = (idx >= 0 ? planIds.slice(idx + 1) : planIds).filter((id) => id !== 'free');
+  const base = idx >= 0 ? idx : 0;
+  const tiers = planIds.slice(base + 1).filter((id) => id !== 'free');
+  // Comparison columns: the current plan plus the tiers above it, so the
+  // user sees what they have next to what they'd gain. `colIdx` indexes
+  // into each row's value array (ordered free, starter, pro, power).
+  const colIdx = planIds.map((_, i) => i).filter((i) => i >= base);
 
   const reason =
     metric && u.reasons[REASON_KEY[metric]]
@@ -104,7 +109,7 @@ export function UpgradeDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-h-[88vh] max-w-3xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{u.title}</DialogTitle>
           <DialogDescription>{reason}</DialogDescription>
@@ -160,6 +165,76 @@ export function UpgradeDialog({
               </div>
             );
           })}
+        </div>
+
+        {/* Full feature comparison — current plan beside the upgrade tiers,
+            the same matrix shown on /pricing. */}
+        <div className="mt-2">
+          <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.16em] text-subtle">
+            {copy.comparisonHeading}
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-xs">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="w-2/5 py-2 pr-3 text-left font-medium text-subtle" />
+                  {colIdx.map((i) => {
+                    const m = planMeta[i];
+                    if (!m) return null;
+                    return (
+                      <th
+                        key={m.id}
+                        className={`px-2 py-2 text-center font-serif text-sm font-semibold ${
+                          m.featured ? 'text-[color:var(--accent)]' : 'text-foreground'
+                        }`}
+                      >
+                        {m.name}
+                      </th>
+                    );
+                  })}
+                </tr>
+              </thead>
+              <tbody>
+                {copy.comparison.map((group) => (
+                  <React.Fragment key={group.title}>
+                    <tr>
+                      <td
+                        colSpan={colIdx.length + 1}
+                        className="pt-4 pb-1 font-mono text-[10px] uppercase tracking-[0.16em] text-subtle"
+                      >
+                        {group.title}
+                      </td>
+                    </tr>
+                    {group.rows.map((row) => (
+                      <tr key={row.label} className="border-b border-border/60">
+                        <td className="py-2 pr-3 text-left text-muted-foreground">{row.label}</td>
+                        {colIdx.map((i) => {
+                          const value = row.values[i];
+                          const m = planMeta[i];
+                          return (
+                            <td
+                              key={m?.id ?? i}
+                              className={`px-2 py-2 text-center ${m?.featured ? 'bg-muted/30' : ''}`}
+                            >
+                              {typeof value === 'boolean' ? (
+                                value ? (
+                                  <Check className="mx-auto size-3.5 text-[color:var(--accent)]" />
+                                ) : (
+                                  <Minus className="mx-auto size-3.5 text-subtle" />
+                                )
+                              ) : (
+                                <span className="text-foreground">{value}</span>
+                              )}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <DialogFooter className="sm:justify-center">
