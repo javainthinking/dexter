@@ -28,7 +28,11 @@ import { isMemoryLakeConfigured } from './memorylake-client';
  *     without us writing a new tool.
  */
 
-export const MAX_PORTFOLIOS_PER_USER = 5;
+// Hard safety backstop only. The real per-user cap is the plan limit
+// (PLAN_LIMITS[plan].portfolios), enforced as a 402 in the portfolios API
+// before this is reached. Kept well above the highest finite plan tier so
+// it never preempts the plan-based gate (which owns the upgrade prompt).
+export const MAX_PORTFOLIOS_PER_USER = 100;
 
 /**
  * Drizzle (+ postgres-js) wraps the underlying Postgres error in its own

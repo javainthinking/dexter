@@ -2,7 +2,8 @@ import { redirect, notFound } from 'next/navigation';
 import { isLocale } from '../../../lib/i18n/locales';
 import { getLocalizedPath } from '../../../lib/i18n/paths';
 import { getCurrentUser } from '../../../lib/auth/session';
-import { listPortfolios, MAX_PORTFOLIOS_PER_USER } from '../../../lib/portfolios';
+import { listPortfolios } from '../../../lib/portfolios';
+import { getUserPlan } from '../../../lib/billing';
 import { PortfoliosClient } from './portfolios-client';
 
 // Force a fresh DB read on every request. Without this, edge-cached SSR
@@ -37,5 +38,6 @@ export default async function PortfoliosPage({
   } catch (err) {
     console.error('portfolios SSR list_failed:', err);
   }
-  return <PortfoliosClient initialPortfolios={initial} maxPortfolios={MAX_PORTFOLIOS_PER_USER} />;
+  const { plan } = await getUserPlan(user.id);
+  return <PortfoliosClient initialPortfolios={initial} plan={plan} />;
 }

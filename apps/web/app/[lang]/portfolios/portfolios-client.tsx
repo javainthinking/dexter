@@ -20,6 +20,7 @@ import { Skeleton } from '../../../components/ui/skeleton';
 import { useDictionary, useLocale } from '../../../components/i18n/dictionary-provider';
 import { useUpgradeDialog } from '../../../components/upgrade/upgrade-dialog-provider';
 import type { PlanId } from '../../../lib/pricing';
+import { PLAN_LIMITS } from '../../../lib/plans';
 import { getLocalizedPath } from '../../../lib/i18n/paths';
 import { cn } from '../../../lib/utils';
 import { SymbolSearch, type SymbolHit } from '../../../components/portfolios/symbol-search';
@@ -63,10 +64,10 @@ interface PortfolioDetail extends PortfolioListItem {
 
 export function PortfoliosClient({
   initialPortfolios,
-  maxPortfolios,
+  plan,
 }: {
   initialPortfolios: PortfolioListItem[];
-  maxPortfolios: number;
+  plan: PlanId;
 }) {
   const dict = useDictionary();
   const locale = useLocale();
@@ -406,7 +407,20 @@ export function PortfoliosClient({
   };
 
   // ─── render ───────────────────────────────────────────────────────
-  const atCap = portfolios.length >= maxPortfolios;
+  // Plan-based portfolio cap (matches the server's 402 gate). Infinity for
+  // unlimited tiers.
+  const portfolioLimit = PLAN_LIMITS[plan].portfolios;
+  const atCap = Number.isFinite(portfolioLimit) && portfolios.length >= portfolioLimit;
+
+  // "New portfolio" stays clickable at the cap — instead of starting the
+  // create flow it opens the upgrade dialog. Below the cap it begins naming.
+  function onNewPortfolio() {
+    if (atCap) {
+      openUpgrade({ plan, metric: 'portfolios', limit: portfolioLimit });
+      return;
+    }
+    startCreateNaming();
+  }
 
   return (
     <div className="flex h-svh w-full bg-background text-foreground">
@@ -432,7 +446,8 @@ export function PortfoliosClient({
                 {dict.portfolios?.yours ?? 'Your portfolios'}
               </span>
               <span className="text-[10px] text-muted-foreground">
-                {portfolios.length}/{maxPortfolios}
+                {portfolios.length}
+                {Number.isFinite(portfolioLimit) ? `/${portfolioLimit}` : ''}
               </span>
             </div>
 
@@ -503,9 +518,7 @@ export function PortfoliosClient({
                   variant="ghost"
                   size="sm"
                   className="w-full justify-start"
-                  onClick={startCreateNaming}
-                  disabled={atCap}
-                  title={atCap ? (dict.portfolios?.atCap ?? `Maximum ${maxPortfolios} portfolios`) : ''}
+                  onClick={onNewPortfolio}
                 >
                   <Plus className="size-3.5 mr-1" />
                   {dict.portfolios?.newPortfolio ?? 'New portfolio'}
@@ -534,7 +547,7 @@ export function PortfoliosClient({
                 dict={dict}
               />
             ) : !activeId ? (
-              <EmptyDetail dict={dict} onCreate={startCreateNaming} atCap={atCap} />
+              <EmptyDetail dict={dict} onCreate={onNewPortfolio} />
             ) : detailLoading ? (
               <div className="flex items-center gap-2 py-12 text-muted-foreground">
                 <Loader2 className="size-4 animate-spin" />
@@ -1003,11 +1016,9 @@ function HoldingRow({
 function EmptyDetail({
   dict,
   onCreate,
-  atCap,
 }: {
   dict: any;
   onCreate: () => void;
-  atCap: boolean;
 }) {
   return (
     <div className="mx-auto mt-12 max-w-md rounded-lg border border-border bg-muted/10 p-6 text-center">
@@ -1018,7 +1029,7 @@ function EmptyDetail({
       <p className="mt-2 text-sm text-muted-foreground">
         {dict.portfolios?.emptyHint ?? 'Create your first portfolio to start tracking technical indicators.'}
       </p>
-      <Button className="mt-4" onClick={onCreate} disabled={atCap}>
+      <Button className="mt-4" onClick={onCreate}>
         <Plus className="size-3.5 mr-1" />
         {dict.portfolios?.newPortfolio ?? 'New portfolio'}
       </Button>
