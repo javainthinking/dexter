@@ -19,7 +19,7 @@
  * private, so presigning is the simplest way to hand a user a working
  * link without making the bucket public.
  */
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { basename, extname } from 'node:path';
 import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -137,6 +137,25 @@ export async function uploadFileForUser(
     expiresAt,
     byteLength: bytes.byteLength,
   };
+}
+
+/**
+ * Download an R2 object's bytes to a local path. Used to restore office
+ * files across chunk boundaries — on Vercel each resume runs in a fresh
+ * container with an empty /tmp, so a file created in an earlier chunk must
+ * be re-materialised from R2 before the agent can keep editing it or the
+ * final drain can upload it.
+ */
+export async function downloadObjectToFile(key: string, destPath: string): Promise<void> {
+  if (!isR2Configured()) throw new Error('R2 is not configured');
+  const client = getClient();
+  if (!client) throw new Error('R2 client unavailable');
+  const bucket = process.env.R2_BUCKET_NAME as string;
+  const res = await client.send(new GetObjectCommand({ Bucket: bucket, Key: key }));
+  const body = res.Body as { transformToByteArray?: () => Promise<Uint8Array> } | undefined;
+  if (!body?.transformToByteArray) throw new Error('R2 get-object returned no body');
+  const bytes = await body.transformToByteArray();
+  await writeFile(destPath, bytes);
 }
 
 export interface PresignedDownloadResult {

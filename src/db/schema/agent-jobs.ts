@@ -59,6 +59,13 @@ export const agentJobs = pgTable(
     messages: jsonb('messages'),
     /** Absolute file paths the office tool touched across chunks. Drained on final completion. */
     touchedFiles: text('touched_files').array().notNull().default(sql`'{}'::text[]`),
+    /**
+     * Office files carried across chunk boundaries as [{path, key}] — the R2
+     * key holds the bytes. On resume (a fresh container with an empty /tmp on
+     * Vercel) these are downloaded back to their paths so editing + the final
+     * drain still work. Null/[] when nothing was carried.
+     */
+    carriedFiles: jsonb('carried_files'),
     /** Final answer when status='done'. Useful for telemetry without re-fetching from web_messages. */
     finalAnswer: text('final_answer'),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),

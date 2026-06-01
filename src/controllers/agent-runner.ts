@@ -17,6 +17,9 @@ import {
   peekTouchedFiles,
   restoreOfficeTouches,
   officeRunBlockedFileAttempt,
+  carryTouchedFiles,
+  restoreCarriedFiles,
+  type CarriedFile,
 } from '../runtime/office-run.js';
 import type { ContinuationSnapshot } from '../agent/agent.js';
 import type { BaseMessage } from '@langchain/core/messages';
@@ -73,6 +76,8 @@ export interface ChunkRunOpts {
     lastApiInputTokens: number;
     originalStartTime: number;
     touchedFiles: string[];
+    /** Office files to re-download from R2 into this chunk's /tmp. */
+    carriedFiles?: CarriedFile[];
   };
   /**
    * Called when `continuation_required` fires. The snapshot carries
@@ -81,7 +86,7 @@ export interface ChunkRunOpts {
    * still closes cleanly so the client can re-issue.
    */
   onContinuation?: (
-    snapshot: ContinuationSnapshot & { touchedFiles: string[] },
+    snapshot: ContinuationSnapshot & { touchedFiles: string[]; carriedFiles: CarriedFile[] },
   ) => Promise<void>;
   /**
    * Called when the agent emits a terminal `done` event. `deliverableCount`
@@ -241,11 +246,16 @@ export class AgentRunnerController {
     // the resulting download URLs to the event before forwarding it.
     // Nested under withMemory because both scopes must be active for the
     // duration of any tool that reads either.
-    const wrapped = () => {
+    const wrapped = async () => {
       // On resume, seed the office-run scope with files touched in
       // previous chunks so the final drain still uploads them.
       if (chunkOpts?.resume?.touchedFiles?.length) {
         restoreOfficeTouches(chunkOpts.resume.touchedFiles);
+      }
+      // Re-materialise office files from R2 — on Vercel this chunk runs in a
+      // fresh container with an empty /tmp, so the bytes are gone otherwise.
+      if (chunkOpts?.resume?.carriedFiles?.length) {
+        await restoreCarriedFiles(chunkOpts.resume.carriedFiles);
       }
       if (this.ports.memory) {
         return withMemory(this.ports.memory, () => this.runQueryInner(query, chunkOpts));
@@ -319,9 +329,13 @@ export class AgentRunnerController {
           const snapshot = agent.consumeContinuationSnapshot();
           if (snapshot && chunkOpts?.onContinuation) {
             try {
+              // Upload touched files to R2 now so the next chunk (a fresh
+              // container on Vercel) can download them back.
+              const carriedFiles = await carryTouchedFiles();
               await chunkOpts.onContinuation({
                 ...snapshot,
                 touchedFiles: peekTouchedFiles(),
+                carriedFiles,
               });
             } catch {
               /* persistence failure is logged by the callback */

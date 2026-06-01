@@ -23,7 +23,12 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { existsSync } from 'node:fs';
 import { resolve as resolvePath } from 'node:path';
-import { isR2Configured, uploadFileForUser, type UploadResult } from './r2.js';
+import {
+  isR2Configured,
+  uploadFileForUser,
+  downloadObjectToFile,
+  type UploadResult,
+} from './r2.js';
 import { getCurrentUser, getCurrentUserId } from './user-context.js';
 
 // Direct stdout/stderr logging — the project's `logger` module is an
@@ -150,6 +155,60 @@ export function restoreOfficeTouches(paths: string[]): void {
   }
   for (const p of paths) state.touchedFiles.add(p);
   log(`[office-run] restored ${paths.length} touched file(s) from previous chunk`);
+}
+
+/** A touched office file carried across a chunk boundary: its local path
+ *  plus the R2 key holding its bytes. */
+export interface CarriedFile {
+  path: string;
+  key: string;
+}
+
+/**
+ * Upload every touched file to R2 and return {path, key} pairs. Called at
+ * `continuation_required` so the bytes survive the chunk boundary — on
+ * Vercel the next chunk runs in a fresh container with an empty /tmp.
+ * The touched set is left intact (the final drain re-uploads the latest
+ * version as the deliverable). No-op when uploads aren't enabled.
+ */
+export async function carryTouchedFiles(): Promise<CarriedFile[]> {
+  const state = storage.getStore();
+  if (!state || state.touchedFiles.size === 0) return [];
+  if (!shouldUploadInThisRun()) return [];
+  const userId = getCurrentUserId();
+  const carried: CarriedFile[] = [];
+  for (const file of state.touchedFiles) {
+    if (!existsSync(file)) continue;
+    try {
+      const upload = await uploadFileForUser(userId, file, { filenamePrefix: 'chunk' });
+      carried.push({ path: resolvePath(file), key: upload.key });
+      log(`[office-run] carried ${file} → ${upload.key}`);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      warn(`[office-run] carry upload failed for ${file}: ${message}`);
+    }
+  }
+  return carried;
+}
+
+/**
+ * Re-materialise files carried from an earlier chunk: download each from R2
+ * to its original local path and register it in the touched set so the
+ * final drain uploads the latest version. Caller is inside withOfficeRun.
+ */
+export async function restoreCarriedFiles(carried: CarriedFile[] | undefined): Promise<void> {
+  const state = storage.getStore();
+  if (!state || !carried?.length) return;
+  for (const { path, key } of carried) {
+    try {
+      await downloadObjectToFile(key, path);
+      state.touchedFiles.add(resolvePath(path));
+      log(`[office-run] restored ${path} from ${key}`);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      warn(`[office-run] restore failed for ${path} (${key}): ${message}`);
+    }
+  }
 }
 
 /**

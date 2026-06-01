@@ -150,6 +150,7 @@ export async function POST(request: NextRequest): Promise<Response> {
           lastApiInputTokens: resumeState!.lastApiInputTokens,
           originalStartTime: resumeState!.originalStartTime,
           touchedFiles: resumeState!.touchedFiles,
+          carriedFiles: resumeState!.carriedFiles,
         },
         onContinuation: async (snapshot) => {
           try {

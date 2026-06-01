@@ -40,12 +40,20 @@ export interface CreateJobResult {
   originalStartTime: number;
 }
 
+export interface CarriedFile {
+  path: string;
+  key: string;
+}
+
 export interface ChunkSnapshot {
   messages: BaseMessage[];
   iteration: number;
   requiredNudges: number;
   lastApiInputTokens: number;
   touchedFiles: string[];
+  /** Office files uploaded to R2 at this boundary so the next chunk can
+   *  re-materialise them (Vercel /tmp is per-container). */
+  carriedFiles?: CarriedFile[];
 }
 
 export interface ResumeJobState {
@@ -59,6 +67,7 @@ export interface ResumeJobState {
   lastApiInputTokens: number;
   messages: BaseMessage[];
   touchedFiles: string[];
+  carriedFiles: CarriedFile[];
   originalStartTime: number;
 }
 
@@ -103,6 +112,7 @@ export async function persistChunk(
       status: 'awaiting_continuation',
       messages: serializeMessages(snapshot.messages) as object,
       touchedFiles: snapshot.touchedFiles,
+      carriedFiles: snapshot.carriedFiles ?? [],
       totalIterations: snapshot.iteration,
       requiredNudges: snapshot.requiredNudges,
       lastApiInputTokens: snapshot.lastApiInputTokens,
@@ -171,6 +181,7 @@ export async function claimForResume(
       lastApiInputTokens: row.lastApiInputTokens,
       messages: row.messages ? deserializeMessages(row.messages) : [],
       touchedFiles: row.touchedFiles ?? [],
+      carriedFiles: (row.carriedFiles as CarriedFile[] | null) ?? [],
       originalStartTime: row.createdAt.getTime(),
     };
   });
