@@ -46,6 +46,9 @@ export function UpgradeDialog({
   const u = dict.upgrade;
   const copy = getPricingContent(locale as Locale);
   const [busy, setBusy] = React.useState<string | null>(null);
+  // Default to annual — the better deal, with the struck-through monthly
+  // price making the saving obvious (mirrors the /pricing cards).
+  const [annual, setAnnual] = React.useState(true);
 
   // Only the tiers strictly above the current plan, paid only.
   const idx = planIds.indexOf(plan);
@@ -84,7 +87,7 @@ export function UpgradeDialog({
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: planId, interval: 'month', locale }),
+        body: JSON.stringify({ plan: planId, interval: annual ? 'year' : 'month', locale }),
       });
       if (res.status === 401) {
         window.location.href = `/${locale}/sign-in?callbackUrl=${encodeURIComponent(`/${locale}/pricing`)}`;
@@ -115,6 +118,41 @@ export function UpgradeDialog({
           <DialogDescription>{reason}</DialogDescription>
         </DialogHeader>
 
+        {/* Monthly / annual toggle — annual selected by default. */}
+        <div className="flex justify-center">
+          <div className="inline-flex items-center gap-1 rounded-full border border-border bg-card p-1 text-sm">
+            <button
+              type="button"
+              onClick={() => setAnnual(false)}
+              aria-pressed={!annual}
+              className={`rounded-full px-3 py-1 font-medium transition-colors ${
+                !annual ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {copy.billing.monthly}
+            </button>
+            <button
+              type="button"
+              onClick={() => setAnnual(true)}
+              aria-pressed={annual}
+              className={`flex items-center gap-1.5 rounded-full px-3 py-1 font-medium transition-colors ${
+                annual ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {copy.billing.annual}
+              <span
+                className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                  annual
+                    ? 'bg-background/20 text-background'
+                    : 'bg-[color:var(--accent)]/15 text-[color:var(--accent)]'
+                }`}
+              >
+                {copy.billing.save}
+              </span>
+            </button>
+          </div>
+        </div>
+
         <div className={`grid gap-3 ${cols}`}>
           {tiers.map((id) => {
             const meta = planMeta.find((p) => p.id === id);
@@ -137,12 +175,25 @@ export function UpgradeDialog({
                 <h3 className="font-serif text-base font-semibold tracking-tight text-foreground">
                   {meta.name}
                 </h3>
-                <div className="mt-1 flex items-baseline gap-1">
+                <div className="mt-1 flex items-baseline gap-1.5">
+                  {annual && meta.annualTotal && (
+                    <span
+                      className="font-serif text-base font-medium text-subtle line-through"
+                      aria-hidden="true"
+                    >
+                      {meta.monthly}
+                    </span>
+                  )}
                   <span className="font-serif text-2xl font-semibold tracking-tight text-foreground">
-                    {meta.monthly}
+                    {annual ? meta.annualMonthly : meta.monthly}
                   </span>
                   <span className="text-xs text-subtle">{copy.perMonth}</span>
                 </div>
+                <p className="mt-0.5 text-[11px] text-subtle">
+                  {annual && meta.annualTotal
+                    ? `${meta.annualTotal} ${copy.billing.billedAnnually}`
+                    : pc.annualNote}
+                </p>
                 <p className="mt-1 text-xs text-muted-foreground">{pc.blurb}</p>
                 <ul className="mt-3 flex-1 space-y-1.5">
                   {pc.features.slice(0, 4).map((f) => (
@@ -240,6 +291,8 @@ export function UpgradeDialog({
         <DialogFooter className="sm:justify-center">
           <Link
             href={getLocalizedPath('/pricing', locale)}
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
           >
             {u.comparePlans} →
