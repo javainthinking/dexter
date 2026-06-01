@@ -6,7 +6,7 @@ import { isLocale, type Locale } from '../../../lib/i18n/locales';
 import { getLocalizedPath } from '../../../lib/i18n/paths';
 import { getDictionary } from '../dictionaries';
 import { getCurrentUser } from '../../../lib/auth/session';
-import { getUserPlan, getUsage } from '../../../lib/billing';
+import { getUserPlan, getUsage, getResourceUsage } from '../../../lib/billing';
 import { PLAN_LIMITS, type PlanId } from '../../../lib/plans';
 import { planMeta, planIds } from '../../../lib/pricing';
 import { Button } from '../../../components/ui/button';
@@ -62,21 +62,23 @@ export default async function AccountPage({
   const planName = planMeta.find((p) => p.id === plan)?.name ?? plan;
   const limits = PLAN_LIMITS[plan as PlanId];
 
-  // Only conversations + files are metered against the usage table; the other
-  // three quotas are plan allowances (caps), shown without a usage bar.
-  const [conversations, files] = await Promise.all([
+  // Live numbers for every quota: conversations / deep-research / files are
+  // metered monthly counters; portfolios + holdings are current resource
+  // counts (holdings = the fullest portfolio vs the per-portfolio cap).
+  const [conversations, deepResearch, files, resources] = await Promise.all([
     getUsage(user.id, 'conversations'),
+    getUsage(user.id, 'deep_research'),
     getUsage(user.id, 'files'),
+    getResourceUsage(user.id),
   ]);
 
   // Every quota the plan defines, in the order the pricing cards present them.
-  // `used` is set only for the two metered metrics → those get a progress bar.
-  const quota: Array<{ field: keyof typeof limits; label: string; used?: number }> = [
+  const quota: Array<{ field: keyof typeof limits; label: string; used: number }> = [
     { field: 'conversations', label: a.conversations, used: conversations },
-    { field: 'deepResearch', label: a.deepResearch },
+    { field: 'deepResearch', label: a.deepResearch, used: deepResearch },
     { field: 'files', label: a.files, used: files },
-    { field: 'portfolios', label: a.portfolios },
-    { field: 'holdings', label: a.holdings },
+    { field: 'portfolios', label: a.portfolios, used: resources.portfolios },
+    { field: 'holdings', label: a.holdings, used: resources.maxHoldings },
   ];
 
   // Next tier up (free → starter → pro → power). Power has no higher tier.
@@ -145,25 +147,18 @@ export default async function AccountPage({
             {quota.map((q) => {
               const limit = limits[q.field];
               const unlimited = !Number.isFinite(limit);
-              const metered = q.used !== undefined;
-              const limitLabel = unlimited ? a.unlimited : fmtNum(limit, lang);
-              const pct =
-                metered && !unlimited
-                  ? Math.min(100, Math.round((q.used! / limit) * 100))
-                  : 0;
+              const pct = unlimited ? 0 : Math.min(100, Math.round((q.used / limit) * 100));
               return (
                 <li key={q.field}>
                   <div className="flex items-baseline justify-between text-sm">
                     <span className="text-foreground">{q.label}</span>
                     <span className="font-mono text-xs text-muted-foreground">
-                      {metered
-                        ? unlimited
-                          ? `${fmtNum(q.used!, lang)} · ${a.unlimited}`
-                          : `${fmtNum(q.used!, lang)} / ${limitLabel}`
-                        : limitLabel}
+                      {unlimited
+                        ? `${fmtNum(q.used, lang)} · ${a.unlimited}`
+                        : `${fmtNum(q.used, lang)} / ${fmtNum(limit, lang)}`}
                     </span>
                   </div>
-                  {metered && !unlimited && (
+                  {!unlimited && (
                     <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
                       <div
                         className="h-full rounded-full bg-[color:var(--accent)]"

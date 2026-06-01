@@ -146,6 +146,7 @@ export async function POST(request: NextRequest): Promise<Response> {
   // the orphan row that rendered as an empty assistant bubble.
   let turnCompleted = false;
   let fileCount = 0;
+  let usedDeepResearch = false;
 
   // Kick off the agent run asynchronously. The sink is what streams events
   // out to the client; runQuery() flushes the sink in its own `finally`.
@@ -175,9 +176,10 @@ export async function POST(request: NextRequest): Promise<Response> {
             );
           }
         },
-        onDone: async (answer, deliverableCount) => {
+        onDone: async (answer, deliverableCount, deepResearch) => {
           turnCompleted = true;
           fileCount = deliverableCount;
+          usedDeepResearch = deepResearch;
           try {
             await markDone(job.jobId, answer);
           } catch (err) {
@@ -242,6 +244,7 @@ export async function POST(request: NextRequest): Promise<Response> {
         try {
           await incrementUsage(user.id, 'conversations', 1);
           if (fileCount > 0) await incrementUsage(user.id, 'files', fileCount);
+          if (usedDeepResearch) await incrementUsage(user.id, 'deep_research', 1);
         } catch (err) {
           console.error(
             JSON.stringify({

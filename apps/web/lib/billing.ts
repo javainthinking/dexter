@@ -3,6 +3,7 @@ import { and, eq, sql } from 'drizzle-orm';
 import { getDb } from '@dexter/core/db/client';
 import { users } from '@dexter/core/db/schema/auth';
 import { usage } from '@dexter/core/db/schema/billing';
+import { portfolios, portfolioHoldings } from '@dexter/core/db/schema/portfolios';
 import { PLAN_LIMITS, LIMIT_FIELD, type PlanId, type UsageMetric } from './plans';
 
 /**
@@ -79,6 +80,32 @@ export async function incrementUsage(
       target: [usage.userId, usage.periodStart, usage.metric],
       set: { count: sql`${usage.count} + ${by}`, updatedAt: new Date() },
     });
+}
+
+/**
+ * Live resource counts (not monthly usage): how many portfolios the user
+ * owns, and the holding count of their fullest portfolio. The holdings
+ * limit is per-portfolio, so the busiest portfolio is the meaningful number
+ * to compare against the cap.
+ */
+export async function getResourceUsage(
+  userId: string,
+): Promise<{ portfolios: number; maxHoldings: number }> {
+  const db = getDb();
+  const [pf] = await db
+    .select({ n: sql<number>`count(*)::int` })
+    .from(portfolios)
+    .where(eq(portfolios.userId, userId));
+
+  const perPortfolio = await db
+    .select({ c: sql<number>`count(*)::int` })
+    .from(portfolioHoldings)
+    .innerJoin(portfolios, eq(portfolioHoldings.portfolioId, portfolios.id))
+    .where(eq(portfolios.userId, userId))
+    .groupBy(portfolioHoldings.portfolioId);
+
+  const maxHoldings = perPortfolio.reduce((m, r) => Math.max(m, r.c), 0);
+  return { portfolios: pf?.n ?? 0, maxHoldings };
 }
 
 export interface QuotaCheck {

@@ -33,6 +33,22 @@ export interface RunQueryResult {
 }
 
 /**
+ * Did this conversation history include a web/X search tool call? Used to
+ * recover the deep-research signal in resume hops, where the search may have
+ * fired in an earlier chunk. Scans the serialized messages for the tool name
+ * tokens — robust to LangChain's exact serialized shape.
+ */
+function messagesUsedSearch(messages: BaseMessage[] | undefined): boolean {
+  if (!messages?.length) return false;
+  try {
+    const blob = JSON.stringify(messages);
+    return blob.includes('"web_search"') || blob.includes('"x_search"');
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Options for chunked agent execution. When provided, the controller
  * enables the time-budget gate in `Agent.runLoop`, emits a
  * `continuation_required` event when the budget is hit, and invokes
@@ -68,9 +84,15 @@ export interface ChunkRunOpts {
   ) => Promise<void>;
   /**
    * Called when the agent emits a terminal `done` event. `deliverableCount`
-   * is the number of files produced this turn (for usage metering).
+   * is the number of files produced this turn; `usedDeepResearch` is true
+   * when the turn invoked a web/X search tool (a "deep-research turn") —
+   * both feed usage metering.
    */
-  onDone?: (finalAnswer: string, deliverableCount: number) => Promise<void>;
+  onDone?: (
+    finalAnswer: string,
+    deliverableCount: number,
+    usedDeepResearch: boolean,
+  ) => Promise<void>;
 }
 
 /**
@@ -101,6 +123,9 @@ export class AgentRunnerController {
   private abortController: AbortController | null = null;
   private approvalResolve: ((decision: ApprovalDecision) => void) | null = null;
   private sessionApprovedTools = new Set<string>();
+  /** Set true when a web/X search tool fires during the current run — the
+   *  signal for a "deep-research turn". Reset at the start of each run. */
+  private runUsedDeepResearch = false;
 
   constructor(
     agentConfig: AgentConfig,
@@ -233,6 +258,7 @@ export class AgentRunnerController {
     chunkOpts?: ChunkRunOpts,
   ): Promise<RunQueryResult | undefined> {
     this.abortController = new AbortController();
+    this.runUsedDeepResearch = false;
     let finalAnswer: string | undefined;
 
     const startTime = Date.now();
@@ -319,8 +345,14 @@ export class AgentRunnerController {
           }
           const finalEvent = { ...event, deliverables } as DoneEvent;
           if (chunkOpts?.onDone) {
+            // Deep-research signal: a search this invocation, OR one in an
+            // earlier chunk (the rehydrated history carries prior tool
+            // calls, so a search in chunk 0 still counts when the turn
+            // completes in a resume hop).
+            const usedDeepResearch =
+              this.runUsedDeepResearch || messagesUsedSearch(chunkOpts.resume?.messages);
             try {
-              await chunkOpts.onDone(finalEvent.answer, deliverables.length);
+              await chunkOpts.onDone(finalEvent.answer, deliverables.length, usedDeepResearch);
             } catch {
               /* persistence failure shouldn't block delivery */
             }
@@ -405,6 +437,10 @@ export class AgentRunnerController {
         break;
       case 'tool_start': {
         const toolId = event.toolCallId ?? `tool-${event.tool}-${Date.now()}`;
+        // A web/X search invocation marks this turn as deep research.
+        if (event.tool === 'web_search' || event.tool === 'x_search') {
+          this.runUsedDeepResearch = true;
+        }
         this.workingStateValue = { status: 'tool', toolName: event.tool };
         this.updateLastItem((last) => ({
           ...last,
