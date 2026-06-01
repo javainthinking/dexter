@@ -11,6 +11,7 @@ import { PLAN_LIMITS, type PlanId } from '../../../lib/plans';
 import { planMeta, planIds } from '../../../lib/pricing';
 import { SiteHeader } from '../../../components/marketing/site-header';
 import { SiteFooter } from '../../../components/marketing/site-footer';
+import { Breadcrumbs } from '../../../components/blog/breadcrumbs';
 import { ManageSubscriptionButton } from '../../../components/account/manage-subscription-button';
 import { AccountUpgradeCta } from '../../../components/account/account-upgrade-cta';
 
@@ -126,6 +127,13 @@ export default async function AccountPage({
     <div className="min-h-screen bg-background text-foreground">
       <SiteHeader lang={lang as Locale} />
       <section className="mx-auto max-w-3xl px-5 py-16 lg:px-8">
+        <Breadcrumbs
+          ariaLabel={a.breadcrumb}
+          items={[
+            { label: dict.nav.home, href: '/' },
+            { label: a.title },
+          ]}
+        />
         <h1 className="font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           {a.title}
         </h1>
