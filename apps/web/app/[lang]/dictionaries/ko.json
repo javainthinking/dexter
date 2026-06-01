@@ -523,7 +523,8 @@
     "holdings": "포트폴리오당 보유 종목",
     "unlockHeading": "{plan}(으)로 업그레이드하여 잠금 해제",
     "unlockNote": "모든 할당량에서 더 높은 한도와 더 많은 여유를 제공합니다.",
-    "seePlans": "모든 플랜 보기"
+    "seePlans": "모든 플랜 보기",
+    "success": "완료되었습니다 — 새 플랜이 활성화되었습니다."
   },
   "upgrade": {
     "title": "플랜 업그레이드",

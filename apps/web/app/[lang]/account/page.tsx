@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
-import { Lock } from 'lucide-react';
+import { Check, Lock } from 'lucide-react';
 import { isLocale, type Locale } from '../../../lib/i18n/locales';
 import { getLocalizedPath } from '../../../lib/i18n/paths';
 import { getDictionary } from '../dictionaries';
 import { getCurrentUser } from '../../../lib/auth/session';
 import { getUserPlan, getUsage, getResourceUsage } from '../../../lib/billing';
+import { syncUserFromStripe } from '../../../lib/stripe';
 import { PLAN_LIMITS, type PlanId } from '../../../lib/plans';
 import { planMeta, planIds } from '../../../lib/pricing';
 import { SiteHeader } from '../../../components/marketing/site-header';
@@ -46,14 +47,28 @@ function fmtNum(n: number, locale: string): string {
 
 export default async function AccountPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ lang: string }>;
+  searchParams: Promise<{ billing?: string }>;
 }) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
 
   const user = await getCurrentUser();
   if (!user) redirect(getLocalizedPath('/sign-in', lang));
+
+  // Returning from a successful Stripe Checkout: pull the entitlement
+  // straight from Stripe so the new plan shows immediately, rather than
+  // racing the webhook (which also lands, idempotently).
+  const justUpgraded = (await searchParams).billing === 'success';
+  if (justUpgraded) {
+    try {
+      await syncUserFromStripe(user.id);
+    } catch {
+      /* webhook/reconcile will catch up */
+    }
+  }
 
   const dict = await getDictionary(lang);
   const a = dict.account;
@@ -114,6 +129,13 @@ export default async function AccountPage({
         <h1 className="font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           {a.title}
         </h1>
+
+        {justUpgraded && (
+          <div className="mt-6 flex items-center gap-2 rounded-lg border border-[color:var(--accent)]/40 bg-[color:var(--accent)]/10 px-4 py-3 text-sm text-foreground">
+            <Check className="size-4 shrink-0 text-[color:var(--accent)]" aria-hidden="true" />
+            {a.success}
+          </div>
+        )}
 
         {/* Plan */}
         <div className="mt-8 rounded-xl border border-border bg-card p-6">

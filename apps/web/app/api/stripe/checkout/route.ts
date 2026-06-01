@@ -25,10 +25,21 @@ export async function POST(request: NextRequest): Promise<Response> {
     plan?: string;
     interval?: string;
     locale?: string;
+    returnTo?: string;
   };
   const plan = body.plan as PaidPlan;
   const interval = (body.interval ?? 'month') as BillingInterval;
   const locale = body.locale && /^[a-zA-Z-]+$/.test(body.locale) ? body.locale : 'en';
+  // Where to send the user if they hit "back"/cancel on Stripe's page —
+  // the surface they launched checkout from. Same-origin relative path
+  // only (leading single slash) to avoid an open redirect; falls back to
+  // the pricing page.
+  const returnTo =
+    typeof body.returnTo === 'string' &&
+    body.returnTo.startsWith('/') &&
+    !body.returnTo.startsWith('//')
+      ? body.returnTo
+      : `/${locale}/pricing`;
   if (!PAID.has(plan) || !['month', 'year'].includes(interval)) {
     return NextResponse.json({ error: 'invalid plan/interval' }, { status: 400 });
   }
@@ -61,8 +72,10 @@ export async function POST(request: NextRequest): Promise<Response> {
     customer: customerId,
     line_items: [{ price: priceId, quantity: 1 }],
     allow_promotion_codes: true,
-    success_url: `${APP_URL}/${locale}/pricing?billing=success&session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${APP_URL}/${locale}/pricing?billing=cancelled`,
+    // Success → account, where the freshly-synced plan + usage are shown.
+    // Cancel → wherever they launched checkout from.
+    success_url: `${APP_URL}/${locale}/account?billing=success&session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${APP_URL}${returnTo}`,
     subscription_data: { metadata: { userId: user.id } },
     metadata: { userId: user.id, plan, interval },
   });

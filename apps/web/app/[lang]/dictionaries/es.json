@@ -523,7 +523,8 @@
     "holdings": "Posiciones por cartera",
     "unlockHeading": "Mejora a {plan} para desbloquear",
     "unlockNote": "Límites más altos y más margen en cada cuota.",
-    "seePlans": "Ver todos los planes"
+    "seePlans": "Ver todos los planes",
+    "success": "Todo listo: tu nuevo plan ya está activo."
   },
   "upgrade": {
     "title": "Mejora tu plan",

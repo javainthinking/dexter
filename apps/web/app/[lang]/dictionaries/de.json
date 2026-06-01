@@ -523,7 +523,8 @@
     "holdings": "Positionen pro Portfolio",
     "unlockHeading": "Upgrade auf {plan}, um freizuschalten",
     "unlockNote": "Höhere Limits und mehr Spielraum bei jedem Kontingent.",
-    "seePlans": "Alle Tarife ansehen"
+    "seePlans": "Alle Tarife ansehen",
+    "success": "Alles erledigt — dein neuer Tarif ist aktiv."
   },
   "upgrade": {
     "title": "Upgrade deinen Tarif",

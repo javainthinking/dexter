@@ -523,7 +523,8 @@
     "holdings": "每個組合持倉數",
     "unlockHeading": "升級至 {plan} 解鎖",
     "unlockNote": "更高的額度，每項配額都有更多餘裕。",
-    "seePlans": "查看所有方案"
+    "seePlans": "查看所有方案",
+    "success": "已完成 —— 你的新方案已生效。"
   },
   "upgrade": {
     "title": "升級你的方案",

@@ -523,7 +523,8 @@
     "holdings": "每个组合持仓数",
     "unlockHeading": "升级到 {plan} 解锁",
     "unlockNote": "更高的额度，每项配额都更充裕。",
-    "seePlans": "查看所有套餐"
+    "seePlans": "查看所有套餐",
+    "success": "已完成 —— 您的新套餐已生效。"
   },
   "upgrade": {
     "title": "升级您的套餐",

@@ -541,7 +541,8 @@
     "holdings": "Holdings per portfolio",
     "unlockHeading": "Upgrade to {plan} to unlock",
     "unlockNote": "Higher limits and more headroom on every quota.",
-    "seePlans": "See all plans"
+    "seePlans": "See all plans",
+    "success": "You're all set — your new plan is active."
   },
   "upgrade": {
     "title": "Upgrade your plan",

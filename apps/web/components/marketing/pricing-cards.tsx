@@ -62,7 +62,12 @@ export function PricingCards({
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: planId, interval: annual ? 'year' : 'month', locale }),
+        body: JSON.stringify({
+          plan: planId,
+          interval: annual ? 'year' : 'month',
+          locale,
+          returnTo: window.location.pathname + window.location.search,
+        }),
       });
       if (res.status === 401) {
         window.location.href = `/${locale}/sign-in?callbackUrl=${encodeURIComponent(`/${locale}/pricing`)}`;
