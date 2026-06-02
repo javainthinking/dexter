@@ -31,7 +31,7 @@ export interface FeatureMeta {
 
 /** Locale-independent structure + ordering. */
 export const featureList: FeatureMeta[] = [
-  { slug: 'portfolio-indicators', image: '/features/portfolio-indicators/hero.png', ctaHref: '/chat' },
+  { slug: 'portfolio-indicators', image: '/features/portfolio-indicators/hero.png', ctaHref: '/portfolios' },
   { slug: 'research-documents', image: '/features/research-documents/hero.png', ctaHref: '/chat' },
   { slug: 'ai-analyst', image: '/features/ai-analyst/hero.png', ctaHref: '/chat' },
 ];
