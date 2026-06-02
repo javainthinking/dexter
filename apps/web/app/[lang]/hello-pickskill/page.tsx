@@ -18,10 +18,12 @@ import {
 import { isAdminAuthed } from '../../../lib/admin-auth';
 import { AdminLogin } from '../../../components/admin/admin-login';
 import { AdminLogoutButton } from '../../../components/admin/admin-logout-button';
+import { SiteHeader } from '../../../components/marketing/site-header';
+import { isLocale, defaultLocale, type Locale } from '../../../lib/i18n/locales';
 import { planMeta, type PlanId } from '../../../lib/pricing';
 
-// Live admin console — never cached, never indexed. Gated by HTTP Basic
-// Auth in proxy.ts (ADMIN_NAME / ADMIN_PASSWORD) before this ever renders.
+// Live admin console — never cached, never indexed. Gated by the admin
+// session cookie (in-page login form, see lib/admin-auth.ts).
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
@@ -96,7 +98,14 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-export default async function AdminPage() {
+export default async function AdminPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang: langParam } = await params;
+  const lang: Locale = isLocale(langParam) ? langParam : defaultLocale;
+
   // Gate on the admin session cookie. Unauthenticated visitors get the
   // in-page login form (no browser Basic Auth dialog); a successful login
   // sets the cookie and refreshes into the dashboard below.
@@ -121,6 +130,7 @@ export default async function AdminPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SiteHeader lang={lang} />
       <div className="mx-auto max-w-6xl px-5 py-12 lg:px-8">
         <header className="flex flex-wrap items-baseline justify-between gap-3 border-b border-border pb-6">
           <div>
