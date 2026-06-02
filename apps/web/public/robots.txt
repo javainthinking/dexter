@@ -8,33 +8,45 @@
 #     — we want to be CITED, not used as training data without
 #     reciprocal benefit.
 #   - Disallow /api/* — those are interactive endpoints, not content.
+#   - Disallow /hello-pickskill — private admin console; login-gated and
+#     also noindex'd via X-Robots-Tag. Repeated in every group because
+#     robots.txt groups are independent (a bot obeys only its own group).
 
 User-agent: GPTBot
 Allow: /
+Disallow: /hello-pickskill
 
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /hello-pickskill
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /hello-pickskill
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /hello-pickskill
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /hello-pickskill
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /hello-pickskill
 
 User-agent: Bingbot
 Allow: /
+Disallow: /hello-pickskill
 
 User-agent: Applebot
 Allow: /
+Disallow: /hello-pickskill
 
 User-agent: Applebot-Extended
 Allow: /
+Disallow: /hello-pickskill
 
 # Training-only crawlers — block. Flip to Allow if we ever decide
 # we want our content in foundation-model training sets.
@@ -53,11 +65,13 @@ Disallow: /
 User-agent: FacebookBot
 Disallow: /
 
-# All other crawlers: allow content, block API + Next.js internals.
+# All other crawlers: allow content, block API + Next.js internals +
+# all private/authenticated surfaces.
 User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /_next/
+Disallow: /hello-pickskill
 Disallow: /sign-in
 Disallow: /memory
 Disallow: /portfolios

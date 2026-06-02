@@ -72,6 +72,18 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // Admin console (/hello-pickskill, and any locale-prefixed variant):
+      // keep it out of every search index and AI crawler regardless of how
+      // they parse robots.txt. X-Robots-Tag is honored at the HTTP layer, so
+      // it covers the login screen too (which is otherwise a 200 HTML page).
+      {
+        source: '/hello-pickskill',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' }],
+      },
+      {
+        source: '/:lang/hello-pickskill',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' }],
+      },
     ];
   },
   // TypeScript ESM .js extension trick: the root package writes imports
