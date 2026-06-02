@@ -65,7 +65,7 @@ function loadGsi(): Promise<void> {
 
 export function GoogleOneTap() {
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-  const { status } = useSession();
+  const { status, update } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const initialized = useRef(false);
@@ -96,7 +96,16 @@ export function GoogleOneTap() {
                 headers: { 'content-type': 'application/json' },
                 body: JSON.stringify({ credential: resp.credential }),
               });
-              if (res.ok) router.refresh();
+              if (res.ok) {
+                // The cookie is set, but useSession() consumers (e.g. the
+                // header UserMenu) hold a cached 'unauthenticated' state and
+                // won't refetch on their own (SessionProvider has
+                // refetchInterval=0). update() forces a session refetch and
+                // broadcasts the result so they re-render signed-in;
+                // router.refresh() re-runs any server components.
+                await update();
+                router.refresh();
+              }
             } catch {
               /* swallow — user can still sign in via /sign-in */
             }
@@ -112,7 +121,7 @@ export function GoogleOneTap() {
     return () => {
       cancelled = true;
     };
-  }, [clientId, status, onSignInPage, router]);
+  }, [clientId, status, onSignInPage, router, update]);
 
   return null;
 }
