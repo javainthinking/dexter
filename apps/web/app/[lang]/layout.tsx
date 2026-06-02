@@ -11,6 +11,7 @@ import { MARKET_COLOR_PREPAINT_SCRIPT } from '../../components/settings/market-c
 import { DictionaryProvider } from '../../components/i18n/dictionary-provider';
 import { LangSetter } from '../../components/i18n/lang-setter';
 import { UpgradeDialogProvider } from '../../components/upgrade/upgrade-dialog-provider';
+import { GoogleOneTap } from '../../components/auth/google-one-tap';
 
 // Google Analytics 4 measurement ID. Env-overrideable so a separate
 // preview / staging deploy can point at its own GA property without a
@@ -131,6 +132,7 @@ gtag('config', '${GA_MEASUREMENT_ID}');`}
           </>
         )}
         <Providers>
+          <GoogleOneTap />
           <DictionaryProvider locale={lang} dict={dict}>
             <LangSetter locale={lang} />
             <UpgradeDialogProvider>{children}</UpgradeDialogProvider>
