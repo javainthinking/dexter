@@ -366,6 +366,7 @@
     "errorLoading": "无法加载记忆,请重试。"
   },
   "auth": {
+    "signIn": "登录",
     "signInTitle": "登录 PickSkill",
     "signInSubtitle": "继续上次未完成的研究。",
     "emailLabel": "邮箱地址",

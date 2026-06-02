@@ -384,6 +384,7 @@
     "errorLoading": "Could not load memories. Please try again."
   },
   "auth": {
+    "signIn": "Sign in",
     "signInTitle": "Sign in to PickSkill",
     "signInSubtitle": "Pick up your research where you left off.",
     "emailLabel": "Email address",

@@ -366,6 +366,7 @@
     "errorLoading": "Impossible de charger les souvenirs. Veuillez réessayer."
   },
   "auth": {
+    "signIn": "Se connecter",
     "signInTitle": "Connectez-vous à PickSkill",
     "signInSubtitle": "Reprenez votre recherche là où vous l'avez laissée.",
     "emailLabel": "Adresse e-mail",

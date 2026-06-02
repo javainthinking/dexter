@@ -42,7 +42,23 @@ export function UserMenu({ variant = 'compact', className }: UserMenuProps) {
       />
     );
   }
-  if (!data?.user) return null;
+  // Logged out: show a sign-in button in the avatar slot to guide login,
+  // rather than rendering nothing.
+  if (!data?.user) {
+    return (
+      <LocalizedLink
+        href="/sign-in"
+        className={cn(
+          'inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm font-medium text-foreground transition-colors',
+          'hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+          className,
+        )}
+      >
+        <UserIcon className="size-4" aria-hidden="true" />
+        {dict.auth.signIn}
+      </LocalizedLink>
+    );
+  }
 
   const user = data.user as { name?: string | null; email?: string | null; image?: string | null };
 

@@ -366,6 +366,7 @@
     "errorLoading": "メモリを読み込めませんでした。再度お試しください。"
   },
   "auth": {
+    "signIn": "ログイン",
     "signInTitle": "PickSkill にサインイン",
     "signInSubtitle": "前回の続きから、リサーチを再開しましょう。",
     "emailLabel": "メールアドレス",

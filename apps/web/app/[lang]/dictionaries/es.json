@@ -366,6 +366,7 @@
     "errorLoading": "No se pudieron cargar los recuerdos. Inténtalo de nuevo."
   },
   "auth": {
+    "signIn": "Iniciar sesión",
     "signInTitle": "Inicia sesión en PickSkill",
     "signInSubtitle": "Retoma tu investigación donde la dejaste.",
     "emailLabel": "Correo electrónico",
