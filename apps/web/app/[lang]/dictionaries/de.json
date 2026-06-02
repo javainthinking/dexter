@@ -366,6 +366,7 @@
     "errorLoading": "Einträge konnten nicht geladen werden. Bitte erneut versuchen."
   },
   "auth": {
+    "signIn": "Anmelden",
     "signInTitle": "Bei PickSkill anmelden",
     "signInSubtitle": "Setzen Sie Ihre Recherche dort fort, wo Sie aufgehört haben.",
     "emailLabel": "E-Mail-Adresse",

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
 /**
@@ -65,8 +65,7 @@ function loadGsi(): Promise<void> {
 
 export function GoogleOneTap() {
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-  const { status, update } = useSession();
-  const router = useRouter();
+  const { status } = useSession();
   const pathname = usePathname();
   const initialized = useRef(false);
 
@@ -97,14 +96,13 @@ export function GoogleOneTap() {
                 body: JSON.stringify({ credential: resp.credential }),
               });
               if (res.ok) {
-                // The cookie is set, but useSession() consumers (e.g. the
-                // header UserMenu) hold a cached 'unauthenticated' state and
-                // won't refetch on their own (SessionProvider has
-                // refetchInterval=0). update() forces a session refetch and
-                // broadcasts the result so they re-render signed-in;
-                // router.refresh() re-runs any server components.
-                await update();
-                router.refresh();
+                // The cookie is set, but client useSession() consumers (the
+                // header UserMenu) hold a cached 'unauthenticated' state.
+                // SessionProvider.update()/router.refresh() proved unreliable
+                // for the database-session strategy, so do a full reload —
+                // the provider re-initialises with the new cookie and the
+                // whole page (header included) renders signed-in.
+                window.location.reload();
               }
             } catch {
               /* swallow — user can still sign in via /sign-in */
@@ -121,7 +119,7 @@ export function GoogleOneTap() {
     return () => {
       cancelled = true;
     };
-  }, [clientId, status, onSignInPage, router, update]);
+  }, [clientId, status, onSignInPage]);
 
   return null;
 }

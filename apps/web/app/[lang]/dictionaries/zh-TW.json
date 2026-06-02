@@ -366,6 +366,7 @@
     "errorLoading": "無法載入記憶,請再試一次。"
   },
   "auth": {
+    "signIn": "登入",
     "signInTitle": "登入 PickSkill",
     "signInSubtitle": "從上次中斷處繼續你的研究。",
     "emailLabel": "電子郵件地址",
