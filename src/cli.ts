@@ -84,6 +84,7 @@ function summarizeToolResult(tool: string, args: Record<string, unknown>, result
       if (typeof parsed.data === 'object') {
         const keys = Object.keys(parsed.data).filter((key) => !key.startsWith('_'));
         if (tool === 'get_financials' || tool === 'get_market_data' || tool === 'stock_screener') {
+          if (keys.length === 0) return 'Done';
           return keys.length === 1 ? 'Called 1 data source' : `Called ${keys.length} data sources`;
         }
         if (tool === 'web_search') {
@@ -221,6 +222,7 @@ export async function runCli() {
   let lastRenderedAnswer = false;
   let lastRenderedQueryId: string | null = null;
   const finalizedToolIds = new Set<string>();
+  const appliedToolProgress = new Map<string, string>();
   let lastPendingApproval: { tool: string; args: Record<string, unknown> } | null = null;
 
   // Build the CorePorts bundle. When MEMORYLAKE_* env vars are configured,
@@ -272,6 +274,20 @@ export async function runCli() {
                 component.setError(display.endEvent.error);
               }
             }
+          }
+        }
+
+        // Apply live progress to already-rendered, still-running tools. Guarded
+        // by change-detection so each unique message triggers exactly one update.
+        for (const display of lastItem.events) {
+          if (
+            display.event.type === 'tool_start' &&
+            !display.completed &&
+            display.progressMessage &&
+            appliedToolProgress.get(display.id) !== display.progressMessage
+          ) {
+            appliedToolProgress.set(display.id, display.progressMessage);
+            chatLog.getToolById(display.id)?.setActive(display.progressMessage);
           }
         }
 

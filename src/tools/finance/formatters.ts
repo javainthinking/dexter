@@ -187,7 +187,71 @@ export function formatInsiderTrades(data: unknown): string {
   return lines.join('\n');
 }
 
-export function formatEarnings(data: unknown): string {
+export function formatInstitutionalHoldings(data: unknown, args?: Rec): string {
+  const items = Array.isArray(data) ? data : [];
+  if (items.length === 0) return 'No institutional holdings found.';
+  const byTicker = Boolean(args?.ticker);
+  const lines: string[] = [];
+  if (byTicker) {
+    const ticker = (args?.ticker as string)?.toUpperCase() ?? '';
+    lines.push(`Institutional Holders — ${ticker}`, '');
+    lines.push('| Filer | Shares | Value (USD) | Report |');
+    lines.push('|-------|--------|-------------|--------|');
+    for (const row of items.slice(0, 15) as Rec[]) {
+      lines.push(`| ${row.filer_name ?? row.filer_cik ?? '—'} | ${fmtNum(row.shares)} | ${fmtNum(row.value_usd)} | ${fmtDate(row.report_period)} |`);
+    }
+  } else {
+    const filer = ((items[0] as Rec)?.filer_name as string)
+      ?? (args?.filer_name as string)
+      ?? (args?.filer_cik as string)
+      ?? '';
+    lines.push(`13F Holdings — ${filer}`, '');
+    lines.push('| Issuer | Ticker | Shares | Value (USD) | Report |');
+    lines.push('|--------|--------|--------|-------------|--------|');
+    for (const row of items.slice(0, 15) as Rec[]) {
+      lines.push(`| ${row.name_of_issuer ?? '—'} | ${row.ticker ?? '—'} | ${fmtNum(row.shares)} | ${fmtNum(row.value_usd)} | ${fmtDate(row.report_period)} |`);
+    }
+  }
+  if (items.length > 15) lines.push('', `(showing 15 of ${items.length})`);
+  return lines.join('\n');
+}
+
+export function formatEarnings(data: unknown, args?: Rec): string {
+  if (Array.isArray(data)) {
+    if (data.length === 0) return 'No earnings data available.';
+
+    const rows = data as Rec[];
+    const ticker = (args?.ticker as string | undefined)?.toUpperCase();
+    const cell = (value: unknown) => String(value ?? '—').replace(/\|/g, '\\|');
+    const title = ticker
+      ? `${ticker} Earnings`
+      : (rows.length === 1
+        ? `${String(rows[0].ticker ?? '').toUpperCase()} Earnings`
+        : 'Latest Earnings Feed');
+    const lines = [title, ''];
+    lines.push('| Ticker | Period | Fiscal | Source | Filed | Revenue | EPS | Signals |');
+    lines.push('|--------|--------|--------|--------|-------|---------|-----|---------|');
+
+    for (const row of rows.slice(0, 15)) {
+      const figures = ((row.quarterly ?? row.annual) && typeof (row.quarterly ?? row.annual) === 'object')
+        ? (row.quarterly ?? row.annual) as Rec
+        : {};
+      const eps = figures.earnings_per_share ?? figures.eps;
+      const signals = Array.isArray(row.signals)
+        ? row.signals
+          .slice(0, 2)
+          .map((signal) => signal && typeof signal === 'object' ? (signal as Rec).headline : null)
+          .filter(Boolean)
+          .join('; ')
+        : '';
+
+      lines.push(`| ${cell(String(row.ticker ?? '—').toUpperCase())} | ${cell(fmtDate(row.report_period))} | ${cell(row.fiscal_period)} | ${cell(row.source_type)} | ${cell(fmtDate(row.filing_date))} | ${cell(fmtNum(figures.revenue))} | ${cell(fmtPrice(eps))} | ${cell(signals || '—')} |`);
+    }
+
+    if (rows.length > 15) lines.push('', `(showing 15 of ${rows.length})`);
+    return lines.join('\n');
+  }
+
   const d = (data && typeof data === 'object') ? data as Rec : {};
   if (Object.keys(d).length === 0) return 'No earnings data available.';
   // Flat shape: each entry IS one filing. data.earnings[0] (already unwrapped upstream)
@@ -317,4 +381,5 @@ export const MARKET_DATA_FORMATTERS: Record<string, (data: unknown, args?: Rec) 
   get_company_news: formatNews,
   get_insider_trades: formatInsiderTrades,
   get_market_movers: formatMarketMovers,
+  get_institutional_holdings: formatInstitutionalHoldings,
 };

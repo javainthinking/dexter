@@ -65,6 +65,19 @@ export interface AgentConfig {
    * turn still runs and answers, it just can't produce PPT/Word/Excel files.
    */
   disableFileGeneration?: boolean;
+  /**
+   * Restrict this agent to a subset of tools, by registry name. When set, only
+   * matching tools are bound. Used to give a delegated worker a focused toolset.
+   */
+  toolAllowlist?: string[];
+  /**
+   * Use this exact system prompt instead of building one. When set, the soul,
+   * rules, and memory context are skipped entirely. Used by delegated workers
+   * that run with a self-contained worker prompt.
+   */
+  systemPromptOverride?: string;
+  /** Optional short label (e.g. "research") used to prefix nested progress lines. */
+  agentLabel?: string;
 }
 
 /**
@@ -129,6 +142,8 @@ export interface ToolProgressEvent {
   type: 'tool_progress';
   tool: string;
   message: string;
+  /** Unique tool_call ID, so progress routes to the right row under concurrent execution. */
+  toolCallId?: string;
 }
 
 /**
