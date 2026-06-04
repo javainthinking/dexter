@@ -59,7 +59,7 @@ import { getCryptoPriceSnapshot, getCryptoPrices, getCryptoTickers } from './cry
 import { getCompanyNews } from './news.js';
 import { getInsiderTrades } from './insider_trades.js';
 import { getMarketMovers } from './market_movers.js';
-import { getInstitutionalHoldings } from './institutional_holdings.js';
+import { getInstitutionalHoldings, getInstitutionalInvestors } from './institutional_holdings.js';
 
 // All market data tools available for routing
 const MARKET_DATA_TOOLS: StructuredToolInterface[] = [
@@ -76,6 +76,7 @@ const MARKET_DATA_TOOLS: StructuredToolInterface[] = [
   getInsiderTrades,
   getMarketMovers,
   getInstitutionalHoldings,
+  getInstitutionalInvestors,
 ];
 
 // Create a map for quick tool lookup by name
@@ -114,6 +115,7 @@ Given a user's natural language query about market data, call the appropriate to
    - For "today's top gainers/losers", "market movers", "biggest movers" → get_market_movers (no args needed)
    - For who holds a stock (largest holders, 13F holders of X) → get_institutional_holdings with ticker
    - For a specific manager's portfolio (Citadel, Berkshire, BlackRock, etc.) → get_institutional_holdings with filer_name (the tool resolves name → CIK internally; do NOT make a separate lookup call)
+   - To look up a 13F filer's CIK, or list/disambiguate managers matching a name (without fetching any holdings) → get_institutional_investors with name
    - For "why did X go up/down" → combine get_stock_price + get_company_news
    - For "what's happening in the markets" → get_company_news without ticker
 
@@ -144,7 +146,7 @@ export function createGetMarketData(model: string): DynamicStructuredTool {
 - Company news and recent headlines
 - Broad market news (omit ticker)
 - Insider trading activity
-- Institutional holdings (SEC 13F)`,
+- Institutional holdings (SEC 13F) and 13F filer/CIK lookup`,
     schema: GetMarketDataInputSchema,
     func: async (input, _runManager, config?: RunnableConfig) => {
       const onProgress = config?.metadata?.onProgress as ((msg: string) => void) | undefined;
