@@ -5,6 +5,7 @@ import { users } from '@dexter/core/db/schema/auth';
 import { usage } from '@dexter/core/db/schema/billing';
 import { portfolios, portfolioHoldings } from '@dexter/core/db/schema/portfolios';
 import { PLAN_LIMITS, LIMIT_FIELD, type PlanId, type UsageMetric } from './plans';
+import { COMP_PLAN, isCompPowerEmail } from './comp';
 
 /**
  * Billing resolvers — read the user's entitlement (plan, mirrored from
@@ -32,6 +33,7 @@ export async function getUserPlan(userId: string): Promise<UserPlan> {
   const db = getDb();
   const [row] = await db
     .select({
+      email: users.email,
       plan: users.plan,
       status: users.stripeStatus,
       periodEnd: users.stripeCurrentPeriodEnd,
@@ -42,8 +44,11 @@ export async function getUserPlan(userId: string): Promise<UserPlan> {
     .where(eq(users.id, userId))
     .limit(1);
 
+  // Complimentary-power allowlist wins over whatever Stripe last wrote.
+  const plan = (isCompPowerEmail(row?.email) ? COMP_PLAN : row?.plan ?? 'free') as PlanId;
+
   return {
-    plan: (row?.plan ?? 'free') as PlanId,
+    plan,
     status: row?.status ?? null,
     periodEnd: row?.periodEnd ?? null,
     cancelAtPeriodEnd: row?.cancelAtPeriodEnd ?? false,

@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm';
 import { getDb } from '@dexter/core/db/client';
 import { users } from '@dexter/core/db/schema/auth';
 import { planFromStripePrice } from './plans';
+import { COMP_PLAN, isCompPowerEmail } from './comp';
 
 /**
  * Stripe client + entitlement sync. Stripe is the source of truth; every
@@ -48,11 +49,15 @@ export async function ensureStripeCustomer(user: UserBillingRow): Promise<string
 export async function syncUserFromStripe(userId: string): Promise<Stripe.Subscription | null> {
   const db = getDb();
   const [user] = await db
-    .select({ stripeCustomerId: users.stripeCustomerId })
+    .select({ email: users.email, stripeCustomerId: users.stripeCustomerId })
     .from(users)
     .where(eq(users.id, userId))
     .limit(1);
   if (!user?.stripeCustomerId) return null;
+
+  // Comp'd accounts keep the top plan no matter what Stripe reports, so the
+  // reconcile cron and webhook can't downgrade them.
+  const comped = isCompPowerEmail(user.email);
 
   const subs = await stripe.subscriptions.list({
     customer: user.stripeCustomerId,
@@ -70,7 +75,7 @@ export async function syncUserFromStripe(userId: string): Promise<Stripe.Subscri
     await db
       .update(users)
       .set({
-        plan: 'free',
+        plan: comped ? COMP_PLAN : 'free',
         billingInterval: null,
         stripeSubscriptionId: null,
         stripePriceId: null,
@@ -96,7 +101,7 @@ export async function syncUserFromStripe(userId: string): Promise<Stripe.Subscri
   await db
     .update(users)
     .set({
-      plan: mapped?.plan ?? 'free',
+      plan: comped ? COMP_PLAN : mapped?.plan ?? 'free',
       billingInterval: mapped?.interval ?? null,
       stripeSubscriptionId: active.id,
       stripePriceId: priceId,
