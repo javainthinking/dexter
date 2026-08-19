@@ -399,6 +399,28 @@ body {
 :root:not(.dark) .hljs-section,
 :root:not(.dark) .hljs-built_in { color: oklch(0.4 0.17 250); }
 
+/* ─────────────────────────────────────────────────────────────────── */
+/*  Blueprint texture — faint graph-paper grid behind product panels    */
+/*  (extend.ai-style technical-drawing register; theme-aware via        */
+/*  --border so it stays subtle in both modes).                         */
+/* ─────────────────────────────────────────────────────────────────── */
+
+.blueprint-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklch, var(--border) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklch, var(--border) 55%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Softer register for text-bearing panels (CTA cards) where the full
+   grid would compete with the copy. */
+.blueprint-grid-soft {
+  background-image:
+    linear-gradient(to right, color-mix(in oklch, var(--border) 30%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklch, var(--border) 30%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
 /* Animations */
 @keyframes pulse-soft {
   0%, 100% { opacity: 1; }

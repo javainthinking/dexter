@@ -15,6 +15,14 @@
       "secondaryCta": "Sehen, was es erstellt",
       "tagline": "Live-Daten · PPT / Word / Excel · Mit Gedächtnis verankert"
     },
+    "stats": {
+      "items": [
+        { "label": "Signal-Engine", "value": "8", "detail": "Indikator-Dimensionen je Position" },
+        { "label": "Rauschfilter", "value": "5 Tage", "detail": "Signalverlauf hinter jedem Signal" },
+        { "label": "Marktabdeckung", "value": "3", "detail": "Märkte — US · HK · A-Aktien" },
+        { "label": "Dokumentfabrik", "value": "3", "detail": "native Formate — PPT · Word · Excel" }
+      ]
+    },
     "features": {
       "reasoning": {
         "eyebrow": "01 — Argumentationsschleife",

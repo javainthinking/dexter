@@ -9,7 +9,8 @@ import { SiteHeader } from '../../components/marketing/site-header';
 import { SiteFooter } from '../../components/marketing/site-footer';
 import { FeatureShowcase } from '../../components/marketing/feature-showcase';
 import { HeroCarousel, type HeroSlide, type HeroSceneVariant } from '../../components/marketing/hero-carousel';
-import { getFeaturesContent } from '../../lib/features';
+import { CornerMarks } from '../../components/marketing/blueprint';
+import { featureList, getFeaturesContent } from '../../lib/features';
 import Link from 'next/link';
 
 const SITE_URL = 'https://pickskill.ai';
@@ -102,11 +103,13 @@ export default async function HomePage({
   ];
   const heroSlides: HeroSlide[] = sceneDefs.map(({ variant, slug }) => {
     const item = featuresContent.items[slug];
+    const meta = featureList.find((f) => f.slug === slug)!;
     return {
       variant,
       title: item.name,
       tagline: item.tagline,
       href: getLocalizedPath(`/features/${slug}`, lang),
+      ctaHref: getLocalizedPath(meta.ctaHref, lang),
     };
   });
 
@@ -124,6 +127,7 @@ export default async function HomePage({
         slides={heroSlides}
         sceneLabels={dict.landing.heroScenes}
       />
+      <StatsBand stats={dict.landing.stats} />
       <FeatureShowcase
         lang={lang as Locale}
         eyebrow={dict.landing.showcase.eyebrow}
@@ -158,7 +162,8 @@ function Hero({
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_60%_at_85%_-10%,color-mix(in_oklch,var(--accent)_16%,transparent),transparent_55%)]"
       />
-      <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 pt-16 pb-20 sm:pt-20 lg:grid-cols-[1.05fr_1fr] lg:gap-10 lg:px-8 lg:pt-24 lg:pb-28">
+      <div className="relative mx-auto grid max-w-6xl items-center gap-12 border-border px-5 pt-16 pb-20 sm:pt-20 lg:grid-cols-[1.05fr_1fr] lg:gap-10 lg:border-x lg:px-8 lg:pt-24 lg:pb-28">
+        <CornerMarks />
         {/* Copy */}
         <div>
           <div className="flex items-center gap-2">
@@ -199,11 +204,61 @@ function Hero({
   );
 }
 
+/**
+ * Stats band — extend.ai-style metric strip under the hero: four cells
+ * split by hairlines, first cell inverted, mono eyebrow + serif figure +
+ * mono detail. All copy from the landing dictionary (8 locales).
+ */
+function StatsBand({ stats }: { stats: Dictionary['landing']['stats'] }) {
+  // Hairline plumbing per cell: 2-up on mobile, 4-up on lg.
+  const dividers = [
+    '',
+    'border-l border-border',
+    'border-t border-border lg:border-t-0 lg:border-l',
+    'border-l border-t border-border lg:border-t-0',
+  ];
+  return (
+    <section className="border-b border-border">
+      <div className="relative mx-auto grid max-w-6xl grid-cols-2 border-border lg:grid-cols-4 lg:border-x">
+        <CornerMarks />
+        {stats.items.map((s, i) => (
+          <div
+            key={s.label}
+            className={`px-5 py-6 sm:px-7 sm:py-7 ${dividers[i]} ${
+              i === 0 ? 'bg-primary text-primary-foreground' : ''
+            }`}
+          >
+            <p
+              className={`font-mono text-[9px] uppercase tracking-[0.2em] ${
+                i === 0 ? 'text-primary-foreground/60' : 'text-subtle'
+              }`}
+            >
+              {s.label}
+            </p>
+            <p className="mt-2 font-serif text-2xl font-semibold tracking-tight tabular-nums sm:text-3xl">
+              {s.value}
+            </p>
+            <p
+              className={`mt-1 font-mono text-[10px] leading-relaxed ${
+                i === 0 ? 'text-primary-foreground/70' : 'text-muted-foreground'
+              }`}
+            >
+              {s.detail}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function Faq({ dict }: { dict: Dictionary }) {
   const { eyebrow, title, items } = dict.landing.faq;
   return (
     <section className="border-b border-border">
-      <div className="mx-auto max-w-3xl px-5 py-20 lg:px-8">
+      <div className="relative mx-auto max-w-6xl border-border lg:border-x">
+        <CornerMarks />
+        <div className="mx-auto max-w-3xl px-5 py-20 lg:px-8">
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">{eyebrow}</p>
         <h2 className="mt-3 font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           {title}
@@ -218,6 +273,7 @@ function Faq({ dict }: { dict: Dictionary }) {
             </div>
           ))}
         </dl>
+        </div>
       </div>
     </section>
   );

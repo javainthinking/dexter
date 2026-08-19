@@ -3,6 +3,7 @@ import { isLocale, type Locale } from '../../../lib/i18n/locales';
 import { getDictionary } from '../dictionaries';
 import { SiteHeader } from '../../../components/marketing/site-header';
 import { SiteFooter } from '../../../components/marketing/site-footer';
+import { CornerMarks } from '../../../components/marketing/blueprint';
 
 /**
  * Layout for every /blog/* route. Wraps the index and post pages with
@@ -29,7 +30,16 @@ export default async function BlogLayout({
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <SiteHeader lang={lang as Locale} />
-      <main className="flex-1">{children}</main>
+      {/* Blueprint rails: the whole blog column sits between two
+          vertical hairlines running from header to footer, with
+          registration crosses at the junctions (extend.ai register). */}
+      {/* (footer supplies the bottom hairline via its own border-t) */}
+      <main className="flex-1">
+        <div className="relative mx-auto min-h-full max-w-6xl border-border lg:border-x">
+          <CornerMarks />
+          {children}
+        </div>
+      </main>
       <SiteFooter lang={lang as Locale} dict={dict} />
     </div>
   );

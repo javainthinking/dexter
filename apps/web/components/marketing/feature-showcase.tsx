@@ -5,6 +5,7 @@ import type { Locale } from '../../lib/i18n/locales';
 import { getLocalizedPath } from '../../lib/i18n/paths';
 import { featureList, getFeaturesContent } from '../../lib/features';
 import { Button } from '../ui/button';
+import { CornerMarks, FigTag } from './blueprint';
 
 /**
  * Homepage feature showcase — the three product pillars in an alternating
@@ -31,11 +32,11 @@ export function FeatureShowcase({
   tryItLabel: string;
 }) {
   const content = getFeaturesContent(lang);
-  const chatHref = getLocalizedPath('/chat', lang);
 
   return (
     <section className="border-b border-border">
-      <div className="mx-auto max-w-6xl px-5 py-20 lg:px-8">
+      <div className="relative mx-auto max-w-6xl border-border px-5 py-20 lg:border-x lg:px-8">
+        <CornerMarks />
         <div className="max-w-2xl">
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">{eyebrow}</p>
           <h2 className="mt-3 font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
@@ -48,16 +49,22 @@ export function FeatureShowcase({
           {featureList.map((feature, i) => {
             const item = content.items[feature.slug];
             const featureHref = getLocalizedPath(`/features/${feature.slug}`, lang);
+            const tryHref = getLocalizedPath(feature.ctaHref, lang);
             const reversed = i % 2 === 1;
             return (
               <div
                 key={feature.slug}
                 className="grid items-center gap-8 lg:grid-cols-2 lg:gap-14"
               >
-                {/* Image */}
-                <div className={reversed ? 'lg:order-2' : 'lg:order-1'}>
-                  <div className="relative overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-                    {/* soft accent wash behind the mockup */}
+                {/* Image — clicks through to the live feature */}
+                <div className={`relative ${reversed ? 'lg:order-2' : 'lg:order-1'}`}>
+                  <Link
+                    href={tryHref}
+                    aria-label={item.name}
+                    className="group relative block overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-colors hover:border-border-strong"
+                  >
+                    {/* blueprint texture + soft accent wash behind the mockup */}
+                    <div className="pointer-events-none absolute inset-0 blueprint-grid opacity-60" />
                     <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_120%_at_80%_0%,color-mix(in_oklch,var(--accent)_12%,transparent),transparent_60%)]" />
                     <Image
                       src={feature.image}
@@ -65,9 +72,11 @@ export function FeatureShowcase({
                       width={1200}
                       height={630}
                       sizes="(min-width: 1024px) 560px, 100vw"
-                      className="relative w-full"
+                      className="relative w-full transition-transform duration-300 group-hover:scale-[1.015]"
                     />
-                  </div>
+                    <FigTag label={`Fig. 0${i + 1}`} side={reversed ? 'left' : 'right'} />
+                  </Link>
+                  <CornerMarks />
                 </div>
 
                 {/* Copy */}
@@ -94,7 +103,7 @@ export function FeatureShowcase({
                   </ul>
                   <div className="mt-7 flex flex-wrap items-center gap-3">
                     <Button asChild size="default" variant="default">
-                      <Link href={chatHref}>
+                      <Link href={tryHref}>
                         {tryItLabel}
                         <ArrowRight className="size-4" />
                       </Link>

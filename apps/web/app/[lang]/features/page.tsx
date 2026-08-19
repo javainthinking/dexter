@@ -17,6 +17,7 @@ import { getDictionary } from '../dictionaries';
 import { Button } from '../../../components/ui/button';
 import { SiteHeader } from '../../../components/marketing/site-header';
 import { SiteFooter } from '../../../components/marketing/site-footer';
+import { CornerMarks, FigTag } from '../../../components/marketing/blueprint';
 
 const SITE_URL = 'https://pickskill.ai';
 const SITE_NAME = 'PickSkill';
@@ -92,7 +93,8 @@ export default async function FeaturesIndexPage({
 
       {/* Hero */}
       <section className="border-b border-border">
-        <div className="mx-auto max-w-6xl px-5 pt-16 pb-12 sm:pt-20 lg:px-8">
+        <div className="relative mx-auto max-w-6xl border-border px-5 pt-16 pb-12 sm:pt-20 lg:border-x lg:px-8">
+          <CornerMarks />
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
             {content.index.eyebrow}
           </p>
@@ -115,7 +117,8 @@ export default async function FeaturesIndexPage({
 
       {/* Feature cards */}
       <section className="border-b border-border">
-        <div className="mx-auto max-w-6xl px-5 py-12 lg:px-8">
+        <div className="relative mx-auto max-w-6xl border-border px-5 py-12 lg:border-x lg:px-8">
+          <CornerMarks />
           <div className="space-y-4">
             {featureList.map((f, i) => {
               const item = content.items[f.slug];
@@ -148,6 +151,7 @@ export default async function FeaturesIndexPage({
                       priority={i === 0}
                       className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                     />
+                    <FigTag label={`Fig. 0${i + 1}`} side={i % 2 === 1 ? 'left' : 'right'} />
                   </div>
                 </Link>
               );

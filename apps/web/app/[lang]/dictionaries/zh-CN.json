@@ -15,6 +15,14 @@
       "secondaryCta": "看看它能做出什么",
       "tagline": "实时数据 · PPT / Word / Excel · 基于记忆"
     },
+    "stats": {
+      "items": [
+        { "label": "信号引擎", "value": "8", "detail": "每只持仓的指标维度" },
+        { "label": "噪音过滤", "value": "5日", "detail": "每个信号附带的信号轨迹" },
+        { "label": "市场覆盖", "value": "3", "detail": "美股 · 港股 · A股" },
+        { "label": "文档工厂", "value": "3", "detail": "原生格式 — PPT · Word · Excel" }
+      ]
+    },
     "features": {
       "reasoning": {
         "eyebrow": "01 — 推理循环",

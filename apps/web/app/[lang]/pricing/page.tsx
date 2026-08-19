@@ -10,6 +10,7 @@ import { getDictionary } from '../dictionaries';
 import { PricingCards } from '../../../components/marketing/pricing-cards';
 import { SiteHeader } from '../../../components/marketing/site-header';
 import { SiteFooter } from '../../../components/marketing/site-footer';
+import { CornerMarks } from '../../../components/marketing/blueprint';
 
 const SITE_URL = 'https://pickskill.ai';
 const SITE_NAME = 'PickSkill';
@@ -100,7 +101,8 @@ export default async function PricingPage({
 
       {/* Hero */}
       <section className="border-b border-border">
-        <div className="mx-auto max-w-6xl px-5 pt-16 pb-12 sm:pt-20 lg:px-8">
+        <div className="relative mx-auto max-w-6xl border-border px-5 pt-16 pb-12 sm:pt-20 lg:border-x lg:px-8">
+          <CornerMarks />
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
             {c.heroEyebrow}
           </p>
@@ -115,7 +117,8 @@ export default async function PricingPage({
 
       {/* Plan cards */}
       <section className="border-b border-border">
-        <div className="mx-auto max-w-6xl px-5 py-12 lg:px-8">
+        <div className="relative mx-auto max-w-6xl border-border px-5 py-12 lg:border-x lg:px-8">
+          <CornerMarks />
           <PricingCards plans={planMeta} copy={c} chatHref={chatHref} locale={lang} />
           <p className="mt-6 text-center text-xs text-subtle">{c.everyPlanNote}</p>
         </div>
@@ -123,7 +126,8 @@ export default async function PricingPage({
 
       {/* Plan comparison matrix */}
       <section className="border-b border-border">
-        <div className="mx-auto max-w-6xl px-5 py-16 lg:px-8">
+        <div className="relative mx-auto max-w-6xl border-border px-5 py-16 lg:border-x lg:px-8">
+          <CornerMarks />
           <h2 className="font-serif text-2xl font-semibold tracking-tight text-foreground">
             {c.comparisonHeading}
           </h2>
@@ -192,18 +196,21 @@ export default async function PricingPage({
 
       {/* FAQ */}
       <section className="border-b border-border">
-        <div className="mx-auto max-w-3xl px-5 py-16 lg:px-8">
-          <h2 className="font-serif text-2xl font-semibold tracking-tight text-foreground">
-            {c.faqHeading}
-          </h2>
-          <dl className="mt-8 space-y-7">
-            {c.faq.map((f) => (
-              <div key={f.q}>
-                <dt className="font-medium text-foreground">{f.q}</dt>
-                <dd className="mt-2 text-sm leading-relaxed text-muted-foreground">{f.a}</dd>
-              </div>
-            ))}
-          </dl>
+        <div className="relative mx-auto max-w-6xl border-border lg:border-x">
+          <CornerMarks />
+          <div className="mx-auto max-w-3xl px-5 py-16 lg:px-8">
+            <h2 className="font-serif text-2xl font-semibold tracking-tight text-foreground">
+              {c.faqHeading}
+            </h2>
+            <dl className="mt-8 space-y-7">
+              {c.faq.map((f) => (
+                <div key={f.q}>
+                  <dt className="font-medium text-foreground">{f.q}</dt>
+                  <dd className="mt-2 text-sm leading-relaxed text-muted-foreground">{f.a}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         </div>
       </section>
 

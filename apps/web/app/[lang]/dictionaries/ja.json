@@ -15,6 +15,14 @@
       "secondaryCta": "何が作れるかを見る",
       "tagline": "ライブデータ · PPT / Word / Excel · メモリ連携"
     },
+    "stats": {
+      "items": [
+        { "label": "シグナルエンジン", "value": "8", "detail": "保有銘柄ごとの指標ディメンション" },
+        { "label": "ノイズフィルター", "value": "5日", "detail": "すべてのシグナルに付くトレイル" },
+        { "label": "市場カバレッジ", "value": "3", "detail": "米国株 · 香港株 · A株" },
+        { "label": "ドキュメント生成", "value": "3", "detail": "ネイティブ形式 — PPT · Word · Excel" }
+      ]
+    },
     "features": {
       "reasoning": {
         "eyebrow": "01 — 推論ループ",

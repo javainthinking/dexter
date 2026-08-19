@@ -23,6 +23,7 @@ import { Button } from '../../../../components/ui/button';
 import { Breadcrumbs } from '../../../../components/blog/breadcrumbs';
 import { SiteHeader } from '../../../../components/marketing/site-header';
 import { SiteFooter } from '../../../../components/marketing/site-footer';
+import { CornerMarks, FigTag } from '../../../../components/marketing/blueprint';
 
 const SITE_URL = 'https://pickskill.ai';
 const SITE_NAME = 'PickSkill';
@@ -129,20 +130,20 @@ export default async function FeaturePage({
       />
       <SiteHeader lang={lang as Locale} />
 
-      <div className="mx-auto max-w-6xl px-5 pt-8 lg:px-8">
-        <Breadcrumbs
-          ariaLabel="Breadcrumb"
-          items={[
-            { label: dict.nav?.home ?? 'Home', href: '/' },
-            { label: dict.nav?.features ?? 'Features', href: '/features' },
-            { label: item.name },
-          ]}
-        />
-      </div>
-
-      {/* Hero */}
+      {/* Hero (breadcrumbs live inside the railed container so the
+          vertical hairlines run unbroken from the header down) */}
       <section className="border-b border-border">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 pb-14 pt-6 lg:grid-cols-2 lg:px-8 lg:pb-20">
+        <div className="relative mx-auto max-w-6xl border-border px-5 pt-8 lg:border-x lg:px-8">
+          <CornerMarks />
+          <Breadcrumbs
+            ariaLabel="Breadcrumb"
+            items={[
+              { label: dict.nav?.home ?? 'Home', href: '/' },
+              { label: dict.nav?.features ?? 'Features', href: '/features' },
+              { label: item.name },
+            ]}
+          />
+          <div className="grid items-center gap-10 pb-14 pt-6 lg:grid-cols-2 lg:pb-20">
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
               {item.eyebrow}
@@ -165,22 +166,28 @@ export default async function FeaturePage({
               </Button>
             </div>
           </div>
-          <div className="relative aspect-[1200/630] w-full overflow-hidden rounded-xl border border-border bg-muted">
-            <Image
-              src={meta.image}
-              alt={item.imageAlt}
-              fill
-              sizes="(max-width: 1024px) 100vw, 560px"
-              priority
-              className="object-cover"
-            />
+          <div className="relative">
+            <div className="relative aspect-[1200/630] w-full overflow-hidden rounded-xl border border-border bg-muted">
+              <Image
+                src={meta.image}
+                alt={item.imageAlt}
+                fill
+                sizes="(max-width: 1024px) 100vw, 560px"
+                priority
+                className="object-cover"
+              />
+              <FigTag label="Fig. 01" />
+            </div>
+            <CornerMarks />
+          </div>
           </div>
         </div>
       </section>
 
       {/* Capabilities */}
       <section className="border-b border-border">
-        <div className="mx-auto max-w-6xl px-5 py-16 lg:px-8">
+        <div className="relative mx-auto max-w-6xl border-border px-5 py-16 lg:border-x lg:px-8">
+          <CornerMarks />
           <h2 className="font-serif text-2xl font-semibold tracking-tight text-foreground">
             {content.sections.whatItDoes}
           </h2>
@@ -199,7 +206,8 @@ export default async function FeaturePage({
 
       {/* How it works */}
       <section className="border-b border-border">
-        <div className="mx-auto max-w-6xl px-5 py-16 lg:px-8">
+        <div className="relative mx-auto max-w-6xl border-border px-5 py-16 lg:border-x lg:px-8">
+          <CornerMarks />
           <h2 className="font-serif text-2xl font-semibold tracking-tight text-foreground">
             {content.sections.howItWorks}
           </h2>
@@ -219,25 +227,29 @@ export default async function FeaturePage({
 
       {/* FAQ */}
       <section className="border-b border-border">
-        <div className="mx-auto max-w-3xl px-5 py-16 lg:px-8">
-          <h2 className="font-serif text-2xl font-semibold tracking-tight text-foreground">
-            {content.sections.faqHeading}
-          </h2>
-          <dl className="mt-8 space-y-7">
-            {item.faq.map((f) => (
-              <div key={f.q}>
-                <dt className="font-medium text-foreground">{f.q}</dt>
-                <dd className="mt-2 text-sm leading-relaxed text-muted-foreground">{f.a}</dd>
-              </div>
-            ))}
-          </dl>
+        <div className="relative mx-auto max-w-6xl border-border lg:border-x">
+          <CornerMarks />
+          <div className="mx-auto max-w-3xl px-5 py-16 lg:px-8">
+            <h2 className="font-serif text-2xl font-semibold tracking-tight text-foreground">
+              {content.sections.faqHeading}
+            </h2>
+            <dl className="mt-8 space-y-7">
+              {item.faq.map((f) => (
+                <div key={f.q}>
+                  <dt className="font-medium text-foreground">{f.q}</dt>
+                  <dd className="mt-2 text-sm leading-relaxed text-muted-foreground">{f.a}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         </div>
       </section>
 
       {/* CTA + other features */}
       <section className="border-b border-border">
-        <div className="mx-auto max-w-6xl px-5 py-16 lg:px-8">
-          <div className="rounded-xl border border-border bg-card p-8 text-center sm:p-12">
+        <div className="relative mx-auto max-w-6xl border-border px-5 py-16 lg:border-x lg:px-8">
+          <CornerMarks />
+          <div className="blueprint-grid-soft rounded-xl border border-border bg-card p-8 text-center sm:p-12">
             <h2 className="font-serif text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
               {item.headline}
             </h2>

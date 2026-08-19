@@ -3,6 +3,8 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CornerMarks, FigTag } from './blueprint';
+import { LottieChart } from './lottie-chart';
 
 export type HeroSceneVariant = 'documents' | 'indicators' | 'analyst';
 
@@ -27,6 +29,9 @@ export interface HeroSlide {
   tagline: string;
   /** Link to the feature detail page. */
   href: string;
+  /** Link to the live feature itself (chat / portfolios …) — the whole
+   *  scene click-throughs here. Localized. */
+  ctaHref: string;
 }
 
 const ADVANCE_MS = 5000;
@@ -35,9 +40,11 @@ const ADVANCE_MS = 5000;
  * Hero carousel — auto-rotating product scenes, one per feature. Each
  * scene is built from real DOM (not a baked image) so its text localizes
  * to all eight languages, stays crisp at any resolution, and is
- * theme-aware. Crossfade via grid-stacking (container sizes to the
- * tallest scene, so no layout jump on advance). Dot indicators,
- * hover/focus pause, prev/next on hover, and respects
+ * theme-aware; the data visuals inside are Lottie animations (language-
+ * neutral). The scene stack links to the live feature (ctaHref); the
+ * caption links to the feature page. Crossfade via grid-stacking
+ * (container sizes to the tallest scene, so no layout jump on advance).
+ * Dot indicators, hover/focus pause, prev/next on hover, and respects
  * prefers-reduced-motion. Client component (rotation is stateful);
  * all copy arrives pre-localized.
  */
@@ -81,23 +88,34 @@ export function HeroCarousel({
       onBlurCapture={() => setPaused(false)}
     >
       {/* Frame */}
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
-        {/* soft accent wash */}
-        <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(120%_120%_at_85%_0%,color-mix(in_oklch,var(--accent)_16%,transparent),transparent_55%)]" />
-        {/* Grid-stack scenes: container sizes to the tallest, children crossfade */}
-        <div className="grid p-5 sm:p-6">
-          {slides.map((slide, i) => (
-            <div
-              key={slide.variant}
-              style={{ gridArea: '1 / 1' }}
-              aria-hidden={i !== active}
-              className={`transition-opacity duration-700 ease-out ${
-                i === active ? 'opacity-100' : 'pointer-events-none opacity-0'
-              }`}
-            >
-              <Scene variant={slide.variant} labels={labels} />
-            </div>
-          ))}
+      <div className="relative rounded-2xl border border-border bg-card shadow-lg">
+        <CornerMarks />
+        <div className="relative overflow-hidden rounded-2xl">
+          {/* blueprint texture + soft accent wash */}
+          <div className="pointer-events-none absolute inset-0 z-10 blueprint-grid opacity-60" />
+          <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(120%_120%_at_85%_0%,color-mix(in_oklch,var(--accent)_16%,transparent),transparent_55%)]" />
+          {/* Grid-stack scenes: container sizes to the tallest, children
+              crossfade. The whole stack links to the active slide's live
+              feature — the caption below keeps the feature-page link. */}
+          <Link
+            href={slides[active].ctaHref}
+            aria-label={slides[active].title}
+            className="relative z-10 grid p-5 sm:p-6"
+          >
+            {slides.map((slide, i) => (
+              <div
+                key={slide.variant}
+                style={{ gridArea: '1 / 1' }}
+                aria-hidden={i !== active}
+                className={`transition-opacity duration-700 ease-out ${
+                  i === active ? 'opacity-100' : 'pointer-events-none opacity-0'
+                }`}
+              >
+                <Scene variant={slide.variant} labels={labels} />
+              </div>
+            ))}
+          </Link>
+          <FigTag label={`Fig. 0${active + 1}`} />
         </div>
 
         {/* Prev / next — appear on hover */}
@@ -188,11 +206,7 @@ function DocumentsScene({ labels }: { labels: HeroSceneLabels }) {
       <GeneratingRow label={labels.generating} />
       <div className="grid grid-cols-3 gap-3">
         <FileCard tint="#d97706" label="deck.pptx">
-          <div className="flex h-12 items-end gap-1">
-            <span className="w-full rounded-sm bg-[color:var(--accent)]/35" style={{ height: '40%' }} />
-            <span className="w-full rounded-sm bg-[color:var(--accent)]/55" style={{ height: '65%' }} />
-            <span className="w-full rounded-sm bg-[color:var(--accent)]/80" style={{ height: '100%' }} />
-          </div>
+          <LottieChart src="/lottie/bars.json" className="h-12 w-full" />
         </FileCard>
         <FileCard tint="#2563eb" label="report.docx">
           <div className="flex h-12 flex-col justify-center gap-1.5">
@@ -258,6 +272,10 @@ function IndicatorsScene({ labels }: { labels: HeroSceneLabels }) {
   );
   return (
     <div className="rounded-lg border border-border bg-background p-3">
+      {/* candlestick tape — pure decoration, market motion */}
+      <div className="mb-2 border-b border-border pb-2">
+        <LottieChart src="/lottie/candles.json" className="h-12 w-full" />
+      </div>
       {/* header */}
       <div className="grid grid-cols-[2.4rem_repeat(5,1fr)_2.6rem] items-center gap-1 border-b border-border pb-2 font-mono text-[8px] uppercase tracking-wide text-subtle">
         <span />
@@ -324,12 +342,8 @@ function AnalystScene({ labels }: { labels: HeroSceneLabels }) {
           <span className="size-1.5 rounded-full bg-[color:var(--accent)]" />
           <span className="font-mono text-[9px] text-foreground">{labels.analystSourced}</span>
         </div>
-        {/* mini chart */}
-        <div className="mt-3 flex h-10 items-end gap-1">
-          {[35, 50, 42, 68, 60, 82, 100].map((h, i) => (
-            <span key={i} className="w-full rounded-sm bg-[color:var(--accent)]/45" style={{ height: `${h}%` }} />
-          ))}
-        </div>
+        {/* mini chart — animated line draw */}
+        <LottieChart src="/lottie/market-line.json" className="mt-3 h-16 w-full" />
       </div>
       {/* memory pill */}
       <div className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1">

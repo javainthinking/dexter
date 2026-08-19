@@ -14,6 +14,7 @@ import { generateAlternatesMetadata } from '../../../lib/i18n/seo';
 import { getAllPosts, type PostMeta } from '../../../lib/blog';
 import { LocalizedLink } from '../../../components/i18n/localized-link';
 import { Breadcrumbs } from '../../../components/blog/breadcrumbs';
+import { CornerMarks, FigTag } from '../../../components/marketing/blueprint';
 import { getDictionary, type Dictionary } from '../dictionaries';
 
 const SITE_URL = 'https://pickskill.ai';
@@ -192,6 +193,8 @@ function FeaturedCard({
   dict: Dictionary;
 }) {
   return (
+    <div className="relative">
+      <CornerMarks />
     <LocalizedLink
       href={`/blog/${post.slug}`}
       // lang attribute is per-card, not per-page: the post may be
@@ -213,6 +216,7 @@ function FeaturedCard({
             unoptimized={post.heroImage.endsWith('.svg')}
             className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
           />
+          <FigTag label="Fig. 01" />
         </div>
       )}
       <div className="flex flex-col gap-3 p-5 sm:p-7">
@@ -236,6 +240,7 @@ function FeaturedCard({
         </span>
       </div>
     </LocalizedLink>
+    </div>
   );
 }
 

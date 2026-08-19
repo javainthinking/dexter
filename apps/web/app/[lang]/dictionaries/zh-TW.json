@@ -15,6 +15,14 @@
       "secondaryCta": "看看它能做出什麼",
       "tagline": "即時資料 · PPT / Word / Excel · 記憶為本"
     },
+    "stats": {
+      "items": [
+        { "label": "訊號引擎", "value": "8", "detail": "每檔持股的指標維度" },
+        { "label": "雜訊過濾", "value": "5日", "detail": "每個訊號附帶的訊號軌跡" },
+        { "label": "市場覆蓋", "value": "3", "detail": "美股 · 港股 · A股" },
+        { "label": "文件工廠", "value": "3", "detail": "原生格式 — PPT · Word · Excel" }
+      ]
+    },
     "features": {
       "reasoning": {
         "eyebrow": "01 — 推理迴圈",

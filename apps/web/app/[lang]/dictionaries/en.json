@@ -15,6 +15,14 @@
       "secondaryCta": "See what it builds",
       "tagline": "Live data · PPT / Word / Excel · Memory-grounded"
     },
+    "stats": {
+      "items": [
+        { "label": "Signal engine", "value": "8", "detail": "indicator dimensions per holding" },
+        { "label": "Noise filter", "value": "5-day", "detail": "signal trail behind every call" },
+        { "label": "Coverage", "value": "3", "detail": "markets — US · HK · A-shares" },
+        { "label": "Document factory", "value": "3", "detail": "native formats — PPT · Word · Excel" }
+      ]
+    },
     "features": {
       "reasoning": {
         "eyebrow": "01 — Reasoning loop",

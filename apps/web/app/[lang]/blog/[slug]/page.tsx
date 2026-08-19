@@ -18,6 +18,7 @@ import { generateAlternatesMetadata } from '../../../../lib/i18n/seo';
 import { extractFaq, getAllSlugs, getPostBySlug } from '../../../../lib/blog';
 import { LocalizedLink } from '../../../../components/i18n/localized-link';
 import { Breadcrumbs } from '../../../../components/blog/breadcrumbs';
+import { CornerMarks, FigTag } from '../../../../components/marketing/blueprint';
 import { getDictionary } from '../../dictionaries';
 
 const SITE_URL = 'https://pickskill.ai';
@@ -318,7 +319,9 @@ export default async function BlogPostPage({
       </header>
 
       {post.heroImage && (
-        <figure className="mb-8 overflow-hidden rounded-lg border border-border">
+        <figure className="relative mb-8 rounded-lg border border-border">
+          <CornerMarks />
+          <div className="relative overflow-hidden rounded-lg">
           {/* Hero via next/image — Next serves AVIF/WebP automatically
               based on the request's Accept header, generates
               responsive srcset for high-DPI screens, and lazy-loads
@@ -340,6 +343,8 @@ export default async function BlogPostPage({
             className="w-full"
             sizes="(max-width: 768px) 100vw, 768px"
           />
+          <FigTag label="Fig. 01" />
+          </div>
         </figure>
       )}
 
@@ -355,7 +360,7 @@ export default async function BlogPostPage({
       <footer className="mt-12 space-y-6 border-t border-border pt-10">
         {/* Primary CTA at the bottom: convert engaged reader to a
             trial. Subtle, not over-aggressive. */}
-        <div className="rounded-lg border border-border bg-card p-6">
+        <div className="blueprint-grid-soft rounded-lg border border-border bg-card p-6">
           <p className="font-serif text-xl font-semibold leading-snug text-foreground">
             {dict.blog.post.cta.title}
           </p>

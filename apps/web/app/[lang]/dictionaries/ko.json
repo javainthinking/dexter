@@ -15,6 +15,14 @@
       "secondaryCta": "무엇을 만드는지 보기",
       "tagline": "실시간 데이터 · PPT / Word / Excel · 메모리 연동"
     },
+    "stats": {
+      "items": [
+        { "label": "시그널 엔진", "value": "8", "detail": "보유 종목당 지표 차원" },
+        { "label": "노이즈 필터", "value": "5일", "detail": "모든 시그널에 붙는 트레일" },
+        { "label": "시장 커버리지", "value": "3", "detail": "미국 · 홍콩 · A주" },
+        { "label": "문서 팩토리", "value": "3", "detail": "네이티브 형식 — PPT · Word · Excel" }
+      ]
+    },
     "features": {
       "reasoning": {
         "eyebrow": "01 — 추론 루프",

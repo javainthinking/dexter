@@ -15,6 +15,14 @@
       "secondaryCta": "Voir ce qu'il produit",
       "tagline": "Données en direct · PPT / Word / Excel · Ancré dans la mémoire"
     },
+    "stats": {
+      "items": [
+        { "label": "Moteur de signaux", "value": "8", "detail": "dimensions d'indicateurs par position" },
+        { "label": "Filtre anti-bruit", "value": "5 j", "detail": "de trace derrière chaque signal" },
+        { "label": "Couverture", "value": "3", "detail": "marchés — US · HK · actions A" },
+        { "label": "Usine à documents", "value": "3", "detail": "formats natifs — PPT · Word · Excel" }
+      ]
+    },
     "features": {
       "reasoning": {
         "eyebrow": "01 — Boucle de raisonnement",

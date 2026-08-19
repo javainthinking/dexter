@@ -15,6 +15,14 @@
       "secondaryCta": "Mira lo que crea",
       "tagline": "Datos en vivo · PPT / Word / Excel · Con base en la memoria"
     },
+    "stats": {
+      "items": [
+        { "label": "Motor de señales", "value": "8", "detail": "dimensiones de indicadores por posición" },
+        { "label": "Filtro de ruido", "value": "5 días", "detail": "de rastro tras cada señal" },
+        { "label": "Cobertura", "value": "3", "detail": "mercados — EE. UU. · HK · acciones A" },
+        { "label": "Fábrica de documentos", "value": "3", "detail": "formatos nativos — PPT · Word · Excel" }
+      ]
+    },
     "features": {
       "reasoning": {
         "eyebrow": "01 — Bucle de razonamiento",
