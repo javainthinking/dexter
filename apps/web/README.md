@@ -39,7 +39,7 @@ something like "What is the current price of AAPL?".
 
 ### Environment variables
 
-The agent needs API keys (OPENAI_API_KEY, FINANCIAL_DATASETS_API_KEY, …).
+The agent needs API keys (MEMORYLAKE_API_KEY, FINANCIAL_DATASETS_API_KEY, …).
 Next.js auto-loads `apps/web/.env.local` and **does not** look at the
 repo-root `.env`. Pick one of:
 
@@ -106,7 +106,7 @@ once that resolution lands (or after a one-time migration that strips
 2. **Set Root Directory to `apps/web`** in the project settings.
 3. Add secrets either via the dashboard or CLI:
    ```bash
-   echo "$OPENAI_API_KEY" | vercel env add OPENAI_API_KEY production preview --sensitive
+   echo "$MEMORYLAKE_API_KEY" | vercel env add MEMORYLAKE_API_KEY production preview --sensitive
    echo "$FINANCIAL_DATASETS_API_KEY" | vercel env add FINANCIAL_DATASETS_API_KEY production preview --sensitive
    # …repeat for every key the agent needs
    ```

@@ -1,15 +1,13 @@
 import { GoogleGenerativeAIEmbeddings } from '@langchain/google-genai';
 import { OllamaEmbeddings } from '@langchain/ollama';
-import { OpenAIEmbeddings } from '@langchain/openai';
 import type { EmbeddingProviderId, MemoryEmbeddingClient } from './types.js';
 
-const DEFAULT_OPENAI_MODEL = 'text-embedding-3-small';
 const DEFAULT_GEMINI_MODEL = 'gemini-embedding-001';
 const DEFAULT_OLLAMA_MODEL = 'nomic-embed-text';
 const EMBEDDING_BATCH_SIZE = 64;
 const EMBEDDING_TIMEOUT_MS = 15_000;
 
-type ResolvedProvider = Exclude<EmbeddingProviderId, 'auto' | 'none'>;
+type ResolvedProvider = Exclude<EmbeddingProviderId, 'auto' | 'none' | 'openai'>;
 
 function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
   return new Promise<T>((resolve, reject) => {
@@ -27,10 +25,9 @@ function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promi
   });
 }
 
+// OpenAI models go through the MemoryLake router, which serves no embedding
+// models; a saved 'openai' preference is treated as 'auto'.
 function resolveProvider(preferred: EmbeddingProviderId): ResolvedProvider | null {
-  if (preferred === 'openai' && process.env.OPENAI_API_KEY) {
-    return 'openai';
-  }
   if (preferred === 'gemini' && process.env.GOOGLE_API_KEY) {
     return 'gemini';
   }
@@ -38,10 +35,7 @@ function resolveProvider(preferred: EmbeddingProviderId): ResolvedProvider | nul
     return 'ollama';
   }
 
-  if (preferred === 'auto') {
-    if (process.env.OPENAI_API_KEY) {
-      return 'openai';
-    }
+  if (preferred === 'auto' || preferred === 'openai') {
     if (process.env.GOOGLE_API_KEY) {
       return 'gemini';
     }
@@ -73,20 +67,6 @@ export function createEmbeddingClient(params: {
   const resolved = resolveProvider(params.provider);
   if (!resolved) {
     return null;
-  }
-
-  if (resolved === 'openai') {
-    const model = params.model || DEFAULT_OPENAI_MODEL;
-    const embeddings = new OpenAIEmbeddings({
-      apiKey: process.env.OPENAI_API_KEY,
-      model,
-    });
-    return {
-      provider: 'openai',
-      model,
-      embed: async (texts: string[]) =>
-        embedInBatches(texts, async (batch) => embeddings.embedDocuments(batch)),
-    };
   }
 
   if (resolved === 'gemini') {

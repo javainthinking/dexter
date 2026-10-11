@@ -13,7 +13,7 @@ import { DEFAULT_SYSTEM_PROMPT } from '@/agent/prompts';
 import type { TokenUsage } from '@/agent/types';
 import { logger } from '@/utils';
 import { classifyError, isNonRetryableError } from '@/utils/errors';
-import { resolveProvider, getProviderById } from '@/providers';
+import { resolveProvider, getProviderById, MEMORYLAKE_LLM_BASE_URL } from '@/providers';
 
 export const DEFAULT_PROVIDER = 'openai';
 export const DEFAULT_MODEL = 'gpt-5.5';
@@ -138,7 +138,10 @@ const DEFAULT_FACTORY: ModelFactory = (name, opts) =>
   new ChatOpenAI({
     model: name,
     ...opts,
-    apiKey: getApiKey('OPENAI_API_KEY'),
+    apiKey: getApiKey('MEMORYLAKE_API_KEY'),
+    configuration: {
+      baseURL: MEMORYLAKE_LLM_BASE_URL,
+    },
   });
 
 export function getChatModel(

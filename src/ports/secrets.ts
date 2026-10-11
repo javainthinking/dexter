@@ -9,7 +9,7 @@
  */
 
 export type SecretName =
-  | 'OPENAI_API_KEY'
+  | 'MEMORYLAKE_API_KEY'
   | 'ANTHROPIC_API_KEY'
   | 'GOOGLE_API_KEY'
   | 'OLLAMA_BASE_URL'

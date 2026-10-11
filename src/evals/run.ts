@@ -16,6 +16,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { Agent } from '../agent/agent.js';
+import { MEMORYLAKE_LLM_BASE_URL } from '../providers.js';
 import { EvalApp, type EvalProgressEvent } from './components/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -164,7 +165,8 @@ const EvaluatorOutputSchema = z.object({
 
 const llm = new ChatOpenAI({
   model: 'gpt-5.5',
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.MEMORYLAKE_API_KEY,
+  configuration: { baseURL: MEMORYLAKE_LLM_BASE_URL },
 });
 
 const structuredLlm = llm.withStructuredOutput(EvaluatorOutputSchema);

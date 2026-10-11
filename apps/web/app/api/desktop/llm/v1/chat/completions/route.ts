@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { getCurrentUser } from '../../../../../../../lib/auth/session';
 import { checkQuota, getUserPlan } from '../../../../../../../lib/billing';
+import { MEMORYLAKE_LLM_BASE_URL } from '@dexter/core/providers';
 
 /**
  * POST /api/desktop/llm/v1/chat/completions
@@ -10,9 +11,8 @@ import { checkQuota, getUserPlan } from '../../../../../../../lib/billing';
  * plan, swap the public model alias for the upstream model, and stream the
  * upstream response straight back.
  *
- * Upstream is any OpenAI-compatible endpoint:
- *   DESKTOP_LLM_BASE_URL  (default https://api.openai.com/v1)
- *   DESKTOP_LLM_API_KEY   (default OPENAI_API_KEY)
+ * Upstream is the MemoryLake router (OpenAI-compatible, same as the web
+ * agent — see src/providers.ts), keyed by MEMORYLAKE_API_KEY.
  *   DESKTOP_LLM_MODEL     (default gpt-5.5) — what `analyst-default` maps to
  *
  * POC limits: quota is checked (read-only) against the monthly
@@ -58,13 +58,12 @@ export async function POST(request: NextRequest): Promise<Response> {
     );
   }
 
-  const apiKey = process.env.DESKTOP_LLM_API_KEY || process.env.OPENAI_API_KEY;
+  const apiKey = process.env.MEMORYLAKE_API_KEY;
   if (!apiKey) {
     return NextResponse.json({ error: { message: 'gateway_not_configured' } }, { status: 503 });
   }
-  const baseURL = (process.env.DESKTOP_LLM_BASE_URL || 'https://api.openai.com/v1').replace(/\/$/, '');
 
-  const upstream = await fetch(`${baseURL}/chat/completions`, {
+  const upstream = await fetch(`${MEMORYLAKE_LLM_BASE_URL}/chat/completions`, {
     method: 'POST',
     headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` },
     body: JSON.stringify({ ...body, model: resolve(), user: user.id }),

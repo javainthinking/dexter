@@ -18,12 +18,20 @@ export interface ProviderDef {
   contextWindow?: number;
 }
 
+/**
+ * OpenAI-family models (the default, unprefixed provider) are served through
+ * the MemoryLake router — an OpenAI-compatible endpoint keyed by
+ * MEMORYLAKE_API_KEY. Used by the agent (src/model/llm.ts) and the desktop
+ * app's LLM gateway (apps/web/app/api/desktop/llm).
+ */
+export const MEMORYLAKE_LLM_BASE_URL = 'https://app.memorylake.ai/openai/v1';
+
 export const PROVIDERS: ProviderDef[] = [
   {
     id: 'openai',
-    displayName: 'OpenAI',
+    displayName: 'OpenAI (MemoryLake)',
     modelPrefix: '',
-    apiKeyEnvVar: 'OPENAI_API_KEY',
+    apiKeyEnvVar: 'MEMORYLAKE_API_KEY',
     fastModel: 'gpt-5.4-mini',
     contextWindow: 1_047_576,
   },

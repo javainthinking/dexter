@@ -13,10 +13,11 @@
  * - The finance catalog + tool execution use dexter's real tools
  *   (src/tools/finance), so schemas and results match production; without
  *   data-provider keys they fall back to Yahoo.
- * - The LLM endpoint proxies to OpenAI when OPENAI_API_KEY is set, otherwise
+ * - The LLM endpoint proxies to the MemoryLake router when MEMORYLAKE_API_KEY is set, otherwise
  *   plays a scripted turn: call get_stock_price(NVDA), then summarise.
  */
 import { createHash, randomBytes } from 'node:crypto';
+import { MEMORYLAKE_LLM_BASE_URL } from '../../../src/providers';
 import { z } from 'zod';
 import {
   getStockPrice,
@@ -167,10 +168,10 @@ Bun.serve({
 
     if (p === '/api/desktop/llm/v1/chat/completions') {
       const body = await req.json();
-      if (!process.env.OPENAI_API_KEY) return scriptedCompletion(body);
-      const upstream = await fetch('https://api.openai.com/v1/chat/completions', {
+      if (!process.env.MEMORYLAKE_API_KEY) return scriptedCompletion(body);
+      const upstream = await fetch(`${MEMORYLAKE_LLM_BASE_URL}/chat/completions`, {
         method: 'POST',
-        headers: { 'content-type': 'application/json', authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
+        headers: { 'content-type': 'application/json', authorization: `Bearer ${process.env.MEMORYLAKE_API_KEY}` },
         body: JSON.stringify({ ...body, model: process.env.DESKTOP_LLM_MODEL ?? 'gpt-5.5' }),
       });
       return new Response(upstream.body, { status: upstream.status, headers: { 'content-type': upstream.headers.get('content-type') ?? 'application/json' } });
