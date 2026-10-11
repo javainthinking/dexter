@@ -4,6 +4,8 @@ import { fileURLToPath } from 'node:url';
 import type { AccountState, AgentEvent } from '../shared/ipc';
 import { AgentHost } from './agent-host';
 import { AuthStore, PROTOCOL } from './auth';
+import { APP_ORIGIN, registerAppScheme, serveApp, type ProxyDeps } from './api-proxy';
+import { LocalChat } from './local-chat';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
@@ -17,13 +19,15 @@ if (process.defaultApp && process.argv[1]) {
   app.setAsDefaultProtocolClient(PROTOCOL);
 }
 if (!app.requestSingleInstanceLock()) app.quit();
+registerAppScheme();
 
 const auth = new AuthStore(API_BASE);
 let win: BrowserWindow | null = null;
 let account: AccountState = { status: 'signed-out' };
 
 const broadcast = (channel: string, payload: unknown) => win?.webContents.send(channel, payload);
-const agent = new AgentHost(API_BASE, (event: AgentEvent) => broadcast('agent:event', event));
+const agent = new AgentHost(API_BASE, (event: AgentEvent) => chat.onAgentEvent(event));
+const chat = new LocalChat(agent, () => (account.status === 'signed-in' ? (account.user?.id ?? null) : null));
 
 function setAccount(next: AccountState): void {
   account = next;
@@ -57,6 +61,7 @@ async function refreshAccount(): Promise<void> {
 }
 
 async function signedOut(error?: string): Promise<void> {
+  if (!auth.current && account.status === 'signed-out') return;
   agent.stop();
   await auth.signOut();
   setAccount({ status: 'signed-out', error });
@@ -84,14 +89,19 @@ function createWindow(): void {
   win = new BrowserWindow({
     width: 1280,
     height: 820,
-    minWidth: 960,
+    // lg breakpoint, so web's desktop layout (sidebar + top bar) always applies.
+    minWidth: 1100,
     minHeight: 600,
-    titleBarStyle: 'hiddenInset',
-    backgroundColor: '#0b0d10',
+    // Traffic lights sit inside web's 56px top bar / sidebar header; the
+    // renderer reserves room for them (see renderer styles).
+    titleBarStyle: 'hidden',
+    trafficLightPosition: { x: 18, y: 20 },
+    backgroundColor: '#14120b',
     webPreferences: {
       preload: path.join(here, '../preload/index.cjs'),
       contextIsolation: true,
       sandbox: true,
+      additionalArguments: [`--pickskill-api=${API_BASE}`],
     },
   });
   // Any link the renderer opens goes to the system browser, never a new
@@ -100,8 +110,15 @@ function createWindow(): void {
     void shell.openExternal(url);
     return { action: 'deny' };
   });
-  if (process.env.ELECTRON_RENDERER_URL) void win.loadURL(process.env.ELECTRON_RENDERER_URL);
-  else void win.loadFile(path.join(here, '../renderer/index.html'));
+  // Full-page navigations away from the app (Stripe checkout, OAuth, …) go
+  // to the system browser too.
+  win.webContents.on('will-navigate', (e, url) => {
+    if (new URL(url).origin !== APP_ORIGIN) {
+      e.preventDefault();
+      void shell.openExternal(url);
+    }
+  });
+  void win.loadURL(`${APP_ORIGIN}/portfolios`);
   win.on('closed', () => (win = null));
 }
 
@@ -111,18 +128,16 @@ ipcMain.handle('account:signIn', async () => {
   await auth.begin();
 });
 ipcMain.handle('account:signOut', () => signedOut());
-// Renderer may only read app API paths; writes stay behind dedicated handlers.
-ipcMain.handle('api:get', (_e, pathname: string) => {
-  if (typeof pathname !== 'string' || !pathname.startsWith('/api/')) throw new Error('forbidden');
-  return api(pathname);
-});
-ipcMain.handle('agent:prompt', async (_e, text: string, sessionID?: string) => ({
-  sessionID: await agent.prompt(text, sessionID),
-}));
-ipcMain.handle('agent:status', () => agent.status);
-ipcMain.handle('agent:abort', (_e, sessionID: string) => agent.abort(sessionID));
+
+const proxy: ProxyDeps = {
+  apiBase: API_BASE,
+  token: () => auth.current,
+  onUnauthorized: () => void signedOut('Your session expired. Please sign in again.'),
+  local: (req, url) => chat.handle(req, url),
+};
 
 app.whenReady().then(async () => {
+  serveApp(process.env.ELECTRON_RENDERER_URL ?? path.join(here, '../renderer'), proxy);
   createWindow();
   await auth.load();
   await refreshAccount();

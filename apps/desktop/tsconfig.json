@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2023",
-    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2023",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
@@ -11,7 +15,43 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "types": ["node"]
+    "types": [
+      "node"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@web/*": [
+        "../web/*"
+      ],
+      "next/navigation": [
+        "src/renderer/src/shims/next-navigation.ts"
+      ],
+      "next/link": [
+        "src/renderer/src/shims/next-link.tsx"
+      ],
+      "next/dynamic": [
+        "src/renderer/src/shims/next-dynamic.tsx"
+      ],
+      "next-auth/react": [
+        "src/renderer/src/shims/next-auth-react.tsx"
+      ],
+      "react": [
+        "../web/node_modules/@types/react"
+      ],
+      "react/*": [
+        "../web/node_modules/@types/react/*"
+      ],
+      "react-dom": [
+        "../web/node_modules/@types/react-dom"
+      ],
+      "react-dom/*": [
+        "../web/node_modules/@types/react-dom/*"
+      ]
+    }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "electron.vite.config.ts"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "electron.vite.config.ts"
+  ]
 }

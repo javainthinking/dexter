@@ -156,13 +156,20 @@ async function pumpEvents(h: Host): Promise<void> {
         toolNames.set(d.id, d.name);
         break;
       case 'session.tool.called':
-        emit({ type: 'tool', sessionID: d.sessionID, name: toolNames.get(d.id) ?? 'tool', status: 'called', detail: JSON.stringify(d.input) });
+        emit({ type: 'tool', sessionID: d.sessionID, callID: d.id, name: toolNames.get(d.id) ?? 'tool', status: 'called', input: d.input });
         break;
       case 'session.tool.success':
-        emit({ type: 'tool', sessionID: d.sessionID, name: toolNames.get(d.id) ?? 'tool', status: 'success' });
+        emit({
+          type: 'tool',
+          sessionID: d.sessionID,
+          callID: d.id,
+          name: toolNames.get(d.id) ?? 'tool',
+          status: 'success',
+          detail: (d.content as { type: string; text?: string }[] | undefined)?.map((c) => c.text ?? '').join('\n'),
+        });
         break;
       case 'session.tool.failed':
-        emit({ type: 'tool', sessionID: d.sessionID, name: toolNames.get(d.id) ?? 'tool', status: 'error', detail: d.error?.message });
+        emit({ type: 'tool', sessionID: d.sessionID, callID: d.id, name: toolNames.get(d.id) ?? 'tool', status: 'error', detail: d.error?.message });
         break;
       case 'session.execution.succeeded':
         emit({ type: 'done', sessionID: d.sessionID, ok: true });

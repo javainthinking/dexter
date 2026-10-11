@@ -7,11 +7,20 @@ export interface AccountState {
   error?: string;
 }
 
-/** Normalised agent events forwarded to the renderer. */
+/** Normalised agent events from the worker (consumed by main's LocalChat). */
 export type AgentEvent =
   | { type: 'ready'; tools: string[] }
   | { type: 'text'; sessionID: string; delta: string }
-  | { type: 'tool'; sessionID: string; name: string; status: 'called' | 'success' | 'error'; detail?: string }
+  | {
+      type: 'tool';
+      sessionID: string;
+      callID: string;
+      name: string;
+      status: 'called' | 'success' | 'error';
+      input?: Record<string, unknown>;
+      /** Tool output text (success) or error message (error). */
+      detail?: string;
+    }
   | { type: 'done'; sessionID: string; ok: boolean; error?: string }
   | { type: 'error'; message: string };
 
@@ -35,20 +44,12 @@ export type WorkerMessage =
   | { type: 'prompt-failed'; requestID: string; message: string };
 
 export interface PickSkillBridge {
+  /** PickSkill server origin, for pages that only exist on the web (account, pricing, …). */
+  apiBase: string;
   account: {
     get(): Promise<AccountState>;
     signIn(): Promise<void>;
     signOut(): Promise<void>;
     onChange(cb: (state: AccountState) => void): () => void;
-  };
-  api: {
-    get<T = unknown>(path: string): Promise<T>;
-  };
-  agent: {
-    prompt(text: string, sessionID?: string): Promise<{ sessionID: string }>;
-    abort(sessionID: string): Promise<void>;
-    /** Latest lifecycle status, for views that mount after `ready` fired. */
-    status(): Promise<AgentStatus>;
-    onEvent(cb: (event: AgentEvent) => void): () => void;
   };
 }

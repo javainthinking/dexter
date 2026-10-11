@@ -1,51 +1,23 @@
+/* pickskill.ai's design system, compiled from apps/web sources. */
+@import '../../../../web/app/globals.css';
+@source '../../../../web/app';
+@source '../../../../web/components';
+@source '../../../../web/lib';
+@source './';
+
+/* next/font isn't available outside Next; system fallbacks for web's font vars. */
 :root {
-  --bg: #f7f7f5;
-  --panel: #ffffff;
-  --text: #16181d;
-  --muted: #6b7079;
-  --line: #e4e4e0;
-  --accent: #2f6fed;
-  --up: #1f9d55;
-  --down: #d64545;
-  color-scheme: light dark;
-  font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  --font-inter: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', system-ui, sans-serif;
+  --font-jetbrains-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-serif-display: 'Source Serif 4', 'New York', Georgia, 'Songti SC', serif;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0b0d10;
-    --panel: #14171c;
-    --text: #e8e9eb;
-    --muted: #8b9099;
-    --line: #262a31;
-  }
-}
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--text); }
-button { font: inherit; cursor: pointer; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); padding: 6px 12px; }
-button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-button:disabled { opacity: .5; cursor: default; }
-.drag { -webkit-app-region: drag; height: 38px; flex-shrink: 0; }
-.shell { display: flex; height: 100vh; }
-.nav { width: 200px; border-right: 1px solid var(--line); display: flex; flex-direction: column; padding: 0 10px 12px; }
-.nav a { display: block; padding: 6px 10px; border-radius: 6px; color: var(--text); text-decoration: none; cursor: pointer; }
-.nav a.active { background: var(--panel); font-weight: 600; }
-.nav .foot { margin-top: auto; color: var(--muted); font-size: 12px; }
-.main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-.content { flex: 1; overflow: auto; padding: 0 24px 24px; }
-.center { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; }
-.muted { color: var(--muted); }
-.error { color: #d64545; }
-.cards { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-.cards button.active { border-color: var(--accent); }
-table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
-th, td { padding: 8px 12px; border-bottom: 1px solid var(--line); text-align: right; font-variant-numeric: tabular-nums; }
-th:first-child, td:first-child { text-align: left; }
-th { color: var(--muted); font-weight: 500; font-size: 12px; }
-.up { color: var(--up); } .down { color: var(--down); }
-.chat { display: flex; flex-direction: column; height: 100%; }
-.log { flex: 1; overflow: auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 12px; }
-.msg { max-width: 760px; white-space: pre-wrap; }
-.msg.user { align-self: flex-end; background: var(--panel); border: 1px solid var(--line); padding: 8px 12px; border-radius: 10px; }
-.tool { font-size: 12px; color: var(--muted); font-family: ui-monospace, Menlo, monospace; }
-.composer { display: flex; gap: 8px; }
-.composer textarea { flex: 1; resize: none; font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); }
+
+/* Native window chrome: web's 56px top bars double as the title bar, and the
+   top-left corner leaves room for the traffic lights. */
+.desktop-drag,
+header,
+aside > div:first-child { -webkit-app-region: drag; }
+.desktop-no-drag,
+header :is(a, button, input, select, textarea, [role='button'], [role='combobox']),
+aside > div:first-child :is(a, button) { -webkit-app-region: no-drag; }
+aside > div:first-child { padding-left: 84px; }

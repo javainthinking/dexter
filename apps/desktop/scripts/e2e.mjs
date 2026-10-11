@@ -1,6 +1,7 @@
 // End-to-end smoke test against the mock server (bun scripts/mock-pickskill.ts).
 // Drives the built app with Playwright: sign-in via the PKCE deep-link flow,
-// portfolio + quotes render, analyst runs a tool-calling turn.
+// web's portfolio page renders with live quotes, and web's chat page runs a
+// tool-calling turn on the local agent.
 // The OS protocol routing is the only part simulated: shell.openExternal is
 // captured and the resulting pickskill:// link is delivered via `open-url`.
 import { _electron as electron } from 'playwright';
@@ -34,8 +35,9 @@ try {
   });
 
   // Start from a clean signed-out state.
-  if (await win.getByRole('button', { name: 'Sign out' }).isVisible().catch(() => false)) {
-    await win.getByRole('button', { name: 'Sign out' }).click();
+  await win.waitForLoadState();
+  if (!(await win.getByRole('button', { name: 'Sign in' }).isVisible().catch(() => false))) {
+    await win.evaluate(() => window.pickskill.account.signOut());
   }
   await win.getByRole('button', { name: 'Sign in' }).click();
   const authorizeUrl = await app.evaluate(async () => {
@@ -48,38 +50,40 @@ try {
   const html = await (await fetch(authorizeUrl)).text();
   const link = html.match(/pickskill:\/\/auth\/callback\?[^"<]+/)[0].replaceAll('&amp;', '&');
   await app.evaluate(({ app }, url) => app.emit('open-url', { preventDefault() {} }, url), link);
-  await win.getByText('demo@pickskill.local').waitFor({ timeout: 15_000 });
-  step('deep link exchanged for token; signed in as demo@pickskill.local');
+  await win.getByRole('button', { name: 'Sign in' }).waitFor({ state: 'detached', timeout: 15_000 });
+  step('deep link exchanged for token; signed in');
   await win.screenshot({ path: `${shots}/1-portfolios-loading.png` });
 
-  await win.getByRole('cell', { name: /NVDA/ }).waitFor({ timeout: 15_000 });
-  await win.locator('td', { hasText: /^\d+\.\d{2}$/ }).first().waitFor({ timeout: 30_000 });
-  step('portfolio holdings + live quotes rendered');
+  await win.getByText('NVDA', { exact: true }).first().waitFor({ timeout: 15_000 });
+  await win.getByText(/^\$?\d{2,}\.\d{2}$/).first().waitFor({ timeout: 30_000 });
+  step('shared web portfolio page rendered holdings + live quotes');
   await win.screenshot({ path: `${shots}/2-portfolios.png` });
 
-  await win.getByText('Analyst', { exact: true }).click();
-  await win.getByText(/Ready · \d+ finance tools/).waitFor({ timeout: 30_000 });
-  step(`local agent ready: ${await win.getByText(/Ready ·/).textContent()}`);
-  await win.getByPlaceholder(/Ask about a ticker/).fill('What is NVDA trading at?');
-  await win.getByRole('button', { name: 'Send' }).click();
-  await win.getByText('→ get_stock_price').waitFor({ timeout: 60_000 });
-  step('agent called get_stock_price through the desktop finance proxy');
-  await win.locator('.msg.assistant').first().waitFor({ timeout: 60_000 });
-  await win.getByRole('button', { name: 'Send' }).waitFor({ timeout: 60_000 });
-  const answer = await win.locator('.msg.assistant').last().textContent();
-  if (!/"price"/.test(answer ?? '') || /"error"/.test(answer ?? '')) throw new Error(`unexpected answer: ${answer}`);
-  step(`answer streamed: ${answer.replace(/\s+/g, ' ').slice(0, 120)}…`);
-  await win.screenshot({ path: `${shots}/3-analyst.png` });
+  // Chat (web's page) runs on the local OpenCode agent via main's /api/agent.
+  await win.evaluate(() => {
+    history.pushState(null, '', '/chat');
+    dispatchEvent(new PopStateEvent('popstate'));
+  });
+  const composer = win.locator('textarea').first();
+  await composer.waitFor({ timeout: 15_000 });
+  await composer.fill('What is NVDA trading at?');
+  await composer.press('Enter');
+  await win.getByText(/get_stock_price/).first().waitFor({ timeout: 60_000 });
+  step('local agent called get_stock_price (tool card rendered)');
+  await win.getByText(/"price"/).first().waitFor({ timeout: 60_000 });
+  step('answer rendered in shared chat UI');
+  await win.getByText('What is NVDA trading at?').first().waitFor();
+  await win.screenshot({ path: `${shots}/3-chat.png` });
 
   // Token survives restart via safeStorage.
   await app.close();
   const app2 = await electron.launch({ executablePath, args: launchArgs, cwd: appDir, env: { ...process.env, PICKSKILL_API_BASE: API } });
   const win2 = await app2.firstWindow();
-  await win2.getByText('demo@pickskill.local').waitFor({ timeout: 15_000 }).catch(async () => {
+  await win2.getByText('NVDA', { exact: true }).first().waitFor({ timeout: 15_000 }).catch(async () => {
     throw new Error('session did not persist across restart');
   });
   step('session restored from Keychain-encrypted store after restart');
-  await win2.getByRole('button', { name: 'Sign out' }).click();
+  await win2.evaluate(() => window.pickskill.account.signOut());
   await win2.getByRole('button', { name: 'Sign in' }).waitFor();
   step('sign out revokes token and returns to sign-in');
   await app2.close();
