@@ -165,3 +165,50 @@ export async function checkQuota(
   const used = await getUsage(userId, metric);
   return { allowed: used < limit, used, limit, plan, metric };
 }
+
+export interface QuotaBlock {
+  error: 'quota_exceeded';
+  code: 'CONVERSATIONS_LIMIT' | 'RESEARCH_LIMIT';
+  metric: 'conversations' | 'deep_research';
+  plan: PlanId;
+  used: number;
+  limit: number;
+  message: string;
+}
+
+/**
+ * The turn-start quota gate, shared by web (/api/agent) and desktop
+ * (/api/desktop/turns) so both surfaces block on the same rules. Returns the
+ * 402 body when the turn may not start, or null when it may.
+ *
+ * Deep research is a hard block too: a turn can't declare upfront whether
+ * it'll search, so once the monthly deep-research quota is spent the turn is
+ * blocked entirely (the user chose a hard block over silently disabling search).
+ */
+export async function turnQuotaBlock(userId: string, plan: PlanId): Promise<QuotaBlock | null> {
+  const quota = await checkQuota(userId, plan, 'conversations');
+  if (!quota.allowed) {
+    return {
+      error: 'quota_exceeded',
+      code: 'CONVERSATIONS_LIMIT',
+      metric: 'conversations',
+      plan,
+      used: quota.used,
+      limit: quota.limit,
+      message: `You've used all ${quota.limit} conversations on the ${plan} plan this month.`,
+    };
+  }
+  const research = await checkQuota(userId, plan, 'deep_research');
+  if (!research.allowed) {
+    return {
+      error: 'quota_exceeded',
+      code: 'RESEARCH_LIMIT',
+      metric: 'deep_research',
+      plan,
+      used: research.used,
+      limit: research.limit,
+      message: `You've used all ${research.limit} deep-research turns on the ${plan} plan this month.`,
+    };
+  }
+  return null;
+}

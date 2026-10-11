@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { getCurrentUser } from '../../../../../../../lib/auth/session';
-import { checkQuota, getUserPlan } from '../../../../../../../lib/billing';
+import { claimDesktopTurn, meterDesktopTurn } from '../../../../../../../lib/desktop-turns';
 import { MEMORYLAKE_LLM_BASE_URL } from '@dexter/core/providers';
 
 /**
@@ -8,16 +8,18 @@ import { MEMORYLAKE_LLM_BASE_URL } from '@dexter/core/providers';
  *
  * OpenAI-compatible LLM gateway for the desktop agent. The desktop never
  * holds provider keys: it sends its bearer token, we gate on the user's
- * plan, swap the public model alias for the upstream model, and stream the
+ * turn, swap the public model alias for the upstream model, and stream the
  * upstream response straight back.
  *
  * Upstream is the MemoryLake router (OpenAI-compatible, same as the web
  * agent — see src/providers.ts), keyed by MEMORYLAKE_API_KEY.
  *   DESKTOP_LLM_MODEL     (default gpt-5.5) — what `analyst-default` maps to
  *
- * POC limits: quota is checked (read-only) against the monthly
- * conversation allowance but not incremented — metering per desktop
- * conversation is a follow-up once the desktop sends a conversation id.
+ * Quota works as on web: the desktop admits each chat turn through
+ * POST /api/desktop/turns (the same gate as /api/agent), and a call here
+ * must belong to an open admitted turn, matched by OpenCode's
+ * x-opencode-session-id. The turn's first successful call counts it as one
+ * conversation (lib/desktop-turns.ts).
  */
 
 export const dynamic = 'force-dynamic';
@@ -44,18 +46,13 @@ export async function POST(request: NextRequest): Promise<Response> {
     return NextResponse.json({ error: { message: `unknown model: ${alias}` } }, { status: 400 });
   }
 
-  const { plan } = await getUserPlan(user.id);
-  const quota = await checkQuota(user.id, plan, 'conversations');
-  if (!quota.allowed) {
-    return NextResponse.json(
-      {
-        error: {
-          message: `You've used all ${quota.limit} conversations on the ${plan} plan this month.`,
-          code: 'quota_exceeded',
-        },
-      },
-      { status: 402 },
-    );
+  const agentSessionId = request.headers.get('x-opencode-session-id') ?? '';
+  if (!/^[A-Za-z0-9_-]{1,128}$/.test(agentSessionId)) {
+    return NextResponse.json({ error: { message: 'missing x-opencode-session-id' } }, { status: 400 });
+  }
+  const turnId = await claimDesktopTurn(user.id, agentSessionId);
+  if (!turnId) {
+    return NextResponse.json({ error: { message: 'no_admitted_turn', code: 'turn_required' } }, { status: 409 });
   }
 
   const apiKey = process.env.MEMORYLAKE_API_KEY;
@@ -69,6 +66,8 @@ export async function POST(request: NextRequest): Promise<Response> {
     body: JSON.stringify({ ...body, model: resolve(), user: user.id }),
     signal: request.signal,
   });
+
+  if (upstream.ok) await meterDesktopTurn(user.id, turnId);
 
   return new Response(upstream.body, {
     status: upstream.status,

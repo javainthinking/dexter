@@ -59,6 +59,9 @@ try {
   });
   const composer = win.locator('textarea').first();
   await composer.waitFor({ timeout: 15_000 });
+  const mock = (p, body) =>
+    fetch(new URL(p, API), body === undefined ? {} : { method: 'POST', body: JSON.stringify(body) }).then((r) => r.json());
+  const before = await mock('/__mock/usage');
   await composer.fill('What is NVDA trading at?');
   await composer.press('Enter');
   await win.getByText(/get_stock_price/).first().waitFor({ timeout: 60_000 });
@@ -67,6 +70,29 @@ try {
   step('answer rendered in shared chat UI');
   await win.getByText('What is NVDA trading at?').first().waitFor();
   await win.screenshot({ path: `${shots}/3-chat.png` });
+
+  // Quota, same as web: the turn above made two LLM calls (tool call +
+  // answer) through the gateway and counts as exactly one conversation.
+  let usage = await mock('/__mock/usage');
+  for (let i = 0; i < 20 && usage.turns.some((t) => !t.completed); i++) {
+    await new Promise((r) => setTimeout(r, 100));
+    usage = await mock('/__mock/usage');
+  }
+  const newTurns = usage.turns.slice(before.turns.length);
+  if (usage.conversations - before.conversations !== 1 || newTurns.length !== 1 || !newTurns[0].completed) {
+    throw new Error(`metering: ${JSON.stringify(usage)}`);
+  }
+  step('turn admitted, metered once (1 conversation for 2 LLM calls), closed');
+  // Over the limit: the server refuses the turn and web's upgrade dialog opens.
+  await mock('/__mock/limit', { conversations: usage.conversations });
+  await composer.fill('And MSFT?');
+  await composer.press('Enter');
+  await win.getByRole('dialog').waitFor({ timeout: 15_000 });
+  await mock('/__mock/limit', { conversations: null });
+  if ((await mock('/__mock/usage')).turns.length !== usage.turns.length) throw new Error('refused turn was admitted');
+  step('over quota: 402 from turn admission opens the upgrade dialog');
+  await win.screenshot({ path: `${shots}/4-quota.png` });
+  await win.keyboard.press('Escape');
 
   // Token survives restart via safeStorage.
   await app.close();

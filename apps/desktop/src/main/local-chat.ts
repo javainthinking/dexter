@@ -18,6 +18,10 @@ import type { AgentHost } from './agent-host';
  *
  * Conversations are stored per user in userData; they never leave the
  * machine (the LLM calls themselves go through the PickSkill gateway).
+ *
+ * Each turn is admitted by the server first (POST /api/desktop/turns, the
+ * same quota gate as web's /api/agent). A 402 is passed through as-is, so
+ * web's chat page shows its usual upgrade prompt.
  */
 
 interface Turn {
@@ -41,6 +45,13 @@ interface Store {
 
 const TOOL_RESULT_MAX = 4000;
 
+/** Server-side turn admission (see apps/web/app/api/desktop/turns). */
+export interface TurnGate {
+  /** Admits a turn, or returns the server's refusal (e.g. 402 quota_exceeded) to pass through. */
+  start(agentSessionID?: string): Promise<{ turnId: string } | { refusal: Response }>;
+  complete(turnId: string): Promise<void>;
+}
+
 export class LocalChat {
   private store: Store = { currentId: null, chats: [] };
   private loadedFor: string | null = null;
@@ -49,6 +60,7 @@ export class LocalChat {
   constructor(
     private readonly agent: AgentHost,
     private readonly userId: () => string | null,
+    private readonly turns: TurnGate,
   ) {}
 
   /** Fed every event from the agent worker. */
@@ -91,7 +103,18 @@ export class LocalChat {
     if (typeof query !== 'string' || !query.trim()) return Response.json({ error: 'invalid_query' }, { status: 400 });
     await this.load();
 
+    if (this.agent.status.state !== 'ready') {
+      const message =
+        this.agent.status.state === 'error' ? this.agent.status.message : 'The local agent is still starting. Try again in a moment.';
+      return sseError(message);
+    }
+
     let chat = this.current();
+    const admitted = await this.turns.start(chat?.agentSessionID);
+    if ('refusal' in admitted) return admitted.refusal;
+    const { turnId } = admitted;
+    const gate = this.turns;
+
     if (!chat) {
       chat = { sessionId: randomUUID(), turns: [], updatedAt: Date.now() };
       this.store.chats.unshift(chat);
@@ -123,6 +146,7 @@ export class LocalChat {
           listeners.delete(listener);
           controller.close();
           void persist();
+          void gate.complete(turnId).catch(() => {});
         };
         const listener = (e: AgentEvent) => {
           if (e.type === 'error') {
@@ -154,10 +178,6 @@ export class LocalChat {
           }
         };
 
-        if (agent.status.state !== 'ready') {
-          send('error', { message: agent.status.state === 'error' ? agent.status.message : 'The local agent is still starting. Try again in a moment.' });
-          return finish();
-        }
         listeners.add(listener);
         send('thinking', {});
         req.signal.addEventListener('abort', () => {
@@ -236,6 +256,12 @@ export class LocalChat {
     await fs.mkdir(path.dirname(file), { recursive: true });
     await fs.writeFile(file, JSON.stringify(this.store));
   }
+}
+
+/** A one-event SSE response: the chat page shows `error` events inline. */
+function sseError(message: string): Response {
+  const body = `event: error\ndata: ${JSON.stringify({ message })}\n\n`;
+  return new Response(body, { headers: { 'content-type': 'text/event-stream', 'cache-control': 'no-cache' } });
 }
 
 function clip(s: string, n: number): string {

@@ -8,7 +8,7 @@ import { withUser } from '@dexter/core/runtime/user-context';
 
 import { resolveSession } from '../../../lib/session';
 import { getCurrentUser } from '../../../lib/auth/session';
-import { getUserPlan, checkQuota, incrementUsage, looksLikeFileRequest } from '../../../lib/billing';
+import { getUserPlan, checkQuota, incrementUsage, looksLikeFileRequest, turnQuotaBlock } from '../../../lib/billing';
 import { PLAN_LIMITS } from '../../../lib/plans';
 import {
   createJob,
@@ -61,45 +61,13 @@ export async function POST(request: NextRequest): Promise<Response> {
   }
 
   // Quota gate — block a new turn when the user is over their monthly
-  // conversation limit. Stripe-mirrored plan + per-month usage; 402 carries
-  // the numbers so the client can show an upgrade prompt.
-  const { plan } = await getUserPlan(user.id);
-  const quota = await checkQuota(user.id, plan, 'conversations');
-  if (!quota.allowed) {
-    return NextResponse.json(
-      {
-        error: 'quota_exceeded',
-        code: 'CONVERSATIONS_LIMIT',
-        metric: 'conversations',
-        plan,
-        used: quota.used,
-        limit: quota.limit,
-        message: `You've used all ${quota.limit} conversations on the ${plan} plan this month.`,
-      },
-      { status: 402 },
-    );
-  }
-
-  // Deep-research gate. A turn can't declare upfront whether it'll search,
-  // so once the monthly deep-research quota is spent we block the turn
-  // entirely (the user chose a hard block over silently disabling search).
+  // conversation or deep-research limit. Stripe-mirrored plan + per-month
+  // usage; 402 carries the numbers so the client can show an upgrade prompt.
   // Only enforced on turn start (/api/agent); resume hops continue an
-  // already-admitted turn.
-  const researchQuota = await checkQuota(user.id, plan, 'deep_research');
-  if (!researchQuota.allowed) {
-    return NextResponse.json(
-      {
-        error: 'quota_exceeded',
-        code: 'RESEARCH_LIMIT',
-        metric: 'deep_research',
-        plan,
-        used: researchQuota.used,
-        limit: researchQuota.limit,
-        message: `You've used all ${researchQuota.limit} deep-research turns on the ${plan} plan this month.`,
-      },
-      { status: 402 },
-    );
-  }
+  // already-admitted turn. Shared with the desktop (/api/desktop/turns).
+  const { plan } = await getUserPlan(user.id);
+  const blocked = await turnQuotaBlock(user.id, plan);
+  if (blocked) return NextResponse.json(blocked, { status: 402 });
 
   // File quota is a soft gate: over the monthly file limit, the turn still
   // runs and answers — it just can't generate new documents. We withhold the

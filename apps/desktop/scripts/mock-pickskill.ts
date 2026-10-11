@@ -15,6 +15,11 @@
  *   data-provider keys they fall back to Yahoo.
  * - The LLM endpoint proxies to the MemoryLake router when MEMORYLAKE_API_KEY is set, otherwise
  *   plays a scripted turn: call get_stock_price(NVDA), then summarise.
+ * - Turn admission + metering follow apps/web/lib/desktop-turns.ts in memory:
+ *   POST /api/desktop/turns gates on a conversation limit (402 like web), LLM
+ *   calls need an open turn for their x-opencode-session-id, and a turn's first
+ *   successful call counts one conversation. Test hooks: GET /__mock/usage,
+ *   POST /__mock/limit {conversations} (null = unlimited).
  */
 import { createHash, randomBytes } from 'node:crypto';
 import { MEMORYLAKE_LLM_BASE_URL } from '../../../src/providers';
@@ -34,6 +39,20 @@ const USER = { id: 'demo-user', name: 'Demo User', email: 'demo@pickskill.local'
 const MOCK_CODE = '123456';
 const codes = new Map<string, { challenge: string; expires: number }>();
 const tokens = new Set<string>();
+
+interface MockTurn { id: string; session: string | null; metered: boolean; completed: boolean }
+const turns: MockTurn[] = [];
+let conversationsUsed = 0;
+let conversationLimit: number | null = null;
+
+function claimTurn(session: string): MockTurn | undefined {
+  const open = turns.filter((t) => !t.completed);
+  const bound = open.findLast((t) => t.session === session);
+  if (bound) return bound;
+  const free = open.find((t) => t.session === null);
+  if (free) free.session = session;
+  return free;
+}
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
@@ -85,6 +104,12 @@ Bun.serve({
     const url = new URL(req.url);
     const p = url.pathname;
     console.log(req.method, p);
+
+    if (p === '/__mock/usage') return json({ conversations: conversationsUsed, turns });
+    if (p === '/__mock/limit' && req.method === 'POST') {
+      conversationLimit = ((await req.json()) as { conversations: number | null }).conversations;
+      return json({ ok: true });
+    }
 
     // In-app email-code sign-in. Any email works; the code is always MOCK_CODE
     // and is echoed back as `devCode` like the real server does outside production.
@@ -166,15 +191,53 @@ Bun.serve({
       }
     }
 
+    if (p === '/api/desktop/turns' && req.method === 'POST') {
+      if (conversationLimit !== null && conversationsUsed >= conversationLimit) {
+        return json(
+          {
+            error: 'quota_exceeded',
+            code: 'CONVERSATIONS_LIMIT',
+            metric: 'conversations',
+            plan: 'free',
+            used: conversationsUsed,
+            limit: conversationLimit,
+            message: `You've used all ${conversationLimit} conversations on the free plan this month.`,
+          },
+          402,
+        );
+      }
+      const { agentSessionId } = (await req.json().catch(() => ({}))) as { agentSessionId?: string };
+      if (agentSessionId) for (const t of turns) if (t.session === agentSessionId) t.completed = true;
+      const turn: MockTurn = { id: crypto.randomUUID(), session: agentSessionId ?? null, metered: false, completed: false };
+      turns.push(turn);
+      return json({ turnId: turn.id });
+    }
+    const done = p.match(/^\/api\/desktop\/turns\/([0-9a-f-]+)\/complete$/);
+    if (done && req.method === 'POST') {
+      const turn = turns.find((t) => t.id === done[1]);
+      if (turn) turn.completed = true;
+      return json({ ok: true });
+    }
+
     if (p === '/api/desktop/llm/v1/chat/completions') {
+      const turn = claimTurn(req.headers.get('x-opencode-session-id') ?? '');
+      if (!turn) return json({ error: { message: 'no_admitted_turn', code: 'turn_required' } }, 409);
       const body = await req.json();
-      if (!process.env.MEMORYLAKE_API_KEY) return scriptedCompletion(body);
-      const upstream = await fetch(`${MEMORYLAKE_LLM_BASE_URL}/chat/completions`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json', authorization: `Bearer ${process.env.MEMORYLAKE_API_KEY}` },
-        body: JSON.stringify({ ...body, model: process.env.DESKTOP_LLM_MODEL ?? 'gpt-5.5' }),
-      });
-      return new Response(upstream.body, { status: upstream.status, headers: { 'content-type': upstream.headers.get('content-type') ?? 'application/json' } });
+      let res: Response;
+      if (!process.env.MEMORYLAKE_API_KEY) res = await scriptedCompletion(body);
+      else {
+        const upstream = await fetch(`${MEMORYLAKE_LLM_BASE_URL}/chat/completions`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', authorization: `Bearer ${process.env.MEMORYLAKE_API_KEY}` },
+          body: JSON.stringify({ ...body, model: process.env.DESKTOP_LLM_MODEL ?? 'gpt-5.5' }),
+        });
+        res = new Response(upstream.body, { status: upstream.status, headers: { 'content-type': upstream.headers.get('content-type') ?? 'application/json' } });
+      }
+      if (res.ok && !turn.metered) {
+        turn.metered = true;
+        conversationsUsed++;
+      }
+      return res;
     }
 
     return json({ error: 'not_found' }, 404);

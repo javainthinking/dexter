@@ -5,7 +5,7 @@ import type { AccountState, AgentEvent } from '../shared/ipc';
 import { AgentHost } from './agent-host';
 import { AuthStore } from './auth';
 import { APP_ORIGIN, registerAppScheme, serveApp, type ProxyDeps } from './api-proxy';
-import { LocalChat } from './local-chat';
+import { LocalChat, type TurnGate } from './local-chat';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
@@ -20,7 +20,24 @@ let account: AccountState = { status: 'signed-out' };
 
 const broadcast = (channel: string, payload: unknown) => win?.webContents.send(channel, payload);
 const agent = new AgentHost(API_BASE, (event: AgentEvent) => chat.onAgentEvent(event));
-const chat = new LocalChat(agent, () => (account.status === 'signed-in' ? (account.user?.id ?? null) : null));
+const turns: TurnGate = {
+  async start(agentSessionId) {
+    const token = auth.current;
+    if (!token) return { refusal: Response.json({ error: 'unauthenticated' }, { status: 401 }) };
+    const res = await fetch(new URL('/api/desktop/turns', API_BASE), {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+      body: JSON.stringify({ agentSessionId }),
+    });
+    if (res.status === 401) void signedOut('Your session expired. Please sign in again.');
+    if (!res.ok) return { refusal: new Response(await res.text(), { status: res.status, headers: { 'content-type': 'application/json' } }) };
+    return (await res.json()) as { turnId: string };
+  },
+  async complete(turnId) {
+    await api(`/api/desktop/turns/${turnId}/complete`, { method: 'POST' });
+  },
+};
+const chat = new LocalChat(agent, () => (account.status === 'signed-in' ? (account.user?.id ?? null) : null), turns);
 
 function setAccount(next: AccountState): void {
   account = next;

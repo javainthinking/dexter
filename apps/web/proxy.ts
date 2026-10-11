@@ -44,6 +44,7 @@ const PROTECTED_API_PREFIXES = [
   '/api/desktop/llm',
   '/api/desktop/finance',
   '/api/desktop/me',
+  '/api/desktop/turns',
 ];
 
 export function proxy(request: NextRequest): NextResponse {
