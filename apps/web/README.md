@@ -116,9 +116,6 @@ once that resolution lands (or after a one-time migration that strips
 
 **Caveats — known limits in this Phase 2 deployment**
 
-- Memory writes (long-term + daily markdown files) and the SQLite vector
-  index go to ephemeral function disk. Restarts wipe them. Phase 3 swaps
-  to Vercel Blob + Neon Postgres.
 - Multi-turn chat history is stored in a module-scope `Map`, so it does
   not survive cold starts and is not shared across instances.
 - The browser tool is disabled on Web. fetch + search still work.

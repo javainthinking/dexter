@@ -2,7 +2,7 @@
   "common": {
     "appName": "PickSkill",
     "openGraphTitle": "PickSkill — tu agente de investigación de cartera",
-    "openGraphDescription": "Cotizaciones en vivo, señales técnicas y un analista IA que recuerda tu tesis — mercados US, HK y A-shares."
+    "openGraphDescription": "Cotizaciones en vivo, señales técnicas y un analista IA basado en datos en vivo — mercados US, HK y A-shares."
   },
   "landing": {
     "badge": "Agente de investigación autónomo",
@@ -13,7 +13,7 @@
       "subtitle": "Un analista de IA que investiga el mercado, modela valoraciones y convierte el trabajo en una presentación de PowerPoint, un informe de Word o un modelo de Excel listos para enviar — a partir de datos en vivo de US, HK y A-shares, editables al descargar.",
       "primaryCta": "Abrir el escritorio",
       "secondaryCta": "Mira lo que crea",
-      "tagline": "Datos en vivo · PPT / Word / Excel · Con base en la memoria"
+      "tagline": "Datos en vivo · PPT / Word / Excel · Respuestas con fuentes"
     },
     "stats": {
       "items": [
@@ -33,11 +33,6 @@
         "eyebrow": "02 — Datos en vivo",
         "title": "Acceso directo al mercado y a los informes",
         "body": "Precios en tiempo real, fundamentales, ratios y noticias vía Financial Datasets, más búsqueda web y herramientas documentales — sin instantáneas obsoletas."
-      },
-      "memory": {
-        "eyebrow": "03 — Memoria persistente",
-        "title": "Recuerda tu tesis",
-        "body": "La memoria a largo plazo vive en MemoryLake. PickSkill recupera tus posiciones, preferencias y reglas en cada turno para que el análisis siga siendo tuyo."
       }
     },
     "samples": {
@@ -60,8 +55,7 @@
       "legendNeutral": "neutral",
       "legendBear": "bajista",
       "analystPrompt": "¿Qué cambió en los factores de riesgo de NVDA?",
-      "analystSourced": "Con fuentes · 10-K, pág. 27",
-      "analystMemory": "Recuerda tu tesis"
+      "analystSourced": "Con fuentes · 10-K, pág. 27"
     },
     "showcase": {
       "eyebrow": "Qué hace",
@@ -77,7 +71,7 @@
         { "q": "¿Qué es PickSkill?", "a": "PickSkill es un analista de IA de equity research. Haces una pregunta en lenguaje natural — sobre una acción, un informe regulatorio, una valoración o tu cartera — e investiga datos de mercado en vivo, ejecuta el análisis y puede convertir el resultado en una presentación de PowerPoint, un informe de Word o un modelo de Excel que puedes descargar y editar. Cubre los mercados de US, Hong Kong y A-shares de China." },
         { "q": "¿Puede PickSkill generar archivos de PowerPoint, Word y Excel?", "a": "Sí. PickSkill genera presentaciones .pptx, informes .docx y modelos .xlsx nativos — no capturas de pantalla ni PDF. Pide \"una presentación de 12 diapositivas para inversores sobre NVDA\" o \"un DCF a 5 años en Excel\" y construye el archivo a partir de informes y datos de mercado en vivo, con fuentes y editable. Los archivos se entregan como un enlace de descarga en el chat y se abren en PowerPoint, Word, Excel, Keynote, Google Workspace o LibreOffice." },
         { "q": "¿Qué mercados y datos utiliza PickSkill?", "a": "PickSkill obtiene precios, fundamentales e informes de la SEC en vivo (además de las divulgaciones de HKEx y Cninfo para Hong Kong y A-shares), y luego calcula indicadores técnicos sobre el último cierre. Cada cifra se rastrea hasta una fuente en el momento de la consulta, por lo que el análisis refleja datos actuales en lugar del límite de entrenamiento de un modelo." },
-        { "q": "¿En qué se diferencia PickSkill de usar ChatGPT para investigar acciones?", "a": "Un chatbot general responde a partir de datos de entrenamiento y a menudo inventa cifras financieras. PickSkill fundamenta cada respuesta en datos en vivo — obtiene el 10-K real, calcula el DCF, ejecuta los indicadores y cita sus fuentes. También recuerda tu tesis y tu lista de seguimiento entre sesiones, y produce archivos de Office reales en lugar de texto plano." },
+        { "q": "¿En qué se diferencia PickSkill de usar ChatGPT para investigar acciones?", "a": "Un chatbot general responde a partir de datos de entrenamiento y a menudo inventa cifras financieras. PickSkill fundamenta cada respuesta en datos en vivo — obtiene el 10-K real, calcula el DCF, ejecuta los indicadores y cita sus fuentes. También produce archivos de Office reales en lugar de texto plano." },
         { "q": "¿Qué indicadores técnicos y herramientas de cartera incluye?", "a": "Todos los planes incluyen ocho dimensiones técnicas — MACD, medias móviles (20/60/200), RSI, KDJ, Bandas de Bollinger, ADX, volumen y un indicador de flujo de capital — además de escaneos de divergencias y de soportes/resistencias, cada uno con un rastro de señales de 5 días. Puedes seguir varias carteras y exportar el panel a una presentación, un informe o un libro de trabajo." },
         { "q": "¿Es PickSkill gratis y constituye asesoramiento de inversión?", "a": "Hay un plan gratuito con 30 conversaciones al mes, sin necesidad de tarjeta; los planes de pago empiezan en $15 al mes. PickSkill es una herramienta de investigación, no un asesor con licencia — su resultado es solo para fines informativos y educativos y no constituye asesoramiento de inversión. Haz siempre tu propia diligencia debida." }
       ]
@@ -281,15 +275,12 @@
     "tickers": "Tickers",
     "tickerPlaceholder": "Añadir ticker (ej. NVDA, 0700.HK)",
     "addTicker": "Añadir",
-    "saveToMemory": "Guardar en memoria",
     "saved": "Guardado",
     "lastSavedAt": "Último guardado",
     "confirm": "Confirmar",
     "loading": "Calculando indicadores…",
     "error": "No se pudieron cargar los indicadores.",
     "retry": "Reintentar",
-    "emptyTitle": "No hay cartera en memoria.",
-    "emptyHint": "Cuéntale a PickSkill tus posiciones — por ej. NVDA, TSLA, 0700.HK — y pulsa «Guardar en memoria» para no tener que repetirlo.",
     "emptyAfterClear": "Añade al menos un ticker para ver este indicador.",
     "portfolio": "Cartera",
     "noPortfolios": "Sin carteras — crea una primero.",

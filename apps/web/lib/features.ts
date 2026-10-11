@@ -155,29 +155,26 @@ const en: FeaturesContent = {
     'ai-analyst': {
       eyebrow: 'Research',
       name: 'AI Analyst',
-      tagline: 'Ask anything you’d ask a junior analyst — get sourced answers, live models, and memory that holds your thesis across sessions.',
+      tagline: 'Ask anything you’d ask a junior analyst — get sourced answers and live models.',
       description:
-        'An AI analyst that researches SEC filings and market data, builds DCF models, reads 10-Ks, and remembers your thesis across sessions — in plain English.',
+        'An AI analyst that researches SEC filings and market data, builds DCF models, and reads 10-Ks — in plain English.',
       headline: 'The analyst that does the research, modelling, and drafting.',
       imageAlt:
-        'Product mockup of the PickSkill chat — a research question, a sourced answer with citations and a chart, and a memory chip holding the thesis.',
+        'Product mockup of the PickSkill chat — a research question, a sourced answer with citations and a chart.',
       ctaLabel: 'Ask the analyst',
       capabilities: [
         { title: 'Valuation on demand', body: 'Full discounted-cash-flow models with sensitivity tables, comparable-company analysis, and reverse DCFs — sourced inputs, editable assumptions, in seconds.' },
         { title: 'Reads filings for you', body: 'Summarises a 10-K in 60 seconds, diffs Risk Factors year-over-year, surfaces MD&A signal and footnotes to chase — every claim linked to the page on EDGAR.' },
         { title: 'Multi-source research', body: 'Pulls web, filings, and market data in one turn, then answers with citations — not a confident guess. Honest about what it can and can’t verify.' },
-        { title: 'Long-term memory', body: 'Remembers your thesis, the tickers you track, and your preferences across sessions, so you pick up where you left off instead of re-explaining context every time.' },
         { title: 'US, HK and A-share coverage', body: 'Recognises NYSE/NASDAQ, HKEx, and SSE/SZSE tickers and pulls the right filing set and market conventions per market.' },
       ],
       howItWorks: [
         { step: 'Ask in plain English', detail: '"Build a 5-year DCF on TSMC", "what changed in NVDA’s risk factors", "compare AMD and Intel on FCF".' },
         { step: 'It researches', detail: 'Pulls filings, market data, and the web — runs the model or the comparison — and shows its work.' },
         { step: 'Get a sourced answer', detail: 'A researched response with citations, charts, and downloadable artefacts — not a black-box guess.' },
-        { step: 'It remembers', detail: 'Your thesis and context persist across sessions, so the next question builds on the last.' },
       ],
       faq: [
         { q: 'How is this different from asking ChatGPT?', a: 'PickSkill grounds every answer in live data — it pulls the actual 10-K, computes the DCF, runs the indicators, and cites sources at query time. Generic chatbots answer from training data and routinely fabricate financial figures. The grounding is the difference, especially for valuation and filings work.' },
-        { q: 'What does "memory" actually remember?', a: 'Your investment thesis, the tickers you track, preferences, and prior conversation context — persisted across sessions and scoped to your account. You can review and edit memory entries, and they’re unlimited on every plan.' },
         { q: 'Which markets are covered?', a: 'US (NYSE / NASDAQ), Hong Kong (HKEx), and Chinese A-shares (SSE / SZSE). The analyst pulls market-appropriate filings — 10-K/10-Q for US, interim/annual for HK, and the 扣非 net-income line for A-shares.' },
       ],
     },

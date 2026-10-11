@@ -10,21 +10,11 @@ import {
 } from '@dexter/core/db/schema/portfolios';
 
 /**
- * Server-side portfolio CRUD + MemoryLake summary sync.
+ * Server-side portfolio CRUD.
  *
- * Truth lives in the DB (dexter_portfolios + dexter_portfolio_holdings);
- * after every write that mutates user-visible state we push a compact
- * markdown snapshot to MemoryLake so the agent's memory_search keeps
- * finding holdings even though the storage layer moved.
- *
- * Why two stores instead of one:
- *   - DB gives us: transactional consistency, fast list/get, FK cascades,
- *     ordered position, and per-user `(user_id, name)` uniqueness.
- *   - MemoryLake gives us: semantic recall for the agent. The agent never
- *     reads from the DB directly — that would couple the agent tools to
- *     the web schema. A compact markdown summary in MemoryLake is enough
- *     for the agent to answer "what do I own?" / "what's in portfolio X?"
- *     without us writing a new tool.
+ * Truth lives in the DB (dexter_portfolios + dexter_portfolio_holdings):
+ * transactional consistency, fast list/get, FK cascades, ordered position,
+ * and per-user `(user_id, name)` uniqueness.
  */
 
 // Hard safety backstop only. The real per-user cap is the plan limit

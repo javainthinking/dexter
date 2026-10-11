@@ -107,7 +107,7 @@ const en: PricingContent = {
   perMonth: '/mo',
   mostPopular: 'Most popular',
   everyPlanNote:
-    'All 8 indicator dimensions and unlimited long-term memory are included on every plan.',
+    'All 8 indicator dimensions are included on every plan.',
   comparisonHeading: 'Compare plans',
   billing: {
     monthly: 'Monthly',
@@ -127,7 +127,6 @@ const en: PricingContent = {
         '1 portfolio · 10 holdings',
         '2 generated files / month (PPT / Word / Excel)',
         'All 8 indicator dimensions',
-        'Unlimited long-term memory',
       ],
     },
     starter: {
@@ -175,7 +174,6 @@ const en: PricingContent = {
         { label: 'Conversations / month', values: ['30', '200', '1,000', 'Unlimited'] },
         { label: 'Deep-research turns / month', values: ['5', '50', '300', 'Unlimited'] },
         { label: 'Specialised workflows (DCF, X research)', values: [true, true, true, true] },
-        { label: 'Long-term memory', values: ['Unlimited', 'Unlimited', 'Unlimited', 'Unlimited'] },
       ],
     },
     {
@@ -226,7 +224,7 @@ const en: PricingContent = {
     { q: 'What counts as one "conversation"?', a: 'One back-and-forth thread with the AI on a topic — including follow-ups and tool calls inside that thread. We count the whole thread as one conversation against your monthly quota.' },
     { q: 'How does file generation work?', a: 'Ask the AI to make a PowerPoint, Word, or Excel file. We generate it, host it on Cloudflare R2, and give you a 7-day download link in chat. Each file counts as one against your monthly quota regardless of how many slides, pages, or rows it contains.' },
     { q: 'Can I switch between monthly and annual billing?', a: 'Yes, any time. Monthly → annual charges a prorated annual amount and shifts your renewal date. Annual → monthly takes effect at your next renewal.' },
-    { q: 'Will my data carry over if I upgrade or downgrade?', a: 'Yes. Portfolios, holdings, memory entries, and conversation history move with your account. If you downgrade past a limit, older data becomes read-only until you remove some or upgrade — nothing is deleted.' },
+    { q: 'Will my data carry over if I upgrade or downgrade?', a: 'Yes. Portfolios, holdings, and conversation history move with your account. If you downgrade past a limit, older data becomes read-only until you remove some or upgrade — nothing is deleted.' },
     { q: 'What payment methods do you accept?', a: 'Major credit cards via Stripe. Local methods (Alipay, WeChat Pay) for supported regions are on the roadmap.' },
   ],
 };

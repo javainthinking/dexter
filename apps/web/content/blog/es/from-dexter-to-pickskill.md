@@ -47,7 +47,7 @@ La tabla siguiente mapea la herencia. La columna izquierda es la contribución d
 
 | Capa | De Dexter (open source) | Añadido por PickSkill |
 |---|---|---|
-| **Bucle de agente** | Planificación de tareas, ejecución de herramientas, autorreflexión, logging en scratchpad | Estado de sesión multi-tenant, cuota + facturación, memoria entre sesiones |
+| **Bucle de agente** | Planificación de tareas, ejecución de herramientas, autorreflexión, logging en scratchpad | Estado de sesión multi-tenant, cuota + facturación |
 | **Superficie** | CLI interactivo (Ink/React en terminal) | Web app de navegador, 8 idiomas, layout móvil, enlaces compartibles |
 | **Datos** | Financieros + datos de mercado en vivo | Cobertura de EE. UU. + Hong Kong + acciones A, enmascarado de barras de límite, proxy de flujo de capitales |
 | **Output** | Texto de terminal + scratchpad JSONL | `.docx` / `.pptx` / `.xlsx` nativos vía OfficeCLI sobre enlaces presignados |
@@ -88,7 +88,7 @@ Cada dimensión viene con un [rastro de señal de 5 días](/blog/5-day-signal-tr
 
 Conservamos la filosofía que define a Dexter: output con fuentes o no cuenta, asunciones editables sobre respuestas de caja negra, y un bucle de agente que se autovalida. Esos principios se mapean directamente sobre nuestra promesa GTM — *PickSkill es el analista IA que investiga, modela y redacta trabajo de equity en lenguaje claro.*
 
-Lo que cambiamos es todo lo que toca un usuario no técnico. La capa de proveedor se generalizó — Dexter soporta múltiples proveedores de modelo, y PickSkill viene con la familia gpt-5.5 de OpenAI por defecto mientras soporta Anthropic, Google Gemini, xAI y Ollama local a través de la misma superficie de agente. Añadimos facturación, memoria, UI multi-idioma y la capa de entregables. Para el panorama más amplio de dónde la IA en investigación de equity realmente aporta palanca hoy, ver [IA para investigación de acciones en 2026](/blog/ai-for-stock-research-2026).
+Lo que cambiamos es todo lo que toca un usuario no técnico. La capa de proveedor se generalizó — Dexter soporta múltiples proveedores de modelo, y PickSkill viene con la familia gpt-5.5 de OpenAI por defecto mientras soporta Anthropic, Google Gemini, xAI y Ollama local a través de la misma superficie de agente. Añadimos facturación, UI multi-idioma y la capa de entregables. Para el panorama más amplio de dónde la IA en investigación de equity realmente aporta palanca hoy, ver [IA para investigación de acciones en 2026](/blog/ai-for-stock-research-2026).
 
 ## Qué sigue
 

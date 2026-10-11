@@ -82,29 +82,26 @@ export const features: FeaturesContent = {
     'ai-analyst': {
       eyebrow: 'Research',
       name: 'AI-Analyst',
-      tagline: 'Fragen Sie alles, was Sie einen Junior-Analysten fragen würden — und erhalten Sie belegte Antworten, Live-Modelle und ein Gedächtnis, das Ihre These über Sitzungen hinweg bewahrt.',
+      tagline: 'Fragen Sie alles, was Sie einen Junior-Analysten fragen würden — und erhalten Sie belegte Antworten und Live-Modelle.',
       description:
-        'Ein AI-Analyst, der SEC-Filings und Marktdaten recherchiert, DCF-Modelle baut, 10-Ks liest und sich Ihre These über Sitzungen hinweg merkt — in verständlichem Deutsch.',
+        'Ein AI-Analyst, der SEC-Filings und Marktdaten recherchiert, DCF-Modelle baut und 10-Ks liest — in verständlichem Deutsch.',
       headline: 'Der Analyst, der die Recherche, Modellierung und das Verfassen übernimmt.',
       imageAlt:
-        'Produkt-Mockup des PickSkill-Chats — eine Research-Frage, eine belegte Antwort mit Zitaten und einem Diagramm sowie ein Memory-Chip, der die These festhält.',
+        'Produkt-Mockup des PickSkill-Chats — eine Research-Frage, eine belegte Antwort mit Zitaten und einem Diagramm.',
       ctaLabel: 'Analyst fragen',
       capabilities: [
         { title: 'Bewertung auf Abruf', body: 'Vollständige Discounted-Cash-Flow-Modelle mit Sensitivitätstabellen, Vergleichsunternehmensanalysen und Reverse-DCFs — belegte Inputs, editierbare Annahmen, in Sekunden.' },
         { title: 'Liest Filings für Sie', body: 'Fasst ein 10-K in 60 Sekunden zusammen, vergleicht Risikofaktoren im Jahresvergleich, deckt MD&A-Signale und nachzugehende Fußnoten auf — jede Aussage verlinkt mit der Seite auf EDGAR.' },
         { title: 'Multi-Quellen-Research', body: 'Zieht Web, Filings und Marktdaten in einem Zug heran und antwortet anschließend mit Zitaten — keine selbstsichere Vermutung. Ehrlich darüber, was es verifizieren kann und was nicht.' },
-        { title: 'Langzeitgedächtnis', body: 'Merkt sich Ihre These, die von Ihnen verfolgten Ticker und Präferenzen über Sitzungen hinweg, sodass Sie dort weitermachen, wo Sie aufgehört haben, statt jedes Mal den Kontext neu zu erklären.' },
         { title: 'Abdeckung von US-, HK- und A-Aktien', body: 'Erkennt NYSE/NASDAQ-, HKEx- und SSE/SZSE-Ticker und zieht je Markt das passende Filing-Set sowie die passenden Marktkonventionen heran.' },
       ],
       howItWorks: [
         { step: 'In verständlichem Deutsch fragen', detail: '„Baue ein 5-Jahres-DCF zu TSMC", „was hat sich bei den Risikofaktoren von NVDA geändert", „vergleiche AMD und Intel beim FCF".' },
         { step: 'Es recherchiert', detail: 'Zieht Filings, Marktdaten und das Web heran — führt das Modell oder den Vergleich aus — und zeigt seinen Rechenweg.' },
         { step: 'Belegte Antwort erhalten', detail: 'Eine recherchierte Antwort mit Zitaten, Diagrammen und herunterladbaren Artefakten — keine Blackbox-Vermutung.' },
-        { step: 'Es merkt sich alles', detail: 'Ihre These und Ihr Kontext bleiben über Sitzungen hinweg erhalten, sodass die nächste Frage auf der letzten aufbaut.' },
       ],
       faq: [
         { q: 'Worin unterscheidet sich das von einer Frage an ChatGPT?', a: 'PickSkill verankert jede Antwort in Live-Daten — es zieht das tatsächliche 10-K heran, berechnet das DCF, führt die Indikatoren aus und nennt Quellen zum Zeitpunkt der Abfrage. Generische Chatbots antworten aus Trainingsdaten und erfinden regelmäßig Finanzkennzahlen. Die Verankerung macht den Unterschied, besonders bei Bewertungs- und Filing-Arbeit.' },
-        { q: 'Was merkt sich das „Gedächtnis" tatsächlich?', a: 'Ihre Investmentthese, die von Ihnen verfolgten Ticker, Präferenzen und den bisherigen Gesprächskontext — über Sitzungen hinweg gespeichert und auf Ihr Konto beschränkt. Sie können Gedächtniseinträge einsehen und bearbeiten, und sie sind in jedem Tarif unbegrenzt.' },
         { q: 'Welche Märkte werden abgedeckt?', a: 'USA (NYSE / NASDAQ), Hongkong (HKEx) und chinesische A-Aktien (SSE / SZSE). Der Analyst zieht marktgerechte Filings heran — 10-K/10-Q für die USA, Zwischen- und Jahresberichte für HK sowie die 扣非-Nettogewinnzeile für A-Aktien.' },
       ],
     },
@@ -122,7 +119,7 @@ export const pricing: PricingContent = {
   perMonth: '/Mon.',
   mostPopular: 'Am beliebtesten',
   everyPlanNote:
-    'Alle 8 Indikator-Dimensionen sowie unbegrenztes Langzeitgedächtnis sind in jedem Tarif enthalten.',
+    'Alle 8 Indikator-Dimensionen sind in jedem Tarif enthalten.',
   comparisonHeading: 'Tarife vergleichen',
   billing: {
     monthly: 'Monatlich',
@@ -142,7 +139,6 @@ export const pricing: PricingContent = {
         '1 Portfolio · 10 Positionen',
         '2 generierte Dateien / Monat (PPT / Word / Excel)',
         'Alle 8 Indikator-Dimensionen',
-        'Unbegrenztes Langzeitgedächtnis',
       ],
     },
     starter: {
@@ -190,7 +186,6 @@ export const pricing: PricingContent = {
         { label: 'Konversationen / Monat', values: ['30', '200', '1.000', 'Unbegrenzt'] },
         { label: 'Deep-Research-Durchläufe / Monat', values: ['5', '50', '300', 'Unbegrenzt'] },
         { label: 'Spezialisierte Workflows (DCF, X-Recherche)', values: [true, true, true, true] },
-        { label: 'Langzeitgedächtnis', values: ['Unbegrenzt', 'Unbegrenzt', 'Unbegrenzt', 'Unbegrenzt'] },
       ],
     },
     {
@@ -241,7 +236,7 @@ export const pricing: PricingContent = {
     { q: 'Was zählt als eine „Konversation"?', a: 'Ein Hin-und-Her-Thread mit der AI zu einem Thema — einschließlich der Folgefragen und Tool-Aufrufe innerhalb dieses Threads. Wir zählen den gesamten Thread als eine Konversation auf Ihr Monatskontingent.' },
     { q: 'Wie funktioniert die Datei-Generierung?', a: 'Bitten Sie die AI, eine PowerPoint-, Word- oder Excel-Datei zu erstellen. Wir generieren sie, hosten sie auf Cloudflare R2 und geben Ihnen einen 7-Tage-Download-Link im Chat. Jede Datei zählt unabhängig von ihrer Länge als eine auf Ihr Monatskontingent.' },
     { q: 'Kann ich zwischen monatlicher und jährlicher Abrechnung wechseln?', a: 'Ja, jederzeit. Monatlich → jährlich berechnet einen anteiligen Jahresbetrag und verschiebt Ihr Verlängerungsdatum. Jährlich → monatlich wird zur nächsten Verlängerung wirksam.' },
-    { q: 'Bleiben meine Daten bei einem Upgrade oder Downgrade erhalten?', a: 'Ja. Portfolios, Positionen, Gedächtniseinträge und Gesprächsverlauf wandern mit Ihrem Konto. Bei einem Downgrade unter ein Limit werden ältere Daten schreibgeschützt, bis Sie einige entfernen oder upgraden — nichts wird gelöscht.' },
+    { q: 'Bleiben meine Daten bei einem Upgrade oder Downgrade erhalten?', a: 'Ja. Portfolios, Positionen und Gesprächsverlauf wandern mit Ihrem Konto. Bei einem Downgrade unter ein Limit werden ältere Daten schreibgeschützt, bis Sie einige entfernen oder upgraden — nichts wird gelöscht.' },
     { q: 'Welche Zahlungsmethoden akzeptieren Sie?', a: 'Gängige Kreditkarten über Stripe. Lokale Methoden (Alipay, WeChat Pay) für unterstützte Regionen stehen auf der Roadmap.' },
   ],
 };

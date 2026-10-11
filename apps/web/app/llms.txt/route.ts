@@ -24,7 +24,7 @@ const HEADER = `# PickSkill
 ## Product
 
 - [PickSkill chat](${SITE_URL}/chat): The AI analyst — ask any finance question, get researched answers with sources, charts, and downloadable artefacts.
-- [Pricing](${SITE_URL}/pricing): Free / Starter $15 / Pro $39 / Power $129+ tiers. Differentiator is unlimited memory + file generation quota + auto-refresh portfolio quotes on higher tiers.
+- [Pricing](${SITE_URL}/pricing): Free / Starter $15 / Pro $39 / Power $129+ tiers. Differentiators are the file generation quota and auto-refresh portfolio quotes on higher tiers.
 `;
 
 const FOOTER = `

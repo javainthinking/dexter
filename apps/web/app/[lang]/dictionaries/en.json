@@ -2,7 +2,7 @@
   "common": {
     "appName": "PickSkill",
     "openGraphTitle": "PickSkill — your portfolio research agent",
-    "openGraphDescription": "Live quotes, technical signals, and an AI analyst that remembers your thesis — across US, HK, and A-share markets."
+    "openGraphDescription": "Live quotes, technical signals, and an AI analyst grounded in live data — across US, HK, and A-share markets."
   },
   "landing": {
     "badge": "Autonomous research agent",
@@ -13,7 +13,7 @@
       "subtitle": "An AI analyst that researches the market, models valuations, and turns the work into a ready-to-send PowerPoint deck, Word report, or Excel model — sourced from live US, HK, and A-share data, editable on download.",
       "primaryCta": "Open the workbench",
       "secondaryCta": "See what it builds",
-      "tagline": "Live data · PPT / Word / Excel · Memory-grounded"
+      "tagline": "Live data · PPT / Word / Excel · Sourced answers"
     },
     "stats": {
       "items": [
@@ -33,11 +33,6 @@
         "eyebrow": "02 — Live data",
         "title": "Direct market & filings access",
         "body": "Real-time prices, fundamentals, ratios and news through Financial Datasets, plus web search and document tooling — no stale snapshots."
-      },
-      "memory": {
-        "eyebrow": "03 — Persistent memory",
-        "title": "Remembers your thesis",
-        "body": "Long-term memory is held in MemoryLake. PickSkill recalls your prior positions, preferences, and rules every turn so the analysis stays personal."
       }
     },
     "samples": {
@@ -60,8 +55,7 @@
       "legendNeutral": "neutral",
       "legendBear": "bearish",
       "analystPrompt": "What changed in NVDA's risk factors?",
-      "analystSourced": "Sourced · 10-K, p.27",
-      "analystMemory": "Remembers your thesis"
+      "analystSourced": "Sourced · 10-K, p.27"
     },
     "showcase": {
       "eyebrow": "What it does",
@@ -88,7 +82,7 @@
         },
         {
           "q": "How is PickSkill different from using ChatGPT for stock research?",
-          "a": "A general chatbot answers from training data and often invents financial figures. PickSkill grounds every answer in live data — it pulls the actual 10-K, computes the DCF, runs the indicators, and cites its sources. It also remembers your thesis and watchlist across sessions, and produces real Office files instead of plain text."
+          "a": "A general chatbot answers from training data and often invents financial figures. PickSkill grounds every answer in live data — it pulls the actual 10-K, computes the DCF, runs the indicators, and cites its sources. It also produces real Office files instead of plain text."
         },
         {
           "q": "What technical indicators and portfolio tools does it include?",
@@ -299,15 +293,12 @@
     "tickers": "Tickers",
     "tickerPlaceholder": "Add ticker (e.g. NVDA, 0700.HK)",
     "addTicker": "Add",
-    "saveToMemory": "Save to memory",
     "saved": "Saved",
     "lastSavedAt": "Last saved",
     "confirm": "Confirm",
     "loading": "Computing indicators…",
     "error": "Failed to load indicators.",
     "retry": "Retry",
-    "emptyTitle": "No portfolio found in memory.",
-    "emptyHint": "Tell PickSkill your holdings — e.g. NVDA, TSLA, 0700.HK — and pick \"Save to memory\" so you only do this once.",
     "emptyAfterClear": "Add at least one ticker to view this indicator.",
     "portfolio": "Portfolio",
     "noPortfolios": "No portfolios — create one first.",

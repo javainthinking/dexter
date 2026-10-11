@@ -73,7 +73,6 @@ Disallow: /api/
 Disallow: /_next/
 Disallow: /hello-pickskill
 Disallow: /sign-in
-Disallow: /memory
 Disallow: /portfolios
 Disallow: /indicators
 Disallow: /feedback

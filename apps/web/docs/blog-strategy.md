@@ -508,7 +508,6 @@ Tutorials are the highest-leverage GTM content the blog ships:
 | T3 | `track-a-portfolio-with-indicators` | `/portfolios` + `/indicators` (MACD, KDJ, divergence) | ★★★ | ★★ | ★★ |
 | T4 | `compare-5-saas-companies-on-fcf-and-growth` | `/chat` + multi-ticker comparison + xlsx | ★★ | ★★ | ★★★ |
 | T5 | `generate-investor-deck-from-a-chat` | `/chat` + PPTX export | ★★★ | ★★ | ★★ |
-| T6 | `remember-a-thesis-across-sessions` | `/memory` | ★★ | ★ | ★ |
 | T7 | `screen-stocks-by-pe-and-fcf-yield` | `/chat` + screener prompt | ★★ | ★★ | ★★ |
 | T8 | `read-a-companys-risk-factors-diff` | `/chat` + 10-K diff | ★★ | ★ | ★★★ |
 

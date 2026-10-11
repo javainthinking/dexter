@@ -2,7 +2,7 @@
   "common": {
     "appName": "PickSkill",
     "openGraphTitle": "PickSkill — dein Portfolio-Research-Agent",
-    "openGraphDescription": "Live-Kurse, technische Signale und ein KI-Analyst, der deine Investmentthese im Kopf behält — für US-, HK- und A-Aktien."
+    "openGraphDescription": "Live-Kurse, technische Signale und ein KI-Analyst auf Basis von Live-Daten — für US-, HK- und A-Aktien."
   },
   "landing": {
     "badge": "Autonomer Research-Agent",
@@ -13,7 +13,7 @@
       "subtitle": "Ein KI-Analyst, der den Markt recherchiert, Bewertungen modelliert und die Arbeit in eine versandfertige PowerPoint-Präsentation, einen Word-Bericht oder ein Excel-Modell verwandelt — gespeist aus Live-Daten zu US-, HK- und A-Aktien, beim Download bearbeitbar.",
       "primaryCta": "Arbeitsbereich öffnen",
       "secondaryCta": "Sehen, was es erstellt",
-      "tagline": "Live-Daten · PPT / Word / Excel · Mit Gedächtnis verankert"
+      "tagline": "Live-Daten · PPT / Word / Excel · Mit Quellen belegt"
     },
     "stats": {
       "items": [
@@ -33,11 +33,6 @@
         "eyebrow": "02 — Live-Daten",
         "title": "Direkter Markt- und Filings-Zugriff",
         "body": "Echtzeitkurse, Fundamentaldaten, Kennzahlen und Nachrichten über Financial Datasets, plus Websuche und Dokumenten-Tools — keine veralteten Snapshots."
-      },
-      "memory": {
-        "eyebrow": "03 — Persistentes Gedächtnis",
-        "title": "Erinnert sich an Ihre These",
-        "body": "Das Langzeitgedächtnis liegt in MemoryLake. PickSkill ruft frühere Positionen, Präferenzen und Regeln in jedem Schritt ab, damit die Analyse persönlich bleibt."
       }
     },
     "samples": {
@@ -60,8 +55,7 @@
       "legendNeutral": "neutral",
       "legendBear": "bearish",
       "analystPrompt": "Was hat sich bei den Risikofaktoren von NVDA geändert?",
-      "analystSourced": "Belegt · 10-K, S. 27",
-      "analystMemory": "Merkt sich deine These"
+      "analystSourced": "Belegt · 10-K, S. 27"
     },
     "showcase": {
       "eyebrow": "Was es leistet",
@@ -77,7 +71,7 @@
         { "q": "Was ist PickSkill?", "a": "PickSkill ist ein KI-Analyst für Aktienresearch. Sie stellen eine Frage in einfacher Sprache — zu einer Aktie, einem Geschäftsbericht, einer Bewertung oder Ihrem Portfolio — und PickSkill recherchiert Live-Marktdaten, führt die Analyse durch und kann das Ergebnis in eine PowerPoint-Präsentation, einen Word-Bericht oder ein Excel-Modell verwandeln, das Sie herunterladen und bearbeiten können. Abgedeckt werden die Märkte für US-, Hongkong- und chinesische A-Aktien." },
         { "q": "Kann PickSkill PowerPoint-, Word- und Excel-Dateien erzeugen?", "a": "Ja. PickSkill erzeugt native .pptx-Präsentationen, .docx-Berichte und .xlsx-Modelle — keine Screenshots oder PDFs. Bitten Sie um \"eine 12-seitige Investorenpräsentation zu NVDA\" oder \"ein 5-Jahres-DCF in Excel\", und PickSkill erstellt die Datei aus Live-Geschäftsberichten und Marktdaten, mit Quellenangaben und bearbeitbar. Die Dateien werden als Download-Link im Chat bereitgestellt und öffnen sich in PowerPoint, Word, Excel, Keynote, Google Workspace oder LibreOffice." },
         { "q": "Welche Märkte und Daten nutzt PickSkill?", "a": "PickSkill ruft Live-Kurse, Fundamentaldaten und SEC-Filings ab (sowie HKEx- und Cninfo-Veröffentlichungen für Hongkong und A-Aktien) und berechnet anschließend technische Indikatoren auf Basis des jüngsten Schlusskurses. Jede Zahl lässt sich zum Abfragezeitpunkt auf eine Quelle zurückführen, sodass die Analyse aktuelle Daten widerspiegelt und nicht den Trainingsstand eines Modells." },
-        { "q": "Wie unterscheidet sich PickSkill davon, ChatGPT für Aktienresearch zu nutzen?", "a": "Ein allgemeiner Chatbot antwortet aus Trainingsdaten und erfindet oft Finanzkennzahlen. PickSkill verankert jede Antwort in Live-Daten — es ruft den tatsächlichen 10-K ab, berechnet das DCF, führt die Indikatoren aus und nennt seine Quellen. Außerdem merkt es sich Ihre These und Ihre Watchlist über Sitzungen hinweg und erstellt echte Office-Dateien statt reinen Text." },
+        { "q": "Wie unterscheidet sich PickSkill davon, ChatGPT für Aktienresearch zu nutzen?", "a": "Ein allgemeiner Chatbot antwortet aus Trainingsdaten und erfindet oft Finanzkennzahlen. PickSkill verankert jede Antwort in Live-Daten — es ruft den tatsächlichen 10-K ab, berechnet das DCF, führt die Indikatoren aus und nennt seine Quellen. Außerdem erstellt es echte Office-Dateien statt reinen Text." },
         { "q": "Welche technischen Indikatoren und Portfolio-Werkzeuge sind enthalten?", "a": "Alle Tarife umfassen acht technische Dimensionen — MACD, gleitende Durchschnitte (20/60/200), RSI, KDJ, Bollinger-Bänder, ADX, Volumen und einen Kapitalfluss-Proxy — plus Divergenz- sowie Unterstützungs- und Widerstands-Scans, jeweils mit einem 5-Tage-Signalverlauf. Sie können mehrere Portfolios verfolgen und das Dashboard in eine Präsentation, einen Bericht oder eine Arbeitsmappe exportieren." },
         { "q": "Ist PickSkill kostenlos, und handelt es sich um Anlageberatung?", "a": "Es gibt einen kostenlosen Tarif mit 30 Unterhaltungen pro Monat, ohne Kreditkarte; kostenpflichtige Tarife beginnen bei $15/Monat. PickSkill ist ein Research-Werkzeug, kein lizenzierter Berater — seine Ausgaben dienen ausschließlich der Information und Bildung und stellen keine Anlageberatung dar. Führen Sie stets Ihre eigene Sorgfaltsprüfung durch." }
       ]
@@ -281,15 +275,12 @@
     "tickers": "Ticker",
     "tickerPlaceholder": "Ticker hinzufügen (z. B. NVDA, 0700.HK)",
     "addTicker": "Hinzufügen",
-    "saveToMemory": "Im Gedächtnis speichern",
     "saved": "Gespeichert",
     "lastSavedAt": "Zuletzt gespeichert",
     "confirm": "Bestätigen",
     "loading": "Indikatoren werden berechnet…",
     "error": "Indikatoren konnten nicht geladen werden.",
     "retry": "Erneut versuchen",
-    "emptyTitle": "Kein Portfolio im Gedächtnis.",
-    "emptyHint": "Sag PickSkill deine Positionen — z. B. NVDA, TSLA, 0700.HK — und klicke „Im Gedächtnis speichern“, damit du das nicht noch einmal tippen musst.",
     "emptyAfterClear": "Füge mindestens einen Ticker hinzu, um diesen Indikator zu sehen.",
     "portfolio": "Portfolio",
     "noPortfolios": "Keine Portfolios — erstelle zuerst eines.",

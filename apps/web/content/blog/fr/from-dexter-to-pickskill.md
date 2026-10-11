@@ -47,7 +47,7 @@ Le tableau ci-dessous cartographie l'héritage. La colonne de gauche est l'appor
 
 | Couche | De Dexter (open source) | Ajouté par PickSkill |
 |---|---|---|
-| **Boucle d'agent** | Planification de tâches, exécution d'outils, auto-réflexion, journalisation scratchpad | État de session multi-tenant, quota + facturation, mémoire entre sessions |
+| **Boucle d'agent** | Planification de tâches, exécution d'outils, auto-réflexion, journalisation scratchpad | État de session multi-tenant, quota + facturation |
 | **Surface** | CLI interactive (Ink/React-dans-le-terminal) | Web app navigateur, 8 locales, layout mobile, liens partageables |
 | **Données** | Financiers + données de marché live | Couverture US + Hong Kong + actions A, masquage des barres de jour limite, proxy de flux de capitaux |
 | **Sortie** | Texte terminal + scratchpad JSONL | `.docx` / `.pptx` / `.xlsx` natifs via OfficeCLI sur liens présignés |
@@ -88,7 +88,7 @@ Chaque dimension est livrée avec une [trace de signal sur 5 jours](/blog/5-day-
 
 Nous avons gardé la philosophie qui définit Dexter : sortie sourcée sinon ça compte pas, hypothèses éditables plutôt que réponses black-box, et une boucle d'agent auto-validante. Ces principes correspondent directement à notre promesse GTM — *PickSkill est l'analyste IA qui recherche, modélise et rédige du travail actions en langage clair.*
 
-Ce que nous avons changé, c'est tout ce que touche un utilisateur non technique. La couche provider a été généralisée — Dexter prend en charge plusieurs providers de modèles, et PickSkill est livré avec la famille gpt-5.5 d'OpenAI par défaut tout en prenant en charge Anthropic, Google Gemini, xAI et Ollama local via la même surface d'agent. Nous avons ajouté la facturation, la mémoire, l'UI multilingue et la couche de livrables. Pour la vue d'ensemble de là où l'IA en recherche actions apporte vraiment du levier aujourd'hui, voir [IA pour la recherche actions en 2026](/blog/ai-for-stock-research-2026).
+Ce que nous avons changé, c'est tout ce que touche un utilisateur non technique. La couche provider a été généralisée — Dexter prend en charge plusieurs providers de modèles, et PickSkill est livré avec la famille gpt-5.5 d'OpenAI par défaut tout en prenant en charge Anthropic, Google Gemini, xAI et Ollama local via la même surface d'agent. Nous avons ajouté la facturation, l'UI multilingue et la couche de livrables. Pour la vue d'ensemble de là où l'IA en recherche actions apporte vraiment du levier aujourd'hui, voir [IA pour la recherche actions en 2026](/blog/ai-for-stock-research-2026).
 
 ## La suite
 

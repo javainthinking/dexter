@@ -46,7 +46,7 @@ Die Tabelle unten bildet die Vererbung ab. Die linke Spalte ist Dexters Beitrag;
 
 | Schicht | Von Dexter (Open Source) | Von PickSkill hinzugefügt |
 |---|---|---|
-| **Agenten-Schleife** | Aufgabenplanung, Werkzeugausführung, Selbstreflexion, Scratchpad-Logging | Mandantenfähiger Sitzungszustand, Quota + Billing, Erinnerung über Sitzungen hinweg |
+| **Agenten-Schleife** | Aufgabenplanung, Werkzeugausführung, Selbstreflexion, Scratchpad-Logging | Mandantenfähiger Sitzungszustand, Quota + Billing |
 | **Oberfläche** | Interaktives CLI (Ink/React-im-Terminal) | Browser-Web-App, 8 Locales, Mobile-Layout, teilbare Links |
 | **Daten** | Live-Finanzen + Marktdaten | US- + Hongkong- + A-Aktien-Abdeckung, Limit-Bar-Maskierung, Geldfluss-Proxy |
 | **Ausgabe** | Terminal-Text + Scratchpad-JSONL | Native `.docx` / `.pptx` / `.xlsx` via OfficeCLI über vorsignierte Links |
@@ -87,7 +87,7 @@ Jede Dimension wird mit einer [5-Tage-Signalspur](/blog/5-day-signal-trail) ausg
 
 Wir behielten die Philosophie, die Dexter definiert: quellenbelegte Ausgabe oder es ist nicht passiert, editierbare Annahmen statt Blackbox-Antworten und eine selbstvalidierende Agenten-Schleife. Diese Prinzipien bilden direkt unser GTM-Versprechen ab — *PickSkill ist der AI-Analyst, der Aktienarbeit in einfachem Deutsch recherchiert, modelliert und entwirft.*
 
-Was wir änderten, ist alles, was ein nicht-technischer Benutzer berührt. Die Provider-Schicht wurde generalisiert — Dexter unterstützt mehrere Modell-Provider, und PickSkill wird mit OpenAIs gpt-5.5-Familie als Standard ausgeliefert, unterstützt aber Anthropic, Google Gemini, xAI und lokales Ollama über dieselbe Agenten-Oberfläche. Wir fügten Billing, Erinnerung, mehrsprachige UI und die Lieferobjekt-Schicht hinzu. Für das größere Bild davon, wo AI in der Aktien-Research heute tatsächlich Hebel liefert, siehe [KI für Aktienforschung 2026](/blog/ai-for-stock-research-2026).
+Was wir änderten, ist alles, was ein nicht-technischer Benutzer berührt. Die Provider-Schicht wurde generalisiert — Dexter unterstützt mehrere Modell-Provider, und PickSkill wird mit OpenAIs gpt-5.5-Familie als Standard ausgeliefert, unterstützt aber Anthropic, Google Gemini, xAI und lokales Ollama über dieselbe Agenten-Oberfläche. Wir fügten Billing, mehrsprachige UI und die Lieferobjekt-Schicht hinzu. Für das größere Bild davon, wo AI in der Aktien-Research heute tatsächlich Hebel liefert, siehe [KI für Aktienforschung 2026](/blog/ai-for-stock-research-2026).
 
 ## Was als Nächstes kommt
 

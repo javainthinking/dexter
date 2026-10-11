@@ -47,7 +47,7 @@ The table below maps the inheritance. The left column is Dexter's contribution; 
 
 | Layer | From Dexter (open source) | Added by PickSkill |
 |---|---|---|
-| **Agent loop** | Task planning, tool execution, self-reflection, scratchpad logging | Multi-tenant session state, quota + billing, memory across sessions |
+| **Agent loop** | Task planning, tool execution, self-reflection, scratchpad logging | Multi-tenant session state, quota + billing |
 | **Surface** | Interactive CLI (Ink/React-in-terminal) | Browser web app, 8 locales, mobile layout, shareable links |
 | **Data** | Live financials + market data | US + Hong Kong + A-share coverage, limit-bar masking, capital-flow proxy |
 | **Output** | Terminal text + scratchpad JSONL | Native `.docx` / `.pptx` / `.xlsx` via OfficeCLI on presigned links |
@@ -88,7 +88,7 @@ Each dimension ships with a [5-day signal trail](/blog/5-day-signal-trail) — f
 
 We kept the philosophy that defines Dexter: sourced output or it didn't happen, editable assumptions over black-box answers, and a self-validating agent loop. Those principles map directly onto our GTM promise — *PickSkill is the AI analyst that researches, models, and drafts equity work in plain English.*
 
-What we changed is everything a non-technical user touches. The provider layer was generalised — Dexter supports multiple model providers, and PickSkill ships with OpenAI's gpt-5.5 family as default while supporting Anthropic, Google Gemini, xAI, and local Ollama through the same agent surface. We added billing, memory, multi-language UI, and the deliverable layer. For the bigger picture of where AI in equity research actually delivers leverage today, see [AI for Stock Research in 2026](/blog/ai-for-stock-research-2026).
+What we changed is everything a non-technical user touches. The provider layer was generalised — Dexter supports multiple model providers, and PickSkill ships with OpenAI's gpt-5.5 family as default while supporting Anthropic, Google Gemini, xAI, and local Ollama through the same agent surface. We added billing, multi-language UI, and the deliverable layer. For the bigger picture of where AI in equity research actually delivers leverage today, see [AI for Stock Research in 2026](/blog/ai-for-stock-research-2026).
 
 ## What's next
 

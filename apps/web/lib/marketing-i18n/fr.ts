@@ -82,29 +82,26 @@ export const features: FeaturesContent = {
     'ai-analyst': {
       eyebrow: 'Recherche',
       name: 'Analyste IA',
-      tagline: 'Demandez tout ce que vous demanderiez à un analyste junior — obtenez des réponses sourcées, des modèles en direct, et une mémoire qui retient votre thèse d’une session à l’autre.',
+      tagline: 'Demandez tout ce que vous demanderiez à un analyste junior — obtenez des réponses sourcées et des modèles en direct.',
       description:
-        'Un analyste IA qui étudie les dépôts SEC et les données de marché, construit des modèles DCF, lit les 10-K et retient votre thèse d’une session à l’autre — en langage clair.',
+        'Un analyste IA qui étudie les dépôts SEC et les données de marché, construit des modèles DCF et lit les 10-K — en langage clair.',
       headline: 'L’analyste qui fait la recherche, la modélisation et la rédaction.',
       imageAlt:
-        'Maquette produit du chat PickSkill — une question de recherche, une réponse sourcée avec citations et un graphique, et une puce de mémoire retenant la thèse.',
+        'Maquette produit du chat PickSkill — une question de recherche, une réponse sourcée avec citations et un graphique.',
       ctaLabel: 'Interroger l’analyste',
       capabilities: [
         { title: 'Valorisation à la demande', body: 'Des modèles de flux de trésorerie actualisés complets avec tables de sensibilité, analyse de sociétés comparables et DCF inversés — entrées sourcées, hypothèses modifiables, en quelques secondes.' },
         { title: 'Lit les dépôts pour vous', body: 'Résume un 10-K en 60 secondes, compare les facteurs de risque d’une année sur l’autre, fait ressortir le signal du MD&A et les notes de bas de page à creuser — chaque affirmation reliée à sa page sur EDGAR.' },
         { title: 'Recherche multi-sources', body: 'Croise le web, les dépôts et les données de marché en un seul tour, puis répond avec citations — pas une supposition confiante. Honnête sur ce qu’il peut et ne peut pas vérifier.' },
-        { title: 'Mémoire à long terme', body: 'Retient votre thèse, les tickers que vous suivez et vos préférences d’une session à l’autre, pour que vous reprenniez là où vous vous étiez arrêté au lieu de réexpliquer le contexte à chaque fois.' },
         { title: 'Couverture des actions américaines, hongkongaises et A', body: 'Reconnaît les tickers NYSE/NASDAQ, HKEx et SSE/SZSE et récupère le bon jeu de dépôts et les conventions de marché propres à chaque place.' },
       ],
       howItWorks: [
         { step: 'Demandez en langage clair', detail: '« Construis un DCF sur 5 ans pour TSMC », « qu’est-ce qui a changé dans les facteurs de risque de NVDA », « compare AMD et Intel sur le FCF ».' },
         { step: 'Il fait la recherche', detail: 'Croise les dépôts, les données de marché et le web — exécute le modèle ou la comparaison — et montre son raisonnement.' },
         { step: 'Obtenez une réponse sourcée', detail: 'Une réponse documentée avec citations, graphiques et livrables téléchargeables — pas une supposition opaque.' },
-        { step: 'Il se souvient', detail: 'Votre thèse et votre contexte persistent d’une session à l’autre, pour que la question suivante s’appuie sur la précédente.' },
       ],
       faq: [
         { q: 'En quoi est-ce différent de demander à ChatGPT ?', a: 'PickSkill ancre chaque réponse dans des données en direct — il récupère le 10-K réel, calcule le DCF, exécute les indicateurs et cite ses sources au moment de la requête. Les chatbots génériques répondent à partir de leurs données d’entraînement et fabriquent régulièrement des chiffres financiers. L’ancrage fait toute la différence, surtout pour le travail de valorisation et sur les dépôts.' },
-        { q: 'Que retient réellement la « mémoire » ?', a: 'Votre thèse d’investissement, les tickers que vous suivez, vos préférences et le contexte des conversations précédentes — persistés d’une session à l’autre et limités à votre compte. Vous pouvez consulter et modifier les entrées de mémoire, et elles sont illimitées sur tous les plans.' },
         { q: 'Quels marchés sont couverts ?', a: 'Les États-Unis (NYSE / NASDAQ), Hong Kong (HKEx) et les actions A chinoises (SSE / SZSE). L’analyste récupère les dépôts adaptés à chaque marché — 10-K/10-Q pour les États-Unis, rapports intérimaires/annuels pour Hong Kong, et la ligne de résultat net 扣非 pour les actions A.' },
       ],
     },
@@ -122,7 +119,7 @@ export const pricing: PricingContent = {
   perMonth: '/mois',
   mostPopular: 'Le plus populaire',
   everyPlanNote:
-    'Les 8 dimensions d’indicateurs et la mémoire à long terme illimitée sont incluses dans tous les plans.',
+    'Les 8 dimensions d’indicateurs sont incluses dans tous les plans.',
   comparisonHeading: 'Comparer les plans',
   billing: {
     monthly: 'Mensuel',
@@ -142,7 +139,6 @@ export const pricing: PricingContent = {
         '1 portefeuille · 10 positions',
         '2 fichiers générés / mois (PPT / Word / Excel)',
         'Les 8 dimensions d’indicateurs',
-        'Mémoire à long terme illimitée',
       ],
     },
     starter: {
@@ -190,7 +186,6 @@ export const pricing: PricingContent = {
         { label: 'Conversations / mois', values: ['30', '200', '1 000', 'Illimitées'] },
         { label: 'Tours de recherche approfondie / mois', values: ['5', '50', '300', 'Illimités'] },
         { label: 'Workflows spécialisés (DCF, recherche X)', values: [true, true, true, true] },
-        { label: 'Mémoire à long terme', values: ['Illimitée', 'Illimitée', 'Illimitée', 'Illimitée'] },
       ],
     },
     {
@@ -241,7 +236,7 @@ export const pricing: PricingContent = {
     { q: 'Qu’est-ce qui compte comme une « conversation » ?', a: 'Un échange aller-retour avec l’IA sur un sujet — y compris les relances et les appels d’outils au sein de ce fil. Nous comptons l’ensemble du fil comme une seule conversation au regard de votre quota mensuel.' },
     { q: 'Comment fonctionne la génération de fichiers ?', a: 'Demandez à l’IA de créer un fichier PowerPoint, Word ou Excel. Nous le générons, l’hébergeons sur Cloudflare R2 et vous donnons un lien de téléchargement valable 7 jours dans le chat. Chaque fichier compte pour un au regard de votre quota mensuel quelle que soit sa longueur.' },
     { q: 'Puis-je basculer entre facturation mensuelle et annuelle ?', a: 'Oui, à tout moment. Mensuel → annuel facture un montant annuel au prorata et décale votre date de renouvellement. Annuel → mensuel prend effet à votre prochain renouvellement.' },
-    { q: 'Mes données sont-elles conservées si je change de plan ?', a: 'Oui. Portefeuilles, positions, entrées de mémoire et historique des conversations suivent votre compte. Si vous passez sous une limite, les données plus anciennes deviennent en lecture seule jusqu’à ce que vous en supprimiez ou que vous montiez de plan — rien n’est supprimé.' },
+    { q: 'Mes données sont-elles conservées si je change de plan ?', a: 'Oui. Portefeuilles, positions et historique des conversations suivent votre compte. Si vous passez sous une limite, les données plus anciennes deviennent en lecture seule jusqu’à ce que vous en supprimiez ou que vous montiez de plan — rien n’est supprimé.' },
     { q: 'Quels moyens de paiement acceptez-vous ?', a: 'Les principales cartes bancaires via Stripe. Les méthodes locales (Alipay, WeChat Pay) pour les régions prises en charge sont prévues dans la feuille de route.' },
   ],
 };

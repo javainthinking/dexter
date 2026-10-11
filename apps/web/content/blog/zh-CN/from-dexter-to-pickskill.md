@@ -40,7 +40,7 @@ Dexter 是一个用于深度金融研究的开源 AI agent,用 TypeScript 配合
 
 | 层 | 来自 Dexter(开源) | PickSkill 新增 |
 |---|---|---|
-| **Agent 循环** | 任务规划、工具执行、自我反思、scratchpad 记录 | 多租户会话状态、配额 + 计费、跨会话记忆 |
+| **Agent 循环** | 任务规划、工具执行、自我反思、scratchpad 记录 | 多租户会话状态、配额 + 计费 |
 | **界面** | 交互式 CLI(Ink / 终端里的 React) | 浏览器 Web 应用、8 种语言、移动端布局、可分享链接 |
 | **数据** | 实时财务 + 市场数据 | 美股 + 港股 + A 股覆盖、涨跌停 K 线屏蔽、资金流代理指标 |
 | **输出** | 终端文本 + scratchpad JSONL | 通过 OfficeCLI 生成的原生 `.docx` / `.pptx` / `.xlsx`,以预签名链接交付 |
@@ -81,7 +81,7 @@ Dexter 一次回答一个问题。PickSkill 加入了*常驻*分析:一个你在
 
 我们保留了定义 Dexter 的那套哲学:要么有出处的输出、要么当它没发生,可编辑的假设优于黑箱答案,以及一个自我校验的 agent 循环。这些原则直接对应到我们的 GTM 承诺 —— *PickSkill 是那位用大白话做研究、建模并起草股票研究工作的 AI 分析师。*
 
-我们改变的,是非技术用户会触碰到的一切。提供商层被泛化了 —— Dexter 支持多个模型提供商,PickSkill 默认搭载 OpenAI 的 gpt-5.5 系列,同时通过同一个 agent 界面支持 Anthropic、Google Gemini、xAI 和本地 Ollama。我们加入了计费、记忆、多语言 UI 和那套可交付物层。关于 AI 在股票研究中今天究竟在哪里带来真正杠杆的更大图景,见 [2026 年的 AI 选股研究](/blog/ai-for-stock-research-2026)。
+我们改变的,是非技术用户会触碰到的一切。提供商层被泛化了 —— Dexter 支持多个模型提供商,PickSkill 默认搭载 OpenAI 的 gpt-5.5 系列,同时通过同一个 agent 界面支持 Anthropic、Google Gemini、xAI 和本地 Ollama。我们加入了计费、多语言 UI 和那套可交付物层。关于 AI 在股票研究中今天究竟在哪里带来真正杠杆的更大图景,见 [2026 年的 AI 选股研究](/blog/ai-for-stock-research-2026)。
 
 ## 接下来在做什么
 

@@ -2,7 +2,7 @@
   "common": {
     "appName": "PickSkill",
     "openGraphTitle": "PickSkill — 你的持倉研究智能體",
-    "openGraphDescription": "即時行情、技術訊號,以及一位會記住你投資邏輯的 AI 分析師 — 涵蓋美股、港股、A 股。"
+    "openGraphDescription": "即時行情、技術訊號,以及一位以即時資料為本的 AI 分析師 — 涵蓋美股、港股、A 股。"
   },
   "landing": {
     "badge": "自主研究代理",
@@ -13,7 +13,7 @@
       "subtitle": "一位 AI 分析師,為你研究市場、建立估值模型,並把成果直接做成可寄出的 PowerPoint 簡報、Word 報告或 Excel 模型 — 全部源自美股、港股與 A 股的即時資料,下載後即可編輯。",
       "primaryCta": "進入工作台",
       "secondaryCta": "看看它能做出什麼",
-      "tagline": "即時資料 · PPT / Word / Excel · 記憶為本"
+      "tagline": "即時資料 · PPT / Word / Excel · 有據可查"
     },
     "stats": {
       "items": [
@@ -33,11 +33,6 @@
         "eyebrow": "02 — 即時資料",
         "title": "直連市場與公告文件",
         "body": "透過 Financial Datasets 取得即時行情、基本面、關鍵比率與新聞,再加上網頁搜尋與文件工具 — 不用過時快照。"
-      },
-      "memory": {
-        "eyebrow": "03 — 持久記憶",
-        "title": "記得你的投資邏輯",
-        "body": "長期記憶存放在 MemoryLake。PickSkill 每一輪都會調取你過往的部位、偏好與規則,讓分析始終貼合你本人。"
       }
     },
     "samples": {
@@ -60,8 +55,7 @@
       "legendNeutral": "中性",
       "legendBear": "看空",
       "analystPrompt": "NVDA 的風險因素有哪些變化?",
-      "analystSourced": "附來源 · 10-K,第 27 頁",
-      "analystMemory": "記住你的投資邏輯"
+      "analystSourced": "附來源 · 10-K,第 27 頁"
     },
     "showcase": {
       "eyebrow": "它能做什麼",
@@ -77,7 +71,7 @@
         { "q": "PickSkill 是什麼?", "a": "PickSkill 是一位 AI 股票研究分析師。你只要用日常語言提問 — 關於某檔股票、某份公告文件、某個估值,或你的投資組合 — 它就會研究即時市場資料、執行分析,並能把結果做成可下載、可編輯的 PowerPoint 簡報、Word 報告或 Excel 模型。涵蓋美股、港股與中國 A 股市場。" },
         { "q": "PickSkill 能生成 PowerPoint、Word 與 Excel 檔案嗎?", "a": "可以。PickSkill 會生成原生的 .pptx 簡報、.docx 報告與 .xlsx 模型 — 而非截圖或 PDF。你可以說「做一份 12 頁的 NVDA 投資人簡報」或「在 Excel 裡建一個 5 年 DCF」,它就會根據即時公告文件與市場資料建出檔案,附帶來源且可編輯。檔案會以聊天中的下載連結交付,並可在 PowerPoint、Word、Excel、Keynote、Google Workspace 或 LibreOffice 中開啟。" },
         { "q": "PickSkill 使用哪些市場與資料?", "a": "PickSkill 會調取即時價格、基本面與 SEC 公告文件(港股與 A 股另加港交所與巨潮資訊的揭露),再以最新收盤價計算技術指標。每一個數字在查詢當下都可追溯到來源,因此分析反映的是當前資料,而非模型訓練資料的截止時點。" },
-        { "q": "PickSkill 跟用 ChatGPT 做股票研究有什麼不同?", "a": "通用聊天機器人是從訓練資料作答,常常會編造財務數字。PickSkill 則把每一個答案都建立在即時資料之上 — 它會調取真正的 10-K、計算 DCF、跑技術指標,並標註來源。它還會跨對話記住你的投資邏輯與關注列表,並產出真正的 Office 檔案,而不只是純文字。" },
+        { "q": "PickSkill 跟用 ChatGPT 做股票研究有什麼不同?", "a": "通用聊天機器人是從訓練資料作答,常常會編造財務數字。PickSkill 則把每一個答案都建立在即時資料之上 — 它會調取真正的 10-K、計算 DCF、跑技術指標,並標註來源。它還會產出真正的 Office 檔案,而不只是純文字。" },
         { "q": "它包含哪些技術指標與投資組合工具?", "a": "所有方案都包含八個技術維度 — MACD、移動平均線(20/60/200)、RSI、KDJ、布林通道、ADX、成交量,以及資金流量代理指標 — 再加上背離與支撐/壓力掃描,每項都附帶 5 天的訊號軌跡。你可以追蹤多個投資組合,並把儀表板匯出成簡報、報告或活頁簿。" },
         { "q": "PickSkill 免費嗎?它算投資建議嗎?", "a": "有一個免費方案,每月 30 次對話,免綁卡;付費方案自每月 $15 起。PickSkill 是一個研究工具,並非持牌顧問 — 其輸出僅供資訊與教育用途,不構成投資建議。請務必自行做好盡職調查。" }
       ]
@@ -281,15 +275,12 @@
     "tickers": "標的",
     "tickerPlaceholder": "新增標的(如 NVDA、0700.HK)",
     "addTicker": "新增",
-    "saveToMemory": "儲存到記憶",
     "saved": "已儲存",
     "lastSavedAt": "上次儲存",
     "confirm": "確認",
     "loading": "正在計算指標…",
     "error": "指標載入失敗。",
     "retry": "重試",
-    "emptyTitle": "記憶中暫無持倉。",
-    "emptyHint": "告訴 PickSkill 你的持倉 — 例如 NVDA、TSLA、0700.HK — 然後點擊「儲存到記憶」,這樣以後不用再輸入。",
     "emptyAfterClear": "至少新增一檔標的才能查看該指標。",
     "portfolio": "持倉",
     "noPortfolios": "尚未建立持倉 — 請先新增一個。",

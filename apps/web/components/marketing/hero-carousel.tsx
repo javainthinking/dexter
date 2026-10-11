@@ -18,7 +18,6 @@ export interface HeroSceneLabels {
   legendBear: string;
   analystPrompt: string;
   analystSourced: string;
-  analystMemory: string;
 }
 
 export interface HeroSlide {
@@ -344,13 +343,6 @@ function AnalystScene({ labels }: { labels: HeroSceneLabels }) {
         </div>
         {/* mini chart — animated line draw */}
         <LottieChart src="/lottie/market-line.json" className="mt-3 h-16 w-full" />
-      </div>
-      {/* memory pill */}
-      <div className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1">
-        <span className="size-1.5 rounded-full bg-[color:var(--accent)] animate-pulse-soft" />
-        <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">
-          {labels.analystMemory}
-        </span>
       </div>
     </div>
   );

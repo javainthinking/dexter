@@ -40,7 +40,6 @@ Annual plans save 20%. Cancel anytime.
 | Conversations per month | 30 | 200 | 1,000 | Unlimited |
 | Deep-research turns per month *(web + filings + multi-source)* | 5 | 50 | 300 | Unlimited |
 | Specialised workflows *(DCF, X/Twitter research, sector deep-dives)* | — | Basic | All | All + custom |
-| Long-term memory entries | Unlimited | Unlimited | Unlimited | Unlimited |
 | **Documents generated** | | | | |
 | Files per month *(PowerPoint / Word / Excel)* | 2 | 8 | 30 | 100+ |
 | AI model used for file generation | Advanced | Advanced | Advanced | Advanced |
@@ -138,7 +137,7 @@ will be included for everyone.
 
 ### Will my data carry over if I upgrade or downgrade?
 
-Yes. Portfolios, holdings, memory entries, and conversation history
+Yes. Portfolios, holdings, and conversation history
 move with your account. If you downgrade and exceed the lower plan's
 limits, we keep all your data — older portfolios become read-only
 until you remove some or upgrade again, but nothing is deleted.

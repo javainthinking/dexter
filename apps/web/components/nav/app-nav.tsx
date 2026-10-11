@@ -97,7 +97,7 @@ export function AppNav() {
           aria-current={e.active ? 'page' : undefined}
           className={cn(
             // Icon-only square on mobile, icon + label pill from md up.
-            // Three labels (Portfolios/Indicators/Memory) translate to
+            // Labels (Portfolios/Indicators/Market) translate to
             // longer strings in some locales (e.g. "Portefeuilles",
             // "Indikatoren"), so hiding text on small screens prevents
             // the header from wrapping or crowding the language/user

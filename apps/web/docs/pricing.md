@@ -47,7 +47,6 @@ will shift when we substitute real GPT-5.5 rates.
 | Simple chat turn (definition / fact / single tool call) | 1–3 | 5–10K in, 0.5–1.5K out, cached | — | **$0.02 – 0.05** |
 | Research chat (web + finance, multi-tool) | 8–15 | 50–100K cumulative in, 5–10K out | Exa $0.005, FinDatasets ~$0.01 | **$0.10 – 0.30** |
 | File generation (PPT/Word/Excel, 20-30 iterations across chunks) | 20–30 | 150–300K cumulative, 10–25K out | + R2 PUT (negligible) | **$0.40 – 1.20** |
-| Memory search | n/a | embedding only | — | **<$0.001** |
 | Portfolio quote (Yahoo path) | n/a | — | Yahoo Finance free | **<$0.001** |
 | Portfolio quote (FinDatasets path) | n/a | — | FinDatasets ~$0.001/call | **~$0.001** |
 
@@ -93,7 +92,6 @@ single lever.
 | Default model | mini | mini | flagship | flagship |
 | Chats / month | 30 | 200 | 1000 (soft cap, then warn) | unlimited (overage above 2000: $0.05/each) |
 | File generations / month | 2 | 8 | 30 | 100 (overage: $1.00/each) |
-| Memory entries | unlimited | unlimited | unlimited | unlimited |
 | **Agent — research** | | | | |
 | Deep research turns / month (web + filings) | 5 | 50 | 300 | unlimited |
 | Multi-skill workflows (DCF, x-research, etc.) | — | basic | all | all + custom skills |
@@ -233,7 +231,7 @@ Reserved for Pro/Power because:
 | 200 chats × $0.002 (mini model) | $0.40 |
 | 50 research × $0.025 (mini + 1 search) | $1.25 |
 | 8 file gens × $0.40 (routed to flagship) | $3.20 |
-| Memory + portfolios + quotes (manual) | $0.75 |
+| Portfolios + quotes (manual) | $0.75 |
 | APIs (FinDatasets allocation, Exa, R2, Postgres) | $0.50 |
 | Vercel compute | $0.30 |
 | **Total** | **~$6.40** |

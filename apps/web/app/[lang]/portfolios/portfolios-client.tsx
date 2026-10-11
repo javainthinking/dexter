@@ -130,7 +130,7 @@ export function PortfoliosClient({
   // Delete-confirm state (inline two-step rather than modal)
   const [confirmingDeleteId, setConfirmingDeleteId] = React.useState<string | null>(null);
 
-  // ─── sidebar plumbing (mirror /memory + /indicators) ──────────────
+  // ─── sidebar plumbing (mirror /indicators) ──────────────
   React.useEffect(() => {
     (async () => {
       try {
