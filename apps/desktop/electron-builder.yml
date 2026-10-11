@@ -1,0 +1,33 @@
+appId: ai.pickskill.desktop
+productName: PickSkill
+directories:
+  output: release
+  buildResources: build
+files:
+  - out/**
+  # Runtime assets mirrored by scripts/bundle-worker.mjs (not a dependency tree).
+  - out/main/node_modules/**
+  - package.json
+  - "!spike/**"
+  - "!scripts/**"
+  - "!e2e-shots/**"
+# Dexter's SKILL.md skills ship as plain files the agent worker mounts.
+extraResources:
+  - from: ../../src/skills
+    to: skills
+    filter: ["**/*.md", "**/*.json", "**/*.txt"]
+asar: true
+# OpenCode's native addons (pty, tree-sitter, file watcher) must live outside the asar.
+asarUnpack:
+  - "**/*.node"
+protocols:
+  - name: PickSkill
+    schemes: [pickskill]
+mac:
+  category: public.app-category.finance
+  target:
+    - target: dmg
+      arch: [arm64, x64]
+  hardenedRuntime: true
+  # Signing + notarization need an Apple Developer ID; POC builds are unsigned.
+  identity: null
