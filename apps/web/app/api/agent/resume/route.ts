@@ -119,7 +119,7 @@ export async function POST(request: NextRequest): Promise<Response> {
   const fileIntentBlocked = filesBlocked && looksLikeFileRequest(resumeState.query);
 
   const controller = new AgentRunnerController(
-    { model: resumeState.model ?? undefined, memoryEnabled: true, disableFileGeneration: filesBlocked },
+    { model: resumeState.model ?? undefined, disableMemory: true, disableFileGeneration: filesBlocked },
     session.history,
     undefined,
     ports,

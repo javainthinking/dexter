@@ -1,4 +1,4 @@
-import { buildCompactToolDescriptions } from '../tools/registry.js';
+import { buildCompactToolDescriptions, MEMORY_TOOL_NAMES } from '../tools/registry.js';
 import { buildSkillMetadataSection, discoverSkills } from '../skills/index.js';
 import { readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
@@ -220,8 +220,10 @@ export function buildSystemPrompt(
   memoryFiles?: string[],
   memoryContext?: string | null,
   rulesContent?: string | null,
+  options: { memory?: boolean } = {},
 ): string {
-  const toolDescriptions = buildCompactToolDescriptions(model);
+  const memory = options.memory !== false;
+  const toolDescriptions = buildCompactToolDescriptions(model, memory ? [] : MEMORY_TOOL_NAMES);
   const profile = getChannelProfile(channel);
 
   const behaviorBullets = profile.behavior.map(b => `- ${b}`).join('\n');
@@ -264,7 +266,7 @@ Stopping early after a \`_required\` payload — for example, after \`office_edi
 
 ${buildSkillsSection()}
 
-${buildMemorySection(memoryFiles ?? [], memoryContext)}
+${memory ? buildMemorySection(memoryFiles ?? [], memoryContext) : ''}
 
 ## Behavior
 

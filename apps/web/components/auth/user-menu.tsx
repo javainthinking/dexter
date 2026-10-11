@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useSession, signOut } from 'next-auth/react';
-import { BrainCircuit, CreditCard, LogOut, Palette, User as UserIcon } from 'lucide-react';
+import { CreditCard, LogOut, Palette, User as UserIcon } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -106,21 +106,10 @@ export function UserMenu({ variant = 'compact', className }: UserMenuProps) {
           )}
         </div>
         <DropdownMenuSeparator />
-        {/* Memory lives in the user menu rather than the top-bar nav
-            cluster — it's a personal-account surface ('what does
-            PickSkill remember about me'), not a section like
-            Portfolios or Indicators. The dropdown grouping fits the
-            mental model and keeps the global nav lean. */}
         <DropdownMenuItem asChild>
           <LocalizedLink href="/account">
             <CreditCard className="size-4" />
             {dict.account.title}
-          </LocalizedLink>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <LocalizedLink href="/memory">
-            <BrainCircuit className="size-4" />
-            {dict.nav.memory}
           </LocalizedLink>
         </DropdownMenuItem>
         <DropdownMenuSeparator />

@@ -16,7 +16,6 @@ import { SignInClient } from '@web/app/[lang]/sign-in/sign-in-client';
 const PortfoliosClient = lazy(() => import('@web/app/[lang]/portfolios/portfolios-client').then((m) => ({ default: m.PortfoliosClient })));
 const IndicatorsClient = lazy(() => import('@web/app/[lang]/indicators/indicators-client').then((m) => ({ default: m.IndicatorsClient })));
 const MarketClient = lazy(() => import('@web/app/[lang]/market/market-client').then((m) => ({ default: m.MarketClient })));
-const MemoryClient = lazy(() => import('@web/app/[lang]/memory/memory-client').then((m) => ({ default: m.MemoryClient })));
 const FeedbackClient = lazy(() => import('@web/app/[lang]/feedback/feedback-client').then((m) => ({ default: m.FeedbackClient })));
 const ChatRoute = lazy(() => import('@web/app/[lang]/chat/page'));
 
@@ -65,7 +64,6 @@ function Routes({ plan }: { plan: PlanId }) {
   if (path === '/portfolios') page = <WithPortfolios>{(p) => <PortfoliosClient initialPortfolios={p} plan={plan} />}</WithPortfolios>;
   else if (path === '/indicators') page = <WithPortfolios>{(p) => <IndicatorsClient initialPortfolios={p} />}</WithPortfolios>;
   else if (path === '/market') page = <MarketClient />;
-  else if (path === '/memory') page = <MemoryClient />;
   else if (path === '/feedback') page = <FeedbackClient />;
   else if (path === '/chat') page = <ChatRoute />;
   else if (path !== '/') page = <OpenOnWeb path={pathname} />;

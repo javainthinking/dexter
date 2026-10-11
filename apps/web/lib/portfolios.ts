@@ -8,7 +8,6 @@ import {
   type Portfolio,
   type PortfolioHolding,
 } from '@dexter/core/db/schema/portfolios';
-import { isMemoryLakeConfigured } from './memorylake-client';
 
 /**
  * Server-side portfolio CRUD + MemoryLake summary sync.
@@ -67,11 +66,6 @@ function pgErrorCode(err: unknown): string | undefined {
   if (/violates foreign key constraint/i.test(text)) return '23503';
   return undefined;
 }
-const MEMORY_FILE = 'PORTFOLIOS.md';
-const MEMORY_KIND = 'portfolios';
-const ML_BASE = process.env.MEMORYLAKE_BASE_URL ?? '';
-const ML_PROJECT = process.env.MEMORYLAKE_PROJECT_ID ?? '';
-const ML_KEY = process.env.MEMORYLAKE_API_KEY ?? '';
 
 export interface AddHoldingInput {
   ticker: string;
@@ -209,7 +203,6 @@ export async function createPortfolio(
       return { portfolio: pf, holding: h };
     });
 
-    await syncMemorySnapshot(userId).catch(() => {});
     return { portfolio, holding };
   } catch (err) {
     // Unique-name collision surfaces as a Postgres 23505. We translate to
@@ -245,7 +238,6 @@ export async function updatePortfolio(
       .where(and(eq(portfolios.id, portfolioId), eq(portfolios.userId, userId)))
       .returning();
     if (!row) throw httpError(404, 'not_found');
-    await syncMemorySnapshot(userId).catch(() => {});
     return row;
   } catch (err) {
     if (pgErrorCode(err) === '23505') {
@@ -262,7 +254,6 @@ export async function deletePortfolio(userId: string, portfolioId: string): Prom
     .where(and(eq(portfolios.id, portfolioId), eq(portfolios.userId, userId)))
     .returning({ id: portfolios.id });
   if (result.length === 0) throw httpError(404, 'not_found');
-  await syncMemorySnapshot(userId).catch(() => {});
 }
 
 // ---------------------------------------------------------------------------
@@ -300,7 +291,6 @@ export async function addHolding(
       })
       .returning();
     await touchPortfolio(portfolioId);
-    await syncMemorySnapshot(userId).catch(() => {});
     return row;
   } catch (err) {
     if (pgErrorCode(err) === '23505') {
@@ -341,7 +331,6 @@ export async function updateHolding(
     .returning();
   if (!row) throw httpError(404, 'not_found');
   await touchPortfolio(portfolioId);
-  await syncMemorySnapshot(userId).catch(() => {});
   return row;
 }
 
@@ -373,159 +362,8 @@ export async function removeHolding(
     .returning({ id: portfolioHoldings.id });
   if (result.length === 0) throw httpError(404, 'not_found');
   await touchPortfolio(portfolioId);
-  await syncMemorySnapshot(userId).catch(() => {});
 }
 
-// ---------------------------------------------------------------------------
-// MemoryLake snapshot
-// ---------------------------------------------------------------------------
-
-/**
- * Push a compact "current portfolios" snapshot to MemoryLake so the agent
- * can still answer "what do I own?" via memory_search even though the
- * truth-store moved to Postgres. One memory per user; replaces the prior
- * snapshot (write-then-forget) so we don't drift to N snapshots over time.
- *
- * Best-effort: if MemoryLake is unreachable, the DB write still wins.
- * Callers wrap this in `.catch(() => {})`.
- */
-async function syncMemorySnapshot(userId: string): Promise<void> {
-  if (!isMemoryLakeConfigured()) return;
-  const items = await listPortfoliosForSnapshot(userId);
-  const body = renderSnapshot(items);
-
-  // Find + forget the prior snapshot first so we don't accumulate.
-  const prior = await findExistingSnapshot(userId).catch(() => null);
-  await postSnapshot(userId, body);
-  if (prior?.id) await forgetSnapshot(prior.id).catch(() => {});
-}
-
-interface PortfolioSnapshot {
-  name: string;
-  description: string | null;
-  holdings: Array<{ ticker: string; displayName: string | null; exchange: string | null; weight: number | null }>;
-}
-
-async function listPortfoliosForSnapshot(userId: string): Promise<PortfolioSnapshot[]> {
-  const db = getDb();
-  const pfs = await db.select().from(portfolios).where(eq(portfolios.userId, userId)).orderBy(asc(portfolios.createdAt));
-  if (pfs.length === 0) return [];
-  const ids = pfs.map((p) => p.id);
-  const allHoldings = await db
-    .select()
-    .from(portfolioHoldings)
-    .where(sql`portfolio_id = ANY(${ids})`)
-    .orderBy(asc(portfolioHoldings.position));
-  const byPf = new Map<string, PortfolioSnapshot['holdings']>();
-  for (const h of allHoldings) {
-    const list = byPf.get(h.portfolioId) ?? [];
-    list.push({
-      ticker: h.ticker,
-      displayName: h.displayName,
-      exchange: h.exchange,
-      weight: h.weight == null ? null : Number(h.weight),
-    });
-    byPf.set(h.portfolioId, list);
-  }
-  return pfs.map((p) => ({
-    name: p.name,
-    description: p.description,
-    holdings: byPf.get(p.id) ?? [],
-  }));
-}
-
-function renderSnapshot(items: PortfolioSnapshot[]): string {
-  if (items.length === 0) {
-    return "User's portfolios: (none — they haven't created any portfolios yet)";
-  }
-  const lines: string[] = [`User's portfolios (${items.length} total):`];
-  for (const p of items) {
-    const desc = p.description ? ` — ${p.description}` : '';
-    lines.push(`\n## ${p.name}${desc}`);
-    if (p.holdings.length === 0) {
-      lines.push('  (empty)');
-      continue;
-    }
-    for (const h of p.holdings) {
-      const name = h.displayName ? ` · ${h.displayName}` : '';
-      const ex = h.exchange ? ` (${h.exchange})` : '';
-      const w = h.weight == null ? '' : ` · ${h.weight}%`;
-      lines.push(`  - ${h.ticker}${name}${ex}${w}`);
-    }
-  }
-  return lines.join('\n');
-}
-
-// MemoryLake REST — calls go direct rather than reusing the
-// memorylake-client.ts module so the dependency stays unidirectional
-// (portfolio lib → memory; not the other way).
-
-async function postSnapshot(userId: string, content: string): Promise<void> {
-  const res = await fetch(
-    `${ML_BASE}/api/v2/projects/${encodeURIComponent(ML_PROJECT)}/memories`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${ML_KEY}`,
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify({
-        messages: [{ role: 'assistant', content }],
-        user_id: userId,
-        infer: false,
-        metadata: { kind: MEMORY_KIND, file: MEMORY_FILE },
-      }),
-      cache: 'no-store',
-    },
-  );
-  if (!res.ok) throw new Error(`MemoryLake sync ${res.status}`);
-}
-
-async function findExistingSnapshot(userId: string): Promise<{ id: string } | null> {
-  // Use search rather than list-and-filter so we don't scan the user's
-  // entire memory page just to find one record.
-  const res = await fetch(
-    `${ML_BASE}/api/v2/projects/${encodeURIComponent(ML_PROJECT)}/memories/search`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${ML_KEY}`,
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify({
-        query: 'portfolios holdings PORTFOLIOS.md',
-        user_id: userId,
-        top_k: 10,
-      }),
-      cache: 'no-store',
-    },
-  );
-  if (!res.ok) return null;
-  const env = (await res.json().catch(() => ({}))) as {
-    data?: { items?: Array<{ id: string; metadata?: Record<string, unknown> }> };
-  };
-  const items = env?.data?.items ?? [];
-  for (const item of items) {
-    const meta = (item.metadata ?? {}) as Record<string, unknown>;
-    if (meta.kind === MEMORY_KIND || meta.file === MEMORY_FILE) {
-      return { id: item.id };
-    }
-  }
-  return null;
-}
-
-async function forgetSnapshot(memoryId: string): Promise<void> {
-  await fetch(
-    `${ML_BASE}/api/v2/projects/${encodeURIComponent(ML_PROJECT)}/memories/${encodeURIComponent(memoryId)}/forget`,
-    {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${ML_KEY}`, Accept: 'application/json' },
-      cache: 'no-store',
-    },
-  );
-}
 
 // ---------------------------------------------------------------------------
 // Internals

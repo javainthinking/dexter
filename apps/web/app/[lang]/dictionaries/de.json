@@ -204,7 +204,6 @@
     "label": "Sprache"
   },
   "nav": {
-    "memory": "Gedächtnis",
     "indicators": "Indikatoren",
     "market": "Markt",
     "portfolios": "Portfolios",
@@ -353,25 +352,6 @@
     "refresh": "Aktualisieren",
     "retry": "Wiederholen",
     "error": "Marktdaten konnten nicht geladen werden."
-  },
-  "memory": {
-    "title": "Gedächtnis",
-    "subtitle": "Was sich PickSkill über Sie merkt. Vergessen Sie alles, was nicht hier bleiben soll.",
-    "searchPlaceholder": "Im Gedächtnis suchen…",
-    "clearSearch": "Suche zurücksetzen",
-    "empty": "Noch keine Einträge. PickSkill wird beim Recherchieren hier ablegen.",
-    "emptySearch": "Keine Einträge zu „{query}\".",
-    "loading": "Einträge werden geladen…",
-    "totalCountOne": "1 Eintrag",
-    "totalCountOther": "{count} Einträge",
-    "searchResultCount": "{count} Treffer",
-    "forget": "Vergessen",
-    "forgetConfirm": "Vergessen?",
-    "forgetConfirmYes": "Bestätigen",
-    "forgetConfirmNo": "Abbrechen",
-    "createdAt": "Gespeichert",
-    "notConfigured": "MemoryLake ist nicht konfiguriert. Setzen Sie MEMORYLAKE_API_KEY in der Umgebung.",
-    "errorLoading": "Einträge konnten nicht geladen werden. Bitte erneut versuchen."
   },
   "auth": {
     "signIn": "Anmelden",

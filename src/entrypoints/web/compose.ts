@@ -22,7 +22,6 @@ import { EnvSecretsVault } from '../../adapters/secrets/env.js';
 import { ConsoleLogger } from '../../adapters/logger/console.js';
 import { DisabledBrowserDriver } from '../../adapters/browser/disabled.js';
 import { PostgresMemoryAdapter } from '../../adapters/memory/postgres.js';
-import { MemoryLakeAdapter } from '../../adapters/memory/memorylake.js';
 import { PostgresWebSessionStore } from '../../adapters/storage/postgres/web-session-store.js';
 import { VercelBlobStore } from '../../adapters/blob/vercel-blob.js';
 import type { Memory } from '../../ports/memory.js';
@@ -59,32 +58,14 @@ function detectMode(): WebPortsMode {
 }
 
 /**
- * Memory backend selection (cloud mode):
- *   1. MemoryLake REST API when MEMORYLAKE_API_KEY + PROJECT_ID + BASE_URL
- *      are present. This is the preferred path — semantic search, conflict
- *      detection, and keyword clustering all live on the MemoryLake side.
- *   2. Postgres tables (dexter_memory_files / _chunks) as a fallback when
- *      the MemoryLake creds aren't configured. Phase 3.5 will enable
- *      pgvector here for parity.
+ * The web app has no memory feature (agent runs set `disableMemory`); the
+ * Postgres adapter only fills the required port and is never called.
  */
 function chooseMemoryAdapter(ctx: WebPortsContext): Memory {
   if (!ctx.userId) {
     throw new Error(
       'composeWebPorts(cloud) requires ctx.userId — every request must run as a known user.',
     );
-  }
-  const mlKey = process.env.MEMORYLAKE_API_KEY;
-  const mlProject = process.env.MEMORYLAKE_PROJECT_ID;
-  const mlBase = process.env.MEMORYLAKE_BASE_URL;
-  if (mlKey && mlProject && mlBase) {
-    // MemoryLake user_id = the authenticated app user id, so memory
-    // survives cookie wipes, new devices, and switching login methods.
-    return new MemoryLakeAdapter({
-      apiKey: mlKey,
-      projectId: mlProject,
-      baseUrl: mlBase,
-      userId: ctx.userId,
-    });
   }
   return new PostgresMemoryAdapter({ userId: ctx.userId });
 }

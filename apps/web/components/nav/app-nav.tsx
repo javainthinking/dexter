@@ -71,10 +71,6 @@ export function AppNav() {
       label: dict.nav?.market ?? 'Market',
       active: cleanPath === '/market' || cleanPath.startsWith('/market/'),
     },
-    // Memory entry intentionally absent — it's surfaced inside the
-    // UserMenu dropdown (a personal-account surface), not as a
-    // top-level section. See components/auth/user-menu.tsx.
-    //
     // Blog entry intentionally absent for signed-in users — once
     // someone is in the product, the marketing blog is a context
     // switch out of the app, not a primary destination. Keep it

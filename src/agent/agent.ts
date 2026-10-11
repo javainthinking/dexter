@@ -1,7 +1,7 @@
 import { AIMessage, AIMessageChunk, SystemMessage, HumanMessage, ToolMessage, type BaseMessage } from '@langchain/core/messages';
 import { StructuredToolInterface } from '@langchain/core/tools';
 import { callLlmWithMessages, streamLlmWithMessages } from '../model/llm.js';
-import { getTools, getToolConcurrencyMap } from '../tools/registry.js';
+import { getTools, getToolConcurrencyMap, MEMORY_TOOL_NAMES } from '../tools/registry.js';
 import { buildSystemPrompt, loadSoulDocument, loadRulesDocument } from './prompts.js';
 import { extractTextContent, hasToolCalls } from '../utils/ai-message.js';
 import { InMemoryChatHistory } from '../utils/in-memory-chat-history.js';
@@ -227,13 +227,13 @@ export class Agent {
     );
     this.systemPrompt = systemPrompt;
     this.signal = config.signal;
-    this.memoryEnabled = config.memoryEnabled ?? true;
+    this.memoryEnabled = !config.disableMemory && (config.memoryEnabled ?? true);
     this.messageQueue = config.messageQueue;
   }
 
   static async create(config: AgentConfig = {}): Promise<Agent> {
     const model = config.model ?? DEFAULT_MODEL;
-    const allTools = getTools(model);
+    const allTools = getTools(model).filter((t) => !config.disableMemory || !MEMORY_TOOL_NAMES.includes(t.name));
     const tools = config.toolAllowlist
       ? allTools.filter(t => config.toolAllowlist!.includes(t.name))
       : allTools;
@@ -251,7 +251,7 @@ export class Agent {
       let memoryFiles: string[] = [];
       let memoryContext: string | null = null;
 
-      if (config.memoryEnabled !== false) {
+      if (config.memoryEnabled !== false && !config.disableMemory) {
         const memoryManager = await MemoryManager.get();
         memoryFiles = await memoryManager.listFiles();
         const session = await memoryManager.loadSessionContext();
@@ -268,6 +268,7 @@ export class Agent {
         memoryFiles,
         memoryContext,
         rulesContent,
+        { memory: !config.disableMemory },
       );
     }
     return new Agent(config, tools, systemPrompt, concurrencyMap);

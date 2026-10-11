@@ -33,13 +33,12 @@ const AUTH_COOKIE_NAMES = [
 /** Paths that require auth (after locale stripping). */
 // /desktop/authorize does its own auth handling (provider=google must reach
 // the page signed-out), so it is not listed here.
-const PROTECTED_PREFIXES = ['/chat', '/memory', '/indicators', '/portfolios'];
+const PROTECTED_PREFIXES = ['/chat', '/indicators', '/portfolios'];
 
 /** API paths that require auth. */
 const PROTECTED_API_PREFIXES = [
   '/api/agent',
   '/api/sessions',
-  '/api/memory',
   '/api/indicators',
   '/api/portfolios',
   '/api/desktop/llm',

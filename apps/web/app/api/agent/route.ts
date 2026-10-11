@@ -129,9 +129,8 @@ export async function POST(request: NextRequest): Promise<Response> {
 
   const sink = new SseEventSink();
 
-  // Per-request CorePorts bundle. userId flows to the MemoryLake adapter so
-  // memories accumulate against the real authenticated user (not a session
-  // cookie). orgId is reserved for Phase 5 multi-tenant B2B.
+  // Per-request CorePorts bundle, scoped to the authenticated user. orgId is
+  // reserved for Phase 5 multi-tenant B2B.
   const ports = await composeWebPorts({
     requestId,
     userId: user.id,
@@ -141,7 +140,7 @@ export async function POST(request: NextRequest): Promise<Response> {
   // Construct the controller. AgentConfig stays small here; Phase 3 lets
   // tenants pick their own model via UI.
   const controller = new AgentRunnerController(
-    { model: body.model, memoryEnabled: true, disableFileGeneration: filesBlocked },
+    { model: body.model, disableMemory: true, disableFileGeneration: filesBlocked },
     session.history,
     undefined,
     ports,

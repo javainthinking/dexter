@@ -56,6 +56,13 @@ export interface AgentConfig {
   sessionApprovedTools?: Set<string>;
   /** Enable/disable persistent memory integration for this run */
   memoryEnabled?: boolean;
+  /**
+   * Remove memory entirely: no memory_* tools, no memory section in the
+   * system prompt, no context load or flush. For surfaces without a memory
+   * feature (the web app). Stronger than `memoryEnabled: false`, which keeps
+   * the tools available.
+   */
+  disableMemory?: boolean;
   /** Message queue for mid-run injection of new user messages. */
   messageQueue?: MessageQueue;
   /**

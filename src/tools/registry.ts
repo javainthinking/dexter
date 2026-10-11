@@ -45,6 +45,8 @@ export interface RegisteredTool {
  * @param model - The model name (needed for tools that require model-specific configuration)
  * @returns Array of registered tools
  */
+export const MEMORY_TOOL_NAMES = ['memory_search', 'memory_get', 'memory_update'];
+
 export function getToolRegistry(model: string): RegisteredTool[] {
   const tools: RegisteredTool[] = [
     {
@@ -267,8 +269,9 @@ export function getTools(model: string): StructuredToolInterface[] {
  * Uses 1-2 sentence descriptions instead of full multi-paragraph ones.
  * The LLM already has full tool schemas via bindTools().
  */
-export function buildCompactToolDescriptions(model: string): string {
+export function buildCompactToolDescriptions(model: string, exclude: readonly string[] = []): string {
   return getToolRegistry(model)
+    .filter((t) => !exclude.includes(t.name))
     .map((t) => `- **${t.name}**: ${t.compactDescription}`)
     .join('\n');
 }

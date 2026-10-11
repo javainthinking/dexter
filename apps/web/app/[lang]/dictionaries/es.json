@@ -204,7 +204,6 @@
     "label": "Idioma"
   },
   "nav": {
-    "memory": "Memoria",
     "indicators": "Indicadores",
     "market": "Mercado",
     "portfolios": "Carteras",
@@ -353,25 +352,6 @@
     "refresh": "Actualizar",
     "retry": "Reintentar",
     "error": "No se pudieron cargar los datos del mercado."
-  },
-  "memory": {
-    "title": "Memoria",
-    "subtitle": "Lo que PickSkill recuerda sobre ti. Olvida cualquier cosa que prefieras que no guarde.",
-    "searchPlaceholder": "Buscar en la memoria…",
-    "clearSearch": "Limpiar búsqueda",
-    "empty": "Aún no hay recuerdos. PickSkill guardará cosas aquí mientras investigas.",
-    "emptySearch": "No hay recuerdos que coincidan con «{query}».",
-    "loading": "Cargando recuerdos…",
-    "totalCountOne": "1 recuerdo",
-    "totalCountOther": "{count} recuerdos",
-    "searchResultCount": "{count} resultados",
-    "forget": "Olvidar",
-    "forgetConfirm": "¿Olvidar?",
-    "forgetConfirmYes": "Confirmar",
-    "forgetConfirmNo": "Cancelar",
-    "createdAt": "Guardado",
-    "notConfigured": "MemoryLake no está configurado. Añade MEMORYLAKE_API_KEY al entorno.",
-    "errorLoading": "No se pudieron cargar los recuerdos. Inténtalo de nuevo."
   },
   "auth": {
     "signIn": "Iniciar sesión",
