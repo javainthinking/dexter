@@ -74,7 +74,7 @@ export function serveApp(renderer: string, deps: ProxyDeps): void {
 }
 
 /** Server routes the signed-out app may call (sign-in form). */
-const PUBLIC_PATHS = new Set(['/api/auth/email/send']);
+const PUBLIC_PATHS = new Set(['/api/auth/email/send', '/api/desktop/auth-config']);
 
 async function forward(req: Request, url: URL, deps: ProxyDeps): Promise<Response> {
   const token = deps.token();

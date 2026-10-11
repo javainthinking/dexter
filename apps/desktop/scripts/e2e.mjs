@@ -79,6 +79,27 @@ try {
   await win2.evaluate(() => window.pickskill.account.signOut());
   await win2.locator('input[type="email"]').waitFor();
   step('sign out revokes token and returns to sign-in');
+
+  // Google: system browser → /desktop/authorize → loopback callback → token.
+  await app2.evaluate(({ shell }) => {
+    globalThis.__opened = [];
+    shell.openExternal = async (url) => void globalThis.__opened.push(url);
+  });
+  await win2.getByRole('button', { name: /Google/ }).click();
+  const authorizeUrl = await app2.evaluate(async () => {
+    for (let i = 0; i < 50 && !globalThis.__opened.length; i++) await new Promise((r) => setTimeout(r, 100));
+    return globalThis.__opened[0];
+  });
+  const authorize = new URL(authorizeUrl);
+  if (authorize.pathname !== '/desktop/authorize' || authorize.searchParams.get('provider') !== 'google') {
+    throw new Error(`unexpected Google URL: ${authorizeUrl}`);
+  }
+  // Stand-in for the browser: follow the redirect chain to the app's loopback server.
+  const done = await fetch(authorizeUrl);
+  if (!(await done.text()).includes('Signed in to PickSkill')) throw new Error(`loopback page: ${done.status}`);
+  await win2.locator('input[type="email"]').waitFor({ state: 'detached', timeout: 15_000 });
+  step(`Google sign-in via system browser + loopback ${new URL(authorize.searchParams.get('redirect_uri')).host}`);
+  await win2.evaluate(() => window.pickskill.account.signOut());
   await app2.close();
   console.log('E2E PASS');
 } catch (err) {

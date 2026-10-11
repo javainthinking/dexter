@@ -15,6 +15,8 @@ const bridge: PickSkillBridge = {
   account: {
     get: () => ipcRenderer.invoke('account:get'),
     signOut: () => ipcRenderer.invoke('account:signOut'),
+    signInWithGoogle: () => ipcRenderer.invoke('account:signInWithGoogle'),
+    cancelSignIn: () => ipcRenderer.invoke('account:cancelSignIn'),
     onChange: (cb) => subscribe<AccountState>('account:changed', cb),
   },
 };

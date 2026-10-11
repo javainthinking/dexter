@@ -2,6 +2,8 @@
 
 export interface AccountState {
   status: 'signed-out' | 'signed-in';
+  /** Google sign-in is waiting on the system browser. */
+  pending?: 'google';
   user?: { id: string; name?: string | null; email?: string | null; image?: string | null };
   plan?: string;
   error?: string;
@@ -51,6 +53,8 @@ export interface PickSkillBridge {
   account: {
     get(): Promise<AccountState>;
     signOut(): Promise<void>;
+    signInWithGoogle(): Promise<void>;
+    cancelSignIn(): Promise<void>;
     onChange(cb: (state: AccountState) => void): () => void;
   };
 }

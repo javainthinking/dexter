@@ -7,13 +7,16 @@
  *
  * - Email-code sign-in (/api/auth/email/send + /api/desktop/email/verify)
  *   accepts any email with code 123456 and signs in a fixed demo user.
+ * - "Continue with Google": /desktop/authorize skips Google, auto-approves the
+ *   demo user and redirects to the app's loopback redirect_uri (same PKCE
+ *   contract as apps/web/lib/auth/desktop.ts).
  * - The finance catalog + tool execution use dexter's real tools
  *   (src/tools/finance), so schemas and results match production; without
  *   data-provider keys they fall back to Yahoo.
  * - The LLM endpoint proxies to OpenAI when OPENAI_API_KEY is set, otherwise
  *   plays a scripted turn: call get_stock_price(NVDA), then summarise.
  */
-import { randomBytes } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import { z } from 'zod';
 import {
   getStockPrice,
@@ -28,6 +31,7 @@ const TOOLS = [getStockPrice, getStockPrices, getIncomeStatements, getKeyRatios,
 const USER = { id: 'demo-user', name: 'Demo User', email: 'demo@pickskill.local', image: null };
 
 const MOCK_CODE = '123456';
+const codes = new Map<string, { challenge: string; expires: number }>();
 const tokens = new Set<string>();
 
 const json = (body: unknown, status = 200) =>
@@ -89,6 +93,26 @@ Bun.serve({
     if (p === '/api/desktop/email/verify' && req.method === 'POST') {
       const { code } = (await req.json().catch(() => ({}))) as { code?: string };
       if (code !== MOCK_CODE) return json({ error: 'invalid_code', message: 'That code is not valid for this email.' }, 400);
+      const token = randomBytes(32).toString('hex');
+      tokens.add(token);
+      return json({ token, expires: new Date(Date.now() + 90 * 864e5).toISOString(), userId: USER.id });
+    }
+    if (p === '/api/desktop/auth-config') return json({ google: true });
+    if (p === '/desktop/authorize') {
+      const redirectUri = url.searchParams.get('redirect_uri') ?? '';
+      if (!/^http:\/\/127\.0\.0\.1:\d{4,5}\/callback$/.test(redirectUri)) return json({ error: 'invalid_request' }, 400);
+      const code = randomBytes(24).toString('base64url');
+      codes.set(code, { challenge: url.searchParams.get('code_challenge') ?? '', expires: Date.now() + 120_000 });
+      const state = url.searchParams.get('state') ?? '';
+      return Response.redirect(`${redirectUri}?${new URLSearchParams({ code, state })}`, 302);
+    }
+    if (p === '/api/desktop/token' && req.method === 'POST') {
+      const { code, code_verifier } = (await req.json()) as { code: string; code_verifier: string };
+      const entry = codes.get(code);
+      codes.delete(code);
+      const ok =
+        entry && entry.expires > Date.now() && createHash('sha256').update(code_verifier).digest('base64url') === entry.challenge;
+      if (!ok) return json({ error: 'invalid_grant' }, 400);
       const token = randomBytes(32).toString('hex');
       tokens.add(token);
       return json({ token, expires: new Date(Date.now() + 90 * 864e5).toISOString(), userId: USER.id });

@@ -35,5 +35,7 @@ export async function signOut(_opts?: { callbackUrl?: string; redirect?: boolean
   await window.pickskill.account.signOut();
 }
 
-/** Only email-code sign-in exists in the desktop app (rendered in place), so there is no provider redirect. */
-export async function signIn(_provider?: string, _opts?: { callbackUrl?: string }): Promise<void> {}
+/** Email sign-in is handled in place; Google runs through main's system-browser flow. */
+export async function signIn(provider?: string, _opts?: { callbackUrl?: string }): Promise<void> {
+  if (provider === 'google') await window.pickskill.account.signInWithGoogle();
+}

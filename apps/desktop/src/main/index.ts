@@ -101,6 +101,21 @@ function createWindow(): void {
 
 ipcMain.handle('account:get', () => account);
 ipcMain.handle('account:signOut', () => signedOut());
+ipcMain.handle('account:signInWithGoogle', async () => {
+  setAccount({ status: 'signed-out', pending: 'google' });
+  try {
+    await auth.signInWithGoogle();
+    if (win) {
+      if (win.isMinimized()) win.restore();
+      app.focus({ steal: true });
+    }
+    await refreshAccount();
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    setAccount({ status: 'signed-out', error: message === 'cancelled' ? undefined : message });
+  }
+});
+ipcMain.handle('account:cancelSignIn', () => auth.cancelGoogle());
 
 const proxy: ProxyDeps = {
   apiBase: API_BASE,

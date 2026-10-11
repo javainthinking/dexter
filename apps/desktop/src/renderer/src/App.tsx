@@ -107,21 +107,42 @@ function SignIn({ account }: { account: AccountState }) {
   const { pathname } = useLocation();
   const locale = readLocaleFromPath(pathname);
   const dict = dictionaries[locale];
+  const [googleEnabled, setGoogleEnabled] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/desktop/auth-config')
+      .then((r) => (r.ok ? r.json() : { google: false }))
+      .then((c: { google?: boolean }) => setGoogleEnabled(!!c.google))
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="desktop-signin">
-      {account.error && (
-        <div className="fixed inset-x-0 top-16 z-10 mx-auto w-fit rounded-md border border-border bg-muted px-3 py-1.5 text-sm text-muted-foreground">
-          {account.error}
+      {(account.pending || account.error) && (
+        <div className="fixed inset-x-0 top-16 z-10 mx-auto flex w-fit items-center gap-3 rounded-md border border-border bg-muted px-3 py-1.5 text-sm text-muted-foreground">
+          {account.pending ? (
+            <>
+              <span>{dict.auth.continueWithGoogle}…</span>
+              <button className="underline" onClick={() => void window.pickskill.account.cancelSignIn()}>
+                {dict.chat.sidebar.cancel}
+              </button>
+            </>
+          ) : (
+            account.error
+          )}
         </div>
       )}
       <SignInClient
+        // The form never resets its own pending state after Google (on the web
+        // that leaves the page); remount it when the browser flow ends.
+        key={account.pending ?? 'idle'}
         auth={dict.auth}
         languageLabel={dict.language.label}
         backToHome={dict.auth.backToHome}
         // Account state flips to signed-in before the form's post-verify
         // `location.href = callbackUrl`; '#' keeps that a same-document jump.
         callbackUrl="#"
-        googleEnabled={false}
+        googleEnabled={googleEnabled}
       />
     </div>
   );
