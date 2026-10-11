@@ -6,6 +6,7 @@
 // this app disables (pty, file watcher, fff search, TUI).
 import { build } from 'esbuild';
 import fs from 'node:fs/promises';
+import { builtinModules } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -28,7 +29,9 @@ await build({
     'electron',
     '@opencode-ai/pty*',
     '@lydell/node-pty*',
-    '@parcel/watcher*',
+    // Only the per-platform native binary; its JS wrapper is imported
+    // statically and must be bundled (nothing to resolve it from at runtime).
+    '@parcel/watcher-*',
     'tree-sitter*',
     'ffi-rs',
     '@yuuang/*',
@@ -54,6 +57,18 @@ await build({
     const dest = path.join(path.dirname(outfile), 'node_modules', asset);
     await fs.mkdir(path.dirname(dest), { recursive: true });
     await fs.copyFile(path.join(root, 'node_modules', asset), dest);
+  }
+  // Externals may only be loaded lazily (require() at use). A static import of
+  // one fails at startup in an installed app — there is no node_modules to
+  // resolve it from (builds under apps/desktop/release find ours, hiding it).
+  const output = r.metafile.outputs[path.relative(process.cwd(), outfile)] ?? Object.values(r.metafile.outputs)[0];
+  const builtin = new Set(builtinModules);
+  const unresolvable = output.imports
+    .filter((i) => i.external && i.kind === 'import-statement')
+    .map((i) => i.path)
+    .filter((p) => !p.startsWith('node:') && !builtin.has(p) && !builtin.has(p.split('/')[0]));
+  if (unresolvable.length) {
+    throw new Error(`agent-worker statically imports externals: ${[...new Set(unresolvable)].join(', ')}`);
   }
   const bytes = Object.values(r.metafile.outputs).reduce((n, o) => n + o.bytes, 0);
   console.log(`agent-worker bundled: ${(bytes / 1e6).toFixed(1)} MB → ${path.relative(root, outfile)}`);
