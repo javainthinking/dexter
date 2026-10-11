@@ -133,6 +133,8 @@ const proxy: ProxyDeps = {
 };
 
 app.whenReady().then(async () => {
+  // Packaged builds get the icon from the bundle; in dev, Electron's default would show.
+  if (!app.isPackaged) app.dock?.setIcon(path.join(here, '../../build/icon.png'));
   serveApp(process.env.ELECTRON_RENDERER_URL ?? path.join(here, '../renderer'), proxy);
   createWindow();
   await auth.load();

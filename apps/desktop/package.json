@@ -29,7 +29,8 @@
     "pack:mac": "pnpm build && electron-builder --mac --dir",
     "mock-server": "bun scripts/mock-pickskill.ts",
     "spike": "node spike/spike.mjs",
-    "e2e": "node scripts/e2e.mjs"
+    "e2e": "node scripts/e2e.mjs",
+    "icon": "electron scripts/render-icon.mjs"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

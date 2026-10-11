@@ -2,3 +2,5 @@ out/
 release/
 e2e-shots/
 node_modules/
+# build/ holds electron-builder resources (app icon), not output.
+!/build/

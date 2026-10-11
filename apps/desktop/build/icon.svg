@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!--
+    PickSkill app icon — the Mark from apps/web/components/logo.tsx (and
+    apps/web/app/icon.svg) laid out on Apple's macOS icon grid: an 824px
+    rounded square centred on a 1024px canvas. The chart strokes occupy 72%
+    of the square, as in the web Mark. Rendered to icon.png by
+    scripts/render-icon.mjs; electron-builder derives the .icns from it.
+  -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#26241d"/>
+      <stop offset="100%" stop-color="#0a0a0a"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.04"/>
+    </linearGradient>
+  </defs>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#bg)"/>
+  <rect x="102" y="102" width="820" height="820" rx="183" fill="none" stroke="url(#edge)" stroke-width="4"/>
+  <g transform="translate(215.5 215.5) scale(24.72)" fill="none" stroke="#fafafa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 16 L9 11 L13 14 L20 6"/>
+    <path d="M15 6 L20 6 L20 11" opacity="0.85"/>
+  </g>
+</svg>

@@ -22,6 +22,8 @@ asarUnpack:
   - "**/*.node"
 mac:
   category: public.app-category.finance
+  # PickSkill mark (build/icon.svg → icon.png via `pnpm icon`); builder derives the .icns.
+  icon: build/icon.png
   target:
     - target: dmg
       arch: [arm64, x64]
