@@ -91,10 +91,15 @@ export async function exchangeDesktopAuthCode(code: string, codeVerifier: string
   const challenge = rest.slice(sep + 1);
   if (!userId || s256Challenge(codeVerifier) !== challenge) return { ok: false, error: 'invalid_grant' };
 
+  return { ok: true, userId, ...(await createDesktopSession(userId)) };
+}
+
+/** Mint a desktop session token (a `dexter_auth_sessions` row) for a signed-in user. */
+export async function createDesktopSession(userId: string): Promise<{ token: string; expires: Date }> {
   const token = randomBytes(32).toString('hex');
   const expires = new Date(Date.now() + DESKTOP_SESSION_TTL_DAYS * 24 * 60 * 60 * 1000);
-  await db.insert(authSessions).values({ sessionToken: token, userId, expires });
-  return { ok: true, token, expires, userId };
+  await getDb().insert(authSessions).values({ sessionToken: token, userId, expires });
+  return { token, expires };
 }
 
 /** Resolve an `Authorization: Bearer <token>` desktop session to its user. */
