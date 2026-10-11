@@ -547,5 +547,12 @@
       "portfolios": "你的方案包含 {limit} 個投資組合。升級即可新增更多。",
       "holdings": "你的方案允許每個組合 {limit} 個持倉。升級可獲得更多。"
     }
+  },
+  "desktopAuth": {
+    "title": "已登入 PickSkill Mac 版",
+    "returning": "正在返回桌面應用程式…",
+    "openApp": "開啟 PickSkill",
+    "hint": "如果沒有自動跳轉，請點擊上方按鈕。完成後可以關閉此分頁。",
+    "invalid": "此登入連結無效或已過期，請在桌面應用程式中重新登入。"
   }
 }

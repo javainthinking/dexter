@@ -565,5 +565,12 @@
       "portfolios": "Your plan includes {limit} portfolio(s). Upgrade to add more.",
       "holdings": "Your plan allows {limit} holdings per portfolio. Upgrade for more."
     }
+  },
+  "desktopAuth": {
+    "title": "Signed in to PickSkill for Mac",
+    "returning": "Returning you to the desktop app…",
+    "openApp": "Open PickSkill",
+    "hint": "If nothing happens, click the button above. You can close this tab afterwards.",
+    "invalid": "This sign-in link is invalid or has expired. Start sign-in again from the desktop app."
   }
 }

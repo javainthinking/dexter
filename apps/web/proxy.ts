@@ -13,6 +13,8 @@ import { defaultLocale, isLocale, locales } from './lib/i18n/locales';
  *   /sign-in, /<l>/sign-in → public
  *   /api/auth/*          → public (NextAuth handles cookies)
  *   /api/agent, /api/sessions(/*) → must be signed-in
+ *   /api/desktop/*       → cookie or `Authorization: Bearer` (desktop app);
+ *                          /api/desktop/token itself is public
  *   /_next/*, static files → untouched
  *
  * Auth check is cookie-presence only (cheap, fast, runs on every request).
@@ -29,7 +31,7 @@ const AUTH_COOKIE_NAMES = [
 ];
 
 /** Paths that require auth (after locale stripping). */
-const PROTECTED_PREFIXES = ['/chat', '/memory', '/indicators', '/portfolios'];
+const PROTECTED_PREFIXES = ['/chat', '/memory', '/indicators', '/portfolios', '/desktop'];
 
 /** API paths that require auth. */
 const PROTECTED_API_PREFIXES = [
@@ -38,6 +40,9 @@ const PROTECTED_API_PREFIXES = [
   '/api/memory',
   '/api/indicators',
   '/api/portfolios',
+  '/api/desktop/llm',
+  '/api/desktop/finance',
+  '/api/desktop/me',
 ];
 
 export function proxy(request: NextRequest): NextResponse {
@@ -51,7 +56,7 @@ export function proxy(request: NextRequest): NextResponse {
   // Other API: enforce auth for protected endpoints, pass everything else through.
   if (pathname.startsWith('/api')) {
     if (PROTECTED_API_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
-      if (!hasAuthCookie(request)) {
+      if (!hasAuthCookie(request) && !hasBearer(request)) {
         return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
       }
     }
@@ -117,6 +122,11 @@ export function proxy(request: NextRequest): NextResponse {
   url.pathname = pathname === '/' ? `/${locale}` : `/${locale}${pathname}`;
   url.search = search;
   return NextResponse.redirect(url, 302);
+}
+
+/** Desktop app sends its session token as a bearer header (API only). */
+function hasBearer(request: NextRequest): boolean {
+  return /^Bearer\s+\S+$/.test(request.headers.get('authorization') ?? '');
 }
 
 function hasAuthCookie(request: NextRequest): boolean {

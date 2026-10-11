@@ -547,5 +547,12 @@
       "portfolios": "Dein Tarif umfasst {limit} Portfolio(s). Upgrade, um weitere hinzuzufügen.",
       "holdings": "Dein Tarif erlaubt {limit} Positionen pro Portfolio. Upgrade für mehr."
     }
+  },
+  "desktopAuth": {
+    "title": "Bei PickSkill für Mac angemeldet",
+    "returning": "Du wirst zur Desktop-App zurückgeleitet…",
+    "openApp": "PickSkill öffnen",
+    "hint": "Falls nichts passiert, klicke auf die Schaltfläche oben. Danach kannst du diesen Tab schließen.",
+    "invalid": "Dieser Anmeldelink ist ungültig oder abgelaufen. Starte die Anmeldung erneut in der Desktop-App."
   }
 }

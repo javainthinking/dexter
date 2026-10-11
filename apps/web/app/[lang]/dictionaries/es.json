@@ -547,5 +547,12 @@
       "portfolios": "Tu plan incluye {limit} cartera(s). Mejóralo para añadir más.",
       "holdings": "Tu plan permite {limit} posiciones por cartera. Mejóralo para tener más."
     }
+  },
+  "desktopAuth": {
+    "title": "Has iniciado sesión en PickSkill para Mac",
+    "returning": "Volviendo a la aplicación de escritorio…",
+    "openApp": "Abrir PickSkill",
+    "hint": "Si no ocurre nada, haz clic en el botón de arriba. Después puedes cerrar esta pestaña.",
+    "invalid": "Este enlace de inicio de sesión no es válido o ha caducado. Vuelve a iniciar sesión desde la aplicación de escritorio."
   }
 }

@@ -547,5 +547,12 @@
       "portfolios": "您的套餐包含 {limit} 个组合。升级可添加更多。",
       "holdings": "您的套餐允许每个组合 {limit} 个持仓。升级可获得更多。"
     }
+  },
+  "desktopAuth": {
+    "title": "已登录 PickSkill Mac 版",
+    "returning": "正在返回桌面客户端…",
+    "openApp": "打开 PickSkill",
+    "hint": "如果没有自动跳转，请点击上方按钮。完成后可以关闭此标签页。",
+    "invalid": "此登录链接无效或已过期，请在桌面客户端中重新发起登录。"
   }
 }
