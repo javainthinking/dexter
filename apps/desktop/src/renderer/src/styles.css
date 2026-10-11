@@ -20,4 +20,5 @@ aside > div:first-child { -webkit-app-region: drag; }
 .desktop-no-drag,
 header :is(a, button, input, select, textarea, [role='button'], [role='combobox']),
 aside > div:first-child :is(a, button) { -webkit-app-region: no-drag; }
-aside > div:first-child { padding-left: 84px; }
+aside > div:first-child,
+.desktop-signin header { padding-left: 84px; }

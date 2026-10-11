@@ -5,15 +5,15 @@
  *   bun scripts/mock-pickskill.ts            # :4319
  *   PICKSKILL_API_BASE=http://127.0.0.1:4319 pnpm dev
  *
- * - /desktop/authorize auto-approves a fixed demo user and redirects to
- *   pickskill://auth/callback (same PKCE contract as apps/web/lib/auth/desktop.ts).
+ * - Email-code sign-in (/api/auth/email/send + /api/desktop/email/verify)
+ *   accepts any email with code 123456 and signs in a fixed demo user.
  * - The finance catalog + tool execution use dexter's real tools
  *   (src/tools/finance), so schemas and results match production; without
  *   data-provider keys they fall back to Yahoo.
  * - The LLM endpoint proxies to OpenAI when OPENAI_API_KEY is set, otherwise
  *   plays a scripted turn: call get_stock_price(NVDA), then summarise.
  */
-import { createHash, randomBytes } from 'node:crypto';
+import { randomBytes } from 'node:crypto';
 import { z } from 'zod';
 import {
   getStockPrice,
@@ -27,7 +27,7 @@ const PORT = Number(process.env.PORT ?? 4319);
 const TOOLS = [getStockPrice, getStockPrices, getIncomeStatements, getKeyRatios, getMarketMovers];
 const USER = { id: 'demo-user', name: 'Demo User', email: 'demo@pickskill.local', image: null };
 
-const codes = new Map<string, { challenge: string; expires: number }>();
+const MOCK_CODE = '123456';
 const tokens = new Set<string>();
 
 const json = (body: unknown, status = 200) =>
@@ -81,29 +81,14 @@ Bun.serve({
     const p = url.pathname;
     console.log(req.method, p);
 
-    if (p === '/desktop/authorize') {
-      const state = url.searchParams.get('state') ?? '';
-      const challenge = url.searchParams.get('code_challenge') ?? '';
-      const code = randomBytes(24).toString('base64url');
-      codes.set(code, { challenge, expires: Date.now() + 120_000 });
-      const link = `pickskill://auth/callback?${new URLSearchParams({ code, state })}`;
-      return new Response(
-        `<!doctype html><meta charset="utf-8"><title>PickSkill mock</title><body style="font-family:system-ui;text-align:center;padding:60px">
-         <h2>Mock sign-in approved for ${USER.email}</h2><p><a href="${link}">Open PickSkill</a></p>
-         <script>location.href=${JSON.stringify(link)}</script>`,
-        { headers: { 'content-type': 'text/html' } },
-      );
+    // In-app email-code sign-in. Any email works; the code is always MOCK_CODE
+    // and is echoed back as `devCode` like the real server does outside production.
+    if (p === '/api/auth/email/send' && req.method === 'POST') {
+      return json({ ok: true, expiresInSeconds: 600, devCode: MOCK_CODE });
     }
-
-    if (p === '/api/desktop/token' && req.method === 'POST') {
-      const { code, code_verifier } = (await req.json()) as { code: string; code_verifier: string };
-      const entry = codes.get(code);
-      codes.delete(code);
-      const ok =
-        entry &&
-        entry.expires > Date.now() &&
-        createHash('sha256').update(code_verifier).digest('base64url') === entry.challenge;
-      if (!ok) return json({ error: 'invalid_grant' }, 400);
+    if (p === '/api/desktop/email/verify' && req.method === 'POST') {
+      const { code } = (await req.json().catch(() => ({}))) as { code?: string };
+      if (code !== MOCK_CODE) return json({ error: 'invalid_code', message: 'That code is not valid for this email.' }, 400);
       const token = randomBytes(32).toString('hex');
       tokens.add(token);
       return json({ token, expires: new Date(Date.now() + 90 * 864e5).toISOString(), userId: USER.id });

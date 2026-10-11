@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { AccountState, AgentEvent } from '../shared/ipc';
 import { AgentHost } from './agent-host';
-import { AuthStore, PROTOCOL } from './auth';
+import { AuthStore } from './auth';
 import { APP_ORIGIN, registerAppScheme, serveApp, type ProxyDeps } from './api-proxy';
 import { LocalChat } from './local-chat';
 
@@ -11,13 +11,6 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 
 const API_BASE = process.env.PICKSKILL_API_BASE ?? 'https://pickskill.ai';
 
-// pickskill:// links arrive via `open-url` on macOS. In dev the protocol is
-// registered against the Electron binary + app path.
-if (process.defaultApp && process.argv[1]) {
-  app.setAsDefaultProtocolClient(PROTOCOL, process.execPath, [path.resolve(process.argv[1])]);
-} else {
-  app.setAsDefaultProtocolClient(PROTOCOL);
-}
 if (!app.requestSingleInstanceLock()) app.quit();
 registerAppScheme();
 
@@ -67,24 +60,6 @@ async function signedOut(error?: string): Promise<void> {
   setAccount({ status: 'signed-out', error });
 }
 
-async function handleDeepLink(url: string): Promise<void> {
-  if (win) {
-    if (win.isMinimized()) win.restore();
-    win.focus();
-  }
-  try {
-    await auth.handleCallback(url);
-    await refreshAccount();
-  } catch (err) {
-    setAccount({ status: 'signed-out', error: err instanceof Error ? err.message : String(err) });
-  }
-}
-
-app.on('open-url', (event, url) => {
-  event.preventDefault();
-  void app.whenReady().then(() => handleDeepLink(url));
-});
-
 function createWindow(): void {
   win = new BrowserWindow({
     width: 1280,
@@ -113,27 +88,33 @@ function createWindow(): void {
   // Full-page navigations away from the app (Stripe checkout, OAuth, …) go
   // to the system browser too.
   win.webContents.on('will-navigate', (e, url) => {
-    if (new URL(url).origin !== APP_ORIGIN) {
-      e.preventDefault();
-      void shell.openExternal(url);
-    }
+    e.preventDefault();
+    const target = new URL(url);
+    // web code that hard-navigates within the app (`location.href = '/x'`)
+    // becomes a client-side route change instead of a full reload.
+    if (target.origin === APP_ORIGIN) broadcast('app:navigate', target.pathname + target.search + target.hash);
+    else void shell.openExternal(url);
   });
   void win.loadURL(`${APP_ORIGIN}/portfolios`);
   win.on('closed', () => (win = null));
 }
 
 ipcMain.handle('account:get', () => account);
-ipcMain.handle('account:signIn', async () => {
-  setAccount({ status: 'pending' });
-  await auth.begin();
-});
 ipcMain.handle('account:signOut', () => signedOut());
 
 const proxy: ProxyDeps = {
   apiBase: API_BASE,
   token: () => auth.current,
   onUnauthorized: () => void signedOut('Your session expired. Please sign in again.'),
-  local: (req, url) => chat.handle(req, url),
+  local: async (req, url) => {
+    // Web's sign-in form posts here; redeem the code for a desktop token.
+    if (url.pathname === '/api/auth/email/verify' && req.method === 'POST') {
+      const { status, json } = await auth.verifyEmailCode(await req.json().catch(() => ({})));
+      if (status === 200) await refreshAccount();
+      return Response.json(json, { status });
+    }
+    return chat.handle(req, url);
+  },
 };
 
 app.whenReady().then(async () => {
@@ -141,9 +122,6 @@ app.whenReady().then(async () => {
   createWindow();
   await auth.load();
   await refreshAccount();
-  // Dev / test hook: a deep link passed on the command line.
-  const link = process.argv.find((a) => a.startsWith(`${PROTOCOL}://`));
-  if (link) await handleDeepLink(link);
 });
 
 app.on('activate', () => {

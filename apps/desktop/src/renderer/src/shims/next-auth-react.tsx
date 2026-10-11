@@ -35,6 +35,5 @@ export async function signOut(_opts?: { callbackUrl?: string; redirect?: boolean
   await window.pickskill.account.signOut();
 }
 
-export async function signIn(): Promise<void> {
-  await window.pickskill.account.signIn();
-}
+/** Only email-code sign-in exists in the desktop app (rendered in place), so there is no provider redirect. */
+export async function signIn(_provider?: string, _opts?: { callbackUrl?: string }): Promise<void> {}

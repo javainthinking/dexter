@@ -1,30 +1,17 @@
-import { app, safeStorage, shell } from 'electron';
-import { createHash, randomBytes } from 'node:crypto';
+import { app, safeStorage } from 'electron';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
 /**
- * System-browser sign-in (RFC 8252 + PKCE), see apps/web/lib/auth/desktop.ts.
- *
- *   begin()            → opens <api>/desktop/authorize?state&code_challenge
- *   handleCallback(u)  → pickskill://auth/callback?code&state → POST /api/desktop/token
+ * In-app sign-in. The renderer shows web's sign-in page (email + 6-digit
+ * code); main answers its `/api/auth/email/verify` call by redeeming the
+ * code at `/api/desktop/email/verify`, which returns a desktop Bearer token
+ * instead of a cookie (apps/web/app/api/desktop/email/verify/route.ts).
  *
  * The token is encrypted with safeStorage (macOS Keychain-backed key) and
  * kept in userData; it never reaches the renderer.
  */
-
-export const PROTOCOL = 'pickskill';
-
-interface Pending {
-  state: string;
-  verifier: string;
-  startedAt: number;
-}
-
-const PENDING_TTL_MS = 10 * 60 * 1000;
-
 export class AuthStore {
-  private pending: Pending | null = null;
   private token: string | null = null;
   private readonly file = path.join(app.getPath('userData'), 'session.bin');
 
@@ -44,40 +31,20 @@ export class AuthStore {
     return this.token;
   }
 
-  async begin(): Promise<void> {
-    const verifier = randomBytes(48).toString('base64url');
-    const state = randomBytes(24).toString('base64url');
-    const challenge = createHash('sha256').update(verifier).digest('base64url');
-    this.pending = { state, verifier, startedAt: Date.now() };
-    const url = new URL('/desktop/authorize', this.apiBase);
-    url.search = new URLSearchParams({ state, code_challenge: challenge, code_challenge_method: 'S256' }).toString();
-    await shell.openExternal(url.toString());
-  }
-
-  /** Returns the new token, or throws with a user-presentable reason. */
-  async handleCallback(raw: string): Promise<string> {
-    const url = new URL(raw);
-    if (url.protocol !== `${PROTOCOL}:` || url.host !== 'auth' || url.pathname !== '/callback') {
-      throw new Error('Unrecognised link');
-    }
-    const pending = this.pending;
-    const code = url.searchParams.get('code');
-    const state = url.searchParams.get('state');
-    // State must match the sign-in this app instance started; anything else
-    // (stale tab, link from elsewhere) is dropped.
-    if (!pending || !code || state !== pending.state || Date.now() - pending.startedAt > PENDING_TTL_MS) {
-      throw new Error('Sign-in link expired. Please try again.');
-    }
-    this.pending = null;
-    const res = await fetch(new URL('/api/desktop/token', this.apiBase), {
+  /**
+   * Redeems an email code for a desktop token. Returns the server's response
+   * shape for web's sign-in form: `{ ok, userId }` or `{ error, message }`.
+   */
+  async verifyEmailCode(body: unknown): Promise<{ status: number; json: Record<string, unknown> }> {
+    const res = await fetch(new URL('/api/desktop/email/verify', this.apiBase), {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ code, code_verifier: pending.verifier }),
+      body: JSON.stringify(body ?? {}),
     });
-    if (!res.ok) throw new Error(`Sign-in failed (${res.status})`);
-    const { token } = (await res.json()) as { token: string };
-    await this.save(token);
-    return token;
+    const json = (await res.json().catch(() => ({}))) as { token?: string; userId?: string } & Record<string, unknown>;
+    if (!res.ok || !json.token) return { status: res.ok ? 500 : res.status, json };
+    await this.save(json.token);
+    return { status: 200, json: { ok: true, userId: json.userId } };
   }
 
   async signOut(): Promise<void> {

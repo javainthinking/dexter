@@ -1,9 +1,7 @@
 // End-to-end smoke test against the mock server (bun scripts/mock-pickskill.ts).
-// Drives the built app with Playwright: sign-in via the PKCE deep-link flow,
+// Drives the built app with Playwright: in-app email-code sign-in,
 // web's portfolio page renders with live quotes, and web's chat page runs a
 // tool-calling turn on the local agent.
-// The OS protocol routing is the only part simulated: shell.openExternal is
-// captured and the resulting pickskill:// link is delivered via `open-url`.
 import { _electron as electron } from 'playwright';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -33,25 +31,20 @@ try {
     globalThis.__opened = [];
     shell.openExternal = async (url) => void globalThis.__opened.push(url);
   });
-
   // Start from a clean signed-out state.
-  await win.waitForLoadState();
-  if (!(await win.getByRole('button', { name: 'Sign in' }).isVisible().catch(() => false))) {
-    await win.evaluate(() => window.pickskill.account.signOut());
-  }
-  await win.getByRole('button', { name: 'Sign in' }).click();
-  const authorizeUrl = await app.evaluate(async () => {
-    for (let i = 0; i < 50 && !globalThis.__opened.length; i++) await new Promise((r) => setTimeout(r, 100));
-    return globalThis.__opened[0];
-  });
-  if (!authorizeUrl?.startsWith(`${API}/desktop/authorize?`)) throw new Error(`unexpected authorize URL: ${authorizeUrl}`);
-  step(`opened system browser at ${new URL(authorizeUrl).pathname} with PKCE S256`);
+  const email = win.locator('input[type="email"]');
+  await email.or(win.locator('nav[aria-label="Primary"]')).first().waitFor({ timeout: 15_000 });
+  if (!(await email.isVisible())) await win.evaluate(() => window.pickskill.account.signOut());
 
-  const html = await (await fetch(authorizeUrl)).text();
-  const link = html.match(/pickskill:\/\/auth\/callback\?[^"<]+/)[0].replaceAll('&amp;', '&');
-  await app.evaluate(({ app }, url) => app.emit('open-url', { preventDefault() {} }, url), link);
-  await win.getByRole('button', { name: 'Sign in' }).waitFor({ state: 'detached', timeout: 15_000 });
-  step('deep link exchanged for token; signed in');
+  // Sign in inside the app: web's email + code form, no browser.
+  await email.fill('demo@pickskill.local');
+  await win.locator('button[type="submit"]').click();
+  await win.locator('input[autocomplete="one-time-code"]').fill('123456');
+  await win.locator('button[type="submit"]').click();
+  await email.waitFor({ state: 'detached', timeout: 15_000 });
+  const opened = await app.evaluate(() => globalThis.__opened);
+  if (opened.length) throw new Error(`sign-in opened the browser: ${opened}`);
+  step('signed in in-app with email code (no browser opened)');
   await win.screenshot({ path: `${shots}/1-portfolios-loading.png` });
 
   await win.getByText('NVDA', { exact: true }).first().waitFor({ timeout: 15_000 });
@@ -84,7 +77,7 @@ try {
   });
   step('session restored from Keychain-encrypted store after restart');
   await win2.evaluate(() => window.pickskill.account.signOut());
-  await win2.getByRole('button', { name: 'Sign in' }).waitFor();
+  await win2.locator('input[type="email"]').waitFor();
   step('sign out revokes token and returns to sign-in');
   await app2.close();
   console.log('E2E PASS');

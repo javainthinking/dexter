@@ -11,9 +11,9 @@ const apiArg = process.argv.find((a) => a.startsWith('--pickskill-api='));
 
 const bridge: PickSkillBridge = {
   apiBase: apiArg ? apiArg.slice('--pickskill-api='.length) : 'https://pickskill.ai',
+  onNavigate: (cb) => subscribe<string>('app:navigate', cb),
   account: {
     get: () => ipcRenderer.invoke('account:get'),
-    signIn: () => ipcRenderer.invoke('account:signIn'),
     signOut: () => ipcRenderer.invoke('account:signOut'),
     onChange: (cb) => subscribe<AccountState>('account:changed', cb),
   },

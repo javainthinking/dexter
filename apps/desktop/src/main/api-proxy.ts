@@ -73,11 +73,14 @@ export function serveApp(renderer: string, deps: ProxyDeps): void {
   });
 }
 
+/** Server routes the signed-out app may call (sign-in form). */
+const PUBLIC_PATHS = new Set(['/api/auth/email/send']);
+
 async function forward(req: Request, url: URL, deps: ProxyDeps): Promise<Response> {
   const token = deps.token();
-  if (!token) return Response.json({ error: 'unauthenticated' }, { status: 401 });
+  if (!token && !PUBLIC_PATHS.has(url.pathname)) return Response.json({ error: 'unauthenticated' }, { status: 401 });
   const headers = new Headers(req.headers);
-  headers.set('authorization', `Bearer ${token}`);
+  if (token) headers.set('authorization', `Bearer ${token}`);
   headers.delete('cookie');
   headers.delete('origin');
   const target = new URL(url.pathname + url.search, deps.apiBase);
@@ -91,6 +94,6 @@ async function forward(req: Request, url: URL, deps: ProxyDeps): Promise<Respons
     redirect: 'manual',
     bypassCustomProtocolHandlers: true,
   } as RequestInit);
-  if (res.status === 401) deps.onUnauthorized();
+  if (res.status === 401 && token) deps.onUnauthorized();
   return res;
 }

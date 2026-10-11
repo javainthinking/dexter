@@ -20,9 +20,6 @@ asar: true
 # OpenCode's native addons (pty, tree-sitter, file watcher) must live outside the asar.
 asarUnpack:
   - "**/*.node"
-protocols:
-  - name: PickSkill
-    schemes: [pickskill]
 mac:
   category: public.app-category.finance
   target:

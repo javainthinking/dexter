@@ -1,7 +1,7 @@
 // Contract between main, preload, renderer and the agent worker.
 
 export interface AccountState {
-  status: 'signed-out' | 'pending' | 'signed-in';
+  status: 'signed-out' | 'signed-in';
   user?: { id: string; name?: string | null; email?: string | null; image?: string | null };
   plan?: string;
   error?: string;
@@ -46,9 +46,10 @@ export type WorkerMessage =
 export interface PickSkillBridge {
   /** PickSkill server origin, for pages that only exist on the web (account, pricing, …). */
   apiBase: string;
+  /** In-app paths main intercepted from full-page navigations. */
+  onNavigate(cb: (path: string) => void): () => void;
   account: {
     get(): Promise<AccountState>;
-    signIn(): Promise<void>;
     signOut(): Promise<void>;
     onChange(cb: (state: AccountState) => void): () => void;
   };

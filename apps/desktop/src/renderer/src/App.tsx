@@ -11,6 +11,7 @@ import { LangSetter } from '@web/components/i18n/lang-setter';
 import { UpgradeDialogProvider } from '@web/components/upgrade/upgrade-dialog-provider';
 import { getLocalizedPath, readLocaleFromPath, stripLocalePrefix } from '@web/lib/i18n/paths';
 import type { PlanId } from '@web/lib/plans';
+import { SignInClient } from '@web/app/[lang]/sign-in/sign-in-client';
 
 const PortfoliosClient = lazy(() => import('@web/app/[lang]/portfolios/portfolios-client').then((m) => ({ default: m.PortfoliosClient })));
 const IndicatorsClient = lazy(() => import('@web/app/[lang]/indicators/indicators-client').then((m) => ({ default: m.IndicatorsClient })));
@@ -101,25 +102,27 @@ function Splash() {
   return <div className="desktop-drag h-screen w-full bg-background" />;
 }
 
+/** web's own sign-in page (email + code); main turns the verified code into a desktop token. */
 function SignIn({ account }: { account: AccountState }) {
-  const pending = account.status === 'pending';
+  const { pathname } = useLocation();
+  const locale = readLocaleFromPath(pathname);
+  const dict = dictionaries[locale];
   return (
-    <div className="desktop-drag flex h-screen flex-col items-center justify-center gap-4 bg-background text-center text-foreground">
-      <h1 className="font-serif text-3xl font-semibold">PickSkill</h1>
-      <p className="text-sm text-muted-foreground">Sign in with your PickSkill account in the browser.</p>
-      <button
-        className="desktop-no-drag inline-flex h-10 items-center rounded-md bg-foreground px-5 text-sm font-medium text-background disabled:opacity-50"
-        disabled={pending}
-        onClick={() => void window.pickskill.account.signIn()}
-      >
-        {pending ? 'Waiting for browser…' : 'Sign in'}
-      </button>
-      {pending && (
-        <button className="desktop-no-drag text-sm text-muted-foreground underline" onClick={() => void window.pickskill.account.signIn()}>
-          Open browser again
-        </button>
+    <div className="desktop-signin">
+      {account.error && (
+        <div className="fixed inset-x-0 top-16 z-10 mx-auto w-fit rounded-md border border-border bg-muted px-3 py-1.5 text-sm text-muted-foreground">
+          {account.error}
+        </div>
       )}
-      {account.error && <p className="text-sm text-red-500">{account.error}</p>}
+      <SignInClient
+        auth={dict.auth}
+        languageLabel={dict.language.label}
+        backToHome={dict.auth.backToHome}
+        // Account state flips to signed-in before the form's post-verify
+        // `location.href = callbackUrl`; '#' keeps that a same-document jump.
+        callbackUrl="#"
+        googleEnabled={false}
+      />
     </div>
   );
 }

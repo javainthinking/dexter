@@ -21,6 +21,7 @@ function emit(): void {
 }
 
 window.addEventListener('popstate', emit);
+window.pickskill.onNavigate((path) => navigate(path));
 
 export function isExternal(href: string): boolean {
   return /^([a-z][a-z0-9+.-]*:|\/\/)/i.test(href);
