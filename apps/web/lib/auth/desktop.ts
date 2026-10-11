@@ -6,12 +6,15 @@ import { users, authSessions, verificationTokens } from '@dexter/core/db/schema/
 import type { SessionUser } from './session';
 
 /**
- * Desktop app sign-in (RFC 8252 + PKCE S256).
+ * Desktop app sign-in. Email codes are redeemed in-app
+ * (/api/desktop/email/verify); Google — which refuses to run inside embedded
+ * app windows — uses the system browser (RFC 8252 loopback + PKCE S256):
  *
- *   1. Desktop opens /desktop/authorize?state&code_challenge in the system
- *      browser. The page is behind the normal web sign-in.
+ *   1. Desktop listens on http://127.0.0.1:<port>/callback and opens
+ *      /desktop/authorize?state&code_challenge&redirect_uri[&provider=google]
+ *      in the system browser. The page is behind the normal web sign-in.
  *   2. The page mints a one-time code bound to (userId, code_challenge) and
- *      hands it back via pickskill://auth/callback?code&state.
+ *      redirects to <redirect_uri>?code&state.
  *   3. Desktop POSTs /api/desktop/token { code, code_verifier } and receives
  *      a bearer token.
  *
@@ -27,7 +30,9 @@ const CODE_TTL_MS = 2 * 60 * 1000;
 const DESKTOP_SESSION_TTL_DAYS = 90;
 const IDENTIFIER_PREFIX = 'desktop:';
 
-export const DESKTOP_REDIRECT_URI = 'pickskill://auth/callback';
+// Loopback only (RFC 8252 §7.3): the code can only be delivered to a process
+// on the user's own machine.
+const REDIRECT_RE = /^http:\/\/127\.0\.0\.1:(\d{4,5})\/callback$/;
 
 // base64url, 43–128 chars per RFC 7636.
 const PKCE_RE = /^[A-Za-z0-9_-]{43,128}$/;
@@ -35,6 +40,11 @@ const STATE_RE = /^[A-Za-z0-9_-]{16,128}$/;
 
 export function isValidCodeChallenge(v: unknown): v is string {
   return typeof v === 'string' && PKCE_RE.test(v);
+}
+
+export function isValidDesktopRedirect(v: unknown): v is string {
+  const m = typeof v === 'string' ? REDIRECT_RE.exec(v) : null;
+  return !!m && Number(m[1]) >= 1024 && Number(m[1]) <= 65535;
 }
 
 export function isValidState(v: unknown): v is string {

@@ -14,7 +14,7 @@ import { defaultLocale, isLocale, locales } from './lib/i18n/locales';
  *   /api/auth/*          → public (NextAuth handles cookies)
  *   /api/agent, /api/sessions(/*) → must be signed-in
  *   /api/desktop/*       → cookie or `Authorization: Bearer` (desktop app);
- *                          /api/desktop/token itself is public
+ *                          token, email/verify and auth-config are public
  *   /_next/*, static files → untouched
  *
  * Auth check is cookie-presence only (cheap, fast, runs on every request).
@@ -31,7 +31,9 @@ const AUTH_COOKIE_NAMES = [
 ];
 
 /** Paths that require auth (after locale stripping). */
-const PROTECTED_PREFIXES = ['/chat', '/memory', '/indicators', '/portfolios', '/desktop'];
+// /desktop/authorize does its own auth handling (provider=google must reach
+// the page signed-out), so it is not listed here.
+const PROTECTED_PREFIXES = ['/chat', '/memory', '/indicators', '/portfolios'];
 
 /** API paths that require auth. */
 const PROTECTED_API_PREFIXES = [
