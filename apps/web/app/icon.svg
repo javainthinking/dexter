@@ -7,26 +7,15 @@
     - rounded-square background filled directly here (rx=5 matches the
       ~rounded-md the logo component uses), so the icon doesn't need
       surrounding context to read.
-    - chart up-trend strokes in white. The secondary arrow-head path
-      keeps its 0.85 opacity for visual hierarchy at small sizes.
+    - the mark (a two-tone check rising into an arrowhead) in white,
+      drawn at 84% of the tile like the Mark component.
 
     Next.js App Router auto-emits <link rel="icon" type="image/svg+xml">
     when this file lives at app/icon.svg — no metadata config needed.
   -->
   <rect width="24" height="24" rx="5" fill="#0a0a0a" />
-  <path
-    d="M4 16 L9 11 L13 14 L20 6"
-    stroke="#fafafa"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  />
-  <path
-    d="M15 6 L20 6 L20 11"
-    stroke="#fafafa"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    opacity="0.85"
-  />
+  <g transform="translate(1.92 1.92) scale(0.84)" fill="#fafafa">
+    <polygon points="2.46,9.78 11.17,18.49 11.17,13.26 5.08,7.17" opacity="0.5" />
+    <polygon points="11.17,18.49 19.38,10.28 20.55,11.45 21.54,5.51 15.60,6.50 16.76,7.67 11.17,13.26" />
+  </g>
 </svg>

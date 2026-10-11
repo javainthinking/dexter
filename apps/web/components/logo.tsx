@@ -1,8 +1,9 @@
 import { cn } from '../lib/utils';
 
 /**
- * PickSkill mark — a clean lock-up combining a small serif-style
- * monogram with the wordmark, tuned for both compact and headline use.
+ * PickSkill mark — a two-tone check ("pick") rising into an arrow, on a rounded
+ * tile, locked up with the serif wordmark. Same geometry as app/icon.svg
+ * and the desktop app icon (apps/desktop/build/icon.svg).
  */
 export function Logo({
   className,
@@ -39,19 +40,10 @@ function Mark({ size }: { size: number }) {
       className="relative inline-flex items-center justify-center rounded-md bg-foreground text-background"
       aria-hidden
     >
-      <svg
-        viewBox="0 0 24 24"
-        width={size * 0.72}
-        height={size * 0.72}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        {/* Stylised chart up-trend */}
-        <path d="M4 16 L9 11 L13 14 L20 6" />
-        <path d="M15 6 L20 6 L20 11" opacity="0.85" />
+      <svg viewBox="0 0 24 24" width={size * 0.84} height={size * 0.84}>
+        {/* "Pick" check rising into an arrowhead; the short stroke is a half-tone facet. */}
+        <polygon points="2.46,9.78 11.17,18.49 11.17,13.26 5.08,7.17" fill="currentColor" opacity="0.5" />
+        <polygon points="11.17,18.49 19.38,10.28 20.55,11.45 21.54,5.51 15.60,6.50 16.76,7.67 11.17,13.26" fill="currentColor" />
       </svg>
     </span>
   );
