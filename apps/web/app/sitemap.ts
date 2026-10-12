@@ -95,6 +95,7 @@ const STATIC_PAGES: StaticEntry[] = [
     changeFrequency: 'monthly' as const,
   })),
   { path: '/pricing', priority: 0.9, changeFrequency: 'monthly' as const },
+  { path: '/download', priority: 0.8, changeFrequency: 'monthly' as const },
   { path: '/blog', priority: 0.8, changeFrequency: 'weekly' },
 ];
 

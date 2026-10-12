@@ -8,6 +8,7 @@ import { Badge } from '../../components/ui/badge';
 import { SiteHeader } from '../../components/marketing/site-header';
 import { SiteFooter } from '../../components/marketing/site-footer';
 import { FeatureShowcase } from '../../components/marketing/feature-showcase';
+import { DesktopDownload } from '../../components/marketing/desktop-download';
 import { HeroCarousel, type HeroSlide, type HeroSceneVariant } from '../../components/marketing/hero-carousel';
 import { CornerMarks } from '../../components/marketing/blueprint';
 import { featureList, getFeaturesContent } from '../../lib/features';
@@ -124,6 +125,7 @@ export default async function HomePage({
         dict={dict}
         chatHref={chatHref}
         featuresHref={featuresHref}
+        downloadHref={getLocalizedPath('/download', lang)}
         slides={heroSlides}
         sceneLabels={dict.landing.heroScenes}
       />
@@ -136,6 +138,7 @@ export default async function HomePage({
         learnMoreLabel={dict.landing.showcase.learnMore}
         tryItLabel={dict.landing.showcase.tryItCta}
       />
+      <DesktopDownload lang={lang as Locale} dict={dict} />
       <Faq dict={dict} />
       <SiteFooter lang={lang as Locale} dict={dict} />
     </div>
@@ -146,12 +149,14 @@ function Hero({
   dict,
   chatHref,
   featuresHref,
+  downloadHref,
   slides,
   sceneLabels,
 }: {
   dict: Dictionary;
   chatHref: string;
   featuresHref: string;
+  downloadHref: string;
   slides: HeroSlide[];
   sceneLabels: Dictionary['landing']['heroScenes'];
 }) {
@@ -195,6 +200,16 @@ function Hero({
           <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.16em] text-subtle">
             {dict.landing.hero.tagline}
           </p>
+          <Link
+            href={downloadHref}
+            className="group mt-4 inline-flex items-center gap-2 rounded-full border border-border bg-card/60 py-1 pr-3 pl-1 text-sm text-muted-foreground transition-colors hover:border-border-strong hover:text-foreground"
+          >
+            <span className="rounded-full bg-[color:var(--accent)]/15 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-[color:var(--accent)]">
+              macOS
+            </span>
+            {dict.download.heroLink}
+            <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+          </Link>
         </div>
 
         {/* Visual */}

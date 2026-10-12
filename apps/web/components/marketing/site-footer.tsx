@@ -28,6 +28,7 @@ export function SiteFooter({ lang, dict }: { lang: Locale; dict: Dictionary }) {
     { href: '/portfolios', label: dict.footer?.product?.portfolios ?? 'Portfolios' },
     { href: '/indicators', label: dict.footer?.product?.indicators ?? 'Indicators' },
     { href: '/pricing', label: dict.footer?.product?.pricing ?? 'Pricing' },
+    { href: '/download', label: dict.download.promoTitle },
   ];
   const resourceLinks = [
     // Reuse the localized nav.features label (added for the header) so the

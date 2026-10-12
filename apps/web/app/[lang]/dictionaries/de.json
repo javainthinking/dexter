@@ -525,5 +525,86 @@
     "openApp": "PickSkill öffnen",
     "hint": "Falls nichts passiert, klicke auf die Schaltfläche oben. Danach kannst du diesen Tab schließen.",
     "invalid": "Dieser Anmeldelink ist ungültig oder abgelaufen. Starte die Anmeldung erneut in der Desktop-App."
+  },
+  "download": {
+    "nav": "Download",
+    "badge": "PickSkill für Mac",
+    "versionLine": "Version {version} · macOS {macos} oder neuer · Kostenlos",
+    "ctaPrimary": "Für Mac herunterladen",
+    "appleSilicon": "Apple Silicon · M1 oder neuer",
+    "intel": "Intel-Mac",
+    "intelLink": "Für Intel herunterladen",
+    "allReleases": "Versionshinweise & Prüfsummen",
+    "heroLink": "Auch für Mac",
+    "homeEyebrow": "Desktop-App",
+    "homeTitle": "Ihr Analyst, jetzt als Mac-App.",
+    "homeSubtitle": "Die ganze Werkbank in einem eigenen Fenster: dasselbe Konto, derselbe Tarif und dieselben Portfolios wie im Web, mit dem Recherche-Agenten direkt auf Ihrem Mac.",
+    "points": [
+      {
+        "title": "Eigenes Fenster",
+        "body": "Bleibt im Dock und angemeldet zwischen den Starts – die Werkbank ist einen Klick entfernt."
+      },
+      {
+        "title": "Agent läuft lokal",
+        "body": "Unterhaltungen werden auf Ihrem Mac gespeichert. Live-Marktdaten und Modelle kommen über Ihr PickSkill-Konto."
+      },
+      {
+        "title": "Ein Konto",
+        "body": "Anmeldung per E-Mail-Code oder Google. Tarif, Kontingent und Portfolios werden aus dem Web übernommen."
+      }
+    ],
+    "screenshotAlt": "Startbildschirm von PickSkill für Mac mit Recherche-Werkbank, Portfolios und Indikatoren",
+    "metaTitle": "PickSkill für Mac herunterladen — KI-Finanzanalyst als Desktop-App",
+    "metaDescription": "PickSkill für Mac herunterladen: die KI-Analysten-Werkbank in einem nativen Fenster, für Apple-Silicon- und Intel-Macs. Kostenlos, macOS 13 oder neuer, dasselbe Konto wie im Web.",
+    "pageTitle": "PickSkill für Mac",
+    "pageSubtitle": "Recherche, Portfolios und Indikatoren in einem nativen Fenster. Kostenloser Download, funktioniert mit jedem PickSkill-Tarif.",
+    "installEyebrow": "Installation",
+    "installTitle": "In einer Minute startklar.",
+    "steps": [
+      {
+        "title": "Herunterladen",
+        "body": "Wählen Sie den Build für Ihren Mac. Unsicher, welcher Chip? Apple-Menü → Über diesen Mac."
+      },
+      {
+        "title": "In Programme ziehen",
+        "body": "Öffnen Sie die .dmg und ziehen Sie PickSkill in den Ordner „Programme“."
+      },
+      {
+        "title": "Ersten Start erlauben",
+        "body": "Diese frühe Version ist noch nicht von Apple notarisiert. Öffnen Sie PickSkill einmal, gehen Sie dann zu Systemeinstellungen → Datenschutz & Sicherheit und klicken Sie auf „Dennoch öffnen“. Das ist nur einmal nötig."
+      },
+      {
+        "title": "Anmelden",
+        "body": "Per E-Mail-Code oder Google, mit demselben Konto wie auf pickskill.ai."
+      }
+    ],
+    "requirementsTitle": "Systemanforderungen",
+    "requirements": [
+      "macOS 13 Ventura oder neuer",
+      "Mac mit Apple Silicon oder Intel",
+      "Ein PickSkill-Konto (der Free-Tarif genügt)"
+    ],
+    "faqTitle": "Fragen",
+    "faq": [
+      {
+        "q": "Ist PickSkill für Mac kostenlos?",
+        "a": "Ja. Die App ist kostenlos und nutzt Ihren PickSkill-Tarif, auch den Free-Tarif. Unterhaltungen in der App zählen zum selben monatlichen Kontingent wie im Web."
+      },
+      {
+        "q": "Warum fragt macOS beim ersten Start nach einer Bestätigung?",
+        "a": "Diese frühe Version ist signiert, aber noch nicht von Apple notarisiert, daher blockiert macOS das erste Öffnen. Erlauben Sie es einmal unter Systemeinstellungen → Datenschutz & Sicherheit → „Dennoch öffnen“."
+      },
+      {
+        "q": "Gibt es eine Version für Windows oder Linux?",
+        "a": "Noch nicht. PickSkill für Mac ist die erste Desktop-Version. Auf anderen Systemen nutzen Sie pickskill.ai im Browser."
+      }
+    ],
+    "otherPlatform": "Die Desktop-App gibt es vorerst nur für Mac. Auf diesem Gerät nutzen Sie PickSkill weiterhin im Browser.",
+    "openWeb": "Web-Werkbank öffnen",
+    "promoTitle": "PickSkill für Mac",
+    "promoBody": "Die Werkbank im eigenen Fenster.",
+    "promoCta": "Download",
+    "dismiss": "Ausblenden",
+    "menuItem": "Mac-App herunterladen"
   }
 }

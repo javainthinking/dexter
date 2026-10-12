@@ -525,5 +525,86 @@
     "openApp": "PickSkill を開く",
     "hint": "自動で切り替わらない場合は上のボタンをクリックしてください。その後このタブは閉じて構いません。",
     "invalid": "このサインインリンクは無効か期限切れです。デスクトップアプリからもう一度サインインしてください。"
+  },
+  "download": {
+    "nav": "ダウンロード",
+    "badge": "PickSkill for Mac",
+    "versionLine": "バージョン {version} · macOS {macos} 以降 · 無料",
+    "ctaPrimary": "Mac 版をダウンロード",
+    "appleSilicon": "Apple シリコン · M1 以降",
+    "intel": "Intel Mac",
+    "intelLink": "Intel 版をダウンロード",
+    "allReleases": "リリースノートとチェックサム",
+    "heroLink": "Mac 版もあります",
+    "homeEyebrow": "デスクトップアプリ",
+    "homeTitle": "あなたのアナリストが、Mac アプリに。",
+    "homeSubtitle": "ワークベンチのすべてを専用ウィンドウで。アカウント・プラン・ポートフォリオは Web と共通で、リサーチエージェントはあなたの Mac 上で動きます。",
+    "points": [
+      {
+        "title": "専用ウィンドウ",
+        "body": "Dock に常駐し、再起動してもサインインしたまま。ワークベンチにワンクリックで戻れます。"
+      },
+      {
+        "title": "エージェントはローカルで実行",
+        "body": "会話はあなたの Mac に保存されます。リアルタイムの市場データとモデルは PickSkill アカウント経由で取得します。"
+      },
+      {
+        "title": "アカウントはひとつ",
+        "body": "メールのコードか Google でサインイン。プラン、利用枠、ポートフォリオは Web と共通です。"
+      }
+    ],
+    "screenshotAlt": "PickSkill for Mac のホーム画面：リサーチワークベンチ、ポートフォリオ、インジケーター",
+    "metaTitle": "PickSkill for Mac をダウンロード — AI 金融アナリストのデスクトップアプリ",
+    "metaDescription": "PickSkill for Mac をダウンロード：AI アナリストのワークベンチをネイティブウィンドウで。Apple シリコンと Intel Mac に対応、無料、macOS 13 以降、Web と同じアカウント。",
+    "pageTitle": "PickSkill for Mac",
+    "pageSubtitle": "リサーチ、ポートフォリオ、インジケーターをネイティブウィンドウで。無料でダウンロードでき、すべての PickSkill プランで使えます。",
+    "installEyebrow": "インストール",
+    "installTitle": "1 分で使い始められます。",
+    "steps": [
+      {
+        "title": "ダウンロード",
+        "body": "お使いの Mac に合ったビルドを選びます。チップが分からない場合は、Apple メニュー → この Mac についてで確認できます。"
+      },
+      {
+        "title": "アプリケーションへドラッグ",
+        "body": ".dmg を開き、PickSkill をアプリケーションフォルダへドラッグします。"
+      },
+      {
+        "title": "初回起動を許可",
+        "body": "この早期リリースはまだ Apple の公証を受けていません。一度 PickSkill を開いてから、システム設定 → プライバシーとセキュリティで「このまま開く」をクリックしてください。操作は一度だけです。"
+      },
+      {
+        "title": "サインイン",
+        "body": "メールのコードか Google で、pickskill.ai と同じアカウントにサインインします。"
+      }
+    ],
+    "requirementsTitle": "動作環境",
+    "requirements": [
+      "macOS 13 Ventura 以降",
+      "Apple シリコンまたは Intel の Mac",
+      "PickSkill アカウント（Free プランで利用可）"
+    ],
+    "faqTitle": "よくある質問",
+    "faq": [
+      {
+        "q": "PickSkill for Mac は無料ですか？",
+        "a": "はい。アプリは無料でダウンロードでき、Free プランを含むあなたの PickSkill プランで動きます。アプリでの会話は Web と同じ月間利用枠にカウントされます。"
+      },
+      {
+        "q": "初回起動時に macOS が確認を求めるのはなぜですか？",
+        "a": "この早期リリースは署名済みですが、まだ Apple の公証を受けていないため、macOS が初回の起動をブロックします。システム設定 → プライバシーとセキュリティ →「このまま開く」で一度だけ許可してください。"
+      },
+      {
+        "q": "Windows 版や Linux 版はありますか？",
+        "a": "まだありません。PickSkill for Mac が最初のデスクトップ版です。ほかの OS ではブラウザで pickskill.ai をご利用ください。"
+      }
+    ],
+    "otherPlatform": "デスクトップアプリは現在 Mac 専用です。このデバイスでは、引き続きブラウザで PickSkill をご利用ください。",
+    "openWeb": "Web のワークベンチを開く",
+    "promoTitle": "PickSkill for Mac",
+    "promoBody": "ワークベンチを専用ウィンドウで。",
+    "promoCta": "ダウンロード",
+    "dismiss": "閉じる",
+    "menuItem": "Mac アプリをダウンロード"
   }
 }

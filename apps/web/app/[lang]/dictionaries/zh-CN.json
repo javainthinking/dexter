@@ -525,5 +525,86 @@
     "openApp": "打开 PickSkill",
     "hint": "如果没有自动跳转，请点击上方按钮。完成后可以关闭此标签页。",
     "invalid": "此登录链接无效或已过期，请在桌面客户端中重新发起登录。"
+  },
+  "download": {
+    "nav": "下载",
+    "badge": "PickSkill Mac 版",
+    "versionLine": "版本 {version} · macOS {macos} 或更高 · 免费",
+    "ctaPrimary": "下载 Mac 版",
+    "appleSilicon": "Apple 芯片 · M1 及以上",
+    "intel": "Intel 芯片 Mac",
+    "intelLink": "下载 Intel 版",
+    "allReleases": "版本说明与校验值",
+    "heroLink": "也有 Mac 版",
+    "homeEyebrow": "桌面应用",
+    "homeTitle": "你的分析师，现在是一个 Mac 应用。",
+    "homeSubtitle": "完整的工作台，在独立窗口里运行：账号、套餐、组合都和网页版一致，研究智能体直接跑在你的 Mac 上。",
+    "points": [
+      {
+        "title": "独立窗口",
+        "body": "常驻程序坞，重启后保持登录，工作台一键即开。"
+      },
+      {
+        "title": "智能体本地运行",
+        "body": "对话保存在你的 Mac 上；实时行情与模型通过你的 PickSkill 账号获取。"
+      },
+      {
+        "title": "同一个账号",
+        "body": "用邮箱验证码或 Google 登录，套餐、额度和组合与网页版同步。"
+      }
+    ],
+    "screenshotAlt": "PickSkill Mac 版首页：研究工作台、组合与技术指标",
+    "metaTitle": "下载 PickSkill Mac 版 — AI 金融分析师桌面应用",
+    "metaDescription": "下载 PickSkill Mac 版：原生窗口里的 AI 分析师工作台，支持 Apple 芯片与 Intel Mac。免费，macOS 13 及以上，与网页版同一账号。",
+    "pageTitle": "PickSkill Mac 版",
+    "pageSubtitle": "研究、组合与技术指标，都在原生窗口里。免费下载，所有 PickSkill 套餐均可使用。",
+    "installEyebrow": "安装",
+    "installTitle": "一分钟装好。",
+    "steps": [
+      {
+        "title": "下载",
+        "body": "选择适合你 Mac 的版本。不确定芯片类型？点左上角苹果菜单 → 关于本机。"
+      },
+      {
+        "title": "拖入应用程序",
+        "body": "打开 .dmg，把 PickSkill 拖进「应用程序」文件夹。"
+      },
+      {
+        "title": "允许首次打开",
+        "body": "这个早期版本尚未经过 Apple 公证。先打开一次 PickSkill，再到「系统设置 → 隐私与安全性」点「仍要打开」。只需操作一次。"
+      },
+      {
+        "title": "登录",
+        "body": "用邮箱验证码或 Google 登录，账号与 pickskill.ai 相同。"
+      }
+    ],
+    "requirementsTitle": "系统要求",
+    "requirements": [
+      "macOS 13 Ventura 或更高版本",
+      "Apple 芯片或 Intel 芯片的 Mac",
+      "一个 PickSkill 账号（免费套餐即可）"
+    ],
+    "faqTitle": "常见问题",
+    "faq": [
+      {
+        "q": "PickSkill Mac 版免费吗？",
+        "a": "免费。应用免费下载，使用你的 PickSkill 套餐（包括免费套餐）。应用内的对话与网页版共用同一个月度额度。"
+      },
+      {
+        "q": "为什么首次打开时 macOS 要我确认？",
+        "a": "这个早期版本已签名，但尚未经过 Apple 公证，所以 macOS 会拦截首次打开。在「系统设置 → 隐私与安全性」中点「仍要打开」确认一次即可。"
+      },
+      {
+        "q": "有 Windows 或 Linux 版吗？",
+        "a": "暂时没有。PickSkill Mac 版是第一个桌面版本，其他系统请在浏览器中使用 pickskill.ai。"
+      }
+    ],
+    "otherPlatform": "桌面应用目前仅支持 Mac。在这台设备上，请继续在浏览器中使用 PickSkill。",
+    "openWeb": "打开网页版工作台",
+    "promoTitle": "PickSkill Mac 版",
+    "promoBody": "工作台，独立窗口运行。",
+    "promoCta": "下载",
+    "dismiss": "关闭",
+    "menuItem": "下载 Mac 应用"
   }
 }

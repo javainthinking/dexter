@@ -24,6 +24,7 @@ const HEADER = `# PickSkill
 ## Product
 
 - [PickSkill chat](${SITE_URL}/chat): The AI analyst — ask any finance question, get researched answers with sources, charts, and downloadable artefacts.
+- [PickSkill for Mac](${SITE_URL}/download): Free desktop app for macOS 13+ (Apple Silicon and Intel) — the same workbench in a native window, signed in with the same account and plan.
 - [Pricing](${SITE_URL}/pricing): Free / Starter $15 / Pro $39 / Power $129+ tiers. Differentiators are the file generation quota and auto-refresh portfolio quotes on higher tiers.
 `;
 

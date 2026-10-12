@@ -18,6 +18,7 @@ import { useDictionary, useLocale } from '../i18n/dictionary-provider';
 import { getLocalizedPath } from '../../lib/i18n/paths';
 import { cn } from '../../lib/utils';
 import { useMarketColor } from '../settings/market-color-provider';
+import { DownloadMenuItem } from '../desktop/download-menu-item';
 
 interface UserMenuProps {
   /** Render compact (avatar only, used in headers) or full (avatar + name). */
@@ -112,6 +113,7 @@ export function UserMenu({ variant = 'compact', className }: UserMenuProps) {
             {dict.account.title}
           </LocalizedLink>
         </DropdownMenuItem>
+        <DownloadMenuItem />
         <DropdownMenuSeparator />
 
         {/* Market-colour convention toggle. Visible inside the user

@@ -525,5 +525,86 @@
     "openApp": "Ouvrir PickSkill",
     "hint": "Si rien ne se passe, cliquez sur le bouton ci-dessus. Vous pourrez ensuite fermer cet onglet.",
     "invalid": "Ce lien de connexion est invalide ou a expiré. Relancez la connexion depuis l’application de bureau."
+  },
+  "download": {
+    "nav": "Télécharger",
+    "badge": "PickSkill pour Mac",
+    "versionLine": "Version {version} · macOS {macos} ou ultérieur · Gratuit",
+    "ctaPrimary": "Télécharger pour Mac",
+    "appleSilicon": "Apple Silicon · M1 ou ultérieur",
+    "intel": "Mac Intel",
+    "intelLink": "Télécharger pour Intel",
+    "allReleases": "Notes de version et sommes de contrôle",
+    "heroLink": "Aussi sur Mac",
+    "homeEyebrow": "Application de bureau",
+    "homeTitle": "Votre analyste, désormais en app Mac.",
+    "homeSubtitle": "Tout l’atelier dans sa propre fenêtre : le même compte, la même offre et les mêmes portefeuilles que sur le web, avec l’agent de recherche qui tourne sur votre Mac.",
+    "points": [
+      {
+        "title": "Sa propre fenêtre",
+        "body": "Reste dans le Dock et garde votre session entre deux lancements : l’atelier est à un clic."
+      },
+      {
+        "title": "L’agent tourne en local",
+        "body": "Les conversations sont enregistrées sur votre Mac. Les données de marché en direct et les modèles passent par votre compte PickSkill."
+      },
+      {
+        "title": "Un seul compte",
+        "body": "Connectez-vous avec un code par e-mail ou Google. Votre offre, votre quota et vos portefeuilles suivent depuis le web."
+      }
+    ],
+    "screenshotAlt": "Écran d’accueil de PickSkill pour Mac avec l’atelier de recherche, les portefeuilles et les indicateurs",
+    "metaTitle": "Télécharger PickSkill pour Mac — l’analyste financier IA sur votre bureau",
+    "metaDescription": "Téléchargez PickSkill pour Mac : l’atelier de l’analyste IA dans une fenêtre native, pour Mac Apple Silicon et Intel. Gratuit, macOS 13 ou ultérieur, même compte que le web.",
+    "pageTitle": "PickSkill pour Mac",
+    "pageSubtitle": "Recherche, portefeuilles et indicateurs dans une fenêtre native. Téléchargement gratuit, compatible avec toutes les offres PickSkill.",
+    "installEyebrow": "Installation",
+    "installTitle": "Prêt en une minute.",
+    "steps": [
+      {
+        "title": "Télécharger",
+        "body": "Choisissez la version adaptée à votre Mac. Vous ne connaissez pas votre puce ? Menu Pomme → À propos de ce Mac."
+      },
+      {
+        "title": "Glisser dans Applications",
+        "body": "Ouvrez le .dmg et glissez PickSkill dans le dossier Applications."
+      },
+      {
+        "title": "Autoriser le premier lancement",
+        "body": "Cette version préliminaire n’est pas encore notariée par Apple. Ouvrez PickSkill une fois, puis allez dans Réglages Système → Confidentialité et sécurité et cliquez sur « Ouvrir quand même ». Une seule fois suffit."
+      },
+      {
+        "title": "Se connecter",
+        "body": "Avec un code par e-mail ou Google, et le même compte que sur pickskill.ai."
+      }
+    ],
+    "requirementsTitle": "Configuration requise",
+    "requirements": [
+      "macOS 13 Ventura ou ultérieur",
+      "Mac Apple Silicon ou Intel",
+      "Un compte PickSkill (l’offre gratuite suffit)"
+    ],
+    "faqTitle": "Questions",
+    "faq": [
+      {
+        "q": "PickSkill pour Mac est-il gratuit ?",
+        "a": "Oui. L’application se télécharge gratuitement et utilise votre offre PickSkill, y compris l’offre gratuite. Les conversations dans l’app comptent dans le même quota mensuel que sur le web."
+      },
+      {
+        "q": "Pourquoi macOS me demande-t-il de confirmer le premier lancement ?",
+        "a": "Cette version préliminaire est signée mais pas encore notariée par Apple, donc macOS bloque la première ouverture. Autorisez-la une fois dans Réglages Système → Confidentialité et sécurité → « Ouvrir quand même »."
+      },
+      {
+        "q": "Existe-t-il une version Windows ou Linux ?",
+        "a": "Pas encore. PickSkill pour Mac est la première version de bureau. Sur les autres systèmes, utilisez pickskill.ai dans votre navigateur."
+      }
+    ],
+    "otherPlatform": "L’application de bureau est réservée au Mac pour l’instant. Sur cet appareil, continuez à utiliser PickSkill dans votre navigateur.",
+    "openWeb": "Ouvrir l’atelier web",
+    "promoTitle": "PickSkill pour Mac",
+    "promoBody": "L’atelier dans sa propre fenêtre.",
+    "promoCta": "Télécharger",
+    "dismiss": "Masquer",
+    "menuItem": "Télécharger l’app Mac"
   }
 }

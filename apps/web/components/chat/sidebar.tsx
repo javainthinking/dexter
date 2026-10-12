@@ -6,6 +6,7 @@ import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
 import { Logo } from '../logo';
+import { DesktopPromo } from '../desktop/desktop-promo';
 import { LocalizedLink } from '../i18n/localized-link';
 import { useDictionary } from '../i18n/dictionary-provider';
 import { cn } from '../../lib/utils';
@@ -117,6 +118,7 @@ export function Sidebar({
           </ul>
         )}
       </ScrollArea>
+      <DesktopPromo />
     </aside>
   );
 }

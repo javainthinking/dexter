@@ -525,5 +525,86 @@
     "openApp": "開啟 PickSkill",
     "hint": "如果沒有自動跳轉，請點擊上方按鈕。完成後可以關閉此分頁。",
     "invalid": "此登入連結無效或已過期，請在桌面應用程式中重新登入。"
+  },
+  "download": {
+    "nav": "下載",
+    "badge": "PickSkill Mac 版",
+    "versionLine": "版本 {version} · macOS {macos} 或更新版本 · 免費",
+    "ctaPrimary": "下載 Mac 版",
+    "appleSilicon": "Apple 晶片 · M1 及以上",
+    "intel": "Intel 晶片 Mac",
+    "intelLink": "下載 Intel 版",
+    "allReleases": "版本說明與校驗值",
+    "heroLink": "也有 Mac 版",
+    "homeEyebrow": "桌面應用程式",
+    "homeTitle": "你的分析師，現在是一個 Mac App。",
+    "homeSubtitle": "完整的工作台，在獨立視窗中執行：帳號、方案、投資組合都與網頁版一致，研究代理直接在你的 Mac 上運作。",
+    "points": [
+      {
+        "title": "獨立視窗",
+        "body": "常駐 Dock，重新啟動後維持登入，工作台一鍵開啟。"
+      },
+      {
+        "title": "代理在本機執行",
+        "body": "對話儲存在你的 Mac 上；即時行情與模型透過你的 PickSkill 帳號取得。"
+      },
+      {
+        "title": "同一個帳號",
+        "body": "用電子郵件驗證碼或 Google 登入，方案、額度與投資組合與網頁版同步。"
+      }
+    ],
+    "screenshotAlt": "PickSkill Mac 版首頁：研究工作台、投資組合與技術指標",
+    "metaTitle": "下載 PickSkill Mac 版 — AI 金融分析師桌面 App",
+    "metaDescription": "下載 PickSkill Mac 版：原生視窗中的 AI 分析師工作台，支援 Apple 晶片與 Intel Mac。免費，macOS 13 或更新版本，與網頁版同一帳號。",
+    "pageTitle": "PickSkill Mac 版",
+    "pageSubtitle": "研究、投資組合與技術指標，都在原生視窗中。免費下載，所有 PickSkill 方案皆可使用。",
+    "installEyebrow": "安裝",
+    "installTitle": "一分鐘完成安裝。",
+    "steps": [
+      {
+        "title": "下載",
+        "body": "選擇適合你 Mac 的版本。不確定晶片類型？點選左上角蘋果選單 → 關於這台 Mac。"
+      },
+      {
+        "title": "拖進應用程式",
+        "body": "打開 .dmg，把 PickSkill 拖進「應用程式」檔案夾。"
+      },
+      {
+        "title": "允許首次開啟",
+        "body": "這個早期版本尚未通過 Apple 公證。先開啟一次 PickSkill，再到「系統設定 → 隱私權與安全性」點選「強制打開」。只需操作一次。"
+      },
+      {
+        "title": "登入",
+        "body": "用電子郵件驗證碼或 Google 登入，帳號與 pickskill.ai 相同。"
+      }
+    ],
+    "requirementsTitle": "系統需求",
+    "requirements": [
+      "macOS 13 Ventura 或更新版本",
+      "Apple 晶片或 Intel 晶片的 Mac",
+      "一個 PickSkill 帳號（免費方案即可）"
+    ],
+    "faqTitle": "常見問題",
+    "faq": [
+      {
+        "q": "PickSkill Mac 版免費嗎？",
+        "a": "免費。App 免費下載，使用你的 PickSkill 方案（包含免費方案）。App 內的對話與網頁版共用同一個每月額度。"
+      },
+      {
+        "q": "為什麼首次開啟時 macOS 要我確認？",
+        "a": "這個早期版本已簽署，但尚未通過 Apple 公證，所以 macOS 會阻擋首次開啟。在「系統設定 → 隱私權與安全性」中點選「強制打開」確認一次即可。"
+      },
+      {
+        "q": "有 Windows 或 Linux 版嗎？",
+        "a": "目前還沒有。PickSkill Mac 版是第一個桌面版本，其他系統請在瀏覽器中使用 pickskill.ai。"
+      }
+    ],
+    "otherPlatform": "桌面 App 目前僅支援 Mac。在這台裝置上，請繼續在瀏覽器中使用 PickSkill。",
+    "openWeb": "開啟網頁版工作台",
+    "promoTitle": "PickSkill Mac 版",
+    "promoBody": "工作台，獨立視窗執行。",
+    "promoCta": "下載",
+    "dismiss": "關閉",
+    "menuItem": "下載 Mac App"
   }
 }

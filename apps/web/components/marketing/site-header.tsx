@@ -32,6 +32,7 @@ export async function SiteHeader({ lang }: { lang: Locale }) {
     { href: getLocalizedPath('/features', lang), label: dict.nav?.features ?? 'Features' },
     { href: getLocalizedPath('/blog', lang), label: dict.nav?.blog ?? 'Blog' },
     { href: getLocalizedPath('/pricing', lang), label: dict.nav?.pricing ?? 'Pricing' },
+    { href: getLocalizedPath('/download', lang), label: dict.download.nav },
   ];
 
   return (
