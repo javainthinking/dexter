@@ -524,7 +524,13 @@
     "returning": "Du wirst zur Desktop-App zurückgeleitet…",
     "openApp": "PickSkill öffnen",
     "hint": "Falls nichts passiert, klicke auf die Schaltfläche oben. Danach kannst du diesen Tab schließen.",
-    "invalid": "Dieser Anmeldelink ist ungültig oder abgelaufen. Starte die Anmeldung erneut in der Desktop-App."
+    "invalid": "Dieser Anmeldelink ist ungültig oder abgelaufen. Starte die Anmeldung erneut in der Desktop-App.",
+    "eyebrow": "PickSkill für Mac",
+    "doneTitle": "Sie sind angemeldet.",
+    "doneBody": "PickSkill für Mac ist bereit. Wechseln Sie zurück zur App – diesen Tab können Sie schließen.",
+    "failedTitle": "Die Anmeldung wurde nicht abgeschlossen.",
+    "failedBody": "Kehren Sie zu PickSkill für Mac zurück und wählen Sie erneut „Mit Google fortfahren“.",
+    "backHome": "Zu pickskill.ai"
   },
   "download": {
     "nav": "Download",

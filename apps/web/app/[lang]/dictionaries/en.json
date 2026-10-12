@@ -542,7 +542,13 @@
     "returning": "Returning you to the desktop app…",
     "openApp": "Open PickSkill",
     "hint": "If nothing happens, click the button above. You can close this tab afterwards.",
-    "invalid": "This sign-in link is invalid or has expired. Start sign-in again from the desktop app."
+    "invalid": "This sign-in link is invalid or has expired. Start sign-in again from the desktop app.",
+    "eyebrow": "PickSkill for Mac",
+    "doneTitle": "You're signed in.",
+    "doneBody": "PickSkill for Mac is ready. Switch back to the app to continue — you can close this tab.",
+    "failedTitle": "Sign-in didn't finish.",
+    "failedBody": "Go back to PickSkill for Mac and choose Continue with Google again.",
+    "backHome": "Go to pickskill.ai"
   },
   "download": {
     "nav": "Download",

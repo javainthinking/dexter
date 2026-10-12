@@ -524,7 +524,13 @@
     "returning": "Volviendo a la aplicación de escritorio…",
     "openApp": "Abrir PickSkill",
     "hint": "Si no ocurre nada, haz clic en el botón de arriba. Después puedes cerrar esta pestaña.",
-    "invalid": "Este enlace de inicio de sesión no es válido o ha caducado. Vuelve a iniciar sesión desde la aplicación de escritorio."
+    "invalid": "Este enlace de inicio de sesión no es válido o ha caducado. Vuelve a iniciar sesión desde la aplicación de escritorio.",
+    "eyebrow": "PickSkill para Mac",
+    "doneTitle": "Has iniciado sesión.",
+    "doneBody": "PickSkill para Mac está listo. Vuelve a la app para continuar; puedes cerrar esta pestaña.",
+    "failedTitle": "El inicio de sesión no terminó.",
+    "failedBody": "Vuelve a PickSkill para Mac y elige de nuevo «Continuar con Google».",
+    "backHome": "Ir a pickskill.ai"
   },
   "download": {
     "nav": "Descargar",

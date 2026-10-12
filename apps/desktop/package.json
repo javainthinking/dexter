@@ -1,6 +1,6 @@
 {
   "name": "@dexter/desktop",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "PickSkill desktop (macOS) \u2014 Electron shell with an embedded OpenCode agent host.",
   "type": "module",

@@ -15,15 +15,15 @@ import path from 'node:path';
  * 127.0.0.1 receives the code from /desktop/authorize, which is exchanged
  * with the PKCE verifier at /api/desktop/token (apps/web/lib/auth/desktop.ts).
  *
+ * After the exchange the loopback server redirects the browser tab to
+ * pickskill.ai/desktop/done, so the tab ends on a styled, localized PickSkill
+ * page rather than on the bare 127.0.0.1 URL.
+ *
  * The token is encrypted with safeStorage (macOS Keychain-backed key) and
  * kept in userData; it never reaches the renderer.
  */
 
 const GOOGLE_TIMEOUT_MS = 10 * 60 * 1000;
-
-const DONE_PAGE = `<!doctype html><meta charset="utf-8"><title>PickSkill</title>
-<body style="font:15px -apple-system,system-ui,sans-serif;display:grid;place-items:center;height:90vh;color:#444">
-<div style="text-align:center"><h2 style="color:#111">Signed in to PickSkill</h2><p>You can close this tab and return to the app.</p></div>`;
 
 export class AuthStore {
   private token: string | null = null;
@@ -74,6 +74,11 @@ export class AuthStore {
     const challenge = createHash('sha256').update(verifier).digest('base64url');
 
     return new Promise<void>((resolve, reject) => {
+      const finish = (res: http.ServerResponse, status: 'ok' | 'error') => {
+        const done = new URL('/desktop/done', this.apiBase);
+        done.searchParams.set('status', status);
+        res.writeHead(302, { location: done.toString(), 'cache-control': 'no-store' }).end();
+      };
       const server = http.createServer((req, res) => {
         const url = new URL(req.url ?? '/', 'http://127.0.0.1');
         if (url.pathname !== '/callback') {
@@ -82,17 +87,17 @@ export class AuthStore {
         }
         const code = url.searchParams.get('code');
         if (!code || url.searchParams.get('state') !== state) {
-          res.writeHead(400, { 'content-type': 'text/plain' }).end('Invalid sign-in response.');
+          finish(res, 'error');
           return;
         }
         this.exchange(code, verifier).then(
           () => {
-            res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }).end(DONE_PAGE);
+            finish(res, 'ok');
             this.finishGoogle();
             resolve();
           },
           (err: Error) => {
-            res.writeHead(500, { 'content-type': 'text/plain' }).end('Sign-in failed. Please try again from PickSkill.');
+            finish(res, 'error');
             this.finishGoogle();
             reject(err);
           },

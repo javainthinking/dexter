@@ -2,9 +2,9 @@
 
 import * as React from 'react';
 import { signIn } from 'next-auth/react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, TriangleAlert } from 'lucide-react';
 import { Button } from '../../../../components/ui/button';
-import { Logo } from '../../../../components/logo';
+import { DesktopAuthShell } from '../../../../components/desktop/desktop-auth-shell';
 import type { Dictionary } from '../../dictionaries';
 
 interface Props {
@@ -18,28 +18,21 @@ export function DesktopHandoff({ copy, redirectTo }: Props) {
     if (redirectTo) window.location.href = redirectTo;
   }, [redirectTo]);
 
+  if (!redirectTo) {
+    return (
+      <DesktopAuthShell eyebrow={copy.eyebrow} tone="negative" icon={<TriangleAlert className="size-5" />} title={copy.failedTitle} homeHref="/">
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{copy.invalid}</p>
+      </DesktopAuthShell>
+    );
+  }
   return (
-    <main className="flex min-h-dvh items-center justify-center px-4">
-      <div className="w-full max-w-sm space-y-6 text-center">
-        <div className="flex justify-center">
-          <Logo />
-        </div>
-        {redirectTo ? (
-          <>
-            <div className="space-y-2">
-              <h1 className="text-xl font-semibold">{copy.title}</h1>
-              <p className="text-sm text-muted-foreground">{copy.returning}</p>
-            </div>
-            <Button asChild className="w-full">
-              <a href={redirectTo}>{copy.openApp}</a>
-            </Button>
-            <p className="text-xs text-muted-foreground">{copy.hint}</p>
-          </>
-        ) : (
-          <p className="text-sm text-muted-foreground">{copy.invalid}</p>
-        )}
-      </div>
-    </main>
+    <DesktopAuthShell eyebrow={copy.eyebrow} icon={<Loader2 className="size-5 animate-spin" />} title={copy.title} homeHref="/">
+      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{copy.returning}</p>
+      <Button asChild size="lg" className="mt-8 w-full">
+        <a href={redirectTo}>{copy.openApp}</a>
+      </Button>
+      <p className="mt-4 text-xs leading-relaxed text-subtle">{copy.hint}</p>
+    </DesktopAuthShell>
   );
 }
 
@@ -50,14 +43,8 @@ export function DesktopGoogleStart({ label, callbackUrl }: { label: string; call
   }, [callbackUrl]);
 
   return (
-    <main className="flex min-h-dvh items-center justify-center px-4">
-      <div className="flex flex-col items-center gap-4 text-sm text-muted-foreground">
-        <Logo />
-        <span className="inline-flex items-center gap-2">
-          <Loader2 className="size-4 animate-spin" />
-          {label}
-        </span>
-      </div>
-    </main>
+    <DesktopAuthShell eyebrow="PickSkill for Mac" tone="muted" icon={<Loader2 className="size-5 animate-spin" />} homeHref="/">
+      <p className="mt-3 text-sm text-muted-foreground">{label}</p>
+    </DesktopAuthShell>
   );
 }

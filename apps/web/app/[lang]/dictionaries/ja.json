@@ -524,7 +524,13 @@
     "returning": "デスクトップアプリに戻っています…",
     "openApp": "PickSkill を開く",
     "hint": "自動で切り替わらない場合は上のボタンをクリックしてください。その後このタブは閉じて構いません。",
-    "invalid": "このサインインリンクは無効か期限切れです。デスクトップアプリからもう一度サインインしてください。"
+    "invalid": "このサインインリンクは無効か期限切れです。デスクトップアプリからもう一度サインインしてください。",
+    "eyebrow": "PickSkill for Mac",
+    "doneTitle": "サインインしました。",
+    "doneBody": "PickSkill for Mac の準備ができました。アプリに戻って続けてください。このタブは閉じてかまいません。",
+    "failedTitle": "サインインが完了しませんでした。",
+    "failedBody": "PickSkill for Mac に戻り、もう一度「Google で続行」を選んでください。",
+    "backHome": "pickskill.ai へ"
   },
   "download": {
     "nav": "ダウンロード",

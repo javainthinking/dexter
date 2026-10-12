@@ -152,9 +152,20 @@ try {
   if (authorize.pathname !== '/desktop/authorize' || authorize.searchParams.get('provider') !== 'google') {
     throw new Error(`unexpected Google URL: ${authorizeUrl}`);
   }
-  // Stand-in for the browser: follow the redirect chain to the app's loopback server.
-  const done = await fetch(authorizeUrl);
-  if (!(await done.text()).includes('Signed in to PickSkill')) throw new Error(`loopback page: ${done.status}`);
+  // Stand-in for the browser: follow the redirect chain to the app's loopback
+  // server, which must hand the tab back to pickskill.ai/desktop/done.
+  let hop = authorizeUrl;
+  let landed = null;
+  for (let i = 0; i < 10 && !landed; i++) {
+    const r = await fetch(hop, { redirect: 'manual' });
+    const next = r.headers.get('location');
+    if (!next) throw new Error(`redirect chain ended at ${hop} (${r.status})`);
+    if (new URL(hop).hostname === '127.0.0.1' && new URL(hop).pathname === '/callback') landed = new URL(next, hop);
+    else hop = new URL(next, hop).toString();
+  }
+  if (!landed || landed.origin !== new URL(API).origin || landed.pathname !== '/desktop/done' || landed.searchParams.get('status') !== 'ok') {
+    throw new Error(`loopback did not redirect to /desktop/done?status=ok: ${landed}`);
+  }
   await win2.locator('input[type="email"]').waitFor({ state: 'detached', timeout: 15_000 });
   step(`Google sign-in via system browser + loopback ${new URL(authorize.searchParams.get('redirect_uri')).host}`);
   await win2.evaluate(() => window.pickskill.account.signOut());

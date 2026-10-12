@@ -524,7 +524,13 @@
     "returning": "正在返回桌面應用程式…",
     "openApp": "開啟 PickSkill",
     "hint": "如果沒有自動跳轉，請點擊上方按鈕。完成後可以關閉此分頁。",
-    "invalid": "此登入連結無效或已過期，請在桌面應用程式中重新登入。"
+    "invalid": "此登入連結無效或已過期，請在桌面應用程式中重新登入。",
+    "eyebrow": "PickSkill Mac 版",
+    "doneTitle": "已登入。",
+    "doneBody": "PickSkill Mac 版已準備就緒。切回 App 即可繼續，這個分頁可以關閉了。",
+    "failedTitle": "登入沒有完成。",
+    "failedBody": "請回到 PickSkill Mac 版，重新選擇「使用 Google 繼續」。",
+    "backHome": "前往 pickskill.ai"
   },
   "download": {
     "nav": "下載",

@@ -524,7 +524,13 @@
     "returning": "Retour à l’application de bureau…",
     "openApp": "Ouvrir PickSkill",
     "hint": "Si rien ne se passe, cliquez sur le bouton ci-dessus. Vous pourrez ensuite fermer cet onglet.",
-    "invalid": "Ce lien de connexion est invalide ou a expiré. Relancez la connexion depuis l’application de bureau."
+    "invalid": "Ce lien de connexion est invalide ou a expiré. Relancez la connexion depuis l’application de bureau.",
+    "eyebrow": "PickSkill pour Mac",
+    "doneTitle": "Vous êtes connecté.",
+    "doneBody": "PickSkill pour Mac est prêt. Revenez dans l’app pour continuer — vous pouvez fermer cet onglet.",
+    "failedTitle": "La connexion n’a pas abouti.",
+    "failedBody": "Revenez dans PickSkill pour Mac et choisissez à nouveau « Continuer avec Google ».",
+    "backHome": "Aller sur pickskill.ai"
   },
   "download": {
     "nav": "Télécharger",
