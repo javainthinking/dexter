@@ -156,9 +156,24 @@ export class AuthStore {
     }
   }
 
+  /**
+   * Keeps the token in memory, and persists it encrypted when the Keychain
+   * allows. Builds are ad-hoc signed for now, so each new version is a new
+   * code identity and macOS asks once before handing it the "PickSkill Safe
+   * Storage" key. If the user declines (or no prompt can be shown), the
+   * session still works until quit instead of failing sign-in outright.
+   */
   private async save(token: string | null): Promise<void> {
     this.token = token;
-    if (token) await fs.writeFile(this.file, safeStorage.encryptString(token));
-    else await fs.rm(this.file, { force: true });
+    if (!token) {
+      await fs.rm(this.file, { force: true });
+      return;
+    }
+    try {
+      await fs.writeFile(this.file, safeStorage.encryptString(token));
+    } catch (err) {
+      console.warn('[auth] Keychain unavailable, keeping this session in memory only:', (err as Error).message);
+      await fs.rm(this.file, { force: true }).catch(() => {});
+    }
   }
 }
