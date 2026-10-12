@@ -112,7 +112,7 @@ function createWindow(): void {
     if (target.origin === APP_ORIGIN) broadcast('app:navigate', target.pathname + target.search + target.hash);
     else void shell.openExternal(url);
   });
-  void win.loadURL(`${APP_ORIGIN}/portfolios`);
+  void win.loadURL(`${APP_ORIGIN}/`);
   win.on('closed', () => (win = null));
 }
 

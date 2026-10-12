@@ -45,8 +45,37 @@ try {
   const opened = await app.evaluate(() => globalThis.__opened);
   if (opened.length) throw new Error(`sign-in opened the browser: ${opened}`);
   step('signed in in-app with email code (no browser opened)');
-  await win.screenshot({ path: `${shots}/1-portfolios-loading.png` });
 
+  // Lands on the desktop home: greeting hero, workspace strip, launch grid,
+  // and the user's portfolios from the server.
+  await win.getByRole('heading', { level: 1 }).waitFor({ timeout: 15_000 });
+  await win.getByText('AI Leaders', { exact: true }).first().waitFor({ timeout: 15_000 });
+  await win.getByText('Pick up where you left off.').waitFor();
+  await win.waitForTimeout(1500); // let the carousel + Lottie tiles paint
+  step('desktop home rendered (hero, workspace stats, launch grid, recent portfolios)');
+  // The web sidebar's "PickSkill for Mac" download card and the user-menu
+  // download item must never show inside the Mac app itself.
+  if (await win.getByText('The workbench in its own window.').count()) throw new Error('download promo shown inside the desktop app');
+  await win.locator('header button[aria-haspopup="menu"]').last().click();
+  if (await win.getByText('Download Mac app').count()) throw new Error('download menu item shown inside the desktop app');
+  await win.keyboard.press('Escape');
+  step('web download prompts hidden inside the desktop app');
+  await win.screenshot({ path: `${shots}/1-home.png` });
+  await win.evaluate(() => document.querySelector('main .overflow-y-auto')?.scrollTo(0, 620));
+  await win.waitForTimeout(800);
+  await win.screenshot({ path: `${shots}/1a-home-workspace.png` });
+  const hScroll = await win.evaluate(() => {
+    const el = document.querySelector('main .overflow-y-auto');
+    // Corner crosses may poke a few px past the edge; they must be clipped, not scrollable.
+    return el && getComputedStyle(el).overflowX !== 'hidden' ? el.scrollWidth - el.clientWidth : 0;
+  });
+  if (hScroll > 0) throw new Error(`home pane scrolls horizontally by ${hScroll}px`);
+  await win.evaluate(() => document.querySelector('main .overflow-y-auto')?.scrollTo(0, 99999));
+  await win.waitForTimeout(800);
+  await win.screenshot({ path: `${shots}/1b-home-bottom.png` });
+
+  // Recent-portfolio row opens that portfolio on web's portfolios page.
+  await win.getByText('AI Leaders', { exact: true }).first().click();
   await win.getByText('NVDA', { exact: true }).first().waitFor({ timeout: 15_000 });
   await win.getByText(/^\$?\d{2,}\.\d{2}$/).first().waitFor({ timeout: 30_000 });
   step('shared web portfolio page rendered holdings + live quotes');
@@ -74,7 +103,10 @@ try {
   // Quota, same as web: the turn above made two LLM calls (tool call +
   // answer) through the gateway and counts as exactly one conversation.
   let usage = await mock('/__mock/usage');
-  for (let i = 0; i < 20 && usage.turns.some((t) => !t.completed); i++) {
+  // Wait for this turn to be metered and closed. The thread may already show
+  // an answer from an earlier run's saved conversation, and the Intel build
+  // under Rosetta is slower — so poll the server rather than trusting the UI.
+  for (let i = 0; i < 300 && (usage.turns.length === before.turns.length || usage.turns.some((t) => !t.completed)); i++) {
     await new Promise((r) => setTimeout(r, 100));
     usage = await mock('/__mock/usage');
   }
@@ -98,7 +130,7 @@ try {
   await app.close();
   const app2 = await electron.launch({ executablePath, args: launchArgs, cwd: appDir, env: { ...process.env, PICKSKILL_API_BASE: API } });
   const win2 = await app2.firstWindow();
-  await win2.getByText('NVDA', { exact: true }).first().waitFor({ timeout: 15_000 }).catch(async () => {
+  await win2.getByText('AI Leaders', { exact: true }).first().waitFor({ timeout: 15_000 }).catch(async () => {
     throw new Error('session did not persist across restart');
   });
   step('session restored from Keychain-encrypted store after restart');

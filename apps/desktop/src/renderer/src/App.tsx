@@ -3,13 +3,14 @@ import type { AccountState } from '../../shared/ipc';
 import { navigate, useLocation, useRefreshKey } from './router';
 import { DesktopSessionProvider } from './shims/next-auth-react';
 import { dictionaries } from './dictionaries';
+import { DesktopHome } from './home/DesktopHome';
 
 // Shared with apps/web — the same components pickskill.ai renders.
 import { Providers } from '@web/app/providers';
 import { DictionaryProvider } from '@web/components/i18n/dictionary-provider';
 import { LangSetter } from '@web/components/i18n/lang-setter';
 import { UpgradeDialogProvider } from '@web/components/upgrade/upgrade-dialog-provider';
-import { getLocalizedPath, readLocaleFromPath, stripLocalePrefix } from '@web/lib/i18n/paths';
+import { readLocaleFromPath, stripLocalePrefix } from '@web/lib/i18n/paths';
 import type { PlanId } from '@web/lib/plans';
 import { SignInClient } from '@web/app/[lang]/sign-in/sign-in-client';
 
@@ -33,7 +34,13 @@ export function App() {
   return (
     <DesktopSessionProvider account={account}>
       <Providers>
-        <Localized>{account.status === 'signed-in' ? <Routes plan={(account.plan ?? 'free') as PlanId} /> : <SignIn account={account} />}</Localized>
+        <Localized>
+          {account.status === 'signed-in' ? (
+            <Routes plan={(account.plan ?? 'free') as PlanId} userName={account.user?.name ?? null} />
+          ) : (
+            <SignIn account={account} />
+          )}
+        </Localized>
       </Providers>
     </DesktopSessionProvider>
   );
@@ -51,22 +58,18 @@ function Localized({ children }: { children: ReactNode }) {
 }
 
 /** Desktop stand-ins for web's server `page.tsx` files: fetch what SSR would have passed as props. */
-function Routes({ plan }: { plan: PlanId }) {
+function Routes({ plan, userName }: { plan: PlanId; userName: string | null }) {
   const { pathname } = useLocation();
-  const locale = readLocaleFromPath(pathname);
   const path = stripLocalePrefix(pathname) || '/';
 
-  useEffect(() => {
-    if (path === '/') navigate(getLocalizedPath('/portfolios', locale), { replace: true });
-  }, [path, locale]);
-
   let page: ReactNode = null;
-  if (path === '/portfolios') page = <WithPortfolios>{(p) => <PortfoliosClient initialPortfolios={p} plan={plan} />}</WithPortfolios>;
+  if (path === '/') page = <DesktopHome plan={plan} userName={userName} />;
+  else if (path === '/portfolios') page = <WithPortfolios>{(p) => <PortfoliosClient initialPortfolios={p} plan={plan} />}</WithPortfolios>;
   else if (path === '/indicators') page = <WithPortfolios>{(p) => <IndicatorsClient initialPortfolios={p} />}</WithPortfolios>;
   else if (path === '/market') page = <MarketClient />;
   else if (path === '/feedback') page = <FeedbackClient />;
   else if (path === '/chat') page = <ChatRoute />;
-  else if (path !== '/') page = <OpenOnWeb path={pathname} />;
+  else page = <OpenOnWeb path={pathname} />;
 
   return <Suspense fallback={<Splash />}>{page}</Suspense>;
 }
@@ -91,7 +94,7 @@ function WithPortfolios({ children }: { children: (p: PortfolioList) => ReactNod
 function OpenOnWeb({ path }: { path: string }) {
   useEffect(() => {
     window.open(new URL(path, window.pickskill.apiBase).toString(), '_blank');
-    window.history.length > 1 ? window.history.back() : navigate('/portfolios', { replace: true });
+    window.history.length > 1 ? window.history.back() : navigate('/', { replace: true });
   }, [path]);
   return <Splash />;
 }

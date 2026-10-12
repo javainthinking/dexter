@@ -28,5 +28,15 @@ mac:
     - target: dmg
       arch: [arm64, x64]
   hardenedRuntime: true
-  # Signing + notarization need an Apple Developer ID; POC builds are unsigned.
-  identity: null
+  # No Apple Developer ID yet: ad-hoc sign ("-") so Apple Silicon accepts the
+  # binary (a fully unsigned arm64 app is reported as "damaged"). Users still
+  # confirm the first launch in System Settings → Privacy & Security.
+  # With a Developer ID, set CSC_LINK/CSC_KEY_PASSWORD + APPLE_* and drop this.
+  identity: "-"
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  # Versionless names so pickskill.ai can link to
+  # releases/latest/download/PickSkill-mac-<arch>.dmg across releases.
+  artifactName: ${productName}-mac-${arch}.${ext}
+dmg:
+  artifactName: ${productName}-mac-${arch}.${ext}
