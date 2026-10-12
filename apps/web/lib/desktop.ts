@@ -10,7 +10,7 @@
 const REPO = 'javainthinking/dexter';
 
 export const DESKTOP_RELEASE = {
-  version: '0.1.0',
+  version: '0.1.1',
   /** LSMinimumSystemVersion of the packaged app (Electron 44). */
   minMacOS: '13',
 } as const;
