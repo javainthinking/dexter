@@ -265,7 +265,14 @@
     "errNotFound": "未找到。",
     "errHoldingRequired": "持仓组合至少需要一个标的,请先选择一个再继续。",
     "errLastHolding": "不能移除最后一个标的。请先添加其他标的,或直接删除整个持仓组合。",
-    "errGeneric": "发生错误,请重试。"
+    "errGeneric": "发生错误,请重试。",
+    "addFromStockTitle": "把 {symbol} 加入持仓",
+    "addFromStockPick": "选择持仓组合",
+    "addFromStockDefaultName": "自选股",
+    "addFromStockSkip": "暂不",
+    "addFromStockDone": "已把 {symbol} 加入「{portfolio}」。",
+    "addFromStockHeld": "{symbol} 已在「{portfolio}」中。",
+    "addFromStockView": "查看"
   },
   "indicators": {
     "_localeHint": "zh",

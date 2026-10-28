@@ -265,7 +265,14 @@
     "errNotFound": "見つかりません。",
     "errHoldingRequired": "ポートフォリオには少なくとも 1 銘柄必要です。続けるには銘柄を選んでください。",
     "errLastHolding": "最後の銘柄は外せません。ポートフォリオを削除するか、先に別の銘柄を追加してください。",
-    "errGeneric": "エラーが発生しました。"
+    "errGeneric": "エラーが発生しました。",
+    "addFromStockTitle": "{symbol} をポートフォリオに追加",
+    "addFromStockPick": "ポートフォリオを選択",
+    "addFromStockDefaultName": "ウォッチリスト",
+    "addFromStockSkip": "後で",
+    "addFromStockDone": "{symbol} を {portfolio} に追加しました。",
+    "addFromStockHeld": "{symbol} は既に {portfolio} にあります。",
+    "addFromStockView": "表示"
   },
   "indicators": {
     "_localeHint": "ja",

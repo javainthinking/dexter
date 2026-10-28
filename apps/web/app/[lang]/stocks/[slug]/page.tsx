@@ -13,6 +13,7 @@ import { SiteFooter } from '../../../../components/marketing/site-footer';
 import { CornerMarks } from '../../../../components/marketing/blueprint';
 import { SignalTimeline } from '../../../../components/indicators/signal-timeline';
 import { ShareBar } from '../../../../components/stocks/share-bar';
+import { AddToPortfolio } from '../../../../components/stocks/add-to-portfolio';
 import {
   StockCard,
   TONE_CLASS,
@@ -293,6 +294,15 @@ export default async function StockPage({
                 </dl>
               )}
               <div className="mt-6">
+                <AddToPortfolio
+                  locale={locale}
+                  ticker={stock.ticker}
+                  name={name}
+                  exchange={stock.exchange}
+                  labels={copy.portfolio}
+                />
+              </div>
+              <div className="mt-5">
                 <ShareBar
                   pageUrl={url}
                   symbol={symbol}

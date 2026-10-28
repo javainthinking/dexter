@@ -265,7 +265,14 @@
     "errNotFound": "Introuvable.",
     "errHoldingRequired": "Un portefeuille doit contenir au moins une position — choisis un symbole pour continuer.",
     "errLastHolding": "Impossible de retirer la dernière position. Supprime le portefeuille ou ajoute d'abord un autre symbole.",
-    "errGeneric": "Une erreur s'est produite."
+    "errGeneric": "Une erreur s'est produite.",
+    "addFromStockTitle": "Ajouter {symbol} à un portefeuille",
+    "addFromStockPick": "Choisissez un portefeuille",
+    "addFromStockDefaultName": "Liste de suivi",
+    "addFromStockSkip": "Plus tard",
+    "addFromStockDone": "{symbol} ajouté à {portfolio}.",
+    "addFromStockHeld": "{symbol} est déjà dans {portfolio}.",
+    "addFromStockView": "Voir"
   },
   "indicators": {
     "_localeHint": "fr",

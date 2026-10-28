@@ -265,7 +265,14 @@
     "errNotFound": "No encontrado.",
     "errHoldingRequired": "Una cartera necesita al menos una posición — elige un ticker para continuar.",
     "errLastHolding": "No se puede quitar la última posición. Elimina la cartera o añade primero otro ticker.",
-    "errGeneric": "Ocurrió un error."
+    "errGeneric": "Ocurrió un error.",
+    "addFromStockTitle": "Añadir {symbol} a una cartera",
+    "addFromStockPick": "Elige una cartera",
+    "addFromStockDefaultName": "Lista de seguimiento",
+    "addFromStockSkip": "Ahora no",
+    "addFromStockDone": "{symbol} añadido a {portfolio}.",
+    "addFromStockHeld": "{symbol} ya está en {portfolio}.",
+    "addFromStockView": "Ver"
   },
   "indicators": {
     "_localeHint": "es",

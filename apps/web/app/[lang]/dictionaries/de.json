@@ -265,7 +265,14 @@
     "errNotFound": "Nicht gefunden.",
     "errHoldingRequired": "Ein Portfolio braucht mindestens eine Position — wähle einen Ticker, um fortzufahren.",
     "errLastHolding": "Die letzte Position lässt sich nicht entfernen. Lösche das Portfolio oder füge zuerst einen anderen Ticker hinzu.",
-    "errGeneric": "Ein Fehler ist aufgetreten."
+    "errGeneric": "Ein Fehler ist aufgetreten.",
+    "addFromStockTitle": "{symbol} zu einem Portfolio hinzufügen",
+    "addFromStockPick": "Portfolio auswählen",
+    "addFromStockDefaultName": "Watchlist",
+    "addFromStockSkip": "Später",
+    "addFromStockDone": "{symbol} wurde zu {portfolio} hinzugefügt.",
+    "addFromStockHeld": "{symbol} ist bereits in {portfolio}.",
+    "addFromStockView": "Ansehen"
   },
   "indicators": {
     "_localeHint": "de",

@@ -26,6 +26,7 @@ export interface StockCopy {
   breadcrumb: string;
   market: Record<StockMarket, string>;
   index: { metaTitle: string; metaDescription: string; eyebrow: string; headline: string; sub: string };
+  portfolio: { button: string; signedOutHint: string; signedInHint: string };
   search: { label: string; placeholder: string; button: string; hint: string; generating: string; featured: string; empty: string };
   metaTitle: (v: Vars) => string;
   metaDescription: (v: Vars & { asOf: string; tally: string }) => string;
@@ -77,6 +78,11 @@ const en: StockCopy = {
     eyebrow: 'Free · No sign-up · Updated daily',
     headline: 'Technical signals for the stocks everyone is watching',
     sub: 'Eight indicators, five trading days, one glance. Pick a ticker to see its signal timeline and a plain-language read of the week.',
+  },
+  portfolio: {
+    button: 'Add to portfolio',
+    signedOutHint: 'Free sign-up — track its signals next to your other holdings.',
+    signedInHint: 'Pick a portfolio, or start a new one.',
   },
   search: {
     label: 'Find any US, Hong Kong or A-share stock',
@@ -196,6 +202,11 @@ const zhCN: StockCopy = {
     headline: '热门个股技术信号，一眼看懂',
     sub: '8 项指标 × 5 个交易日。选择一只股票，查看它的信号时间线和本周走势解读。',
   },
+  portfolio: {
+    button: '加入持仓',
+    signedOutHint: '免费注册，和你的其他持仓一起追踪信号。',
+    signedInHint: '选择一个持仓组合，或新建一个。',
+  },
   search: {
     label: '搜索美股、港股、A股',
     placeholder: '代码、公司名或拼音，如 NVDA、0700、茅台',
@@ -314,6 +325,11 @@ const zhTW: StockCopy = {
     eyebrow: '免費 · 無需登入 · 每日更新',
     headline: '熱門個股技術訊號，一眼看懂',
     sub: '8 項指標 × 5 個交易日。選擇一檔股票，查看它的訊號時間線和本週走勢解讀。',
+  },
+  portfolio: {
+    button: '加入持倉',
+    signedOutHint: '免費註冊，和你的其他持倉一起追蹤訊號。',
+    signedInHint: '選擇一個持倉組合，或新建一個。',
   },
   search: {
     label: '搜尋美股、港股、A股',

@@ -283,7 +283,14 @@
     "errNotFound": "Not found.",
     "errHoldingRequired": "A portfolio needs at least one holding — pick a ticker to continue.",
     "errLastHolding": "Can't remove the last holding. Delete the portfolio instead, or add another ticker first.",
-    "errGeneric": "Something went wrong."
+    "errGeneric": "Something went wrong.",
+    "addFromStockTitle": "Add {symbol} to a portfolio",
+    "addFromStockPick": "Choose a portfolio",
+    "addFromStockDefaultName": "Watchlist",
+    "addFromStockSkip": "Not now",
+    "addFromStockDone": "{symbol} added to {portfolio}.",
+    "addFromStockHeld": "{symbol} is already in {portfolio}.",
+    "addFromStockView": "View"
   },
   "indicators": {
     "_localeHint": "en",

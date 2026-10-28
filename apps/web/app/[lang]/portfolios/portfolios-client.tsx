@@ -24,6 +24,9 @@ import { PLAN_LIMITS } from '../../../lib/plans';
 import { getLocalizedPath } from '../../../lib/i18n/paths';
 import { cn } from '../../../lib/utils';
 import { SymbolSearch, type SymbolHit } from '../../../components/portfolios/symbol-search';
+import { AddFromStockDialog, type PendingAdd } from '../../../components/portfolios/add-from-stock-dialog';
+
+export type { PendingAdd };
 import {
   resolveInitialActivePortfolioId,
   writeLastActivePortfolioId,
@@ -65,9 +68,12 @@ interface PortfolioDetail extends PortfolioListItem {
 export function PortfoliosClient({
   initialPortfolios,
   plan,
+  pendingAdd: initialPendingAdd = null,
 }: {
   initialPortfolios: PortfolioListItem[];
   plan: PlanId;
+  /** Ticker handed over by a public stock page's "Add to portfolio". */
+  pendingAdd?: PendingAdd | null;
 }) {
   const dict = useDictionary();
   const locale = useLocale();
@@ -126,6 +132,11 @@ export function PortfoliosClient({
   // Inline-rename state
   const [renamingId, setRenamingId] = React.useState<string | null>(null);
   const [renameValue, setRenameValue] = React.useState('');
+
+  // Ticker carried over from /stocks/[slug]; cleared (and stripped from
+  // the URL) once added or dismissed so a reload doesn't reopen it.
+  const [pendingAdd, setPendingAdd] = React.useState<PendingAdd | null>(initialPendingAdd);
+  const [notice, setNotice] = React.useState<string | null>(null);
 
   // Delete-confirm state (inline two-step rather than modal)
   const [confirmingDeleteId, setConfirmingDeleteId] = React.useState<string | null>(null);
@@ -412,6 +423,74 @@ export function PortfoliosClient({
   const portfolioLimit = PLAN_LIMITS[plan].portfolios;
   const atCap = Number.isFinite(portfolioLimit) && portfolios.length >= portfolioLimit;
 
+  // ─── add-from-stock-page flow ────────────────────────────────────
+
+  function closePendingAdd() {
+    setPendingAdd(null);
+    window.history.replaceState(null, '', window.location.pathname);
+  }
+
+  async function showPortfolio(id: string) {
+    setActiveId(id);
+    const r = await fetch(`/api/portfolios/${id}`);
+    if (r.ok) setDetail(((await r.json()) as { portfolio: PortfolioDetail }).portfolio);
+    void refreshQuotes(id);
+    await refreshList();
+  }
+
+  function pendingHolding(weight: number | null) {
+    return {
+      ticker: pendingAdd!.ticker,
+      displayName: pendingAdd!.name,
+      exchange: pendingAdd!.exchange,
+      weight,
+    };
+  }
+
+  function addedNotice(portfolioName: string) {
+    return (dict.portfolios?.addFromStockDone ?? '{symbol} added to {portfolio}.')
+      .replace('{symbol}', pendingAdd!.ticker)
+      .replace('{portfolio}', portfolioName);
+  }
+
+  async function handlePendingAddToExisting(portfolioId: string, weight: number | null) {
+    if (!pendingAdd) return;
+    const res = await fetch(`/api/portfolios/${portfolioId}/holdings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(pendingHolding(weight)),
+    });
+    if (await handledQuota(res)) return;
+    if (!res.ok) {
+      const body = (await res.json().catch(() => null)) as { error?: string } | null;
+      throw new Error(translateError(body?.error ?? 'server_error', dict));
+    }
+    setNotice(addedNotice(portfolios.find((p) => p.id === portfolioId)?.name ?? ''));
+    closePendingAdd();
+    await showPortfolio(portfolioId);
+  }
+
+  async function handlePendingCreate(name: string, weight: number | null) {
+    if (!pendingAdd) return;
+    if (portfolios.some((p) => p.name.trim().toLowerCase() === name.toLowerCase())) {
+      throw new Error(translateError('name_taken', dict));
+    }
+    const res = await fetch('/api/portfolios', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, holding: pendingHolding(weight) }),
+    });
+    if (await handledQuota(res)) return;
+    if (!res.ok) {
+      const body = (await res.json().catch(() => null)) as { error?: string } | null;
+      throw new Error(translateError(body?.error ?? 'server_error', dict));
+    }
+    const created = (await res.json()) as { portfolio: { id: string } };
+    setNotice(addedNotice(name));
+    closePendingAdd();
+    await showPortfolio(created.portfolio.id);
+  }
+
   // "New portfolio" stays clickable at the cap — instead of starting the
   // create flow it opens the upgrade dialog. Below the cap it begins naming.
   function onNewPortfolio() {
@@ -529,6 +608,15 @@ export function PortfoliosClient({
 
           {/* Active portfolio detail */}
           <div className="flex-1 overflow-y-auto px-4 py-4 lg:px-6">
+            {notice && (
+              <div className="mb-3 flex items-center gap-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm">
+                <Check className="size-4 text-[color:var(--accent)]" />
+                <span className="flex-1">{notice}</span>
+                <button onClick={() => setNotice(null)} className="text-xs opacity-70 hover:opacity-100">
+                  ×
+                </button>
+              </div>
+            )}
             {error && (
               <div className="mb-3 flex items-center gap-2 rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2 text-sm text-destructive">
                 <AlertTriangle className="size-4" />
@@ -568,6 +656,40 @@ export function PortfoliosClient({
           </div>
         </div>
       </main>
+
+      {pendingAdd && (
+        <AddFromStockDialog
+          pending={pendingAdd}
+          portfolios={portfolios}
+          defaultPortfolioId={activeId}
+          atCap={atCap}
+          onUpgrade={() => openUpgrade({ plan, metric: 'portfolios', limit: portfolioLimit })}
+          onAddToExisting={handlePendingAddToExisting}
+          onCreate={handlePendingCreate}
+          onView={(id) => {
+            closePendingAdd();
+            setActiveId(id);
+          }}
+          onClose={closePendingAdd}
+          labels={{
+            title: dict.portfolios?.addFromStockTitle ?? 'Add {symbol} to a portfolio',
+            pick: dict.portfolios?.addFromStockPick ?? 'Choose a portfolio',
+            newPortfolio: dict.portfolios?.newPortfolio ?? 'New portfolio',
+            defaultName: dict.portfolios?.addFromStockDefaultName ?? 'Watchlist',
+            namePlaceholder: dict.portfolios?.createPlaceholder ?? 'Portfolio name',
+            holdingsLabel: dict.portfolios?.holdingsLabel ?? 'holdings',
+            already: dict.portfolios?.already ?? 'Added',
+            weight: dict.portfolios?.weight ?? 'Weight',
+            optional: dict.portfolios?.optional ?? 'optional',
+            weightHint: dict.portfolios?.weightHint ?? 'Weight 0–100, or leave blank for a watchlist entry.',
+            add: dict.portfolios?.add ?? 'Add',
+            adding: dict.portfolios?.adding ?? 'Adding…',
+            skip: dict.portfolios?.addFromStockSkip ?? 'Not now',
+            held: dict.portfolios?.addFromStockHeld ?? '{symbol} is already in {portfolio}.',
+            view: dict.portfolios?.addFromStockView ?? 'View',
+          }}
+        />
+      )}
     </div>
   );
 }
