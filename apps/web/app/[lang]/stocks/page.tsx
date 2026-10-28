@@ -8,6 +8,7 @@ import { SiteHeader } from '../../../components/marketing/site-header';
 import { SiteFooter } from '../../../components/marketing/site-footer';
 import { CornerMarks } from '../../../components/marketing/blueprint';
 import { StockCard } from '../../../components/stocks/stock-card';
+import { StockSearch } from '../../../components/stocks/stock-search';
 import { getStockCopy, stockPageLang, STOCK_PAGE_LOCALES } from '../../../lib/stocks/copy';
 import { getStockSnapshots } from '../../../lib/stocks/snapshot';
 import { STOCKS, STOCK_MARKETS, displaySymbol, stockName } from '../../../lib/stocks/universe';
@@ -95,6 +96,12 @@ export default async function StocksIndexPage({ params }: { params: Promise<{ la
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
               {copy.index.sub}
             </p>
+            <StockSearch
+              className="mt-8"
+              locale={locale}
+              lang={lang}
+              labels={{ ...copy.search, markets: copy.market }}
+            />
           </div>
         </div>
       </section>

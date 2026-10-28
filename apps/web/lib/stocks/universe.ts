@@ -1,10 +1,11 @@
 /**
- * The tickers that get a public, login-free /stocks/[slug] page.
+ * The hand-picked tickers featured on /stocks: listed on the index,
+ * in the sitemap and in related-stock links.
  *
- * Deliberately a short hand-picked list while the pages are an
- * experiment: every entry costs one cached price fetch per revalidate
- * window, and only listed slugs resolve (anything else 404s), so the
- * pages can't be used as an open proxy onto the data providers.
+ * Any other US / HK / A-share ticker still gets a page on demand — see
+ * `resolveStock` in ./resolve — but only after the symbol search confirms
+ * it exists, so arbitrary slugs can't be used as an open proxy onto the
+ * data providers.
  *
  * Slugs are the ticker lowercased with the exchange as a suffix in the
  * form people actually type: `nvda`, `0700-hk`, `600519-sh`, `300750-sz`.
@@ -29,7 +30,8 @@ export interface StockEntry {
   ticker: string;
   market: StockMarket;
   exchange: string;
-  sector: StockSector;
+  /** Curated entries only; on-demand pages have no sector. */
+  sector?: StockSector;
   /** `zhTW` only where the Traditional form differs from `zh`. */
   name: { en: string; zh: string; zhTW?: string };
 }
@@ -96,8 +98,62 @@ export function displaySymbol(stock: StockEntry): string {
  */
 export function relatedStocks(stock: StockEntry, limit = 6): StockEntry[] {
   const others = STOCKS.filter((s) => s.slug !== stock.slug);
-  const sameSector = others.filter((s) => s.sector === stock.sector);
-  const sameMarket = others.filter((s) => s.market === stock.market && s.sector !== stock.sector);
-  const rest = others.filter((s) => s.sector !== stock.sector && s.market !== stock.market);
+  const sameSector = stock.sector ? others.filter((s) => s.sector === stock.sector) : [];
+  const sameMarket = others.filter((s) => s.market === stock.market && !sameSector.includes(s));
+  const rest = others.filter((s) => s.market !== stock.market && !sameSector.includes(s));
   return [...sameSector, ...sameMarket, ...rest].slice(0, limit);
+}
+
+/**
+ * Yahoo ticker → page slug, or null for anything outside the three
+ * supported markets (indices, FX, Beijing exchange, OTC suffixes…).
+ */
+export function tickerToSlug(ticker: string): string | null {
+  const t = ticker.trim().toUpperCase();
+  let m = t.match(/^(\d{1,5})\.HK$/);
+  if (m) return `${m[1].replace(/^0+/, '').padStart(4, '0')}-hk`;
+  m = t.match(/^(\d{6})\.(SS|SZ)$/);
+  if (m) return `${m[1]}-${m[2] === 'SS' ? 'sh' : 'sz'}`;
+  // US: plain symbols plus share classes (BRK-B / BRK.B).
+  m = t.match(/^([A-Z]{1,5})(?:[.-]([A-Z]))?$/);
+  if (m) return m[2] ? `${m[1]}-${m[2]}`.toLowerCase() : m[1].toLowerCase();
+  return null;
+}
+
+/** Page slug → Yahoo ticker + market, or null when the slug isn't well-formed. */
+export function slugToTicker(slug: string): { ticker: string; market: StockMarket } | null {
+  const s = slug.trim().toLowerCase();
+  let m = s.match(/^(\d{1,5})-hk$/);
+  if (m) return { ticker: `${m[1].replace(/^0+/, '').padStart(4, '0')}.HK`, market: 'hk' };
+  m = s.match(/^(\d{6})-(sh|sz)$/);
+  if (m) return { ticker: `${m[1]}.${m[2] === 'sh' ? 'SS' : 'SZ'}`, market: 'cn' };
+  m = s.match(/^([a-z]{1,5})(?:-([a-z]))?$/);
+  if (m) return { ticker: (m[2] ? `${m[1]}-${m[2]}` : m[1]).toUpperCase(), market: 'us' };
+  return null;
+}
+
+/**
+ * Curated entries matching free text — slug, ticker, display code
+ * ("0700", "700") or any name form. Exact code hits first, then names.
+ * Runs client-side for instant suggestions before the remote search.
+ */
+export function matchCurated(query: string, limit = 5): StockEntry[] {
+  const q = query.trim().toLowerCase().replace(/\s+/g, '');
+  if (!q) return [];
+  const bare = (s: StockEntry) => s.ticker.split('.')[0].toLowerCase();
+  const exact = STOCKS.filter(
+    (s) =>
+      s.slug === q ||
+      s.ticker.toLowerCase() === q ||
+      bare(s) === q ||
+      // "700" for people who drop the HK leading zero.
+      (s.market === 'hk' && bare(s).replace(/^0+/, '') === q.replace(/^0+/, '')),
+  );
+  const named = STOCKS.filter(
+    (s) =>
+      !exact.includes(s) &&
+      (bare(s).startsWith(q) ||
+        [s.name.en, s.name.zh, s.name.zhTW ?? ''].some((n) => n && n.toLowerCase().replace(/\s+/g, '').includes(q))),
+  );
+  return [...exact, ...named].slice(0, limit);
 }

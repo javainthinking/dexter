@@ -35,6 +35,8 @@ export interface SymbolHit {
   exchange: string | null;
   /** Coarse asset class. Filters out indices, warrants, futures, FX. */
   type: 'equity' | 'etf';
+  /** Yahoo's untruncated name, when it differs from `name`. */
+  longName?: string;
   /** Which feed produced this row — debug-only, never shown in UI. */
   source: 'yahoo' | 'tencent';
 }
@@ -72,6 +74,54 @@ export async function searchSymbols(query: string, limit = 8): Promise<SymbolHit
   return Array.from(dedup.values()).slice(0, limit);
 }
 
+export interface SymbolProfile {
+  ticker: string;
+  /** Yahoo's name — English for every market. */
+  nameEn: string | null;
+  /** Tencent's name — Chinese for A / HK and most US large caps. */
+  nameZh: string | null;
+  exchange: string | null;
+  type: 'equity' | 'etf';
+}
+
+/**
+ * Confirm one exact Yahoo ticker exists and collect its names from both
+ * feeds. Resolves null when neither feed knows the symbol; throws only
+ * when both feeds fail, so callers can tell "no such ticker" (safe to
+ * cache) from an outage (retry later).
+ */
+export async function lookupSymbol(ticker: string): Promise<SymbolProfile | null> {
+  const t = ticker.toUpperCase();
+  const code = t.split('.')[0];
+  // Tencent indexes bare codes and keys HK by the 5-digit form.
+  const tencentQuery = t.endsWith('.HK') ? code.padStart(5, '0') : code.toLowerCase();
+  const [yahoo, tencent] = await Promise.allSettled([searchYahoo(t), searchTencent(tencentQuery)]);
+  if (yahoo.status === 'rejected' && tencent.status === 'rejected') {
+    throw new Error(`symbol lookup failed for ${t}`);
+  }
+  const y = yahoo.status === 'fulfilled' ? yahoo.value.find((h) => h.ticker.toUpperCase() === t) : undefined;
+  const c = tencent.status === 'fulfilled' ? tencent.value.find((h) => h.ticker.toUpperCase() === t) : undefined;
+  if (!y && !c) return null;
+  return {
+    ticker: t,
+    nameEn: y ? cleanCompanyName(y.longName ?? y.name) : null,
+    nameZh: c && CHINESE_CHAR.test(c.name) ? c.name : null,
+    exchange: y?.exchange ?? c?.exchange ?? null,
+    type: (y ?? c)!.type,
+  };
+}
+
+/** "Coinbase Global, Inc." → "Coinbase Global"; "Berkshire Hathaway Inc. New" → "Berkshire Hathaway". */
+function cleanCompanyName(name: string): string {
+  const SUFFIX = /[,\s]+(inc\.?|incorporated|corp\.?|corporation|co\.?|company|ltd\.?|limited|plc|n\.?v\.?|s\.?a\.?|ag|new|class [a-z])$/i;
+  let out = name.trim();
+  for (let prev = ''; prev !== out; ) {
+    prev = out;
+    out = out.replace(SUFFIX, '').trim();
+  }
+  return out || name.trim();
+}
+
 // ---------------------------------------------------------------------------
 // Yahoo
 // ---------------------------------------------------------------------------
@@ -96,6 +146,7 @@ async function searchYahoo(query: string): Promise<SymbolHit[]> {
     out.push({
       ticker: q.symbol,
       name: q.shortname ?? q.longname ?? q.symbol,
+      longName: q.longname,
       exchange: q.exchange ?? null,
       type,
       source: 'yahoo',

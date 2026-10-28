@@ -26,6 +26,7 @@ export interface StockCopy {
   breadcrumb: string;
   market: Record<StockMarket, string>;
   index: { metaTitle: string; metaDescription: string; eyebrow: string; headline: string; sub: string };
+  search: { label: string; placeholder: string; button: string; hint: string; generating: string; featured: string; empty: string };
   metaTitle: (v: Vars) => string;
   metaDescription: (v: Vars & { asOf: string; tally: string }) => string;
   eyebrow: (market: string, exchange: string) => string;
@@ -76,6 +77,15 @@ const en: StockCopy = {
     eyebrow: 'Free · No sign-up · Updated daily',
     headline: 'Technical signals for the stocks everyone is watching',
     sub: 'Eight indicators, five trading days, one glance. Pick a ticker to see its signal timeline and a plain-language read of the week.',
+  },
+  search: {
+    label: 'Find any US, Hong Kong or A-share stock',
+    placeholder: 'Ticker, name or pinyin — NVDA, 0700, Moutai',
+    button: 'Go',
+    hint: 'Not on the list? Any ticker gets its own signal page — the first visit builds it in a few seconds.',
+    generating: 'Building the {symbol} signal page — first visit takes a few seconds…',
+    featured: 'Featured',
+    empty: 'No US, Hong Kong or A-share match. Try the ticker code.',
   },
   metaTitle: ({ name, symbol }) => `${name} (${symbol}) Technical Signals — 5-Day Indicator Read | PickSkill`,
   metaDescription: ({ name, symbol, asOf, tally }) =>
@@ -186,6 +196,15 @@ const zhCN: StockCopy = {
     headline: '热门个股技术信号，一眼看懂',
     sub: '8 项指标 × 5 个交易日。选择一只股票，查看它的信号时间线和本周走势解读。',
   },
+  search: {
+    label: '搜索美股、港股、A股',
+    placeholder: '代码、公司名或拼音，如 NVDA、0700、茅台',
+    button: '前往',
+    hint: '列表里没有？任何标的都能生成专属信号页，首次访问只需几秒。',
+    generating: '正在生成 {symbol} 信号页，首次访问需要几秒…',
+    featured: '精选',
+    empty: '没有匹配的美股、港股或 A股，试试输入代码。',
+  },
   metaTitle: ({ name, symbol }) => `${name}（${symbol}）技术分析 — 近5日指标信号解读 | PickSkill`,
   metaDescription: ({ name, symbol, asOf, tally }) =>
     `${name}（${symbol}）技术面，截至 ${asOf}：${tally}。近 5 个交易日 MACD、均线、RSI、KDJ、布林带、ADX、成交量与资金流信号。`,
@@ -295,6 +314,15 @@ const zhTW: StockCopy = {
     eyebrow: '免費 · 無需登入 · 每日更新',
     headline: '熱門個股技術訊號，一眼看懂',
     sub: '8 項指標 × 5 個交易日。選擇一檔股票，查看它的訊號時間線和本週走勢解讀。',
+  },
+  search: {
+    label: '搜尋美股、港股、A股',
+    placeholder: '代碼、公司名或拼音，如 NVDA、0700、茅台',
+    button: '前往',
+    hint: '清單裡沒有？任何標的都能產生專屬訊號頁，首次造訪只需幾秒。',
+    generating: '正在產生 {symbol} 訊號頁，首次造訪需要幾秒…',
+    featured: '精選',
+    empty: '沒有符合的美股、港股或 A股，試試輸入代碼。',
   },
   metaTitle: ({ name, symbol }) => `${name}（${symbol}）技術分析 — 近5日指標訊號解讀 | PickSkill`,
   metaDescription: ({ name, symbol, asOf, tally }) =>

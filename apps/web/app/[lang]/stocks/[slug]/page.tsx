@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowRight, Bot, FileText, LineChart, ShieldAlert, Sparkles } from 'lucide-react';
 import { isLocale, localeBcp47, localeOg, type Locale } from '../../../../lib/i18n/locales';
@@ -36,12 +36,8 @@ import {
   toneOf,
   type StockSnapshot,
 } from '../../../../lib/stocks/snapshot';
-import {
-  displaySymbol,
-  getStockBySlug,
-  relatedStocks,
-  stockName,
-} from '../../../../lib/stocks/universe';
+import { resolveStock } from '../../../../lib/stocks/resolve';
+import { displaySymbol, relatedStocks, stockName } from '../../../../lib/stocks/universe';
 
 const SITE_URL = 'https://pickskill.ai';
 const ORG_ID = `${SITE_URL}/#organization`;
@@ -88,7 +84,7 @@ export async function generateMetadata({
   params: Promise<{ lang: string; slug: string }>;
 }): Promise<Metadata> {
   const { lang: locale, slug } = await params;
-  const stock = getStockBySlug(slug);
+  const stock = isLocale(locale) ? await resolveStock(slug) : null;
   if (!isLocale(locale) || !stock) return {};
   const lang = stockPageLang(locale);
   const copy = getStockCopy(lang);
@@ -128,8 +124,11 @@ export default async function StockPage({
 }) {
   const { lang: locale, slug } = await params;
   if (!isLocale(locale)) notFound();
-  const stock = getStockBySlug(slug);
+  // Curated tickers resolve instantly; any other US / HK / A-share ticker
+  // is looked up once and its page generated on this first request.
+  const stock = await resolveStock(slug);
   if (!stock) notFound();
+  if (stock.slug !== slug) permanentRedirect(getLocalizedPath(`/stocks/${stock.slug}`, locale));
 
   const lang = stockPageLang(locale);
   const labelLang = lang === 'en' ? 'en' : 'zh';

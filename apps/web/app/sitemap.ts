@@ -4,6 +4,7 @@ import { featureList } from '../lib/features';
 import { locales, defaultLocale, type Locale } from '../lib/i18n/locales';
 import { STOCK_PAGE_LOCALES } from '../lib/stocks/copy';
 import { LEGAL_DRAFT, LEGAL_LOCALES } from '../lib/legal/facts';
+import { listGeneratedPages } from '../lib/stocks/resolve';
 import { STOCKS } from '../lib/stocks/universe';
 
 /**
@@ -27,7 +28,8 @@ import { STOCKS } from '../lib/stocks/universe';
  *   - /chat (public marketing entry-point — primary CTA)
  *   - /blog/<slug> for every published post
  *   - /stocks and /stocks/<slug> (public signal pages; alternates only
- *     for the locales those pages are written in)
+ *     for the locales those pages are written in) — the curated list
+ *     plus every page generated on demand (dexter_stock_pages)
  *
  * What's excluded:
  *   - /portfolios, /indicators, /market, /feedback — behind
@@ -107,7 +109,11 @@ const STATIC_PAGES: StaticEntry[] = [
   { path: '/blog', priority: 0.8, changeFrequency: 'weekly' },
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+// On-demand stock pages are added as visitors generate them, so the
+// sitemap is regenerated hourly rather than frozen at build time.
+export const revalidate = 3600;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Slugs are locale-independent (translated variants live under
   // content/blog/<locale>/<slug>.md but reuse the English slug). One
   // call to getAllPosts() in the default locale gives the canonical
@@ -145,15 +151,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Stock pages change daily; hreflang lists only the languages they're
   // written in, matching the pages' own alternates.
-  const stockEntries: MetadataRoute.Sitemap = ['/stocks', ...STOCKS.map((st) => `/stocks/${st.slug}`)].map(
-    (path) => ({
-      url: localeUrl(path, defaultLocale),
-      lastModified: now,
-      changeFrequency: 'daily' as const,
-      priority: path === '/stocks' ? 0.8 : 0.7,
-      alternates: { languages: buildAlternates(path, STOCK_PAGE_LOCALES) },
-    }),
-  );
+  // The data behind them changes every session, so lastModified is now.
+  const curated = new Set(STOCKS.map((st) => st.slug));
+  const generated = (await listGeneratedPages()).filter((p) => !curated.has(p.slug));
+  const stockPaths = [
+    { path: '/stocks', priority: 0.8 },
+    ...STOCKS.map((st) => ({ path: `/stocks/${st.slug}`, priority: 0.7 })),
+    ...generated.map((p) => ({ path: `/stocks/${p.slug}`, priority: 0.6 })),
+  ];
+  const stockEntries: MetadataRoute.Sitemap = stockPaths.map(({ path, priority }) => ({
+    url: localeUrl(path, defaultLocale),
+    lastModified: now,
+    changeFrequency: 'daily' as const,
+    priority,
+    alternates: { languages: buildAlternates(path, STOCK_PAGE_LOCALES) },
+  }));
 
   // About / Privacy / Terms join the sitemap once the drafts are final.
   const legalEntries: MetadataRoute.Sitemap = LEGAL_DRAFT

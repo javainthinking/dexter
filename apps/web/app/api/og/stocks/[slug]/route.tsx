@@ -7,7 +7,8 @@ import {
 } from '../../../../../lib/indicators/labels';
 import type { Bucket } from '../../../../../lib/indicators/math';
 import { getStockSnapshot, latestTally, toneOf, type StockSnapshot } from '../../../../../lib/stocks/snapshot';
-import { displaySymbol, getStockBySlug } from '../../../../../lib/stocks/universe';
+import { resolveStock } from '../../../../../lib/stocks/resolve';
+import { displaySymbol } from '../../../../../lib/stocks/universe';
 
 /**
  * GET /api/og/stocks/[slug] — per-ticker social card (X / LinkedIn /
@@ -60,7 +61,7 @@ export async function GET(
   context: { params: Promise<{ slug: string }> },
 ): Promise<Response> {
   const { slug } = await context.params;
-  const stock = getStockBySlug(slug);
+  const stock = await resolveStock(slug).catch(() => null);
   if (!stock) return new Response('not found', { status: 404 });
   const snapshot = await getStockSnapshot(stock.ticker);
   const symbol = displaySymbol(stock);
