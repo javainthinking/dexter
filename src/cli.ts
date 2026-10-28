@@ -36,6 +36,7 @@ import {
 import {
   ApiKeyInputComponent,
   ApprovalPromptComponent,
+  QuestionPromptComponent,
   ChatLogComponent,
   CustomEditor,
   DebugPanelComponent,
@@ -143,6 +144,11 @@ function renderEvent(
 
   if (event.type === 'tool_start') {
     const toolStart = event as ToolStartEvent;
+    // ask_user_question has no tool row: the inline widget is its UI, and an
+    // answered block is appended on submit. (matches the no-tool-message design)
+    if (toolStart.tool === 'ask_user_question') {
+      return;
+    }
     const component = chatLog.startTool(display.id, toolStart.tool, toolStart.args);
     if (display.completed && display.endEvent?.type === 'tool_end') {
       const done = display.endEvent as ToolEndEvent;
@@ -181,7 +187,12 @@ function renderEvent(
     chatLog.addMicrocompact(event.cleared, event.tokensSaved);
   }
   if (event.type === 'queue_drain') {
-    chatLog.addQueueDrain(event.messageCount);
+    // Picked up mid-run: the queued text leaves the area below the working
+    // indicator and joins the log as a normal query row.
+    for (const text of event.texts) {
+      chatLog.addQuery(text);
+    }
+    chatLog.resetToolGrouping();
   }
   if (event.type === 'compaction' && event.phase === 'end') {
     chatLog.addCompaction(event.success ?? false, event.preCompactTokens, event.postCompactTokens);
@@ -224,6 +235,10 @@ export async function runCli() {
   const finalizedToolIds = new Set<string>();
   const appliedToolProgress = new Map<string, string>();
   let lastPendingApproval: { tool: string; args: Record<string, unknown> } | null = null;
+  let lastPendingQuestion: { questions: unknown[] } | null = null;
+  // Cached so the stateful question overlay survives onChange-driven re-renders
+  // (partial selections, active tab, in-progress text are kept across renders).
+  let activeQuestionPrompt: QuestionPromptComponent | null = null;
 
   // Build the CorePorts bundle. When MEMORYLAKE_* env vars are configured,
   // memory_search / memory_update / memory_get flow through the MemoryLake
@@ -239,7 +254,7 @@ export async function runCli() {
     // 10 was tight for any tool chain with > 2 phases; 30 gives headroom
     // without enabling unbounded loops (the executor still halts on
     // duplicate tool args + the model halts when it has an answer).
-    { model: modelSelection.model, modelProvider: modelSelection.provider, maxIterations: 30 },
+    { model: modelSelection.model, modelProvider: modelSelection.provider, maxIterations: 30, channel: 'cli' },
     modelSelection.inMemoryChatHistory,
     () => {
       // Incremental history update — only render new events
@@ -319,6 +334,10 @@ export async function runCli() {
         lastPendingApproval = agentRunner.pendingApproval;
         renderSelectionOverlay();
       }
+      if (agentRunner.pendingQuestion !== lastPendingQuestion) {
+        lastPendingQuestion = agentRunner.pendingQuestion;
+        renderSelectionOverlay();
+      }
       throttledRender();
     },
     cliPorts,
@@ -332,16 +351,26 @@ export async function runCli() {
   const hintBar = new HintBarComponent();
   const debugPanel = new DebugPanelComponent(8, true);
   const spacer = new Spacer(1);
+  // Queued messages wait below the working indicator until the agent picks them up.
+  const queuedMessages = new Container();
+  defaultQueue.subscribe(() => {
+    queuedMessages.clear();
+    const queued = defaultQueue.snapshot();
+    if (queued.length > 0) {
+      queuedMessages.addChild(new Spacer(1)); // gap under the working indicator
+    }
+    for (const msg of queued) {
+      queuedMessages.addChild(new Text(theme.muted(`❯ ${msg.text}`), 0, 0));
+    }
+    tui.requestRender();
+  });
 
-  // Build the component tree ONCE — stable structure, no root.clear()
-  root.addChild(intro);
-  root.addChild(chatLog);
-  root.addChild(errorText);
-  root.addChild(workingIndicator);
-  root.addChild(spacer);
-  root.addChild(editor);
-  root.addChild(hintBar);
-  root.addChild(debugPanel);
+  // The main view, top to bottom. Built once here and again by restoreMainView()
+  // after an overlay screen closes, so both must use this one list.
+  const mainViewChildren = [intro, chatLog, errorText, workingIndicator, queuedMessages, spacer, editor, hintBar, debugPanel];
+  for (const child of mainViewChildren) {
+    root.addChild(child);
+  }
   tui.addChild(root);
   initSpinner(tui);
 
@@ -493,7 +522,6 @@ export async function runCli() {
         source: 'cli',
       });
       await inputHistory.saveMessage(query);
-      chatLog.addQueuedMessage(query);
       tui.requestRender();
       return;
     }
@@ -566,7 +594,8 @@ export async function runCli() {
     if (
       !modelSelection.isInSelectionFlow() &&
       !searchSelection.isInSelectionFlow() &&
-      !agentRunner.pendingApproval
+      !agentRunner.pendingApproval &&
+      !agentRunner.pendingQuestion
     ) {
       tui.setFocus(editor);
     }
@@ -595,15 +624,25 @@ export async function runCli() {
    */
   const restoreMainView = () => {
     root.clear();
+    for (const child of mainViewChildren) {
+      root.addChild(child);
+    }
+    updateView();
+  };
+
+  // Render the question widget INLINE: keep the conversation (intro + chatLog)
+  // visible and slot the widget where the input normally sits, instead of
+  // replacing the whole screen via showScreenView.
+  const showQuestionInline = () => {
+    if (!activeQuestionPrompt) return;
+    root.clear();
     root.addChild(intro);
     root.addChild(chatLog);
     root.addChild(errorText);
-    root.addChild(workingIndicator);
     root.addChild(spacer);
-    root.addChild(editor);
-    root.addChild(hintBar);
+    root.addChild(activeQuestionPrompt);
     root.addChild(debugPanel);
-    updateView();
+    tui.setFocus(activeQuestionPrompt);
   };
 
   const renderSelectionOverlay = () => {
@@ -612,8 +651,10 @@ export async function runCli() {
     if (
       state.appState === 'idle' &&
       searchState.appState === 'idle' &&
-      !agentRunner.pendingApproval
+      !agentRunner.pendingApproval &&
+      !agentRunner.pendingQuestion
     ) {
+      activeQuestionPrompt = null;
       restoreMainView();
       tui.requestRender();
       return;
@@ -623,11 +664,37 @@ export async function runCli() {
       const prompt = new ApprovalPromptComponent(
         agentRunner.pendingApproval.tool,
         agentRunner.pendingApproval.args,
+        {
+          command: agentRunner.pendingApproval.command,
+          reason: agentRunner.pendingApproval.decision?.reason,
+          proposedRule: agentRunner.pendingApproval.decision?.proposedRule,
+        },
       );
       prompt.onSelect = (decision: ApprovalDecision) => {
         agentRunner.respondToApproval(decision);
       };
       showScreenView('', '', prompt, undefined, prompt.selector);
+      return;
+    }
+
+    if (agentRunner.pendingQuestion) {
+      if (!activeQuestionPrompt) {
+        activeQuestionPrompt = new QuestionPromptComponent(
+          agentRunner.pendingQuestion.questions,
+          tui,
+        );
+        activeQuestionPrompt.onSubmit = (answers) => {
+          chatLog.addAnsweredQuestions(answers.answers);
+          agentRunner.respondToQuestion(answers);
+        };
+        activeQuestionPrompt.onCancel = () => {
+          agentRunner.respondToQuestion({ answers: [], declined: true });
+        };
+        activeQuestionPrompt.onAbort = () => {
+          agentRunner.cancelExecution();
+        };
+      }
+      showQuestionInline();
       return;
     }
 
@@ -807,6 +874,8 @@ export async function runCli() {
     slashSuggestions = matchCommands(text);
     slashSelectedIndex = 0;
     slashActive = slashSuggestions.length > 0;
+    // No matches (e.g. "/compact focus on X"): let Enter submit the text as typed.
+    editor.slashActive = slashActive;
     updateView();
     tui.requestRender();
   };
@@ -828,6 +897,17 @@ export async function runCli() {
       slashSuggestions = [];
       editor.setText('');
       void handleSlashCommand(selected.name);
+    }
+    updateView();
+    tui.requestRender();
+  };
+
+  editor.onSlashComplete = () => {
+    const selected = slashSuggestions[slashSelectedIndex];
+    slashActive = false;
+    slashSuggestions = [];
+    if (selected) {
+      editor.setText(`/${selected.name} `);
     }
     updateView();
     tui.requestRender();

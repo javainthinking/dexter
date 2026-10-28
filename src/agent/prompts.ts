@@ -220,10 +220,13 @@ export function buildSystemPrompt(
   memoryFiles?: string[],
   memoryContext?: string | null,
   rulesContent?: string | null,
-  options: { memory?: boolean } = {},
+  options: { memory?: boolean; excludeTools?: readonly string[] } = {},
 ): string {
   const memory = options.memory !== false;
-  const toolDescriptions = buildCompactToolDescriptions(model, memory ? [] : MEMORY_TOOL_NAMES);
+  const toolDescriptions = buildCompactToolDescriptions(model, [
+    ...(memory ? [] : MEMORY_TOOL_NAMES),
+    ...(options.excludeTools ?? []),
+  ]);
   const profile = getChannelProfile(channel);
 
   const behaviorBullets = profile.behavior.map(b => `- ${b}`).join('\n');

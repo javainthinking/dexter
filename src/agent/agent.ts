@@ -32,6 +32,9 @@ const DEFAULT_MAX_ITERATIONS = 30;
 const MAX_OVERFLOW_RETRIES = 2;
 const OVERFLOW_KEEP_ROUNDS = 3;
 
+/** Tools that require an interactive user and are only bound on the CLI channel. */
+const CLI_ONLY_TOOLS = new Set<string>(['ask_user_question', 'bash']);
+
 /**
  * Per-chunk wall-clock budget. When the agent is invoked under a
  * chunked job (jobId provided), every iteration checks the elapsed
@@ -224,6 +227,8 @@ export class Agent {
       config.signal,
       config.requestToolApproval,
       config.sessionApprovedTools,
+      undefined,
+      config.requestUserInput,
     );
     this.systemPrompt = systemPrompt;
     this.signal = config.signal;
@@ -234,9 +239,17 @@ export class Agent {
   static async create(config: AgentConfig = {}): Promise<Agent> {
     const model = config.model ?? DEFAULT_MODEL;
     const allTools = getTools(model).filter((t) => !config.disableMemory || !MEMORY_TOOL_NAMES.includes(t.name));
-    const tools = config.toolAllowlist
+    let tools = config.toolAllowlist
       ? allTools.filter(t => config.toolAllowlist!.includes(t.name))
       : allTools;
+    // CLI-only tools (interactive prompts, shell) are bound only when the caller
+    // explicitly opts in with channel 'cli'. Fail closed: the web API, desktop,
+    // gateway, cron and subagents create agents without a CLI channel, and a
+    // shell tool must never reach a server-side run.
+    const isCli = config.channel === 'cli';
+    if (!isCli) {
+      tools = tools.filter(t => !CLI_ONLY_TOOLS.has(t.name));
+    }
     // The concurrency map is a name→bool lookup; extra entries are harmless since
     // toolMap only holds the (possibly filtered) tools above.
     const concurrencyMap = getToolConcurrencyMap(model);
@@ -268,7 +281,7 @@ export class Agent {
         memoryFiles,
         memoryContext,
         rulesContent,
-        { memory: !config.disableMemory },
+        { memory: !config.disableMemory, excludeTools: isCli ? [] : [...CLI_ONLY_TOOLS] },
       );
     }
     return new Agent(config, tools, systemPrompt, concurrencyMap);
@@ -585,7 +598,7 @@ export class Agent {
       const drainResult = this.drainQueue();
       if (drainResult) {
         messages.push(new HumanMessage(drainResult.text));
-        yield { type: 'queue_drain', messageCount: drainResult.count, mergedText: drainResult.text } as QueueDrainEvent;
+        yield { type: 'queue_drain', messageCount: drainResult.count, mergedText: drainResult.text, texts: drainResult.texts } as QueueDrainEvent;
       }
     }
 
@@ -749,15 +762,17 @@ export class Agent {
    * Drain all queued messages, merge into a single text block.
    * Returns null if the queue is empty or not configured.
    */
-  private drainQueue(): { text: string; count: number } | null {
+  private drainQueue(): { text: string; count: number; texts: string[] } | null {
     if (!this.messageQueue || this.messageQueue.isEmpty()) {
       return null;
     }
     const messages = this.messageQueue.dequeueAll();
     if (messages.length === 0) return null;
+    const texts = messages.map(m => m.text);
     return {
-      text: messages.map(m => m.text).join('\n\n'),
+      text: texts.join('\n\n'),
       count: messages.length,
+      texts,
     };
   }
 
@@ -820,14 +835,14 @@ export class Agent {
   }
 
   private truncateMessages(messages: BaseMessage[], keepRounds: number): number {
-    let roundStartIndex = 0;
+    let roundStartIndex = -1;
     for (let i = 0; i < messages.length; i++) {
       if (messages[i] instanceof AIMessage) {
         roundStartIndex = i;
         break;
       }
     }
-    if (roundStartIndex === 0) return 0;
+    if (roundStartIndex === -1) return 0;
 
     const rounds: { start: number; end: number }[] = [];
     let i = roundStartIndex;

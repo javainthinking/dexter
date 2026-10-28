@@ -6,6 +6,9 @@ const SETTINGS_FILE = dexterPath('settings.json');
 
 // Map legacy model IDs to provider IDs for migration
 const MODEL_TO_PROVIDER_MAP: Record<string, string> = {
+  'gpt-5.6-sol': 'openai',
+  'gpt-5.6-terra': 'openai',
+  'gpt-5.6-luna': 'openai',
   'gpt-5.5': 'openai',
   'gpt-5.4': 'openai',
   'gpt-5.2': 'openai',
@@ -15,7 +18,20 @@ const MODEL_TO_PROVIDER_MAP: Record<string, string> = {
 
 // Deprecated model IDs to upgrade on load
 const DEPRECATED_MODEL_UPGRADES: Record<string, string> = {
+  'gpt-5.6-sol': 'gpt-6-sol',
+  'gpt-5.6-terra': 'gpt-6-sol',
+  'gpt-5.6-luna': 'gpt-6-luna',
+  // gpt-5.5 stays the default on the MemoryLake gateway, so saved 5.5/5.4
+  // selections are kept as-is rather than moved to gpt-6.
   'gpt-5.2': 'gpt-5.5',
+  'claude-sonnet-4-6': 'claude-sonnet-5',
+  'claude-opus-4-8': 'claude-opus-5-5',
+  'claude-fable-5': 'claude-fable-5-1',
+  'gemini-3-flash-preview': 'gemini-3.8-flash',
+  'grok-4-0709': 'grok-4.7',
+  'grok-4-1-fast-reasoning': 'grok-4.7',
+  'kimi-k2-5': 'kimi-k3',
+  'deepseek-v4-flash': 'deepseek-flash',
 };
 
 interface Config {
@@ -28,6 +44,13 @@ interface Config {
     embeddingProvider?: 'openai' | 'gemini' | 'ollama' | 'auto';
     embeddingModel?: string;
     maxSessionContextTokens?: number;
+  };
+  /** Bash permission rules (allow/ask/deny), persisted from the approval prompt. */
+  permissions?: {
+    allow?: string[];
+    ask?: string[];
+    deny?: string[];
+    defaultBashDecision?: 'allow' | 'ask' | 'deny';
   };
   [key: string]: unknown;
 }

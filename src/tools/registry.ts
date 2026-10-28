@@ -21,6 +21,8 @@ import { cronTool, CRON_TOOL_DESCRIPTION } from './cron/cron-tool.js';
 import { memoryGetTool, MEMORY_GET_DESCRIPTION, memorySearchTool, MEMORY_SEARCH_DESCRIPTION, memoryUpdateTool, MEMORY_UPDATE_DESCRIPTION } from './memory/index.js';
 import { discoverSkills } from '../skills/index.js';
 import { createSpawnSubagent, SPAWN_SUBAGENT_DESCRIPTION } from './subagent/spawn-subagent.js';
+import { createAskUserQuestion, ASK_USER_QUESTION_DESCRIPTION } from './ask-user-question/ask-user-question.js';
+import { createBash, BASH_TOOL_DESCRIPTION } from './bash/bash-tool.js';
 
 /**
  * A registered tool with its rich description for system prompt injection.
@@ -60,7 +62,7 @@ export function getToolRegistry(model: string): RegisteredTool[] {
       name: 'get_market_data',
       tool: createGetMarketData(model),
       description: GET_MARKET_DATA_DESCRIPTION,
-      compactDescription: 'Stock/crypto prices, company news, and insider trades. Handles multi-asset queries in one call.',
+      compactDescription: 'Stock/crypto prices, company news, and insider trades/ownership. Handles multi-asset queries in one call.',
       concurrencySafe: true,
     },
     {
@@ -83,6 +85,13 @@ export function getToolRegistry(model: string): RegisteredTool[] {
       description: SPAWN_SUBAGENT_DESCRIPTION,
       compactDescription: 'Delegate a focused sub-task to an isolated subagent. Emit multiple calls in one turn to run independent sub-tasks in parallel.',
       concurrencySafe: true,
+    },
+    {
+      name: 'ask_user_question',
+      tool: createAskUserQuestion(),
+      description: ASK_USER_QUESTION_DESCRIPTION,
+      compactDescription: 'Ask the user 1-4 multiple-choice questions mid-turn and wait for their answers. CLI only.',
+      concurrencySafe: false,
     },
     {
       name: 'web_fetch',
@@ -233,6 +242,18 @@ export function getToolRegistry(model: string): RegisteredTool[] {
       description: OFFICE_EDIT_DESCRIPTION,
       compactDescription:
         'Create or modify a .docx / .xlsx / .pptx file via OfficeCLI: create, add/move/remove/set/swap elements, import CSV, refresh, batch.',
+      concurrencySafe: false,
+    });
+  }
+
+  // bash: Unix/macOS only (uses /bin/sh + POSIX process groups). Channel gating
+  // (CLI-only) is handled by CLI_ONLY_TOOLS in Agent.create.
+  if (process.platform !== 'win32') {
+    tools.push({
+      name: 'bash',
+      tool: createBash(model),
+      description: BASH_TOOL_DESCRIPTION,
+      compactDescription: 'Run a shell command (stdout/stderr/exit code). CLI only; every command asks for approval.',
       concurrencySafe: false,
     });
   }
