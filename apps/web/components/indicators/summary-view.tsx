@@ -114,7 +114,14 @@ export interface SummaryEntry {
  * sticky on the left so they stay visible while users scroll the
  * trails horizontally on mobile.
  */
-export function SummaryView({ entries }: { entries: SummaryEntry[] }) {
+export function SummaryView({
+  entries,
+  initialOpenTicker = null,
+}: {
+  entries: SummaryEntry[];
+  /** Ticker whose detail sheet opens on mount (deep link from /portfolios). */
+  initialOpenTicker?: string | null;
+}) {
   const dict = useDictionary();
   const columnLabels = (dict.indicators?.summaryColumns ?? {}) as Partial<
     Record<DimensionKey | 'ticker' | 'dailyChange', string>
@@ -126,7 +133,7 @@ export function SummaryView({ entries }: { entries: SummaryEntry[] }) {
   // automatically refreshes when `entries` itself reloads — staying
   // tied to the current data instead of a stale snapshot. The
   // selected entry is looked up from `entries` on render.
-  const [openTicker, setOpenTicker] = React.useState<string | null>(null);
+  const [openTicker, setOpenTicker] = React.useState<string | null>(initialOpenTicker);
   const selectedEntry = React.useMemo(
     () => (openTicker ? entries.find((e) => e.ticker === openTicker) ?? null : null),
     [openTicker, entries],

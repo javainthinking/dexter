@@ -272,7 +272,10 @@
     "addFromStockSkip": "暂不",
     "addFromStockDone": "已把 {symbol} 加入「{portfolio}」。",
     "addFromStockHeld": "{symbol} 已在「{portfolio}」中。",
-    "addFromStockView": "查看"
+    "addFromStockView": "查看",
+    "indicatorsPromoTitle": "查看这个组合的技术信号",
+    "indicatorsPromoBody": "MACD、均线、RSI、KDJ、布林带、ADX、成交量与资金流——每只持仓近 5 个交易日的信号，一屏看完。",
+    "viewTickerSignals": "查看 {symbol} 的指标信号"
   },
   "indicators": {
     "_localeHint": "zh",

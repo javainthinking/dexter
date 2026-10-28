@@ -272,7 +272,10 @@
     "addFromStockSkip": "後で",
     "addFromStockDone": "{symbol} を {portfolio} に追加しました。",
     "addFromStockHeld": "{symbol} は既に {portfolio} にあります。",
-    "addFromStockView": "表示"
+    "addFromStockView": "表示",
+    "indicatorsPromoTitle": "このポートフォリオのテクニカルシグナルを見る",
+    "indicatorsPromoBody": "MACD・移動平均・RSI・KDJ・ボリンジャー・ADX・出来高・資金フロー — 全銘柄の直近5営業日を1画面で。",
+    "viewTickerSignals": "{symbol} のシグナルを見る"
   },
   "indicators": {
     "_localeHint": "ja",

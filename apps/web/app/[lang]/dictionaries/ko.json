@@ -272,7 +272,10 @@
     "addFromStockSkip": "나중에",
     "addFromStockDone": "{symbol}을(를) {portfolio}에 추가했습니다.",
     "addFromStockHeld": "{symbol}은(는) 이미 {portfolio}에 있습니다.",
-    "addFromStockView": "보기"
+    "addFromStockView": "보기",
+    "indicatorsPromoTitle": "이 포트폴리오의 기술적 시그널 보기",
+    "indicatorsPromoBody": "MACD, 이동평균, RSI, KDJ, 볼린저, ADX, 거래량, 자금 흐름 — 모든 종목의 최근 5거래일을 한 화면에.",
+    "viewTickerSignals": "{symbol} 시그널 보기"
   },
   "indicators": {
     "_localeHint": "ko",

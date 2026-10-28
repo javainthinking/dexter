@@ -290,7 +290,10 @@
     "addFromStockSkip": "Not now",
     "addFromStockDone": "{symbol} added to {portfolio}.",
     "addFromStockHeld": "{symbol} is already in {portfolio}.",
-    "addFromStockView": "View"
+    "addFromStockView": "View",
+    "indicatorsPromoTitle": "See the technical signals for this portfolio",
+    "indicatorsPromoBody": "MACD, MA, RSI, KDJ, Bollinger, ADX, volume and money flow — 5 trading days for every holding, on one screen.",
+    "viewTickerSignals": "View {symbol} signals"
   },
   "indicators": {
     "_localeHint": "en",

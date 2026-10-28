@@ -1,8 +1,11 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
+  ArrowRight,
+  LineChart,
   Plus,
   Trash2,
   Check,
@@ -650,6 +653,12 @@ export function PortfoliosClient({
                 onRemoveHolding={handleRemoveHolding}
                 onEditWeight={handleEditWeight}
                 onRefreshQuotes={handleRefreshQuotes}
+                indicatorsHref={(ticker) =>
+                  `${getLocalizedPath('/indicators', locale)}?${new URLSearchParams({
+                    portfolio: detail.id,
+                    ...(ticker ? { ticker } : {}),
+                  })}`
+                }
                 dict={dict}
               />
             ) : null}
@@ -811,6 +820,7 @@ function PortfolioDetailView({
   onRemoveHolding,
   onEditWeight,
   onRefreshQuotes,
+  indicatorsHref,
   dict,
 }: {
   portfolio: PortfolioDetail;
@@ -820,6 +830,8 @@ function PortfolioDetailView({
   onRemoveHolding: (id: string) => void;
   onEditWeight: (id: string, value: string) => void;
   onRefreshQuotes: () => void;
+  /** /indicators for this portfolio; with a ticker, opens its signal sheet. */
+  indicatorsHref: (ticker?: string) => string;
   dict: any;
 }) {
   const existing = portfolio.holdings.map((h) => h.ticker);
@@ -834,6 +846,25 @@ function PortfolioDetailView({
           {totalWeight > 0 && ` · ${totalWeight.toFixed(2)}%`}
         </span>
       </div>
+
+      {portfolio.holdings.length > 0 && (
+        <Link
+          href={indicatorsHref()}
+          className="group flex items-center gap-3 rounded-lg border border-border bg-muted/20 px-4 py-3 transition-colors hover:border-foreground/30 hover:bg-muted/40"
+        >
+          <LineChart className="size-5 shrink-0 text-[color:var(--accent)]" />
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-medium">
+              {dict.portfolios?.indicatorsPromoTitle ?? 'See the technical signals for this portfolio'}
+            </span>
+            <span className="block text-xs text-muted-foreground">
+              {dict.portfolios?.indicatorsPromoBody ??
+                'MACD, MA, RSI, KDJ, Bollinger, ADX, volume and money flow — 5 trading days for every holding, on one screen.'}
+            </span>
+          </span>
+          <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
+        </Link>
+      )}
 
       <section className="rounded-lg border border-border bg-card p-4 space-y-3">
         <h3 className="text-sm font-medium">
@@ -865,6 +896,7 @@ function PortfolioDetailView({
         onRemoveHolding={onRemoveHolding}
         onEditWeight={onEditWeight}
         onRefreshQuotes={onRefreshQuotes}
+        indicatorsHref={indicatorsHref}
         dict={dict}
       />
     </div>
@@ -891,6 +923,7 @@ function HoldingsSection({
   onRemoveHolding,
   onEditWeight,
   onRefreshQuotes,
+  indicatorsHref,
   dict,
 }: {
   portfolio: PortfolioDetail;
@@ -899,6 +932,7 @@ function HoldingsSection({
   onRemoveHolding: (id: string) => void;
   onEditWeight: (id: string, value: string) => void;
   onRefreshQuotes: () => void;
+  indicatorsHref: (ticker?: string) => string;
   dict: any;
 }) {
   const [sort, setSort] = React.useState<HoldingsSort>('default');
@@ -954,6 +988,7 @@ function HoldingsSection({
               quotesLoading={quotesLoading}
               onRemove={() => onRemoveHolding(h.id)}
               onEditWeight={(v) => onEditWeight(h.id, v)}
+              signalsHref={indicatorsHref(h.ticker)}
               dict={dict}
             />
           ))}
@@ -1004,6 +1039,7 @@ function HoldingRow({
   quotesLoading,
   onRemove,
   onEditWeight,
+  signalsHref,
   dict,
 }: {
   holding: Holding;
@@ -1011,6 +1047,7 @@ function HoldingRow({
   quotesLoading: boolean;
   onRemove: () => void;
   onEditWeight: (v: string) => void;
+  signalsHref: string;
   dict: any;
 }) {
   const [editing, setEditing] = React.useState(false);
@@ -1113,6 +1150,14 @@ function HoldingRow({
           </button>
         )}
       </div>
+      <Link
+        href={signalsHref}
+        className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+        title={(dict.portfolios?.viewTickerSignals ?? 'View {symbol} signals').replace('{symbol}', holding.ticker)}
+        aria-label={(dict.portfolios?.viewTickerSignals ?? 'View {symbol} signals').replace('{symbol}', holding.ticker)}
+      >
+        <LineChart className="size-3.5" />
+      </Link>
       {confirming ? (
         <div className="flex items-center gap-1">
           <button onClick={onRemove} className="rounded p-1 text-destructive hover:bg-destructive/10">

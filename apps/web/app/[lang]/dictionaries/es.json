@@ -272,7 +272,10 @@
     "addFromStockSkip": "Ahora no",
     "addFromStockDone": "{symbol} añadido a {portfolio}.",
     "addFromStockHeld": "{symbol} ya está en {portfolio}.",
-    "addFromStockView": "Ver"
+    "addFromStockView": "Ver",
+    "indicatorsPromoTitle": "Ver las señales técnicas de esta cartera",
+    "indicatorsPromoBody": "MACD, MA, RSI, KDJ, Bollinger, ADX, volumen y flujo de dinero: 5 sesiones de cada posición en una sola pantalla.",
+    "viewTickerSignals": "Ver señales de {symbol}"
   },
   "indicators": {
     "_localeHint": "es",

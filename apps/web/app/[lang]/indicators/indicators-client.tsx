@@ -152,8 +152,14 @@ function dailyChangesFromPrices(
 
 export function IndicatorsClient({
   initialPortfolios,
+  focusPortfolioId = null,
+  focusTicker = null,
 }: {
   initialPortfolios: PortfolioSummary[];
+  /** Deep link from /portfolios: open this portfolio instead of the last-active one. */
+  focusPortfolioId?: string | null;
+  /** …and open this ticker's signal sheet once the summary loads. */
+  focusTicker?: string | null;
 }) {
   const dict = useDictionary();
   const locale = useLocale();
@@ -172,8 +178,16 @@ export function IndicatorsClient({
   // been deleted. Lazy initializer means localStorage is read once on
   // mount — no re-renders, no flashing of the wrong portfolio.
   const [activeId, setActiveId] = React.useState<string | null>(() =>
-    resolveInitialActivePortfolioId(initialPortfolios),
+    focusPortfolioId && initialPortfolios.some((p) => p.id === focusPortfolioId)
+      ? focusPortfolioId
+      : resolveInitialActivePortfolioId(initialPortfolios),
   );
+
+  // The deep-link query has done its job once read; drop it so a reload
+  // or a shared URL doesn't keep reopening the same sheet.
+  React.useEffect(() => {
+    if (focusPortfolioId || focusTicker) window.history.replaceState(null, '', window.location.pathname);
+  }, [focusPortfolioId, focusTicker]);
 
   // Persist activeId changes so /portfolios picks up the latest
   // selection on its next visit (and vice versa).
@@ -198,6 +212,13 @@ export function IndicatorsClient({
   // type narrowing trivial.
   const [summaryEntries, setSummaryEntries] = React.useState<SummaryEntry[] | null>(null);
   const [loading, setLoading] = React.useState(false);
+  // One-shot: SummaryView reads it on its first mount with data, then
+  // it's cleared so later remounts (tab / portfolio switch) don't reopen
+  // the sheet.
+  const [pendingFocusTicker, setPendingFocusTicker] = React.useState(focusTicker);
+  React.useEffect(() => {
+    if (summaryEntries) setPendingFocusTicker(null);
+  }, [summaryEntries]);
   const [error, setError] = React.useState<string | null>(null);
 
   // ─── sidebar plumbing ──────────────────────────────────────────────
@@ -674,7 +695,7 @@ export function IndicatorsClient({
           {error && <ErrorPanel message={error} onRetry={() => fetchData(true)} dict={dict} />}
 
           {!loading && tab === 'summary' && summaryEntries && (
-            <SummaryView entries={summaryEntries} />
+            <SummaryView entries={summaryEntries} initialOpenTicker={pendingFocusTicker} />
           )}
 
           {!loading && data && tab === 'macd' && (

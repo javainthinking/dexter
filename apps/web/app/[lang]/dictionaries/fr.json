@@ -272,7 +272,10 @@
     "addFromStockSkip": "Plus tard",
     "addFromStockDone": "{symbol} ajouté à {portfolio}.",
     "addFromStockHeld": "{symbol} est déjà dans {portfolio}.",
-    "addFromStockView": "Voir"
+    "addFromStockView": "Voir",
+    "indicatorsPromoTitle": "Voir les signaux techniques de ce portefeuille",
+    "indicatorsPromoBody": "MACD, MM, RSI, KDJ, Bollinger, ADX, volume et flux monétaires — 5 séances pour chaque position, sur un seul écran.",
+    "viewTickerSignals": "Voir les signaux de {symbol}"
   },
   "indicators": {
     "_localeHint": "fr",
