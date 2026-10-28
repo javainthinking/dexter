@@ -16,6 +16,10 @@ import type { PriceBar } from './math';
  * the CLI dashboards do. Returns an ASCENDING price array — chart code
  * downstream relies on prices[N-1] being the latest bar.
  *
+ * `prefer: 'yahoo'` flips the order for the public /stocks pages: Yahoo
+ * is keyless and covers HK / Shanghai listings that Valyu returns nothing
+ * for, so anonymous traffic never spends Valyu credits unless Yahoo fails.
+ *
  * The chain throws when every source fails; the caller is expected to
  * convert that into a per-ticker error in the API response so a single
  * bad ticker doesn't blow up the whole page.
@@ -24,13 +28,13 @@ export async function getHistoricalPrices(
   ticker: string,
   startDate: string,
   endDate: string,
+  { prefer = 'valyu' }: { prefer?: 'valyu' | 'yahoo' } = {},
 ): Promise<{ ticker: string; prices: PriceBar[]; sourceUrl: string }> {
+  const valyu = { name: 'valyu', run: () => fetchValyuHistoricalPrices(ticker, startDate, endDate, 'day') };
+  const yahoo = { name: 'yahoo', run: () => fetchYahooHistoricalPrices(ticker, startDate, endDate, 'day') };
   const { data, url } = await withFallbackChain(
     `web/prices ${ticker} ${startDate}..${endDate}`,
-    [
-      { name: 'valyu', run: () => fetchValyuHistoricalPrices(ticker, startDate, endDate, 'day') },
-      { name: 'yahoo', run: () => fetchYahooHistoricalPrices(ticker, startDate, endDate, 'day') },
-    ],
+    prefer === 'yahoo' ? [yahoo, valyu] : [valyu, yahoo],
   );
   const raw = Array.isArray(data.prices) ? (data.prices as Array<Record<string, unknown>>) : [];
   // Defensive resort: chains should already be ascending, but if Yahoo or a
