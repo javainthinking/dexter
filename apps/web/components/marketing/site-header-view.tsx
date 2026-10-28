@@ -20,6 +20,7 @@ export function SiteHeaderView({ lang, dict }: { lang: Locale; dict: Dictionary 
 
   const navLinks = [
     { href: getLocalizedPath('/features', lang), label: dict.nav?.features ?? 'Features' },
+    { href: getLocalizedPath('/stocks', lang), label: dict.nav?.stocks ?? 'Stocks' },
     { href: getLocalizedPath('/blog', lang), label: dict.nav?.blog ?? 'Blog' },
     { href: getLocalizedPath('/pricing', lang), label: dict.nav?.pricing ?? 'Pricing' },
     { href: getLocalizedPath('/download', lang), label: dict.download.nav },
@@ -37,9 +38,10 @@ export function SiteHeaderView({ lang, dict }: { lang: Locale; dict: Dictionary 
         </Link>
         {/* Absolutely centered so the nav sits in the middle of the header
             regardless of the (asymmetric) logo and control-cluster widths.
-            Hidden below `sm`, where <MobileMenu> exposes the same links. */}
+            Hidden below `lg` (five links in the longer locales would collide
+            with the control cluster), where <MobileMenu> exposes them. */}
         <nav
-          className="absolute inset-y-0 left-1/2 hidden -translate-x-1/2 items-center gap-6 sm:flex"
+          className="absolute inset-y-0 left-1/2 hidden -translate-x-1/2 items-center gap-5 lg:flex xl:gap-6"
           aria-label="Primary"
         >
           {navLinks.map((l) => (

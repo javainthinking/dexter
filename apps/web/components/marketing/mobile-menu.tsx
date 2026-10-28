@@ -37,7 +37,7 @@ export function MobileMenu({ links, label = 'Menu' }: { links: MobileNavLink[]; 
   }, [open]);
 
   return (
-    <div ref={ref} className="sm:hidden">
+    <div ref={ref} className="lg:hidden">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
