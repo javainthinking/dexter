@@ -476,7 +476,14 @@
       "indicators": "指标",
       "pricing": "定价"
     },
+    "legal": {
+      "about": "关于",
+      "privacy": "隐私政策",
+      "terms": "服务条款",
+      "contact": "联系我们"
+    },
     "resources": {
+      "stocks": "个股技术信号",
       "heading": "资源",
       "blog": "博客",
       "feedback": "反馈"

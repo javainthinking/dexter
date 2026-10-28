@@ -494,7 +494,14 @@
       "indicators": "Indicators",
       "pricing": "Pricing"
     },
+    "legal": {
+      "about": "About",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "contact": "Contact"
+    },
     "resources": {
+      "stocks": "Stock signals",
       "heading": "Resources",
       "blog": "Blog",
       "feedback": "Feedback"

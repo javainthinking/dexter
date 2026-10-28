@@ -476,7 +476,14 @@
       "indicators": "지표",
       "pricing": "요금"
     },
+    "legal": {
+      "about": "소개",
+      "privacy": "개인정보처리방침",
+      "terms": "이용약관",
+      "contact": "문의"
+    },
     "resources": {
+      "stocks": "종목 시그널",
       "heading": "리소스",
       "blog": "블로그",
       "feedback": "피드백"

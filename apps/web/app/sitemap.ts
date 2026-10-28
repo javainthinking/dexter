@@ -2,6 +2,9 @@ import type { MetadataRoute } from 'next';
 import { getAllPosts } from '../lib/blog';
 import { featureList } from '../lib/features';
 import { locales, defaultLocale, type Locale } from '../lib/i18n/locales';
+import { STOCK_PAGE_LOCALES } from '../lib/stocks/copy';
+import { LEGAL_DRAFT, LEGAL_LOCALES } from '../lib/legal/facts';
+import { STOCKS } from '../lib/stocks/universe';
 
 /**
  * Dynamic sitemap.xml — Next.js App Router convention.
@@ -23,6 +26,8 @@ import { locales, defaultLocale, type Locale } from '../lib/i18n/locales';
  *   - /blog (index)
  *   - /chat (public marketing entry-point — primary CTA)
  *   - /blog/<slug> for every published post
+ *   - /stocks and /stocks/<slug> (public signal pages; alternates only
+ *     for the locales those pages are written in)
  *
  * What's excluded:
  *   - /portfolios, /indicators, /market, /feedback — behind
@@ -68,9 +73,12 @@ function localeUrl(canonicalPath: string, locale: Locale): string {
  * so search engines have a fallback when none of the more specific
  * hreflangs match the user's preferences.
  */
-function buildAlternates(canonicalPath: string): Record<string, string> {
+function buildAlternates(
+  canonicalPath: string,
+  pageLocales: readonly Locale[] = locales,
+): Record<string, string> {
   const languages: Record<string, string> = {};
-  for (const locale of locales) {
+  for (const locale of pageLocales) {
     languages[locale] = localeUrl(canonicalPath, locale);
   }
   languages['x-default'] = localeUrl(canonicalPath, defaultLocale);
@@ -135,5 +143,28 @@ export default function sitemap(): MetadataRoute.Sitemap {
     };
   });
 
-  return [...staticEntries, ...postEntries];
+  // Stock pages change daily; hreflang lists only the languages they're
+  // written in, matching the pages' own alternates.
+  const stockEntries: MetadataRoute.Sitemap = ['/stocks', ...STOCKS.map((st) => `/stocks/${st.slug}`)].map(
+    (path) => ({
+      url: localeUrl(path, defaultLocale),
+      lastModified: now,
+      changeFrequency: 'daily' as const,
+      priority: path === '/stocks' ? 0.8 : 0.7,
+      alternates: { languages: buildAlternates(path, STOCK_PAGE_LOCALES) },
+    }),
+  );
+
+  // About / Privacy / Terms join the sitemap once the drafts are final.
+  const legalEntries: MetadataRoute.Sitemap = LEGAL_DRAFT
+    ? []
+    : ['/about', '/privacy', '/terms'].map((path) => ({
+        url: localeUrl(path, defaultLocale),
+        lastModified: now,
+        changeFrequency: 'yearly' as const,
+        priority: path === '/about' ? 0.6 : 0.3,
+        alternates: { languages: buildAlternates(path, LEGAL_LOCALES) },
+      }));
+
+  return [...staticEntries, ...postEntries, ...stockEntries, ...legalEntries];
 }

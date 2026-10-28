@@ -476,7 +476,14 @@
       "indicators": "Indikatoren",
       "pricing": "Preise"
     },
+    "legal": {
+      "about": "Über uns",
+      "privacy": "Datenschutz",
+      "terms": "AGB",
+      "contact": "Kontakt"
+    },
     "resources": {
+      "stocks": "Aktiensignale",
       "heading": "Ressourcen",
       "blog": "Blog",
       "feedback": "Feedback"

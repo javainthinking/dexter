@@ -476,7 +476,14 @@
       "indicators": "Indicateurs",
       "pricing": "Tarifs"
     },
+    "legal": {
+      "about": "À propos",
+      "privacy": "Confidentialité",
+      "terms": "Conditions",
+      "contact": "Contact"
+    },
     "resources": {
+      "stocks": "Signaux boursiers",
       "heading": "Ressources",
       "blog": "Blog",
       "feedback": "Retours"

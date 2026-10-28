@@ -1,5 +1,7 @@
 import { getAllPosts } from '../../lib/blog';
 import { featureList, getFeaturesContent } from '../../lib/features';
+import { STOCKS, displaySymbol } from '../../lib/stocks/universe';
+import { LEGAL_DRAFT } from '../../lib/legal/facts';
 
 /**
  * Dynamic /llms.txt — replaces the old static public/llms.txt that went
@@ -44,6 +46,14 @@ const FOOTER = `
 - Feedback: ${SITE_URL}/feedback
 `;
 
+const COMPANY = `
+## Company
+
+- [About PickSkill](${SITE_URL}/about): What PickSkill is, how it is built, where its data comes from, and how to reach the team (via the feedback page).
+- [Privacy Policy](${SITE_URL}/privacy): What data PickSkill collects, the processors it uses, retention, and user rights.
+- [Terms of Service](${SITE_URL}/terms): Usage terms, billing, and the not-investment-advice disclaimer.
+`;
+
 export const dynamic = 'force-static';
 
 export function GET(): Response {
@@ -68,16 +78,26 @@ export function GET(): Response {
     })
     .join('\n');
 
+  const stockLines = STOCKS.map(
+    (s) =>
+      `- [${s.name.en} (${displaySymbol(s)}) technical signals](${SITE_URL}/stocks/${s.slug}): Daily MACD, MA, RSI, KDJ, Bollinger, ADX, volume and money-flow signals for the last 5 trading days, with a written summary.`,
+  ).join('\n');
+
   const body = `${HEADER}
 ## Features
 
 - [Features overview](${SITE_URL}/features): What PickSkill does — the AI analyst, the indicators dashboard, and document generation.
 ${featureLines}
 
+## Stock signals (free, no sign-up)
+
+- [All stock signal pages](${SITE_URL}/stocks): US, Hong Kong and China A-share tickers, refreshed daily. Also available in Simplified (/zh-CN/stocks) and Traditional Chinese (/zh-TW/stocks).
+${stockLines}
+
 ## Blog
 
 ${blogLines}
-${FOOTER}`;
+${LEGAL_DRAFT ? '' : COMPANY}${FOOTER}`;
 
   return new Response(body, {
     headers: {

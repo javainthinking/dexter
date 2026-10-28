@@ -476,7 +476,14 @@
       "indicators": "指標",
       "pricing": "定價"
     },
+    "legal": {
+      "about": "關於",
+      "privacy": "隱私政策",
+      "terms": "服務條款",
+      "contact": "聯絡我們"
+    },
     "resources": {
+      "stocks": "個股技術訊號",
       "heading": "資源",
       "blog": "部落格",
       "feedback": "意見回饋"

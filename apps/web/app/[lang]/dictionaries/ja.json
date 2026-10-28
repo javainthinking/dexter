@@ -476,7 +476,14 @@
       "indicators": "インジケーター",
       "pricing": "料金"
     },
+    "legal": {
+      "about": "会社概要",
+      "privacy": "プライバシー",
+      "terms": "利用規約",
+      "contact": "お問い合わせ"
+    },
     "resources": {
+      "stocks": "銘柄シグナル",
       "heading": "リソース",
       "blog": "ブログ",
       "feedback": "フィードバック"

@@ -36,8 +36,16 @@ export function SiteFooter({ lang, dict }: { lang: Locale; dict: Dictionary }) {
     // who don't see the header nav below the `sm` breakpoint — a path to
     // the features pages.
     { href: '/features', label: dict.nav?.features ?? 'Features' },
+    { href: '/stocks', label: dict.footer?.resources?.stocks ?? 'Stock signals' },
     { href: '/blog', label: dict.footer?.resources?.blog ?? 'Blog' },
     { href: '/feedback', label: dict.footer?.resources?.feedback ?? 'Feedback' },
+  ];
+
+  const legalLinks = [
+    { href: getLocalizedPath('/about', lang), label: dict.footer?.legal?.about ?? 'About' },
+    { href: getLocalizedPath('/privacy', lang), label: dict.footer?.legal?.privacy ?? 'Privacy' },
+    { href: getLocalizedPath('/terms', lang), label: dict.footer?.legal?.terms ?? 'Terms' },
+    { href: getLocalizedPath('/feedback', lang), label: dict.footer?.legal?.contact ?? 'Contact' },
   ];
 
   return (
@@ -83,9 +91,18 @@ export function SiteFooter({ lang, dict }: { lang: Locale; dict: Dictionary }) {
         {/* Bottom row: legal line. Disclaimer is finance-compliance
             critical — keep it visible on every page, not just /chat. */}
         <div className="mt-10 flex flex-col gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-mono uppercase tracking-[0.16em] text-subtle">
-            {copyright}
-          </p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <p className="font-mono uppercase tracking-[0.16em] text-subtle">
+              {copyright}
+            </p>
+            <nav aria-label="Legal" className="flex flex-wrap gap-x-4 gap-y-1">
+              {legalLinks.map((l) => (
+                <Link key={l.href} href={l.href} className="hover:text-foreground">
+                  {l.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
           <p className="max-w-md sm:text-right">
             {dict.footer?.disclaimer ??
               dict.landing?.footer?.disclaimer ??
