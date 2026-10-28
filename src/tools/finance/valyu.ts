@@ -1,7 +1,7 @@
 /**
- * Valyu adapter — second-fallback source for US-market financials and the
- * primary source for market-movers (which Financial Datasets / Yahoo don't
- * cover in our existing toolset).
+ * Valyu adapter — primary source for US-market prices, financials, earnings,
+ * insider trades and market-movers, with Yahoo Finance as the fallback where
+ * Yahoo has coverage.
  *
  * Valyu exposes typed financial datasets behind a natural-language search
  * surface. Each fetcher here:
@@ -11,8 +11,8 @@
  *      the canonical `url` so the caller can attach source citations.
  *
  * Layering: this module is a pure data adapter. It does NOT decide whether
- * Valyu is the primary source for a given call — that's `withFallback` /
- * `withFallbackChain` in api.ts. The matching DynamicStructuredTool wrappers
+ * Valyu is the primary source for a given call — that's `withFallbackChain`
+ * in api.ts. The matching DynamicStructuredTool wrappers
  * live alongside the existing tools (earnings.ts, insider_trades.ts, etc.).
  */
 
@@ -126,7 +126,7 @@ function num(v: unknown): number | undefined {
 }
 
 /**
- * Build a `cash_flow_statements` payload shaped like Financial Datasets'.
+ * Build a `cash_flow_statements` payload in the finance tools' shared shape.
  *
  * Valyu nests the cashflows by activity type (operating / investing /
  * financing), so we lift the relevant scalar fields up to the top level
@@ -158,7 +158,7 @@ export async function fetchValyuCashFlowStatements(
   return { data: { cash_flow_statements }, url: result.url };
 }
 
-/** Build an `income_statements` payload shaped like Financial Datasets'. */
+/** Build an `income_statements` payload in the finance tools' shared shape. */
 export async function fetchValyuIncomeStatements(
   ticker: string,
   limit: number,
@@ -188,7 +188,7 @@ export async function fetchValyuIncomeStatements(
   return { data: { income_statements }, url: result.url };
 }
 
-/** Build an `earnings` payload shaped like Financial Datasets'. */
+/** Build an `earnings` payload in the finance tools' shared shape. */
 export async function fetchValyuEarnings(ticker: string): Promise<ApiResponse> {
   const label = `valyu earnings ${ticker}`;
   const query = `${ticker} latest earnings report`;
@@ -211,7 +211,7 @@ export async function fetchValyuEarnings(ticker: string): Promise<ApiResponse> {
 }
 
 /**
- * Build an `insider_trades` payload shaped like Financial Datasets'.
+ * Build an `insider_trades` payload in the finance tools' shared shape.
  *
  * Valyu collapses transaction type into a free-text `description` field
  * ("Sale at price 171.97 - 177.51 per share."). We sniff the first verb so
@@ -252,19 +252,19 @@ export async function fetchValyuInsiderTrades(
 }
 
 /**
- * Build a key-ratios snapshot shaped like Financial Datasets'.
+ * Build a key-ratios snapshot in the finance tools' shared shape.
  *
  * Valyu's statistics object is heavily nested (valuations_metrics /
  * financials / stock_statistics / stock_price_summary / dividends_and_splits).
  * We flatten the relevant scalars onto the top level the existing formatter
- * + downstream consumers expect. Both Financial-Datasets-style long names
+ * + downstream consumers expect. Both the long field names
  * (`price_to_earnings_ratio`, `return_on_equity`) and the short aliases the
  * formatter prefers (`pe_ratio`, `roe`) are populated so neither side has to
  * branch on source.
  *
- * NOTE: Valyu reports debt/equity as a percentage (7.255 -> 7.255%), whereas
- * FinDatasets reports it as a raw ratio (~0.14 for NVDA). Divide by 100 so
- * downstream math (e.g. quick screen filters) treats them identically.
+ * NOTE: Valyu reports debt/equity as a percentage (7.255 -> 7.255%); the
+ * shared shape uses a raw ratio (~0.07), matching the Yahoo adapter. Divide
+ * by 100 so downstream math treats both sources identically.
  */
 export async function fetchValyuKeyRatiosSnapshot(ticker: string): Promise<ApiResponse> {
   const label = `valyu statistics ${ticker}`;

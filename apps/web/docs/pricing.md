@@ -45,10 +45,10 @@ will shift when we substitute real GPT-5.5 rates.
 | Action | Iterations | Tokens (typical) | External APIs | Per-action cost |
 |---|---|---|---|---|
 | Simple chat turn (definition / fact / single tool call) | 1–3 | 5–10K in, 0.5–1.5K out, cached | — | **$0.02 – 0.05** |
-| Research chat (web + finance, multi-tool) | 8–15 | 50–100K cumulative in, 5–10K out | Exa $0.005, FinDatasets ~$0.01 | **$0.10 – 0.30** |
+| Research chat (web + finance, multi-tool) | 8–15 | 50–100K cumulative in, 5–10K out | Exa $0.005, Valyu (per-search, TBD) | **$0.10 – 0.30** |
 | File generation (PPT/Word/Excel, 20-30 iterations across chunks) | 20–30 | 150–300K cumulative, 10–25K out | + R2 PUT (negligible) | **$0.40 – 1.20** |
 | Portfolio quote (Yahoo path) | n/a | — | Yahoo Finance free | **<$0.001** |
-| Portfolio quote (FinDatasets path) | n/a | — | FinDatasets ~$0.001/call | **~$0.001** |
+| Portfolio quote (Valyu path) | n/a | — | Valyu per-search (TBD) | **TBD** |
 
 ### 2.2 Fixed monthly costs (regardless of users)
 
@@ -56,7 +56,7 @@ will shift when we substitute real GPT-5.5 rates.
 |---|---|---|
 | Vercel | Pro + active-CPU usage | 50–150 |
 | Postgres (Neon / Supabase) | Pro | 25–50 |
-| Financial Datasets | Starter contract | 50–200 (depends on plan) |
+| Valyu | usage-based plan | TBD (fill in from current plan) |
 | Cloudflare R2 | pay-as-you-go | 5–15 |
 | LangSmith (optional tracing) | Plus, skip while small | 0–39 |
 | Email auth (Resend / Postmark) | free → cheap | 0–20 |
@@ -177,11 +177,11 @@ auto-refresh.
   fetches/user/day
 - Power: 100 holdings × 5-min refresh = ~7,800 fetches/user/day
 
-Yahoo Finance is free but rate-limited (~2000/hour per IP). FinDatasets
-is paid (~$0.001/call). With holdings capped at 100 max even on the
-Power tier, quote-refresh COGS stays modest — Yahoo-primary keeps it
-near zero, and the FinDatasets-fallback worst case is ~$8/user/month
-on Power, comfortably absorbed by the $129 anchor.
+Yahoo Finance is free but rate-limited (~2000/hour per IP). Valyu is
+paid per search (rate TBD — fill in from the current plan). With
+holdings capped at 100 max even on the Power tier, quote-refresh COGS
+stays modest as long as quotes go Yahoo-first; re-check the Valyu
+worst case against the $129 anchor once its rate is known.
 
 **Strategy:**
 - Free + Starter: manual refresh only (user clicks button)
@@ -232,7 +232,7 @@ Reserved for Pro/Power because:
 | 50 research × $0.025 (mini + 1 search) | $1.25 |
 | 8 file gens × $0.40 (routed to flagship) | $3.20 |
 | Portfolios + quotes (manual) | $0.75 |
-| APIs (FinDatasets allocation, Exa, R2, Postgres) | $0.50 |
+| APIs (Valyu allocation, Exa, R2, Postgres) | $0.50 |
 | Vercel compute | $0.30 |
 | **Total** | **~$6.40** |
 | **Gross margin at $15** | **57%** |
@@ -356,10 +356,10 @@ minimum viable purchase path. Everything else can ship in the second wave.
 - **Risk:** With holdings capped at 100/portfolio even on Power, a
   single user's max load is ~7,800 fetches/day at 5-min refresh.
   Multiplied across hundreds of users on Power, this approaches
-  Yahoo's rate limits (~2000/hour per IP). FinDatasets fallback
-  would be ~$8/user/month at this load — affordable but not zero.
+  Yahoo's rate limits (~2000/hour per IP). Falling back to Valyu at
+  this load has a per-search cost (TBD) — affordable but not zero.
 - **Mitigation:** strongly prefer Yahoo Finance (free) as primary;
-  FinDatasets only on fallback. Add per-user fetch ceiling.
+  Valyu only on fallback. Add per-user fetch ceiling.
   Consider batched fetches (one call returns N tickers) where
   Yahoo's API supports it. Cache quotes for 30–60s server-side so
   two users watching the same ticker share the fetch.
@@ -375,7 +375,7 @@ minimum viable purchase path. Everything else can ship in the second wave.
 
 ### 8.5 Vendor pricing volatility
 
-- **Risk:** OpenAI / Anthropic raise prices. Financial Datasets changes
+- **Risk:** OpenAI / Anthropic raise prices. Valyu changes
   rate card. Our COGS rises overnight.
 - **Mitigation:** keep this doc current; review per-action cost matrix
   quarterly; build the model selector so we can switch defaults

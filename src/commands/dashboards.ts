@@ -342,7 +342,7 @@ export function FLOW_PROMPT(): string {
 
 【主力资金流量 维度】
 
-数据说明:financial-datasets API 没有直接的"主力资金净流入"字段(那是 A 股特有的盘口口径)。
+数据说明:行情数据源没有直接的"主力资金净流入"字段(那是 A 股特有的盘口口径)。
 我们用 "量价代理" 近似:NET_FLOW(t) = sign(close(t) − close(t-1)) × volume(t) × close(t),按交易日累计。
 对 A 股 / ETF,如果通过 get_stock_prices 拿到分笔大单数据,优先使用;否则全部用代理。
 

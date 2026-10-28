@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { api, withFallbackChain } from '@dexter/core/tools/finance/api';
+import { withFallbackChain } from '@dexter/core/tools/finance/api';
 import {
   fetchValyuHistoricalPrices,
   fetchValyuMarketMovers,
@@ -11,8 +11,8 @@ import type { PriceBar } from './math';
 /**
  * Server-side OHLCV fetcher used by the /indicators page.
  *
- * Hits the same 3-source chain the agent's get_stock_prices tool uses
- * (FinDatasets -> Valyu -> Yahoo) so the web indicators see the same data
+ * Hits the same chain the agent's get_stock_prices tool uses
+ * (Valyu -> Yahoo) so the web indicators see the same data
  * the CLI dashboards do. Returns an ASCENDING price array — chart code
  * downstream relies on prices[N-1] being the latest bar.
  *
@@ -25,21 +25,11 @@ export async function getHistoricalPrices(
   startDate: string,
   endDate: string,
 ): Promise<{ ticker: string; prices: PriceBar[]; sourceUrl: string }> {
-  const params = {
-    ticker: ticker.toUpperCase(),
-    interval: 'day',
-    start_date: startDate,
-    end_date: endDate,
-  };
-  const endDateObj = new Date(`${endDate}T00:00:00`);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
   const { data, url } = await withFallbackChain(
     `web/prices ${ticker} ${startDate}..${endDate}`,
     [
-      { name: 'financial-datasets', run: () => api.get('/prices/', params, { cacheable: endDateObj < today }) },
-      { name: 'valyu',              run: () => fetchValyuHistoricalPrices(ticker, startDate, endDate, 'day') },
-      { name: 'yahoo',              run: () => fetchYahooHistoricalPrices(ticker, startDate, endDate, 'day') },
+      { name: 'valyu', run: () => fetchValyuHistoricalPrices(ticker, startDate, endDate, 'day') },
+      { name: 'yahoo', run: () => fetchYahooHistoricalPrices(ticker, startDate, endDate, 'day') },
     ],
   );
   const raw = Array.isArray(data.prices) ? (data.prices as Array<Record<string, unknown>>) : [];

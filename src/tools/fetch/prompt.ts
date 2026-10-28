@@ -24,6 +24,7 @@ Use web_fetch as your FIRST choice whenever you need to read the content of a we
 ## When to Use
 
 - Reading earnings reports, press releases, or investor relations pages
+- Reading SEC filings (10-K, 10-Q, 8-K) from their sec.gov document URL
 - Reading articles from news sites (CNBC, Bloomberg, Reuters, etc.)
 - Accessing any URL discovered via web_search
 - Reading documentation, blog posts, or any static web content
@@ -34,7 +35,6 @@ Use web_fetch as your FIRST choice whenever you need to read the content of a we
 - Interactive pages that require JavaScript rendering, clicking, or form filling (use browser instead)
 - Structured financial data like metrics or estimates (use get_financials instead)
 - Stock or crypto prices (use get_market_data instead)
-- SEC filings content (use read_filings instead)
 
 ## Usage Notes
 

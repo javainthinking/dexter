@@ -4,7 +4,7 @@
  * Every function takes a `closes[]` (or `prices[]`) array assumed to be in
  * ASCENDING chronological order — index 0 is the oldest bar, the last index
  * is the latest. The rest of the codebase enforces this invariant in the
- * Yahoo/Valyu/FinDatasets adapters.
+ * Yahoo/Valyu adapters.
  *
  * Output arrays match the input length one-to-one (no truncation). Leading
  * values that can't be computed yet (e.g. the first 12 bars of EMA(12)) come

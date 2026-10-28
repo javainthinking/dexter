@@ -1,8 +1,7 @@
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { api, stripFieldsDeep, withFallback, withFallbackChain } from './api.js';
+import { stripFieldsDeep, withFallbackChain } from './api.js';
 import { formatToolResult } from '../types.js';
-import { TTL_24H } from './utils.js';
 import {
   fetchYahooIncomeStatements,
   fetchYahooBalanceSheets,
@@ -30,51 +29,17 @@ const FinancialStatementsInputSchema = z.object({
     .describe(
       'Maximum number of report periods to return (default: 4). Returns the most recent N periods based on the period type. Increase this for longer historical analysis when needed.'
     ),
-  report_period_gt: z
-    .string()
-    .optional()
-    .describe('Filter for financial statements with report periods after this date (YYYY-MM-DD).'),
-  report_period_gte: z
-    .string()
-    .optional()
-    .describe(
-      'Filter for financial statements with report periods on or after this date (YYYY-MM-DD).'
-    ),
-  report_period_lt: z
-    .string()
-    .optional()
-    .describe('Filter for financial statements with report periods before this date (YYYY-MM-DD).'),
-  report_period_lte: z
-    .string()
-    .optional()
-    .describe(
-      'Filter for financial statements with report periods on or before this date (YYYY-MM-DD).'
-    ),
 });
-
-function createParams(input: z.infer<typeof FinancialStatementsInputSchema>): Record<string, string | number | undefined> {
-  return {
-    ticker: input.ticker,
-    period: input.period,
-    limit: input.limit,
-    report_period_gt: input.report_period_gt,
-    report_period_gte: input.report_period_gte,
-    report_period_lt: input.report_period_lt,
-    report_period_lte: input.report_period_lte,
-  };
-}
 
 export const getIncomeStatements = new DynamicStructuredTool({
   name: 'get_income_statements',
   description: `Fetches a company's income statements, detailing its revenues, expenses, net income, etc. over a reporting period. Useful for evaluating a company's profitability and operational efficiency.`,
   schema: FinancialStatementsInputSchema,
   func: async (input) => {
-    const params = createParams(input);
     const ticker = input.ticker.trim().toUpperCase();
     const { data, url } = await withFallbackChain(
       `income-statements ${ticker} ${input.period}`,
       [
-        { name: 'financial-datasets', run: () => api.get('/financials/income-statements/', params, { cacheable: true, ttlMs: TTL_24H }) },
         { name: 'valyu', run: () => fetchValyuIncomeStatements(ticker, input.limit) },
         { name: 'yahoo', run: () => fetchYahooIncomeStatements(ticker, input.period, input.limit) },
       ],
@@ -91,13 +56,8 @@ export const getBalanceSheets = new DynamicStructuredTool({
   description: `Retrieves a company's balance sheets, providing a snapshot of its assets, liabilities, shareholders' equity, etc. at a specific point in time. Useful for assessing a company's financial position.`,
   schema: FinancialStatementsInputSchema,
   func: async (input) => {
-    const params = createParams(input);
     const ticker = input.ticker.trim().toUpperCase();
-    const { data, url } = await withFallback(
-      () => api.get('/financials/balance-sheets/', params, { cacheable: true, ttlMs: TTL_24H }),
-      () => fetchYahooBalanceSheets(ticker, input.period, input.limit),
-      `balance-sheets ${ticker} ${input.period}`,
-    );
+    const { data, url } = await fetchYahooBalanceSheets(ticker, input.period, input.limit);
     return formatToolResult(
       stripFieldsDeep(data.balance_sheets || {}, REDUNDANT_FINANCIAL_FIELDS),
       [url]
@@ -110,12 +70,10 @@ export const getCashFlowStatements = new DynamicStructuredTool({
   description: `Retrieves a company's cash flow statements, showing how cash is generated and used across operating, investing, and financing activities. Useful for understanding a company's liquidity and solvency.`,
   schema: FinancialStatementsInputSchema,
   func: async (input) => {
-    const params = createParams(input);
     const ticker = input.ticker.trim().toUpperCase();
     const { data, url } = await withFallbackChain(
       `cash-flow-statements ${ticker} ${input.period}`,
       [
-        { name: 'financial-datasets', run: () => api.get('/financials/cash-flow-statements/', params, { cacheable: true, ttlMs: TTL_24H }) },
         { name: 'valyu', run: () => fetchValyuCashFlowStatements(ticker, input.limit) },
         { name: 'yahoo', run: () => fetchYahooCashFlowStatements(ticker, input.period, input.limit) },
       ],
@@ -129,16 +87,11 @@ export const getCashFlowStatements = new DynamicStructuredTool({
 
 export const getAllFinancialStatements = new DynamicStructuredTool({
   name: 'get_all_financial_statements',
-  description: `Retrieves all three financial statements (income statements, balance sheets, and cash flow statements) for a company in a single API call. This is more efficient than calling each statement type separately when you need all three for comprehensive financial analysis.`,
+  description: `Retrieves all three financial statements (income statements, balance sheets, and cash flow statements) for a company in a single call. This is more efficient than calling each statement type separately when you need all three for comprehensive financial analysis.`,
   schema: FinancialStatementsInputSchema,
   func: async (input) => {
-    const params = createParams(input);
     const ticker = input.ticker.trim().toUpperCase();
-    const { data, url } = await withFallback(
-      () => api.get('/financials/', params, { cacheable: true, ttlMs: TTL_24H }),
-      () => fetchYahooAllFinancials(ticker, input.period, input.limit),
-      `financials ${ticker} ${input.period}`,
-    );
+    const { data, url } = await fetchYahooAllFinancials(ticker, input.period, input.limit);
     return formatToolResult(
       stripFieldsDeep(data.financials || {}, REDUNDANT_FINANCIAL_FIELDS),
       [url]

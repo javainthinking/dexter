@@ -53,9 +53,9 @@
 
 ## Tools
 
-- `financial_search`: primary tool for all financial data queries (prices, metrics, filings). Delegates to multiple sub-tools internally.
-- `financial_metrics`: direct metric lookups (revenue, market cap, etc.).
-- `read_filings`: SEC filing reader for 10-K, 10-Q, 8-K documents.
+- `get_financials`: financial statements, key ratios and latest earnings. Routes to sub-tools internally (Valyu primary, Yahoo Finance fallback).
+- `get_market_data`: stock/crypto prices, news, insider trades and market movers. Routes to sub-tools internally.
+- SEC filings have no dedicated tool; the agent reads them from sec.gov via `web_fetch`.
 - `web_search`: general web search (Exa if `EXASEARCH_API_KEY` set, else Tavily if `TAVILY_API_KEY` set).
 - `browser`: Playwright-based web scraping for reading pages the agent discovers.
 - `skill`: invokes SKILL.md-defined workflows (e.g. DCF valuation). Each skill runs at most once per query.
@@ -80,7 +80,7 @@
 
 - LLM keys: `MEMORYLAKE_API_KEY` (OpenAI models via the MemoryLake router, `src/providers.ts`), `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, `XAI_API_KEY`, `OPENROUTER_API_KEY`
 - Ollama: `OLLAMA_BASE_URL` (default `http://127.0.0.1:11434`)
-- Finance: `FINANCIAL_DATASETS_API_KEY`
+- Finance: `VALYU_API_KEY` (Yahoo Finance is the keyless fallback)
 - Search: `EXASEARCH_API_KEY` (preferred), `TAVILY_API_KEY` (fallback)
 - Tracing: `LANGSMITH_API_KEY`, `LANGSMITH_ENDPOINT`, `LANGSMITH_PROJECT`, `LANGSMITH_TRACING`
 - Never commit `.env` files or real API keys.

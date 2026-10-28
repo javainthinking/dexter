@@ -145,19 +145,6 @@ export function formatKeyRatios(data: unknown, args?: Rec): string {
   return lines.join('\n');
 }
 
-export function formatHistoricalKeyRatios(data: unknown, args?: Rec): string {
-  const items = Array.isArray(data) ? data : [];
-  if (items.length === 0) return 'No historical metrics available.';
-  const ticker = (args?.ticker as string)?.toUpperCase() ?? '';
-  const lines = [`${ticker} Historical Metrics`, ''];
-  lines.push('| Period | P/E | EPS | Rev Growth | Op Margin | ROE |');
-  lines.push('|--------|-----|-----|------------|-----------|-----|');
-  for (const row of items as Rec[]) {
-    lines.push(`| ${fmtPeriod(row)} | ${fmtRatio(row.price_to_earnings_ratio)} | ${fmtPrice(row.earnings_per_share)} | ${fmtPct(row.revenue_growth)} | ${fmtPct(row.operating_margin)} | ${fmtPct(row.return_on_equity)} |`);
-  }
-  return lines.join('\n');
-}
-
 // ---------------------------------------------------------------------------
 // Market data formatters
 // ---------------------------------------------------------------------------
@@ -227,125 +214,20 @@ export function formatInsiderTrades(data: unknown): string {
   return lines.join('\n');
 }
 
-export function formatInsiderNames(data: unknown, args?: Rec): string {
-  const names = Array.isArray(data) ? data : [];
-  if (names.length === 0) return 'No insider names found.';
-  const ticker = (args?.ticker as string)?.toUpperCase() ?? '';
-  return `Insider names${ticker ? ` — ${ticker}` : ''} (exact SEC filing spellings, use verbatim as the name filter):\n${names.join('; ')}`;
-}
-
-export function formatInsiderOwnership(data: unknown): string {
-  const items = Array.isArray(data) ? data : [];
-  if (items.length === 0) return 'No Form 3/5 ownership statements on file for this ticker. This is normal — many insiders report via Form 4 transactions instead (see get_insider_trades). Absence here does not imply missing coverage.';
-  const lines = ['Insider Ownership', ''];
-  lines.push('| Name | Title | Form | Holding | Security | Shares | D/I | As of |');
-  lines.push('|------|-------|------|---------|----------|--------|-----|-------|');
-  for (const row of items.slice(0, 15) as Rec[]) {
-    // Derivative rows (options, RSUs) report their size as underlying shares.
-    const shares = row.shares_owned ?? row.underlying_security_shares;
-    lines.push(`| ${row.name ?? '—'} | ${row.title ?? '—'} | ${row.form_type ?? '—'} | ${row.holding_type ?? '—'} | ${row.security_title ?? '—'} | ${fmtNum(shares)} | ${row.direct_or_indirect ?? '—'} | ${String(row.as_of_date ?? row.filing_date ?? '').slice(0, 10)} |`);
-  }
-  return lines.join('\n');
-}
-
-export function formatBeneficialOwnership(data: unknown): string {
-  const items = Array.isArray(data) ? data : [];
-  if (items.length === 0) return 'No beneficial ownership stakes found.';
-  const lines = ['Beneficial Ownership (5%+ stakes)', ''];
-  lines.push('| Owner | Ticker | Type | Form | % of Class | Shares | Filed |');
-  lines.push('|-------|--------|------|------|------------|--------|-------|');
-  for (const row of items.slice(0, 15) as Rec[]) {
-    const pct = row.percent_of_class != null ? `${row.percent_of_class}%` : '—';
-    lines.push(`| ${row.reporting_person_name ?? '—'} | ${row.ticker ?? '—'} | ${row.type ?? '—'} | ${row.form_type ?? '—'} | ${pct} | ${fmtNum(row.aggregate_amount_beneficially_owned)} | ${String(row.filing_date ?? '').slice(0, 10)} |`);
-  }
-  return lines.join('\n');
-}
-
-export function formatInstitutionalHoldings(data: unknown, args?: Rec): string {
-  const items = Array.isArray(data) ? data : [];
-  if (items.length === 0) return 'No institutional holdings found.';
-  const byTicker = Boolean(args?.ticker);
-  const lines: string[] = [];
-  if (byTicker) {
-    const ticker = (args?.ticker as string)?.toUpperCase() ?? '';
-    lines.push(`Institutional Holders — ${ticker}`, '');
-    lines.push('| Filer | Shares | Value (USD) | Report |');
-    lines.push('|-------|--------|-------------|--------|');
-    for (const row of items.slice(0, 15) as Rec[]) {
-      lines.push(`| ${row.filer_name ?? row.filer_cik ?? '—'} | ${fmtNum(row.shares)} | ${fmtNum(row.value_usd)} | ${fmtDate(row.report_period)} |`);
-    }
-  } else {
-    const filer = ((items[0] as Rec)?.filer_name as string)
-      ?? (args?.filer_name as string)
-      ?? (args?.filer_cik as string)
-      ?? '';
-    lines.push(`13F Holdings — ${filer}`, '');
-    lines.push('| Issuer | Ticker | Shares | Value (USD) | Report |');
-    lines.push('|--------|--------|--------|-------------|--------|');
-    for (const row of items.slice(0, 15) as Rec[]) {
-      lines.push(`| ${row.name_of_issuer ?? '—'} | ${row.ticker ?? '—'} | ${fmtNum(row.shares)} | ${fmtNum(row.value_usd)} | ${fmtDate(row.report_period)} |`);
-    }
-  }
-  if (items.length > 15) lines.push('', `(showing 15 of ${items.length})`);
-  return lines.join('\n');
-}
-
-export function formatEarnings(data: unknown, args?: Rec): string {
-  if (Array.isArray(data)) {
-    if (data.length === 0) return 'No earnings data available.';
-
-    const rows = data as Rec[];
-    const ticker = (args?.ticker as string | undefined)?.toUpperCase();
-    const cell = (value: unknown) => String(value ?? '—').replace(/\|/g, '\\|');
-    const title = ticker
-      ? `${ticker} Earnings`
-      : (rows.length === 1
-        ? `${String(rows[0].ticker ?? '').toUpperCase()} Earnings`
-        : 'Latest Earnings Feed');
-    const lines = [title, ''];
-    lines.push('| Ticker | Period | Fiscal | Source | Filed | Revenue | EPS | Signals |');
-    lines.push('|--------|--------|--------|--------|-------|---------|-----|---------|');
-
-    for (const row of rows.slice(0, 15)) {
-      const figures = ((row.quarterly ?? row.annual) && typeof (row.quarterly ?? row.annual) === 'object')
-        ? (row.quarterly ?? row.annual) as Rec
-        : {};
-      const eps = figures.earnings_per_share ?? figures.eps;
-      const signals = Array.isArray(row.signals)
-        ? row.signals
-          .slice(0, 2)
-          .map((signal) => signal && typeof signal === 'object' ? (signal as Rec).headline : null)
-          .filter(Boolean)
-          .join('; ')
-        : '';
-
-      lines.push(`| ${cell(String(row.ticker ?? '—').toUpperCase())} | ${cell(fmtPeriod(row))} | ${cell(row.fiscal_period)} | ${cell(row.source_type)} | ${cell(String(row.filing_date ?? '—').slice(0, 10))} | ${cell(fmtNum(figures.revenue))} | ${cell(fmtPrice(eps))} | ${cell(signals || '—')} |`);
-    }
-
-    if (rows.length > 15) lines.push('', `(showing 15 of ${rows.length})`);
-    return lines.join('\n');
-  }
-
-  const d = (data && typeof data === 'object') ? data as Rec : {};
+export function formatEarnings(data: unknown): string {
+  const d = (data && typeof data === 'object' && !Array.isArray(data)) ? data as Rec : {};
   if (Object.keys(d).length === 0) return 'No earnings data available.';
-  // Flat shape: each entry IS one filing. data.earnings[0] (already unwrapped upstream)
-  // lands on the most recent period's 8-K when present (sorted report_period DESC, filing_date ASC).
-  const figures = ((d.quarterly ?? d.annual) && typeof (d.quarterly ?? d.annual) === 'object')
-    ? (d.quarterly ?? d.annual) as Rec
-    : {};
   const ticker = (d.ticker as string)?.toUpperCase() ?? '';
-  const lines: string[] = [];
-  const header = `${ticker} Earnings — ${fmtDate(d.report_period)}${d.fiscal_period ? ` (${d.fiscal_period})` : ''}${d.currency ? ` [${d.currency}]` : ''}`;
-  lines.push(header.trim());
-  lines.push('');
-  lines.push(`Source: ${d.source_type ?? '—'} | Filed: ${String(d.filing_date ?? '—').slice(0, 10)} | Accession: ${d.accession_number ?? '—'}`);
-  if (figures.revenue !== undefined) lines.push(`Revenue: ${fmtNum(figures.revenue)}`);
-  if (figures.net_income !== undefined) lines.push(`Net Income: ${fmtNum(figures.net_income)}`);
-  const eps = figures.earnings_per_share ?? figures.eps;
-  if (eps !== undefined) lines.push(`EPS: ${fmtPrice(eps)}`);
-  // *_surprise holds the BEAT/MISS/MEET label; the magnitude is in *_surprise_pct.
-  if (figures.revenue_surprise !== undefined) lines.push(`Revenue Surprise: ${figures.revenue_surprise}${figures.revenue_surprise_pct != null ? ` (${fmtPct(figures.revenue_surprise_pct)})` : ''}`);
-  if (figures.eps_surprise !== undefined) lines.push(`EPS Surprise: ${figures.eps_surprise}${figures.eps_surprise_pct != null ? ` (${fmtPct(figures.eps_surprise_pct)})` : ''}`);
+  const when = [d.report_date, d.report_time].filter(Boolean).join(', ');
+  const lines = [`${ticker} Latest Earnings${when ? ` — ${when}` : ''}`, ''];
+  lines.push(`EPS: ${fmtPrice(d.eps_actual)} actual vs ${fmtPrice(d.eps_estimate)} estimate`);
+  if (d.eps_surprise != null) {
+    const surprise = Number(d.eps_surprise);
+    const label = surprise > 0 ? 'BEAT' : surprise < 0 ? 'MISS' : 'MEET';
+    // eps_surprise_percent is already a percentage (6.88 = 6.88%).
+    const pct = d.eps_surprise_percent != null ? ` (${Number(d.eps_surprise_percent).toFixed(2)}%)` : '';
+    lines.push(`EPS Surprise: ${label} ${fmtPrice(surprise)}${pct}`);
+  }
   return lines.join('\n');
 }
 
@@ -391,54 +273,6 @@ export function formatCryptoPrice(data: unknown): string {
   return `${ticker}: ${fmtPrice(d.price ?? d.close)}${extras.length ? ` (${extras.join(' ')})` : ''}`;
 }
 
-export function formatFinancialSegments(data: unknown, args?: Rec): string {
-  const items = Array.isArray(data) ? data : [];
-  if (items.length === 0) return 'No segment data available.';
-  const ticker = (args?.ticker as string)?.toUpperCase() ?? '';
-  const lines = [`${ticker} Financial Segments`, ''];
-
-  const STATEMENTS = ['income_statement', 'balance_sheet', 'cash_flow_statement'] as const;
-
-  for (const period of items as Rec[]) {
-    const header = period.fiscal_period
-      ? `${fmtDate(period.report_period)} (${period.fiscal_period})`
-      : fmtDate(period.report_period);
-    lines.push(`**${header}**`);
-
-    let wroteAny = false;
-    for (const statementKey of STATEMENTS) {
-      const statement = period[statementKey] as Rec | null | undefined;
-      if (!statement || typeof statement !== 'object') continue;
-
-      for (const [metricName, metricValue] of Object.entries(statement)) {
-        if (!metricValue || typeof metricValue !== 'object') continue;
-        const breakdowns = metricValue as Rec;
-
-        for (const [axisName, axisValue] of Object.entries(breakdowns)) {
-          if (!Array.isArray(axisValue) || axisValue.length === 0) continue;
-          const metricLabel = formatLabel(metricName);
-          const axisLabel = formatLabel(axisName);
-          lines.push(`${metricLabel} · ${axisLabel}:`);
-          for (const entry of axisValue as Rec[]) {
-            const label = entry.label ?? entry.name ?? 'Unknown';
-            lines.push(`- ${label}: ${fmtNum(entry.value ?? entry.revenue)}`);
-          }
-          wroteAny = true;
-        }
-      }
-    }
-    if (!wroteAny) {
-      lines.push('No segment breakdowns reported.');
-    }
-    lines.push('');
-  }
-  return lines.join('\n').trimEnd();
-}
-
-function formatLabel(s: string): string {
-  return s.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-}
-
 // ---------------------------------------------------------------------------
 // Formatter registry — maps sub-tool names to formatters
 // ---------------------------------------------------------------------------
@@ -449,9 +283,7 @@ export const FINANCIAL_FORMATTERS: Record<string, (data: unknown, args?: Rec) =>
   get_cash_flow_statements: formatCashFlowStatements,
   get_all_financial_statements: formatAllFinancials,
   get_key_ratios: formatKeyRatios,
-  get_historical_key_ratios: formatHistoricalKeyRatios,
   get_earnings: formatEarnings,
-  get_financial_segments: formatFinancialSegments,
 };
 
 export const MARKET_DATA_FORMATTERS: Record<string, (data: unknown, args?: Rec) => string> = {
@@ -462,8 +294,4 @@ export const MARKET_DATA_FORMATTERS: Record<string, (data: unknown, args?: Rec) 
   get_company_news: formatNews,
   get_insider_trades: formatInsiderTrades,
   get_market_movers: formatMarketMovers,
-  get_insider_names: formatInsiderNames,
-  get_insider_ownership: formatInsiderOwnership,
-  get_institutional_holdings: formatInstitutionalHoldings,
-  get_beneficial_ownership: formatBeneficialOwnership,
 };

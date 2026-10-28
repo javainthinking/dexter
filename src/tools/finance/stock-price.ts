@@ -1,12 +1,12 @@
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { api, withFallbackChain } from './api.js';
+import { withFallbackChain } from './api.js';
 import { formatToolResult } from '../types.js';
 import { fetchYahooPriceSnapshot, fetchYahooHistoricalPrices } from './yahoo.js';
 import { fetchValyuPriceSnapshot, fetchValyuHistoricalPrices } from './valyu.js';
 
 export const STOCK_PRICE_DESCRIPTION = `
-Fetches the current stock price snapshot for an equity: latest price and the day's change. For open/high/low/close and volume over a range, use historical prices. Powered by Financial Datasets.
+Fetches the current stock price snapshot for an equity: latest price and the day's change. For open/high/low/close and volume over a range, use historical prices. Powered by Valyu with Yahoo Finance as fallback.
 `.trim();
 
 const StockPriceInputSchema = z.object({
@@ -22,11 +22,9 @@ export const getStockPrice = new DynamicStructuredTool({
   schema: StockPriceInputSchema,
   func: async (input) => {
     const ticker = input.ticker.trim().toUpperCase();
-    const params = { ticker };
     const { data, url } = await withFallbackChain(`prices/snapshot ${ticker}`, [
-      { name: 'financial-datasets', run: () => api.get('/prices/snapshot/', params) },
-      { name: 'valyu',              run: () => fetchValyuPriceSnapshot(ticker) },
-      { name: 'yahoo',              run: () => fetchYahooPriceSnapshot(ticker) },
+      { name: 'valyu', run: () => fetchValyuPriceSnapshot(ticker) },
+      { name: 'yahoo', run: () => fetchYahooPriceSnapshot(ticker) },
     ]);
     return formatToolResult(data.snapshot || {}, [url]);
   },
@@ -50,44 +48,22 @@ export const getStockPrices = new DynamicStructuredTool({
     'Retrieves historical price data for a stock over a specified date range, including open, high, low, close prices and volume.',
   schema: StockPricesInputSchema,
   func: async (input) => {
-    // The API rejects a zero-width range (start_date == end_date) with a 400.
-    // Widen a same-day request back a week so "price on date X" queries return
-    // the row for X (or the nearest prior trading day) instead of erroring.
+    // Widen a same-day request (start_date == end_date) back a week so "price on
+    // date X" queries return the row for X (or the nearest prior trading day).
     let startDate = input.start_date;
     if (startDate >= input.end_date) {
       const widened = new Date(input.end_date + 'T00:00:00');
       widened.setDate(widened.getDate() - 7);
       startDate = widened.toISOString().slice(0, 10);
     }
-    const params = {
-      ticker: input.ticker.trim().toUpperCase(),
-      interval: input.interval,
-      start_date: startDate,
-      end_date: input.end_date,
-    };
-    // Cache when the date window is fully closed (OHLCV data is final)
-    const endDate = new Date(input.end_date + 'T00:00:00');
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const ticker = params.ticker;
+    const ticker = input.ticker.trim().toUpperCase();
     const { data, url } = await withFallbackChain(
-      `prices ${ticker} ${input.start_date}..${input.end_date}`,
+      `prices ${ticker} ${startDate}..${input.end_date}`,
       [
-        { name: 'financial-datasets', run: () => api.get('/prices/', params, { cacheable: endDate < today }) },
-        { name: 'valyu',              run: () => fetchValyuHistoricalPrices(ticker, input.start_date, input.end_date, input.interval) },
-        { name: 'yahoo',              run: () => fetchYahooHistoricalPrices(ticker, input.start_date, input.end_date, input.interval) },
+        { name: 'valyu', run: () => fetchValyuHistoricalPrices(ticker, startDate, input.end_date, input.interval) },
+        { name: 'yahoo', run: () => fetchYahooHistoricalPrices(ticker, startDate, input.end_date, input.interval) },
       ],
     );
     return formatToolResult(data.prices || [], [url]);
-  },
-});
-
-export const getStockTickers = new DynamicStructuredTool({
-  name: 'get_available_stock_tickers',
-  description: 'Retrieves the list of available stock tickers that can be used with the stock price tools.',
-  schema: z.object({}),
-  func: async () => {
-    const { data, url } = await api.get('/prices/snapshot/tickers/', {}, { cacheable: true, ttlMs: 24 * 60 * 60 * 1000 });
-    return formatToolResult(data.tickers || [], [url]);
   },
 });

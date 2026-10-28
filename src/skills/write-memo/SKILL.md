@@ -44,8 +44,7 @@ Call `get_financials`:
 - `"[TICKER] annual cash flow statements last 5 years"` — operating CF, capex, FCF
 - `"[TICKER] latest balance sheet"` — debt, cash, shares outstanding
 - `"[TICKER] financial metrics snapshot"` — P/E, EV, ROIC, FCF growth, debt/equity, margins
-- `"[TICKER] segmented financials"` — segment revenue, segment margins (if multi-segment)
-- `"[TICKER] earnings history last 8 quarters"` — beats/misses, surprises
+- `"[TICKER] latest earnings"` — EPS actual vs. estimate, surprise
 - `"[TICKER] company facts"` — sector, industry, market cap
 - `"[TICKER] KPI guidance"` and `"[TICKER] KPI metrics"` — management-provided KPIs and guidance
 
@@ -54,14 +53,14 @@ Call `get_market_data`:
 - `"[TICKER] price snapshot"` — current price, 52-week range, market cap
 - `"[TICKER] historical prices last 12 months"` — for return / multiple compression context
 - `"[TICKER] insider trades last 6 months"` — recent buys/sells, dollar amounts
-- `"[TICKER] institutional holdings"` — top holders, recent additions / reductions
 - `"[TICKER] news last 30 days"` — recent material events
 
 ### 2.3 Filings
-Call `read_filings`:
+Find the filing on SEC EDGAR via `web_search` (e.g. `"[TICKER] 10-K sec.gov"`), then read it with `web_fetch`:
 - Most recent 10-K Item 1 (Business) — for business snapshot language
 - Most recent 10-K Item 1A (Risk Factors) — to source risks from the company itself
 - Most recent 10-Q — recent quarterly trajectory
+- Segment revenue and margins (if multi-segment) come from the 10-K segment note
 
 ### 2.4 Memory (optional)
 Call `memory_search` with the ticker — surfaces any prior notes, prior memos, or user-provided constraints (e.g., risk tolerance, sector exposure already in book).

@@ -15,7 +15,7 @@ Run a shell command via \`/bin/sh -c\` and get back its stdout, stderr, and exit
 
 - Reading a single file you know the path of — use read_file (it is cheaper and clearer)
 - Fetching web pages or APIs — use web_fetch / web_search (bash has no network sandbox)
-- Structured financial data, prices, or filings — use get_financials / get_market_data / read_filings
+- Structured financial data or prices — use get_financials / get_market_data
 - Interactive programs (vim, a REPL, ssh sessions) — bash captures output only, no interactivity
 - Long-running daemons — they will hit the timeout; schedule recurring work with the cron tool
 

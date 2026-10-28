@@ -20,9 +20,8 @@ Intelligent meta-tool for retrieving company financial data. Takes a natural lan
 - Company facts (sector, industry, market cap, number of employees, listing date, exchange, location, weighted average shares, website)
 - Company financials (income statements, balance sheets, cash flow statements)
 - Financial metrics and key ratios (P/E ratio, market cap, EPS, dividend yield, enterprise value, ROE, ROA, margins)
-- Historical metrics and trend analysis across multiple periods
-- Financial segment breakdowns (revenue, margins, etc. by product / geography)
-- Earnings data (EPS/revenue beat-miss, earnings surprises, latest earnings feed)
+- Trend analysis across multiple reporting periods (from the financial statements)
+- Latest earnings release (EPS actual vs. estimate, earnings surprise)
 - Multi-company comparisons (pass the full query, it handles routing internally)
 
 ## When NOT to Use
@@ -33,8 +32,7 @@ Intelligent meta-tool for retrieving company financial data. Takes a natural lan
 - Questions that don't require external financial data (answer directly from knowledge)
 - Non-public company information
 - Real-time trading or order execution
-- Reading SEC filing content (use read_filings instead)
-- Stock screening by criteria (use stock_screener)
+- Reading SEC filing content (use web_fetch on the filing URL)
 
 ## Usage Notes
 
@@ -52,8 +50,7 @@ function formatSubToolName(name: string): string {
 
 // Import all finance tools directly (avoid circular deps with index.ts)
 import { getIncomeStatements, getBalanceSheets, getCashFlowStatements, getAllFinancialStatements } from './fundamentals.js';
-import { getKeyRatios, getHistoricalKeyRatios } from './key-ratios.js';
-import { getFinancialSegments } from './segments.js';
+import { getKeyRatios } from './key-ratios.js';
 import { getEarnings } from './earnings.js';
 
 // All finance tools available for routing
@@ -67,9 +64,6 @@ const FINANCE_TOOLS: StructuredToolInterface[] = [
   getEarnings,
   // Key Ratios & Snapshots
   getKeyRatios,
-  getHistoricalKeyRatios,
-  // Other Data
-  getFinancialSegments,
 ];
 
 // Create a map for quick tool lookup by name
@@ -88,18 +82,17 @@ Given a user's natural language query about financial data, call the appropriate
    - Apple → AAPL, Tesla → TSLA, Microsoft → MSFT, Amazon → AMZN
    - Google/Alphabet → GOOGL, Meta/Facebook → META, Nvidia → NVDA
 
-2. **Date Inference**: Use schema-supported filters for date ranges:
-   - "last year" → report_period_gte 1 year ago
-   - "last quarter" → report_period_gte 3 months ago
-   - "past 5 years" → report_period_gte 5 years ago and limit 5 (annual) or 20 (quarterly)
-   - "YTD" → report_period_gte Jan 1 of current year
+2. **Date Inference**: Statements return the most recent N periods, so express ranges via period + limit:
+   - "last year" → period annual, limit 1
+   - "last quarter" → period quarterly, limit 1
+   - "past 5 years" → period annual, limit 5 (or quarterly, limit 20)
+   - "YTD" → period quarterly, limit = quarters reported so far this year
 
 3. **Tool Selection**:
-   - For latest financial metrics snapshot (P/E, margins, ROE, EPS, growth rates) → get_financial_metrics_snapshot
-   - For historical P/E ratio, historical market cap, valuation metrics over time → get_key_ratios
+   - For latest financial metrics snapshot (P/E, margins, ROE, EPS, growth rates) → get_key_ratios
+   - Historical valuation ratios are not available; derive trends from the statements instead
    - For revenue, earnings, profitability → get_income_statements
-   - For latest earnings release snapshot, EPS/revenue beat-miss, earnings surprises, or latest earnings feed → get_earnings
-   - For "latest earnings", "recent earnings", or "earnings feed" across the market, call get_earnings without a ticker
+   - For a company's latest earnings release, EPS beat-miss, or earnings surprise → get_earnings with ticker
    - For debt, assets, equity → get_balance_sheets
    - For cash flow, free cash flow → get_cash_flow_statements
    - For comprehensive analysis → get_all_financial_statements
@@ -132,8 +125,8 @@ export function createGetFinancials(model: string): DynamicStructuredTool {
     description: `Intelligent meta-tool for retrieving company financial data. Takes a natural language query and automatically routes to appropriate financial data tools. Use for:
 - Company financials (income statements, balance sheets, cash flow)
 - Financial metrics and key ratios (P/E ratio, market cap, EPS, dividend yield, ROE, margins)
-- Historical metrics and trend analysis
-- Earnings data, latest earnings feed, and financial segments`,
+- Multi-period trend analysis from the financial statements
+- A company's latest earnings release`,
     schema: GetFinancialsInputSchema,
     func: async (input, _runManager, config?: RunnableConfig) => {
       const onProgress = config?.metadata?.onProgress as ((msg: string) => void) | undefined;

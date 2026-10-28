@@ -34,8 +34,6 @@ export const SUBAGENT_DISALLOWED_TOOLS = new Set<string>(['spawn_subagent', 'ask
 const READ_ONLY_TOOLS = [
   'get_financials',
   'get_market_data',
-  'read_filings',
-  'stock_screener',
   'web_search',
   'x_search',
   'web_fetch',
@@ -62,13 +60,13 @@ export const SUBAGENT_TYPES: Record<string, SubagentTypeConfig> = {
   research: {
     whenToUse: 'Gather and synthesize external information on a single topic.',
     systemPrompt: `${WORKER_PREAMBLE}\n\nYou are a research worker. Gather information from the web, news, and filings, cross-check sources, and synthesize a clear, sourced summary of what you found.`,
-    tools: ['web_search', 'x_search', 'web_fetch', 'read_filings', 'get_market_data'],
+    tools: ['web_search', 'x_search', 'web_fetch', 'get_market_data'],
     maxIterations: 8,
   },
   analysis: {
     whenToUse: 'Quantitative financial analysis on specific companies.',
     systemPrompt: `${WORKER_PREAMBLE}\n\nYou are a financial analysis worker. Pull the relevant financials, metrics, and market data, then deliver a focused quantitative analysis with the numbers that support it.`,
-    tools: ['get_financials', 'get_market_data', 'stock_screener', 'read_filings'],
+    tools: ['get_financials', 'get_market_data', 'web_fetch'],
     maxIterations: 8,
   },
 };

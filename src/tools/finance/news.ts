@@ -1,8 +1,6 @@
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { api, withFallback } from './api.js';
 import { formatToolResult } from '../types.js';
-import { TTL_15M } from './utils.js';
 import { fetchYahooNews } from './yahoo.js';
 
 const CompanyNewsInputSchema = z.object({
@@ -24,12 +22,7 @@ export const getCompanyNews = new DynamicStructuredTool({
   func: async (input) => {
     const ticker = input.ticker?.trim().toUpperCase();
     const limit = Math.min(input.limit, 10);
-    const params: Record<string, string | number | undefined> = { ticker, limit };
-    const { data, url } = await withFallback(
-      () => api.get('/news', params, { cacheable: true, ttlMs: TTL_15M }),
-      () => fetchYahooNews(ticker, limit),
-      `news ${ticker ?? 'market'}`,
-    );
+    const { data, url } = await fetchYahooNews(ticker, limit);
     return formatToolResult((data.news as unknown[]) || [], [url]);
   },
 });

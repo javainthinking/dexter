@@ -39,7 +39,7 @@ something like "What is the current price of AAPL?".
 
 ### Environment variables
 
-The agent needs API keys (MEMORYLAKE_API_KEY, FINANCIAL_DATASETS_API_KEY, …).
+The agent needs API keys (MEMORYLAKE_API_KEY, VALYU_API_KEY, …).
 Next.js auto-loads `apps/web/.env.local` and **does not** look at the
 repo-root `.env`. Pick one of:
 
@@ -107,7 +107,7 @@ once that resolution lands (or after a one-time migration that strips
 3. Add secrets either via the dashboard or CLI:
    ```bash
    echo "$MEMORYLAKE_API_KEY" | vercel env add MEMORYLAKE_API_KEY production preview --sensitive
-   echo "$FINANCIAL_DATASETS_API_KEY" | vercel env add FINANCIAL_DATASETS_API_KEY production preview --sensitive
+   echo "$VALYU_API_KEY" | vercel env add VALYU_API_KEY production preview --sensitive
    # …repeat for every key the agent needs
    ```
    Then `vercel env pull apps/web/.env.local --yes` to mirror them locally.

@@ -1,9 +1,10 @@
 /**
- * Yahoo Finance adapter — fallback data source when Financial Datasets fails.
+ * Yahoo Finance adapter — fallback data source when Valyu fails, and the sole
+ * source for balance sheets, combined statements, news and crypto prices.
  *
  * Each export returns an `ApiResponse`-shaped object (`{ data, url }`) whose
- * `data` matches the field names the existing tools expect from Financial
- * Datasets. The wrapping payload keys (`snapshot`, `prices`, `income_statements`,
+ * `data` matches the field names the finance tools share across sources. The
+ * wrapping payload keys (`snapshot`, `prices`, `income_statements`,
  * `balance_sheets`, `cash_flow_statements`, `financials`, `news`) are preserved
  * so call sites do not need to change.
  *
@@ -18,7 +19,7 @@ const yahooFinance = new YahooFinance({
   suppressNotices: ['yahooSurvey', 'ripHistorical'],
 });
 
-/** FD `interval` (`day`/`week`/`month`/`year`) → Yahoo chart interval. */
+/** Tool `interval` (`day`/`week`/`month`/`year`) → Yahoo chart interval. */
 const INTERVAL_MAP: Record<string, '1d' | '1wk' | '1mo' | '3mo'> = {
   day: '1d',
   week: '1wk',
@@ -43,7 +44,7 @@ function nullable<T>(value: T | undefined | null): T | null {
   return value === undefined ? null : (value as T | null);
 }
 
-/** Yahoo's debtToEquity is a percentage (e.g. 184.04); FD reports it as a decimal. */
+/** Yahoo's debtToEquity is a percentage (e.g. 184.04); the tools report it as a decimal. */
 function debtEquityToDecimal(value: number | undefined | null): number | null {
   if (value == null || !Number.isFinite(value)) return null;
   return value / 100;
@@ -82,7 +83,7 @@ export async function fetchYahooHistoricalPrices(
   endDate: string,
   interval: 'day' | 'week' | 'month' | 'year',
 ): Promise<ApiResponse> {
-  // Yahoo's chart `period2` is exclusive; FD's `end_date` is inclusive. Push
+  // Yahoo's chart `period2` is exclusive; the tools' `end_date` is inclusive. Push
   // out one day so the user's requested end date is actually included.
   const endExclusive = new Date(endDate + 'T00:00:00Z');
   endExclusive.setUTCDate(endExclusive.getUTCDate() + 1);
@@ -115,7 +116,7 @@ export async function fetchYahooHistoricalPrices(
 // Fundamentals — income / balance / cash flow
 // =============================================================================
 
-/** Yahoo's `type` parameter matches FD's `period` for annual/quarterly; FD also accepts `ttm` which Yahoo only exposes as a `trailing` type. */
+/** Yahoo's `type` parameter matches the tools' `period` for annual/quarterly; `ttm` maps to Yahoo's `trailing` type. */
 function mapPeriod(period: 'annual' | 'quarterly' | 'ttm'): 'annual' | 'quarterly' | 'trailing' {
   return period === 'ttm' ? 'trailing' : period;
 }
@@ -149,7 +150,7 @@ async function fetchYahooStatementRows(
     module,
   })) as YahooFinancialsRow[];
 
-  // Yahoo returns oldest → newest; tools expect newest-first ordering matching FD.
+  // Yahoo returns oldest → newest; tools expect newest-first ordering.
   const sorted = [...(rows ?? [])].sort((a, b) => {
     const da = a.date ? new Date(a.date).getTime() : 0;
     const db = b.date ? new Date(b.date).getTime() : 0;
@@ -219,7 +220,7 @@ function mapBalanceSheet(ticker: string, row: YahooFinancialsRow) {
 }
 
 function mapCashFlow(ticker: string, row: YahooFinancialsRow) {
-  // Yahoo reports capex as a negative number ("cash out"); FD reports it positive.
+  // Yahoo reports capex as a negative number ("cash out"); the tools report it positive.
   const capex = num(row, 'capitalExpenditure');
   return {
     ticker,
@@ -360,9 +361,8 @@ export async function fetchYahooKeyRatiosSnapshot(ticker: string): Promise<ApiRe
 // =============================================================================
 
 export async function fetchYahooNews(ticker: string | undefined, limit: number): Promise<ApiResponse> {
-  // Yahoo's `search` returns the most relevant news for a query. When no
-  // ticker is given, the FD `/news/` endpoint returns broad market news;
-  // Yahoo's closest analogue is searching for "market".
+  // Yahoo's `search` returns the most relevant news for a query. With no
+  // ticker, search for "market" to approximate broad market news.
   const query = ticker?.trim() || 'market';
   const result = await yahooFinance.search(query, { newsCount: Math.max(1, Math.min(limit, 20)) });
 

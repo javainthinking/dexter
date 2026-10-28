@@ -32,7 +32,7 @@
       "liveData": {
         "eyebrow": "02 — Données en direct",
         "title": "Accès direct au marché et aux publications",
-        "body": "Prix, fondamentaux, ratios et actualités en temps réel via Financial Datasets, plus recherche web et outils documentaires — pas d'instantanés périmés."
+        "body": "Prix, fondamentaux, ratios et actualités en temps réel issus de flux de données de marché en direct, plus recherche web et outils documentaires — pas d'instantanés périmés."
       }
     },
     "samples": {

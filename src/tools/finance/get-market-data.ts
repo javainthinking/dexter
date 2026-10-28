@@ -19,26 +19,20 @@ Intelligent meta-tool for retrieving market data including prices, news, and ins
 
 - Current stock price snapshots (price, market cap, volume, 52-week high/low)
 - Historical stock prices over date ranges
-- Available stock ticker lookup
 - Current cryptocurrency price snapshots
 - Historical cryptocurrency prices over date ranges
-- Available crypto ticker lookup
 - Multi-asset price comparisons
 - Company news and recent headlines
 - Broad market news (macro, rates, earnings, geopolitics)
-- Insider trading activity
+- Recent insider trading activity (SEC Form 4)
 - Top US-market gainers/losers ("market movers", "biggest movers today")
-- Insider ownership statements (SEC Forms 3/5 — what insiders hold)
-- Institutional holdings (SEC 13F — who holds a security, what a filer holds)
-- Beneficial ownership and activist stakes (SEC 13D/13G — 5%+ owners, activist positions)
 - Price move explanations ("why did X go up/down" → combines price + news)
 
 ## When NOT to Use
 
 - Company financials like income statements, balance sheets, cash flow (use get_financials)
 - Financial metrics and key ratios (use get_financials)
-- SEC filings (use read_filings)
-- Stock screening by criteria (use stock_screener)
+- SEC filing content (use web_fetch on the filing URL)
 - General web searches (use web_search)
 
 ## Usage Notes
@@ -46,7 +40,6 @@ Intelligent meta-tool for retrieving market data including prices, news, and ins
 - Call ONCE with the complete natural language query - the tool handles complexity internally
 - Handles ticker resolution automatically (Apple -> AAPL, Bitcoin -> BTC)
 - Handles date inference (e.g., "last month", "past year", "YTD")
-- For "what ticker is X?" queries, this tool can look up available tickers
 - Returns structured JSON data with source URLs for verification
 `.trim();
 
@@ -56,38 +49,28 @@ function formatSubToolName(name: string): string {
 }
 
 // Import market data tools directly (avoid circular deps with index.ts)
-import { getStockPrice, getStockPrices, getStockTickers } from './stock-price.js';
-import { getCryptoPriceSnapshot, getCryptoPrices, getCryptoTickers } from './crypto.js';
+import { getStockPrice, getStockPrices } from './stock-price.js';
+import { getCryptoPriceSnapshot, getCryptoPrices } from './crypto.js';
 import { getCompanyNews } from './news.js';
-import { createGetInsiderTrades, getInsiderNames } from './insider_trades.js';
-import { getInsiderOwnership } from './insider_ownership.js';
+import { getInsiderTrades } from './insider_trades.js';
 import { getMarketMovers } from './market_movers.js';
-import { getInstitutionalHoldings, getInstitutionalInvestors } from './institutional_holdings.js';
-import { getBeneficialOwnership } from './beneficial_ownership.js';
 
-// All market data tools available for routing. Built per-instance because
-// get_insider_trades needs the model for its LLM name-resolution fallback.
-function buildMarketDataTools(model: string): StructuredToolInterface[] {
-  return [
-    // Stock Prices
-    getStockPrice,
-    getStockPrices,
-    getStockTickers,
-    // Crypto Prices
-    getCryptoPriceSnapshot,
-    getCryptoPrices,
-    getCryptoTickers,
-    // News & Activity
-    getCompanyNews,
-    createGetInsiderTrades(model),
-    getInsiderNames,
-    getInsiderOwnership,
-    getMarketMovers,
-    getInstitutionalHoldings,
-    getInstitutionalInvestors,
-    getBeneficialOwnership,
-  ];
-}
+// All market data tools available for routing
+const MARKET_DATA_TOOLS: StructuredToolInterface[] = [
+  // Stock Prices
+  getStockPrice,
+  getStockPrices,
+  // Crypto Prices
+  getCryptoPriceSnapshot,
+  getCryptoPrices,
+  // News & Activity
+  getCompanyNews,
+  getInsiderTrades,
+  getMarketMovers,
+];
+
+// Create a map for quick tool lookup by name
+const MARKET_DATA_TOOL_MAP = new Map(MARKET_DATA_TOOLS.map(t => [t.name, t]));
 
 // Build the router system prompt for market data
 function buildRouterPrompt(): string {
@@ -112,21 +95,12 @@ Given a user's natural language query about market data, call the appropriate to
 3. **Tool Selection**:
    - For a current stock quote/snapshot (price, market cap, volume) → get_stock_price
    - For historical stock prices over a date range → get_stock_prices
-   - For "what stocks are available" or ticker lookup → get_stock_tickers
    - For a current crypto price/snapshot → get_crypto_price_snapshot
    - For historical crypto prices over a date range → get_crypto_prices
-   - For "what cryptos are available" or crypto ticker lookup → get_crypto_tickers
    - For company-specific news, catalysts, recent announcements → get_company_news with ticker
    - For broad market news (macro, rates, earnings, geopolitics) → get_company_news without ticker
-   - For insider buying/selling activity → get_insider_trades (the name filter accepts common names like 'Jensen Huang' and resolves them to the SEC spelling internally; do NOT make a separate lookup call)
-   - For "who are the insiders at X" or to list a company's insiders by name → get_insider_names with ticker
-   - For what insiders OWN (positions and holdings, initial Form 3 statements, annual Form 5 statements, options/RSUs held) → get_insider_ownership
+   - For insider buying/selling activity → get_insider_trades (optionally filter by insider name or filing date)
    - For "today's top gainers/losers", "market movers", "biggest movers" → get_market_movers (no args needed)
-   - For who holds a stock (largest holders, 13F holders of X) → get_institutional_holdings with ticker
-   - For a specific manager's portfolio (Citadel, Berkshire, BlackRock, etc.) → get_institutional_holdings with filer_name (the tool resolves name → CIK internally; do NOT make a separate lookup call)
-   - To look up a 13F filer's CIK, or list/disambiguate managers matching a name (without fetching any holdings) → get_institutional_investors with name
-   - For 5%+ owners of a company or activist stakes ("who owns X", "any activists in X") → get_beneficial_ownership with ticker (add type=activist for activists only)
-   - For a specific activist's or 5%+ owner's stakes across companies (Saba, Elliott, Icahn, etc.) → get_beneficial_ownership with filer_name (resolves name → CIK internally)
    - For "why did X go up/down" → combine get_stock_price + get_company_news
    - For "what's happening in the markets" → get_company_news without ticker
 
@@ -148,20 +122,15 @@ const GetMarketDataInputSchema = z.object({
  * Uses native LLM tool calling for routing queries to market data tools.
  */
 export function createGetMarketData(model: string): DynamicStructuredTool {
-  const marketDataTools = buildMarketDataTools(model);
-  const marketDataToolMap = new Map(marketDataTools.map(t => [t.name, t]));
   return new DynamicStructuredTool({
     name: 'get_market_data',
     description: `Intelligent meta-tool for retrieving market data including prices, news, and insider activity. Takes a natural language query and automatically routes to appropriate market data tools. Use for:
 - Current and historical stock prices
 - Current and historical cryptocurrency prices
-- Stock and crypto ticker lookup
 - Company news and recent headlines
 - Broad market news (omit ticker)
-- Insider trading activity
-- Insider ownership statements (Forms 3/5)
-- Institutional holdings (SEC 13F) and 13F filer/CIK lookup
-- Beneficial ownership and activist stakes (SEC 13D/13G)`,
+- Recent insider trading activity
+- Top US-market gainers/losers`,
     schema: GetMarketDataInputSchema,
     func: async (input, _runManager, config?: RunnableConfig) => {
       const onProgress = config?.metadata?.onProgress as ((msg: string) => void) | undefined;
@@ -171,7 +140,7 @@ export function createGetMarketData(model: string): DynamicStructuredTool {
       const { response } = await callLlm(input.query, {
         model,
         systemPrompt: buildRouterPrompt(),
-        tools: marketDataTools,
+        tools: MARKET_DATA_TOOLS,
       });
       const aiMessage = response as AIMessage;
 
@@ -187,7 +156,7 @@ export function createGetMarketData(model: string): DynamicStructuredTool {
       const results = await Promise.all(
         toolCalls.map(async (tc) => {
           try {
-            const tool = marketDataToolMap.get(tc.name);
+            const tool = MARKET_DATA_TOOL_MAP.get(tc.name);
             if (!tool) {
               throw new Error(`Tool '${tc.name}' not found`);
             }

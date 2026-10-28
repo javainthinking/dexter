@@ -3,15 +3,8 @@
  */
 
 /** Sub-tool timeout in milliseconds. Returns partial results on timeout.
- * Sized for cursor pagination: a year of daily prices arrives as ~25
- * sequential pages, which routinely exceeds the old 15s budget. */
+ * Sized for a full fallback chain (Valyu search, then Yahoo) on a slow day. */
 export const SUB_TOOL_TIMEOUT_MS = 60_000;
-
-/** Cache TTL constants. */
-export const TTL_15M = 15 * 60 * 1000;
-export const TTL_1H = 60 * 60 * 1000;
-export const TTL_6H = 6 * 60 * 60 * 1000;
-export const TTL_24H = 24 * 60 * 60 * 1000;
 
 /**
  * Race a promise against a timeout. Rejects with a descriptive error

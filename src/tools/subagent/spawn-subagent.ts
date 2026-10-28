@@ -12,8 +12,8 @@ import { encodeSubagentProgress } from './progress.js';
 
 // Rough categories so the activity line can roll up trailing operations the way
 // a human would summarize them ("Searched 3×, read 2 sources").
-const SEARCH_TOOLS = new Set(['web_search', 'x_search', 'stock_screener']);
-const READ_TOOLS = new Set(['read_filings', 'read_file', 'web_fetch']);
+const SEARCH_TOOLS = new Set(['web_search', 'x_search']);
+const READ_TOOLS = new Set(['read_file', 'web_fetch']);
 
 function activityText(searchCount: number, readCount: number, lastTool: string): string {
   if (searchCount + readCount >= 2) {
