@@ -637,5 +637,51 @@
     "promoCta": "Download",
     "dismiss": "Dismiss",
     "menuItem": "Download Mac app"
+  },
+  "notFound": {
+    "title": "Page not found — PickSkill",
+    "eyebrow": "Error 404 · Page not found",
+    "headline": "This page fell off the chart.",
+    "sub": "The link may be broken, or the page may have moved. Here's where to pick up the trail.",
+    "searchLabel": "Jump to a stock signal page",
+    "searchPlaceholder": "Ticker, name or pinyin — NVDA, 0700, Moutai",
+    "searchButton": "Go",
+    "searchGenerating": "Building the {symbol} signal page — first visit takes a few seconds…",
+    "searchFeatured": "Featured",
+    "searchEmpty": "No US, Hong Kong or A-share match. Try the ticker code.",
+    "markets": {
+      "us": "US",
+      "hk": "HK",
+      "cn": "A-share"
+    },
+    "popular": "Popular",
+    "linksHeading": "Or head to",
+    "chartLabel": "Price line that crashes and flatlines at 404",
+    "links": {
+      "home": {
+        "title": "Home",
+        "desc": "What PickSkill does"
+      },
+      "stocks": {
+        "title": "Stock signals",
+        "desc": "Free 5-day technical signals"
+      },
+      "chat": {
+        "title": "AI analyst",
+        "desc": "Ask any market question"
+      },
+      "features": {
+        "title": "Features",
+        "desc": "Indicators, research, documents"
+      },
+      "blog": {
+        "title": "Blog",
+        "desc": "Guides and market explainers"
+      },
+      "feedback": {
+        "title": "Report this link",
+        "desc": "Tell us what was broken"
+      }
+    }
   }
 }

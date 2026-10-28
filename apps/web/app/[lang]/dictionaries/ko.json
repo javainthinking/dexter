@@ -619,5 +619,51 @@
     "promoCta": "다운로드",
     "dismiss": "닫기",
     "menuItem": "Mac 앱 다운로드"
+  },
+  "notFound": {
+    "title": "페이지를 찾을 수 없습니다 — PickSkill",
+    "eyebrow": "오류 404 · 페이지를 찾을 수 없음",
+    "headline": "이 페이지는 차트를 벗어났습니다.",
+    "sub": "링크가 깨졌거나 페이지가 이동했을 수 있습니다. 여기서 다시 시작하세요.",
+    "searchLabel": "종목 시그널 페이지로 이동",
+    "searchPlaceholder": "티커 또는 회사명 (예: NVDA, 0700, Moutai)",
+    "searchButton": "이동",
+    "searchGenerating": "{symbol} 시그널 페이지 생성 중 — 첫 방문은 몇 초 걸립니다…",
+    "searchFeatured": "추천",
+    "searchEmpty": "일치하는 미국·홍콩·중국 A주 종목이 없습니다. 종목 코드로 검색해 보세요.",
+    "markets": {
+      "us": "미국",
+      "hk": "홍콩",
+      "cn": "A주"
+    },
+    "popular": "인기",
+    "linksHeading": "또는 이동하기",
+    "chartLabel": "급락 후 404에서 평탄해지는 가격선",
+    "links": {
+      "home": {
+        "title": "홈",
+        "desc": "PickSkill 소개"
+      },
+      "stocks": {
+        "title": "종목 시그널",
+        "desc": "무료 5일 기술적 시그널"
+      },
+      "chat": {
+        "title": "AI 애널리스트",
+        "desc": "시장 질문을 무엇이든"
+      },
+      "features": {
+        "title": "기능",
+        "desc": "지표, 리서치, 문서"
+      },
+      "blog": {
+        "title": "블로그",
+        "desc": "가이드와 시장 해설"
+      },
+      "feedback": {
+        "title": "링크 신고",
+        "desc": "무엇이 문제였는지 알려주세요"
+      }
+    }
   }
 }

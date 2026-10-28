@@ -619,5 +619,51 @@
     "promoCta": "下载",
     "dismiss": "关闭",
     "menuItem": "下载 Mac 应用"
+  },
+  "notFound": {
+    "title": "页面未找到 — PickSkill",
+    "eyebrow": "错误 404 · 页面未找到",
+    "headline": "这个页面跌出了图表。",
+    "sub": "链接可能已失效，或页面已被移动。可以从这里继续。",
+    "searchLabel": "直达个股信号页",
+    "searchPlaceholder": "代码或公司名，如 NVDA、0700、茅台",
+    "searchButton": "前往",
+    "searchGenerating": "正在生成 {symbol} 信号页，首次访问需要几秒…",
+    "searchFeatured": "精选",
+    "searchEmpty": "没有匹配的美股、港股或 A股，试试输入代码。",
+    "markets": {
+      "us": "美股",
+      "hk": "港股",
+      "cn": "A股"
+    },
+    "popular": "热门",
+    "linksHeading": "或者去看看",
+    "chartLabel": "价格线暴跌后在 404 处走平",
+    "links": {
+      "home": {
+        "title": "首页",
+        "desc": "了解 PickSkill"
+      },
+      "stocks": {
+        "title": "个股技术信号",
+        "desc": "免费的近 5 日技术信号"
+      },
+      "chat": {
+        "title": "AI 分析师",
+        "desc": "问任何市场问题"
+      },
+      "features": {
+        "title": "功能",
+        "desc": "指标、研究、文档生成"
+      },
+      "blog": {
+        "title": "博客",
+        "desc": "指南与市场解读"
+      },
+      "feedback": {
+        "title": "报告这个链接",
+        "desc": "告诉我们哪里出了问题"
+      }
+    }
   }
 }

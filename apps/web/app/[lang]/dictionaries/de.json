@@ -619,5 +619,51 @@
     "promoCta": "Download",
     "dismiss": "Ausblenden",
     "menuItem": "Mac-App herunterladen"
+  },
+  "notFound": {
+    "title": "Seite nicht gefunden — PickSkill",
+    "eyebrow": "Fehler 404 · Seite nicht gefunden",
+    "headline": "Diese Seite ist aus dem Chart gefallen.",
+    "sub": "Der Link ist vielleicht defekt oder die Seite wurde verschoben. Hier geht es weiter.",
+    "searchLabel": "Zur Signalseite einer Aktie springen",
+    "searchPlaceholder": "Ticker oder Firma, z. B. NVDA, 0700, Moutai",
+    "searchButton": "Los",
+    "searchGenerating": "Signalseite für {symbol} wird erstellt — der erste Aufruf dauert ein paar Sekunden…",
+    "searchFeatured": "Auswahl",
+    "searchEmpty": "Keine passende US-, Hongkong- oder A-Aktie. Versuchen Sie das Kürzel.",
+    "markets": {
+      "us": "US",
+      "hk": "HK",
+      "cn": "A-Aktie"
+    },
+    "popular": "Beliebt",
+    "linksHeading": "Oder weiter zu",
+    "chartLabel": "Kurslinie, die abstürzt und bei 404 flach wird",
+    "links": {
+      "home": {
+        "title": "Startseite",
+        "desc": "Was PickSkill macht"
+      },
+      "stocks": {
+        "title": "Aktiensignale",
+        "desc": "Kostenlose 5-Tage-Signale"
+      },
+      "chat": {
+        "title": "KI-Analyst",
+        "desc": "Stellen Sie jede Marktfrage"
+      },
+      "features": {
+        "title": "Funktionen",
+        "desc": "Indikatoren, Research, Dokumente"
+      },
+      "blog": {
+        "title": "Blog",
+        "desc": "Leitfäden und Markterklärungen"
+      },
+      "feedback": {
+        "title": "Link melden",
+        "desc": "Sagen Sie uns, was kaputt war"
+      }
+    }
   }
 }

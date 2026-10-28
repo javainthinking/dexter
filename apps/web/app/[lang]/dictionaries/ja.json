@@ -619,5 +619,51 @@
     "promoCta": "ダウンロード",
     "dismiss": "閉じる",
     "menuItem": "Mac アプリをダウンロード"
+  },
+  "notFound": {
+    "title": "ページが見つかりません — PickSkill",
+    "eyebrow": "エラー 404 · ページが見つかりません",
+    "headline": "このページはチャートから外れてしまいました。",
+    "sub": "リンクが壊れているか、ページが移動した可能性があります。こちらから続きをどうぞ。",
+    "searchLabel": "銘柄のシグナルページへ移動",
+    "searchPlaceholder": "ティッカーまたは企業名（例：NVDA、0700、茅台）",
+    "searchButton": "移動",
+    "searchGenerating": "{symbol} のシグナルページを作成中 — 初回は数秒かかります…",
+    "searchFeatured": "注目",
+    "searchEmpty": "該当する米国株・香港株・中国A株がありません。銘柄コードで試してください。",
+    "markets": {
+      "us": "米国",
+      "hk": "香港",
+      "cn": "A株"
+    },
+    "popular": "人気",
+    "linksHeading": "こちらもどうぞ",
+    "chartLabel": "急落して 404 で横ばいになる価格ライン",
+    "links": {
+      "home": {
+        "title": "ホーム",
+        "desc": "PickSkill でできること"
+      },
+      "stocks": {
+        "title": "銘柄シグナル",
+        "desc": "無料の5日間テクニカルシグナル"
+      },
+      "chat": {
+        "title": "AI アナリスト",
+        "desc": "市場の質問を何でも"
+      },
+      "features": {
+        "title": "機能",
+        "desc": "指標・リサーチ・資料作成"
+      },
+      "blog": {
+        "title": "ブログ",
+        "desc": "ガイドと市場解説"
+      },
+      "feedback": {
+        "title": "このリンクを報告",
+        "desc": "壊れていた内容を教えてください"
+      }
+    }
   }
 }

@@ -619,5 +619,51 @@
     "promoCta": "Télécharger",
     "dismiss": "Masquer",
     "menuItem": "Télécharger l’app Mac"
+  },
+  "notFound": {
+    "title": "Page introuvable — PickSkill",
+    "eyebrow": "Erreur 404 · Page introuvable",
+    "headline": "Cette page est sortie du graphique.",
+    "sub": "Le lien est peut-être cassé ou la page a été déplacée. Voici où reprendre la piste.",
+    "searchLabel": "Accéder à la page de signaux d'une action",
+    "searchPlaceholder": "Ticker ou société, ex. NVDA, 0700, Moutai",
+    "searchButton": "Aller",
+    "searchGenerating": "Création de la page de signaux {symbol} — la première visite prend quelques secondes…",
+    "searchFeatured": "Sélection",
+    "searchEmpty": "Aucune action américaine, hongkongaise ou chinoise A trouvée. Essayez le code.",
+    "markets": {
+      "us": "US",
+      "hk": "HK",
+      "cn": "Actions A"
+    },
+    "popular": "Populaires",
+    "linksHeading": "Ou rendez-vous sur",
+    "chartLabel": "Courbe de prix qui chute et s'aplatit à 404",
+    "links": {
+      "home": {
+        "title": "Accueil",
+        "desc": "Ce que fait PickSkill"
+      },
+      "stocks": {
+        "title": "Signaux boursiers",
+        "desc": "Signaux techniques sur 5 jours, gratuits"
+      },
+      "chat": {
+        "title": "Analyste IA",
+        "desc": "Posez toute question de marché"
+      },
+      "features": {
+        "title": "Fonctionnalités",
+        "desc": "Indicateurs, recherche, documents"
+      },
+      "blog": {
+        "title": "Blog",
+        "desc": "Guides et décryptages"
+      },
+      "feedback": {
+        "title": "Signaler ce lien",
+        "desc": "Dites-nous ce qui ne marchait pas"
+      }
+    }
   }
 }

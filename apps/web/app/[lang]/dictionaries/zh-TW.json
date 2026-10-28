@@ -619,5 +619,51 @@
     "promoCta": "下載",
     "dismiss": "關閉",
     "menuItem": "下載 Mac App"
+  },
+  "notFound": {
+    "title": "找不到頁面 — PickSkill",
+    "eyebrow": "錯誤 404 · 找不到頁面",
+    "headline": "這個頁面跌出了圖表。",
+    "sub": "連結可能已失效，或頁面已被移動。可以從這裡繼續。",
+    "searchLabel": "直達個股訊號頁",
+    "searchPlaceholder": "代號或公司名，如 NVDA、0700、茅台",
+    "searchButton": "前往",
+    "searchGenerating": "正在產生 {symbol} 訊號頁，首次造訪需要幾秒…",
+    "searchFeatured": "精選",
+    "searchEmpty": "沒有符合的美股、港股或 A股，試試輸入代碼。",
+    "markets": {
+      "us": "美股",
+      "hk": "港股",
+      "cn": "A股"
+    },
+    "popular": "熱門",
+    "linksHeading": "或者去看看",
+    "chartLabel": "價格線暴跌後在 404 處走平",
+    "links": {
+      "home": {
+        "title": "首頁",
+        "desc": "了解 PickSkill"
+      },
+      "stocks": {
+        "title": "個股技術訊號",
+        "desc": "免費的近 5 日技術訊號"
+      },
+      "chat": {
+        "title": "AI 分析師",
+        "desc": "問任何市場問題"
+      },
+      "features": {
+        "title": "功能",
+        "desc": "指標、研究、文件產生"
+      },
+      "blog": {
+        "title": "部落格",
+        "desc": "指南與市場解讀"
+      },
+      "feedback": {
+        "title": "回報這個連結",
+        "desc": "告訴我們哪裡出了問題"
+      }
+    }
   }
 }
