@@ -14,3 +14,4 @@ export * from './agent-jobs.js';
 export * from './feedback.js';
 export * from './desktop-turns.js';
 export * from './stock-pages.js';
+export * from './gsc.js';

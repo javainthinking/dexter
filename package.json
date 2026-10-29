@@ -29,6 +29,11 @@
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
+    "gsc:verify": "bun run scripts/seo/gsc-verify.ts",
+    "gsc:pull": "bun run scripts/seo/gsc-pull.ts",
+    "gsc:report": "bun run scripts/seo/gsc-report.ts",
+    "gsc:sitemap": "bun run scripts/seo/gsc-sitemap-sync.ts",
+    "geo:audit": "bun run scripts/seo/geo-audit.ts",
     "postinstall": "playwright install chromium && bun run scripts/install-officecli.ts"
   },
   "dependencies": {
