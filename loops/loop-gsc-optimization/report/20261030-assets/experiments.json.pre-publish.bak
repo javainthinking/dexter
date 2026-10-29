@@ -1,0 +1,15 @@
+{
+  "experiments": [
+    {
+      "id": "a-es-what-is-fcf-meta-20261030",
+      "pages": ["/blog/what-is-fcf"],
+      "windowDays": 28,
+      "publishedOn": null,
+      "status": "pending-publish",
+      "hypothesis": "es 版 title/description 对准「fórmula / FCFF vs FCFE / flujo de caja libre」意图（§2 有 12 个均位 4–15 的公式类 query），CTR 从 0.185% 提到 ≥ 0.28%（前窗 × 1.5），接近 blog·6–10 期望 0.390%",
+      "metric": "/es/blog/what-is-fcf 页面 CTR（无偏 totals）",
+      "successIf": "读窗 CTR ≥ 前窗 × 1.5 且点击 Δ ≥ 2σ（Poisson）；读窗均位偏离前窗 > 2 位 → ⚪；期望点击 < 1/周 → ⚪"
+    }
+  ],
+  "dequeued": []
+}
