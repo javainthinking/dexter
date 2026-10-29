@@ -117,16 +117,16 @@ export default async function BlogIndexPage({
     ],
   };
 
-  // Index layout: the newest post gets a "featured" card with a wide
-  // image on top + larger title (vertical layout). Every subsequent
-  // post renders as a horizontal card — thumbnail on the left,
-  // content on the right. On mobile, all cards stack vertically.
-  // This gives the most-recent post the visual weight it deserves
-  // without making the rest of the index feel like a list of footnotes.
+  // Index layout fills the same max-w-6xl rail as the rest of the
+  // marketing site. The newest post gets a "featured" card — image and
+  // copy side by side at >=lg, stacked below that. Every subsequent
+  // post renders as a vertical card in a responsive grid (1 / 2 / 3
+  // columns), so thumbnails keep their 1200×630 ratio instead of being
+  // cropped into a narrow strip.
   const [featured, ...rest] = posts;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:py-16">
+    <div className="px-5 py-12 sm:py-16 lg:px-8">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -164,9 +164,9 @@ export default async function BlogIndexPage({
             <FeaturedCard post={featured} lang={lang} dict={dict} />
           )}
           {rest.length > 0 && (
-            <ul className="space-y-6">
+            <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {rest.map((p) => (
-                <li key={p.slug}>
+                <li key={p.slug} className="flex">
                   <CompactCard post={p} lang={lang} dict={dict} />
                 </li>
               ))}
@@ -179,8 +179,8 @@ export default async function BlogIndexPage({
 }
 
 /**
- * Featured (newest) post card — full-width image on top, big title
- * and description below. `priority` on the image so it counts as the
+ * Featured (newest) post card — image left, big title and description
+ * right at >=lg; image on top below that. `priority` on the image so it counts as the
  * LCP element for /blog and is not lazy-loaded.
  */
 function FeaturedCard({
@@ -203,15 +203,15 @@ function FeaturedCard({
       // engines the actual language of this card's title + description
       // is more honest than letting them inherit the page locale.
       lang={post.inLanguage}
-      className="group block overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-border-strong hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="group grid overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-border-strong hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]"
     >
       {post.heroImage && (
-        <div className="relative aspect-[1200/630] w-full overflow-hidden bg-muted">
+        <div className="relative aspect-[1200/630] w-full overflow-hidden bg-muted lg:self-center">
           <Image
             src={post.heroImage}
             alt={post.heroAlt ?? post.title}
             fill
-            sizes="(max-width: 768px) 100vw, 720px"
+            sizes="(max-width: 1024px) 100vw, 640px"
             priority
             unoptimized={post.heroImage.endsWith('.svg')}
             className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
@@ -219,7 +219,7 @@ function FeaturedCard({
           <FigTag label="Fig. 01" />
         </div>
       )}
-      <div className="flex flex-col gap-3 p-5 sm:p-7">
+      <div className="flex flex-col justify-center gap-3 p-5 sm:p-7 lg:p-8">
         <div className="flex items-baseline justify-between gap-3">
           <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
             {dict.blog.pillars?.[post.pillar] ?? post.pillar}
@@ -245,9 +245,8 @@ function FeaturedCard({
 }
 
 /**
- * Compact card for follow-up posts — thumbnail on the left,
- * content on the right at >=sm breakpoint; stacks vertically on
- * mobile. Image lazy-loaded (browser default for non-priority
+ * Compact card for follow-up posts — thumbnail on top, content below,
+ * stretched to the tallest card in its grid row. Image lazy-loaded (browser default for non-priority
  * next/image).
  */
 function CompactCard({
@@ -263,21 +262,21 @@ function CompactCard({
     <LocalizedLink
       href={`/blog/${post.slug}`}
       lang={post.inLanguage}
-      className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-border-strong hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:flex-row"
+      className="group flex w-full flex-col overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-border-strong hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       {post.heroImage && (
-        <div className="relative aspect-[1200/630] w-full shrink-0 overflow-hidden bg-muted sm:aspect-auto sm:w-[260px] sm:self-stretch">
+        <div className="relative aspect-[1200/630] w-full shrink-0 overflow-hidden border-b border-border bg-muted">
           <Image
             src={post.heroImage}
             alt={post.heroAlt ?? post.title}
             fill
-            sizes="(max-width: 640px) 100vw, 260px"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 360px"
             unoptimized={post.heroImage.endsWith('.svg')}
             className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
           />
         </div>
       )}
-      <div className="flex min-w-0 flex-1 flex-col gap-2.5 p-5 sm:p-6">
+      <div className="flex min-w-0 flex-1 flex-col gap-2.5 p-5">
         <div className="flex items-baseline justify-between gap-3">
           <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
             {dict.blog.pillars?.[post.pillar] ?? post.pillar}
@@ -287,7 +286,7 @@ function CompactCard({
             {dict.blog.index.minRead.replace('{count}', String(post.readingMinutes))}
           </span>
         </div>
-        <h2 className="font-serif text-lg font-semibold leading-snug text-foreground sm:text-xl">
+        <h2 className="font-serif text-lg font-semibold leading-snug text-foreground">
           {post.title}
         </h2>
         <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">

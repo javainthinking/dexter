@@ -240,7 +240,11 @@ export default async function BlogPostPage({
       : null;
 
   return (
-    <article className="mx-auto max-w-3xl px-4 py-10 sm:py-14">
+    // Fills the same max-w-6xl rail as the rest of the marketing site:
+    // header + hero span the full width, the body keeps a readable
+    // measure with the CTA and tags in a sticky sidebar at >=lg (the
+    // sidebar stacks under the body below that).
+    <article className="px-5 py-10 sm:py-14 lg:px-8">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
@@ -279,10 +283,10 @@ export default async function BlogPostPage({
             {dict.blog.post.minRead.replace('{count}', String(post.readingMinutes))}
           </span>
         </div>
-        <h1 className="mt-4 font-serif text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
+        <h1 className="mt-4 max-w-4xl font-serif text-3xl font-semibold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
           {post.title}
         </h1>
-        <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+        <p className="mt-4 max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
           {post.description}
         </p>
         <div className="mt-5 flex items-center gap-3 border-t border-border pt-5">
@@ -319,7 +323,7 @@ export default async function BlogPostPage({
       </header>
 
       {post.heroImage && (
-        <figure className="relative mb-8 rounded-lg border border-border">
+        <figure className="relative mb-10 rounded-lg border border-border">
           <CornerMarks />
           <div className="relative overflow-hidden rounded-lg">
           {/* Hero via next/image — Next serves AVIF/WebP automatically
@@ -341,14 +345,15 @@ export default async function BlogPostPage({
             priority
             unoptimized={post.heroImage.endsWith('.svg')}
             className="w-full"
-            sizes="(max-width: 768px) 100vw, 768px"
+            sizes="(max-width: 1152px) 100vw, 1088px"
           />
           <FigTag label="Fig. 01" />
           </div>
         </figure>
       )}
 
-      <div className="prose-dexter">
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-14">
+      <div className="prose-dexter min-w-0 max-w-3xl">
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeHighlight]}
@@ -357,7 +362,7 @@ export default async function BlogPostPage({
         </ReactMarkdown>
       </div>
 
-      <footer className="mt-12 space-y-6 border-t border-border pt-10">
+      <footer className="space-y-6 border-t border-border pt-10 lg:sticky lg:top-24 lg:self-start lg:border-t-0 lg:pt-0">
         {/* Primary CTA at the bottom: convert engaged reader to a
             trial. Subtle, not over-aggressive. */}
         <div className="blueprint-grid-soft rounded-lg border border-border bg-card p-6">
@@ -398,6 +403,7 @@ export default async function BlogPostPage({
           )}
         </div>
       </footer>
+      </div>
     </article>
   );
 }
