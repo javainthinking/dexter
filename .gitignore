@@ -63,3 +63,6 @@ coverage.json
 
 # Scratchpad files
 scratchpads/*
+
+# Agent loops live in ~/Workspace/products/loops/dexter (javainthinking/loops); this is a local symlink
+/loops
