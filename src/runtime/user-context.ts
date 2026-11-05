@@ -8,11 +8,10 @@
  * "who is this request acting on behalf of?" without threading a
  * userId argument through every tool wrapper.
  *
- * Pattern mirrors `memory-context.ts`: the request handler enters the
+ * The request handler enters the
  * scope before invoking the agent; tools resolve the current user id
  * by calling `getCurrentUserId()`. CLI mode leaves the store empty and
- * uses the `DEXTER_USER_ID` env var if set, falling back to 'default'
- * (same precedent the MemoryLake adapter uses).
+ * uses the `DEXTER_USER_ID` env var if set, falling back to 'default'.
  */
 
 import { AsyncLocalStorage } from 'node:async_hooks';

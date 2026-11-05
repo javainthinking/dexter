@@ -65,7 +65,7 @@ export type AgentRunRequest = {
   signal?: AbortSignal;
   onEvent?: (event: AgentEvent) => void | Promise<void>;
   isHeartbeat?: boolean;
-  /** Run without persistent session history or memory (minimal context, ~95% token savings). */
+  /** Run without persistent session history (minimal context, ~95% token savings). */
   isolatedSession?: boolean;
   channel?: string;
   groupContext?: GroupContext;
@@ -89,7 +89,6 @@ export async function runAgentForMessage(req: AgentRunRequest): Promise<string> 
       signal: req.signal,
       channel: req.channel,
       groupContext: req.groupContext,
-      memoryEnabled: !isolated,
       messageQueue: session?.queue,
     });
 
@@ -113,7 +112,6 @@ export async function runAgentForMessage(req: AgentRunRequest): Promise<string> 
         signal: req.signal,
         channel: req.channel,
         groupContext: req.groupContext,
-        memoryEnabled: !isolated,
         messageQueue: session.queue,
       });
 

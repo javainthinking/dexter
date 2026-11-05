@@ -26,7 +26,7 @@ export const TOKEN_TRIGGER_THRESHOLD = 80_000;
 const COMPACTABLE_TOOLS = new Set([
   'get_financials', 'get_market_data',
   'web_fetch', 'web_search', 'x_search', 'browser', 'read_file',
-  'memory_search', 'memory_get', 'heartbeat', 'cron',
+  'heartbeat', 'cron',
 ]);
 
 export interface MicrocompactResult {

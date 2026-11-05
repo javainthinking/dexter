@@ -6,7 +6,7 @@
  *   - The agent picks the right verb via the skill markdown
  *     (src/skills/office/SKILL.md), which documents every subcommand.
  *   - System-prompt budget is finite; fanning out to one tool per verb
- *     would eat budget the agent needs for portfolio + memory + chat
+ *     would eat budget the agent needs for portfolio + chat
  *     tools.
  *   - The read/write split is the only distinction that's actually
  *     load-bearing: it gates side effects, lets us audit mutations, and

@@ -16,7 +16,6 @@ import { GET_FINANCIALS_DESCRIPTION } from './finance/get-financials.js';
 import { GET_MARKET_DATA_DESCRIPTION } from './finance/get-market-data.js';
 import { heartbeatTool, HEARTBEAT_TOOL_DESCRIPTION } from './heartbeat/heartbeat-tool.js';
 import { cronTool, CRON_TOOL_DESCRIPTION } from './cron/cron-tool.js';
-import { memoryGetTool, MEMORY_GET_DESCRIPTION, memorySearchTool, MEMORY_SEARCH_DESCRIPTION, memoryUpdateTool, MEMORY_UPDATE_DESCRIPTION } from './memory/index.js';
 import { discoverSkills } from '../skills/index.js';
 import { createSpawnSubagent, SPAWN_SUBAGENT_DESCRIPTION } from './subagent/spawn-subagent.js';
 import { createAskUserQuestion, ASK_USER_QUESTION_DESCRIPTION } from './ask-user-question/ask-user-question.js';
@@ -45,7 +44,6 @@ export interface RegisteredTool {
  * @param model - The model name (needed for tools that require model-specific configuration)
  * @returns Array of registered tools
  */
-export const MEMORY_TOOL_NAMES = ['memory_search', 'memory_get', 'memory_update'];
 
 export function getToolRegistry(model: string): RegisteredTool[] {
   const tools: RegisteredTool[] = [
@@ -125,27 +123,6 @@ export function getToolRegistry(model: string): RegisteredTool[] {
       description: CRON_TOOL_DESCRIPTION,
       compactDescription: 'Manage scheduled cron jobs (create, list, update, delete).',
       concurrencySafe: true,
-    },
-    {
-      name: 'memory_search',
-      tool: memorySearchTool,
-      description: MEMORY_SEARCH_DESCRIPTION,
-      compactDescription: 'Search persistent memory and past conversations for stored facts and preferences.',
-      concurrencySafe: true,
-    },
-    {
-      name: 'memory_get',
-      tool: memoryGetTool,
-      description: MEMORY_GET_DESCRIPTION,
-      compactDescription: 'Read specific memory file sections by line range.',
-      concurrencySafe: true,
-    },
-    {
-      name: 'memory_update',
-      tool: memoryUpdateTool,
-      description: MEMORY_UPDATE_DESCRIPTION,
-      compactDescription: 'Add, edit, or delete persistent memory entries.',
-      concurrencySafe: false,
     },
   ];
 

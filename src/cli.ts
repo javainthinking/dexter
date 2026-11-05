@@ -240,17 +240,13 @@ export async function runCli() {
   // (partial selections, active tab, in-progress text are kept across renders).
   let activeQuestionPrompt: QuestionPromptComponent | null = null;
 
-  // Build the CorePorts bundle. When MEMORYLAKE_* env vars are configured,
-  // memory_search / memory_update / memory_get flow through the MemoryLake
-  // adapter (default user_id 'default', overridable via DEXTER_USER_ID).
-  // Otherwise the legacy LocalMemoryAdapter (markdown files in .dexter/)
-  // is used — same as before.
+  // Build the CorePorts bundle (local adapters).
   const cliPorts = await composeCliPorts();
 
   agentRunner = new AgentRunnerController(
     // 30 iterations because the office-authoring workflow alone uses
     // 6-10 (create → theme → batch slides → validate → issues → screenshot),
-    // and that's before any upstream research / portfolio / memory calls.
+    // and that's before any upstream research / portfolio calls.
     // 10 was tight for any tool chain with > 2 phases; 30 gives headroom
     // without enabling unbounded loops (the executor still halts on
     // duplicate tool args + the model halts when it has an answer).
@@ -429,9 +425,6 @@ export async function runCli() {
       case 'clear':
         chatLog.clearAll();
         tui.requestRender();
-        break;
-      case 'memory':
-        await agentRunner.runQuery('Show me what you know about me from memory. Use memory_search and memory_get.');
         break;
       case 'heartbeat':
         await agentRunner.runQuery('Show me my current heartbeat checklist from .dexter/HEARTBEAT.md');

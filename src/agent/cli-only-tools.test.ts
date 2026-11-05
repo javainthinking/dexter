@@ -4,13 +4,13 @@ import { Agent } from './agent.js';
 const CLI_ONLY = ['bash', 'ask_user_question'];
 
 async function boundToolNames(config: Parameters<typeof Agent.create>[0]): Promise<string[]> {
-  const agent = await Agent.create({ disableMemory: true, ...config });
+  const agent = await Agent.create({ ...config });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return [...(agent as any).toolMap.keys()];
 }
 
 async function systemPrompt(config: Parameters<typeof Agent.create>[0]): Promise<string> {
-  const agent = await Agent.create({ disableMemory: true, ...config });
+  const agent = await Agent.create({ ...config });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (agent as any).systemPrompt;
 }

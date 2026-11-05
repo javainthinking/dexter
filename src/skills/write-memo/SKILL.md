@@ -62,10 +62,7 @@ Find the filing on SEC EDGAR via `web_search` (e.g. `"[TICKER] 10-K sec.gov"`), 
 - Most recent 10-Q — recent quarterly trajectory
 - Segment revenue and margins (if multi-segment) come from the 10-K segment note
 
-### 2.4 Memory (optional)
-Call `memory_search` with the ticker — surfaces any prior notes, prior memos, or user-provided constraints (e.g., risk tolerance, sector exposure already in book).
-
-### 2.5 Sentiment (optional, only if time-sensitive)
+### 2.4 Sentiment (optional, only if time-sensitive)
 Call `x_search` for recent material chatter on the ticker. Skip if the thesis is fundamental and not catalyst-driven this week.
 
 ## Step 3: Build Scenarios
@@ -155,7 +152,7 @@ Before rendering, verify every check. If any fail, revise the relevant section b
 1. Read `memo-template.html` via `read_file`
 2. Replace every `{{slot}}` placeholder with the content you drafted
 3. Set `{{date}}` to today's date in YYYY-MM-DD format
-4. Set `{{analyst}}` from memory if known, otherwise blank
+4. Set `{{analyst}}` from the conversation if known, otherwise blank
 5. Write to `.dexter/memos/[TICKER]_[DIRECTION]_[YYYY-MM-DD].html` via `write_file`
    - Direction is `LONG` or `SHORT` (uppercase)
    - Example: `.dexter/memos/NFLX_LONG_2026-05-24.html`

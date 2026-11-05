@@ -45,12 +45,6 @@ interface Config {
   modelId?: string;  // Selected model ID (e.g., "deepseek-v4-pro", "ollama:llama3.1")
   model?: string;    // Legacy key, kept for migration
   webSearchPreferredProvider?: 'exa' | 'perplexity' | 'tavily';
-  memory?: {
-    enabled?: boolean;
-    embeddingProvider?: 'openai' | 'gemini' | 'ollama' | 'auto';
-    embeddingModel?: string;
-    maxSessionContextTokens?: number;
-  };
   /** Bash permission rules (allow/ask/deny), persisted from the approval prompt. */
   permissions?: {
     allow?: string[];

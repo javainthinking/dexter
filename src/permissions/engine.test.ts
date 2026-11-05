@@ -19,7 +19,7 @@ describe('evaluatePermission — non-bash parity', () => {
     expect(evaluatePermission({ tool: 'edit_file', args: { path: 'x' } }).mode).toBe('ask');
   });
   test('read-only and other tools auto-allow', () => {
-    for (const tool of ['read_file', 'get_financials', 'web_search', 'memory_search', 'skill']) {
+    for (const tool of ['read_file', 'get_financials', 'web_search', 'skill']) {
       expect(evaluatePermission({ tool, args: {} }).mode).toBe('allow');
     }
   });

@@ -17,7 +17,6 @@
 import type { CorePorts } from '../../ports/index.js';
 import { systemClock } from '../../ports/index.js';
 import { LocalFsBlobStore } from '../../adapters/blob/local-fs.js';
-import { LocalMemoryAdapter } from '../../adapters/memory/local.js';
 import { EnvSecretsVault } from '../../adapters/secrets/env.js';
 import { ConsoleLogger } from '../../adapters/logger/console.js';
 import { DisabledBrowserDriver } from '../../adapters/browser/disabled.js';
@@ -45,7 +44,6 @@ export interface GatewayPorts extends CorePorts {
 
 export async function composeGatewayPorts(options: GatewayPortsOptions): Promise<GatewayPorts> {
   const blob = new LocalFsBlobStore();
-  const memory = await LocalMemoryAdapter.create();
   const secrets = new EnvSecretsVault();
   const logger = new ConsoleLogger({ baseFields: { surface: 'gateway' } });
   const browser = new DisabledBrowserDriver();
@@ -67,7 +65,6 @@ export async function composeGatewayPorts(options: GatewayPortsOptions): Promise
 
   return {
     blob,
-    memory,
     events,
     secrets,
     browser,

@@ -108,7 +108,7 @@ export async function POST(request: NextRequest): Promise<Response> {
   // Construct the controller. AgentConfig stays small here; Phase 3 lets
   // tenants pick their own model via UI.
   const controller = new AgentRunnerController(
-    { model: body.model, disableMemory: true, disableFileGeneration: filesBlocked },
+    { model: body.model, disableFileGeneration: filesBlocked },
     session.history,
     undefined,
     ports,

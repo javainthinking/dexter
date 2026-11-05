@@ -101,7 +101,6 @@ async function target(
     const agent = await Agent.create({
       model: options.model,
       maxIterations: 10,
-      memoryEnabled: false,
       channel: 'eval',
       signal: controller.signal,
     });

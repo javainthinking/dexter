@@ -1,4 +1,4 @@
-import { buildCompactToolDescriptions, MEMORY_TOOL_NAMES } from '../tools/registry.js';
+import { buildCompactToolDescriptions } from '../tools/registry.js';
 import { buildSkillMetadataSection, discoverSkills } from '../skills/index.js';
 import { readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
@@ -83,39 +83,6 @@ ${skillList}
 - When a skill is relevant, invoke it IMMEDIATELY as your first action
 - Skills provide specialized workflows for complex tasks (e.g., DCF valuation)
 - Do not invoke a skill that has already been invoked for the current query`;
-}
-
-function buildMemorySection(memoryFiles: string[], memoryContext?: string | null): string {
-  const fileListSection = memoryFiles.length > 0
-    ? `\nMemory files on disk: ${memoryFiles.join(', ')}`
-    : '';
-
-  const contextSection = memoryContext
-    ? `\n\n### What you know about the user\n\n${memoryContext}`
-    : '';
-
-  return `## Memory
-
-You have persistent memory stored as Markdown files in .dexter/memory/.${fileListSection}${contextSection}
-
-### Recalling memories
-Use memory_search to recall stored facts, preferences, or notes. The search covers all
-memory files (long-term and daily logs) AND past conversation transcripts.
-
-**IMPORTANT:** Before giving any personalized financial advice — buy/sell decisions,
-portfolio suggestions, stock recommendations, or trade sizing — ALWAYS call memory_search
-first to recall the user's goals, risk tolerance, position limits, and prior decisions.
-The user expects you to know them. Do not give generic advice when personalized context exists.
-
-Follow up with memory_get to read full sections when you need exact text.
-
-### Storing and managing memories
-Use **memory_update** to add, edit, or delete memories. Do NOT use write_file or
-edit_file for memory files.
-- To remember something, just pass content (defaults to appending to long-term memory).
-- For daily notes, pass file="daily".
-- For edits/deletes, pass action="edit" or action="delete" with old_text.
-Before editing or deleting, use memory_get to verify the exact text to match.`;
 }
 
 // ============================================================================
@@ -217,16 +184,10 @@ export function buildSystemPrompt(
   soulContent?: string | null,
   channel?: string,
   groupContext?: GroupContext,
-  memoryFiles?: string[],
-  memoryContext?: string | null,
   rulesContent?: string | null,
-  options: { memory?: boolean; excludeTools?: readonly string[] } = {},
+  options: { excludeTools?: readonly string[] } = {},
 ): string {
-  const memory = options.memory !== false;
-  const toolDescriptions = buildCompactToolDescriptions(model, [
-    ...(memory ? [] : MEMORY_TOOL_NAMES),
-    ...(options.excludeTools ?? []),
-  ]);
+  const toolDescriptions = buildCompactToolDescriptions(model, [...(options.excludeTools ?? [])]);
   const profile = getChannelProfile(channel);
 
   const behaviorBullets = profile.behavior.map(b => `- ${b}`).join('\n');
@@ -268,8 +229,6 @@ Some tool responses include a top-level \`_required\` field. **\`_required\` is 
 Stopping early after a \`_required\` payload — for example, after \`office_edit create\` which only produces a blank scaffold — leaves the user with an undelivered or unusable artifact. Treat \`_required\` as a contract you have already accepted by calling the tool.
 
 ${buildSkillsSection()}
-
-${memory ? buildMemorySection(memoryFiles ?? [], memoryContext) : ''}
 
 ## Behavior
 

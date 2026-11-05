@@ -22,7 +22,6 @@ export interface PendingApproval {
 import type { DisplayEvent, StreamMode } from '../agent/types.js';
 import type { HistoryItem, HistoryItemStatus, WorkingState } from '../types.js';
 import type { CorePorts, EventSink } from '../ports/index.js';
-import { withMemory } from '../runtime/memory-context.js';
 import {
   withOfficeRun,
   drainOfficeRun,
@@ -270,16 +269,10 @@ export class AgentRunnerController {
     query: string,
     chunkOpts?: ChunkRunOpts,
   ): Promise<RunQueryResult | undefined> {
-    // Enter the Memory scope so memory_* tools that run inside this turn
-    // pick up the injected port (MemoryLake for cloud Web, LocalMemoryAdapter
-    // for CLI). When no Memory port is injected (legacy callers) the scope
-    // is skipped and tools fall back to the local default.
     // Outer scope is the office-run touch tracker. The Agent's office
     // tool calls record file mutations into this scope; when the agent
     // emits its 'done' event we drain the set, upload to R2, and attach
     // the resulting download URLs to the event before forwarding it.
-    // Nested under withMemory because both scopes must be active for the
-    // duration of any tool that reads either.
     const wrapped = async () => {
       // On resume, seed the office-run scope with files touched in
       // previous chunks so the final drain still uploads them.
@@ -290,9 +283,6 @@ export class AgentRunnerController {
       // fresh container with an empty /tmp, so the bytes are gone otherwise.
       if (chunkOpts?.resume?.carriedFiles?.length) {
         await restoreCarriedFiles(chunkOpts.resume.carriedFiles);
-      }
-      if (this.ports.memory) {
-        return withMemory(this.ports.memory, () => this.runQueryInner(query, chunkOpts));
       }
       return this.runQueryInner(query, chunkOpts);
     };

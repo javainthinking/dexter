@@ -2,7 +2,7 @@
  * Prompt templates for the portfolio dashboard slash commands.
  *
  * Each template instructs the agent to:
- *   1. Resolve the user's portfolio (via memory_search / memory_get).
+ *   1. Resolve the user's portfolio from the conversation context.
  *   2. Pull historical OHLCV for every ticker via get_stock_prices.
  *   3. Compute the dimension-specific indicator(s).
  *   4. Bucket each holding into 2–3 signal categories.
@@ -59,10 +59,9 @@ function buildCommonRules(): string {
 - 输出文件名中的 YYYY-MM-DD 也用 ${today}
 
 数据来源:
-1. 先用 memory_search 找用户的持仓清单(关键词:"持仓"、"holdings"、"portfolio")
-2. 若 memory 没有,从近期对话上下文中提取;还没有就明确告知用户并停止
-3. 对每个 ticker 调 get_stock_prices,严格使用上面的 start_date/end_date
-4. 若个别 ticker 拉数据失败,卡片做 fallback:显示 "数据不足" 提示,不要省略
+1. 从近期对话上下文中提取用户的持仓清单;没有就明确告知用户并停止
+2. 对每个 ticker 调 get_stock_prices,严格使用上面的 start_date/end_date
+3. 若个别 ticker 拉数据失败,卡片做 fallback:显示 "数据不足" 提示,不要省略
 
 ⚠️ 数据顺序 — 不要弄反时间轴(这是最容易出错的地方):
 - get_stock_prices 返回的 prices 数组是 升序 chronological:prices[0] = 最早, prices[N-1] = 最新
@@ -181,7 +180,7 @@ export function MA_PROMPT(): string {
 
 /**
  * MOVERS_PROMPT is not portfolio-scoped — it's a market-pulse dashboard.
- * It deliberately bypasses COMMON_RULES (which mandates memory_search for
+ * It deliberately bypasses COMMON_RULES (which resolves the user's
  * holdings) because the data source is the whole US market, not the user's
  * book.
  */

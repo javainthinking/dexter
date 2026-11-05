@@ -17,14 +17,11 @@
 import type { CorePorts, EventSink, WebSessionStore } from '../../ports/index.js';
 import { systemClock } from '../../ports/index.js';
 import { LocalFsBlobStore } from '../../adapters/blob/local-fs.js';
-import { LocalMemoryAdapter } from '../../adapters/memory/local.js';
 import { EnvSecretsVault } from '../../adapters/secrets/env.js';
 import { ConsoleLogger } from '../../adapters/logger/console.js';
 import { DisabledBrowserDriver } from '../../adapters/browser/disabled.js';
-import { PostgresMemoryAdapter } from '../../adapters/memory/postgres.js';
 import { PostgresWebSessionStore } from '../../adapters/storage/postgres/web-session-store.js';
 import { VercelBlobStore } from '../../adapters/blob/vercel-blob.js';
-import type { Memory } from '../../ports/memory.js';
 
 export type WebPortsMode = 'local' | 'cloud';
 
@@ -57,20 +54,12 @@ function detectMode(): WebPortsMode {
   return process.env.DATABASE_URL ? 'cloud' : 'local';
 }
 
-/**
- * The web app has no memory feature (agent runs set `disableMemory`); the
- * Postgres adapter only fills the required port and is never called.
- */
-function chooseMemoryAdapter(ctx: WebPortsContext): Memory {
+async function composeCloud(ctx: WebPortsContext): Promise<WebPortsBundle> {
   if (!ctx.userId) {
     throw new Error(
       'composeWebPorts(cloud) requires ctx.userId — every request must run as a known user.',
     );
   }
-  return new PostgresMemoryAdapter({ userId: ctx.userId });
-}
-
-async function composeCloud(ctx: WebPortsContext): Promise<WebPortsBundle> {
   const logger = new ConsoleLogger({
     baseFields: { surface: 'web', mode: 'cloud', requestId: ctx.requestId },
   });
@@ -83,13 +72,11 @@ async function composeCloud(ctx: WebPortsContext): Promise<WebPortsBundle> {
     ? new VercelBlobStore({ prefix: 'dexter' })
     : new LocalFsBlobStore();
 
-  const memory = chooseMemoryAdapter(ctx);
   const webSessions = new PostgresWebSessionStore();
 
   return {
     mode: 'cloud',
     blob,
-    memory,
     events:
       ctx.events ?? {
         emit() {},
@@ -111,7 +98,6 @@ async function composeLocal(ctx: WebPortsContext): Promise<WebPortsBundle> {
   return {
     mode: 'local',
     blob: new LocalFsBlobStore(),
-    memory: await LocalMemoryAdapter.create(),
     events:
       ctx.events ?? {
         emit() {},

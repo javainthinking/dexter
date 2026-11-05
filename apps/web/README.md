@@ -125,7 +125,7 @@ once that resolution lands (or after a one-time migration that strips
 
 Adapter package additions:
 - `src/adapters/blob/vercel-blob.ts`
-- `src/adapters/storage/postgres/{memory-vector-db,session-meta,cron-storage}.ts`
+- `src/adapters/storage/postgres/{session-meta,cron-storage}.ts`
 - `src/adapters/secrets/db-encrypted.ts`
 - `src/adapters/scheduler/vercel-cron.ts`
 

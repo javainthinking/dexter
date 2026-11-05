@@ -9,7 +9,6 @@
  */
 
 export type SecretName =
-  | 'MEMORYLAKE_API_KEY'
   | 'LLM_ROUTER_API_KEY'
   | 'LLM_ROUTER_BASE_URL'
   | 'ANTHROPIC_API_KEY'

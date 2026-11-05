@@ -56,11 +56,6 @@ export function getAutoCompactThreshold(model: string): number {
 // ---------------------------------------------------------------------------
 
 /**
- * Static threshold used as fallback by memory flush.
- */
-export const CONTEXT_THRESHOLD = 100_000;
-
-/**
  * Number of most recent tool results to keep when clearing.
  */
 export const KEEP_TOOL_USES = 5;

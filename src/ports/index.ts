@@ -15,7 +15,6 @@ export type { CronStorage } from './cron-storage.js';
 export type { Scheduler, SchedulerTickHandler } from './scheduler.js';
 export type { SecretsVault, SecretName } from './secrets.js';
 export type { EventSink } from './event-sink.js';
-export type { Memory } from './memory.js';
 export type { BrowserDriver, BrowserSnapshot } from './browser.js';
 export type { Clock } from './clock.js';
 export { systemClock } from './clock.js';
@@ -32,7 +31,6 @@ export type {
  * Composition roots build one of these and pass it in.
  */
 import type { BlobStore } from './blob.js';
-import type { Memory } from './memory.js';
 import type { EventSink } from './event-sink.js';
 import type { SecretsVault } from './secrets.js';
 import type { BrowserDriver } from './browser.js';
@@ -41,7 +39,6 @@ import type { Logger } from './logger.js';
 
 export interface CorePorts {
   blob: BlobStore;
-  memory: Memory;
   events: EventSink;
   secrets: SecretsVault;
   browser: BrowserDriver;

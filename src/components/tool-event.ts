@@ -45,10 +45,6 @@ function formatArgs(tool: string, args: Record<string, unknown>): string {
     const query = String(args.query);
     return theme.muted(`"${truncateAtWord(query, 60)}"`);
   }
-  if (tool === 'memory_update') {
-    const text = String(args.content ?? args.old_text ?? '').replace(/\n/g, ' ');
-    if (text) return theme.muted(truncateAtWord(text, 80));
-  }
   return theme.muted(
     Object.entries(args)
       .map(([key, value]) => `${key}=${truncateAtWord(String(value).replace(/\n/g, '\\n'), 60)}`)

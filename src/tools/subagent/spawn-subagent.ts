@@ -96,7 +96,6 @@ export function createSpawnSubagent(model: string): DynamicStructuredTool {
         model,
         maxIterations: typeCfg.maxIterations,
         signal,
-        memoryEnabled: false,
         toolAllowlist,
         systemPromptOverride: typeCfg.systemPrompt,
         agentLabel: typeKey,

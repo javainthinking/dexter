@@ -66,15 +66,6 @@ export interface AgentConfig {
   requestUserInput?: (request: { questions: Question[] }) => Promise<UserAnswers>;
   /** Shared set of tool names that have been session-approved (persists across queries) */
   sessionApprovedTools?: Set<string>;
-  /** Enable/disable persistent memory integration for this run */
-  memoryEnabled?: boolean;
-  /**
-   * Remove memory entirely: no memory_* tools, no memory section in the
-   * system prompt, no context load or flush. For surfaces without a memory
-   * feature (the web app). Stronger than `memoryEnabled: false`, which keeps
-   * the tools available.
-   */
-  disableMemory?: boolean;
   /** Message queue for mid-run injection of new user messages. */
   messageQueue?: MessageQueue;
   /**
@@ -90,8 +81,8 @@ export interface AgentConfig {
    */
   toolAllowlist?: string[];
   /**
-   * Use this exact system prompt instead of building one. When set, the soul,
-   * rules, and memory context are skipped entirely. Used by delegated workers
+   * Use this exact system prompt instead of building one. When set, the soul
+   * and rules are skipped entirely. Used by delegated workers
    * that run with a self-contained worker prompt.
    */
   systemPromptOverride?: string;
@@ -207,24 +198,6 @@ export interface ContextClearedEvent {
   clearedCount: number;
   /** Number of most recent tool results that were kept */
   keptCount: number;
-}
-
-/**
- * Session-start memory context was loaded into the system prompt.
- */
-export interface MemoryRecalledEvent {
-  type: 'memory_recalled';
-  filesLoaded: string[];
-  tokenCount: number;
-}
-
-/**
- * Pre-compaction memory flush lifecycle event.
- */
-export interface MemoryFlushEvent {
-  type: 'memory_flush';
-  phase: 'start' | 'end';
-  filesWritten?: string[];
 }
 
 /**
@@ -378,8 +351,6 @@ export type AgentEvent =
   | QueueDrainEvent
   | MicrocompactEvent
   | CompactionEvent
-  | MemoryRecalledEvent
-  | MemoryFlushEvent
   | StreamProgressEvent
   | ContinuationRequiredEvent
   | DoneEvent;

@@ -28,7 +28,7 @@ export const SUBAGENT_DISALLOWED_TOOLS = new Set<string>(['spawn_subagent', 'ask
 
 /**
  * Read-only tools available to a general-purpose subagent. Deliberately excludes
- * write/edit/memory-mutation tools: subagents run in parallel and must not race
+ * write/edit tools: subagents run in parallel and must not race
  * on approval prompts or side effects.
  */
 const READ_ONLY_TOOLS = [
@@ -38,8 +38,6 @@ const READ_ONLY_TOOLS = [
   'x_search',
   'web_fetch',
   'read_file',
-  'memory_search',
-  'memory_get',
 ];
 
 const WORKER_PREAMBLE =
