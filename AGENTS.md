@@ -45,8 +45,8 @@
 
 ## LLM Providers
 
-- Supported: OpenAI (default), Anthropic, Google, xAI (Grok), OpenRouter, Ollama (local).
-- Default model: `gpt-5.5`. Provider detection is prefix-based (`claude-` -> Anthropic, `gemini-` -> Google, etc.).
+- Supported: DeepSeek via the LLM router (default), Anthropic, Google, Moonshot, OpenRouter, Ollama (local).
+- Default model: `deepseek-v4-pro`. Provider detection is prefix-based (`claude-` -> Anthropic, `gemini-` -> Google, etc.).
 - Fast models for lightweight tasks: see `FAST_MODELS` map in `src/model/llm.ts`.
 - Anthropic uses explicit `cache_control` on system prompt for prompt caching cost savings.
 - Users switch providers/models via `/model` command in the CLI.
@@ -78,7 +78,7 @@
 
 ## Environment Variables
 
-- LLM keys: `LLM_ROUTER_BASE_URL` + `LLM_ROUTER_API_KEY` (default DeepSeek models via an OpenAI-compatible router, `src/providers.ts`), `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, `XAI_API_KEY`, `OPENROUTER_API_KEY`
+- LLM keys: `LLM_ROUTER_BASE_URL` + `LLM_ROUTER_API_KEY` (default DeepSeek models via an OpenAI-compatible router, `src/providers.ts`), `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, `OPENROUTER_API_KEY`
 - Ollama: `OLLAMA_BASE_URL` (default `http://127.0.0.1:11434`)
 - Finance: `VALYU_API_KEY` (Yahoo Finance is the keyless fallback)
 - Search: `EXASEARCH_API_KEY` (preferred), `TAVILY_API_KEY` (fallback)

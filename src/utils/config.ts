@@ -33,8 +33,10 @@ const DEPRECATED_MODEL_UPGRADES: Record<string, string> = {
   'claude-opus-4-8': 'claude-opus-5-5',
   'claude-fable-5': 'claude-fable-5-1',
   'gemini-3-flash-preview': 'gemini-3.8-flash',
-  'grok-4-0709': 'grok-4.7',
-  'grok-4-1-fast-reasoning': 'grok-4.7',
+  // xAI (Grok) support was removed; saved Grok selections move to the default.
+  'grok-4-0709': 'deepseek-v4-pro',
+  'grok-4-1-fast-reasoning': 'deepseek-v4-pro',
+  'grok-4.7': 'deepseek-v4-pro',
   'kimi-k2-5': 'kimi-k3',
   'deepseek-v4-flash': 'deepseek-v4.1-flash',
   'deepseek-flash': 'deepseek-v4.1-flash',

@@ -38,7 +38,7 @@ const FOOTER = `
 - Eight technical-indicator dimensions in the portfolio dashboard: MACD, moving averages (MA5/20/60), RSI(14), KDJ(9,3,3), Bollinger Bands(20,2), ADX/DMI(14), volume/price relationship, and capital flow proxy. Every dimension ships with a 5-day signal trail showing how the bucket call evolved across the trading week.
 - Indicator dashboards detect Chinese A-share limit-up / limit-down / halt bars (high == low) and mask them as neutral so degenerate bars do not produce false-positive bullish or bearish buckets.
 - File generation produces native .pptx / .docx / .xlsx via OfficeCLI, delivered as 7-day presigned download links on Cloudflare R2.
-- Default LLM is DeepSeek V4 Pro; Anthropic, Google Gemini, xAI, and local Ollama are supported via the same agent surface.
+- Default LLM is DeepSeek V4 Pro; Anthropic, Google Gemini, and local Ollama are supported via the same agent surface.
 
 ## Contact
 

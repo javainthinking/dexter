@@ -81,15 +81,6 @@ const MODEL_FACTORIES: Record<string, ModelFactory> = {
       ...opts,
       apiKey: getApiKey('GOOGLE_API_KEY'),
     }),
-  xai: (name, opts) =>
-    new ChatOpenAI({
-      model: name,
-      ...opts,
-      apiKey: getApiKey('XAI_API_KEY'),
-      configuration: {
-        baseURL: 'https://api.x.ai/v1',
-      },
-    }),
   openrouter: (name, opts) =>
     new ChatOpenAI({
       model: name.replace(/^openrouter:/, ''),

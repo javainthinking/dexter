@@ -93,7 +93,6 @@ cp env.example .env
 # LLM_ROUTER_BASE_URL=https://your-llm-router/openai/v1 and LLM_ROUTER_API_KEY=your-llm-router-key (default DeepSeek models)
 # ANTHROPIC_API_KEY=your-anthropic-api-key (optional)
 # GOOGLE_API_KEY=your-google-api-key (optional)
-# XAI_API_KEY=your-xai-api-key (optional)
 # OPENROUTER_API_KEY=your-openrouter-api-key (optional)
 
 # Market data (Valyu primary, Yahoo Finance keyless fallback)

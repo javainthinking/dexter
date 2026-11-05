@@ -26,7 +26,6 @@ const PROVIDER_MODELS: Record<string, Model[]> = {
     { id: 'gemini-3.8-flash', displayName: 'Gemini 3.8 Flash' },
     { id: 'gemini-3.1-pro-preview', displayName: 'Gemini 3.1 Pro' },
   ],
-  xai: [{ id: 'grok-4.7', displayName: 'Grok 4.7' }],
   moonshot: [{ id: 'kimi-k3', displayName: 'Kimi K3' }],
   deepseek: [
     { id: 'deepseek-v4-pro', displayName: 'DeepSeek V4 Pro' },

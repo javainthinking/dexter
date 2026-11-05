@@ -100,14 +100,6 @@ export const PROVIDERS: ProviderDef[] = [
     contextWindow: 1_000_000,
   },
   {
-    id: 'xai',
-    displayName: 'xAI',
-    modelPrefix: 'grok-',
-    apiKeyEnvVar: 'XAI_API_KEY',
-    fastModel: 'grok-4.7',
-    contextWindow: 500_000,
-  },
-  {
     id: 'moonshot',
     displayName: 'Moonshot',
     modelPrefix: 'kimi-',
