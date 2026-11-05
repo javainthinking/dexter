@@ -36,6 +36,15 @@ const turns: TurnGate = {
   async complete(turnId) {
     await api(`/api/desktop/turns/${turnId}/complete`, { method: 'POST' });
   },
+  async indicatorTickers(query, answer) {
+    const { tickers } = await api<{ tickers?: unknown }>('/api/desktop/indicator-tickers', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ query, answer }),
+      signal: AbortSignal.timeout(15_000),
+    });
+    return Array.isArray(tickers) ? tickers.filter((t): t is string => typeof t === 'string') : [];
+  },
 };
 const chat = new LocalChat(agent, () => (account.status === 'signed-in' ? (account.user?.id ?? null) : null), turns);
 

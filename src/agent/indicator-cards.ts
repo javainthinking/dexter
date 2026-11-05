@@ -71,11 +71,11 @@ export function appendIndicatorBlock(answer: string, tickers: string[]): string 
 }
 
 /**
- * Return `answer` with an ```indicators block appended when the turn is
- * about specific stocks; otherwise (or on any failure) return it as-is.
+ * The listed stocks (at most MAX_CARDS) a question/answer pair is about,
+ * picked by the fast model. Best-effort: [] on any failure or timeout.
  */
-export async function withIndicatorCards(query: string, answer: string, model: string): Promise<string> {
-  if (!answer.trim() || answer.startsWith('Error:') || hasIndicatorBlock(answer)) return answer;
+export async function pickIndicatorTickers(query: string, answer: string, model: string): Promise<string[]> {
+  if (!answer.trim() || answer.startsWith('Error:')) return [];
   try {
     const fastModel = getFastModel(resolveProvider(model).id, model);
     // Messages, not callLlm: callLlm runs the prompt through a template,
@@ -86,8 +86,17 @@ export async function withIndicatorCards(query: string, answer: string, model: s
     );
     const content = typeof response === 'string' ? response : response.content;
     const text = typeof content === 'string' ? content : JSON.stringify(content ?? '');
-    return appendIndicatorBlock(answer, parseTickerReply(text));
+    return parseTickerReply(text);
   } catch {
-    return answer;
+    return [];
   }
+}
+
+/**
+ * Return `answer` with an ```indicators block appended when the turn is
+ * about specific stocks; otherwise (or on any failure) return it as-is.
+ */
+export async function withIndicatorCards(query: string, answer: string, model: string): Promise<string> {
+  if (hasIndicatorBlock(answer)) return answer;
+  return appendIndicatorBlock(answer, await pickIndicatorTickers(query, answer, model));
 }

@@ -50,6 +50,8 @@ export interface TurnGate {
   /** Admits a turn, or returns the server's refusal (e.g. 402 quota_exceeded) to pass through. */
   start(agentSessionID?: string): Promise<{ turnId: string } | { refusal: Response }>;
   complete(turnId: string): Promise<void>;
+  /** Stocks the turn is about, for the chat's inline indicator cards (best-effort, [] on failure). */
+  indicatorTickers(query: string, answer: string): Promise<string[]>;
 }
 
 export class LocalChat {
@@ -148,6 +150,12 @@ export class LocalChat {
           void persist();
           void gate.complete(turnId).catch(() => {});
         };
+        const complete = (final: string) => {
+          if (closed) return;
+          turn.answer = final;
+          send('done', { answer: final });
+          finish();
+        };
         const listener = (e: AgentEvent) => {
           if (e.type === 'error') {
             send('error', { message: e.message });
@@ -168,13 +176,17 @@ export class LocalChat {
               send('tool_error', { toolCallId: e.callID, tool: e.name, error: e.detail ?? 'Tool failed' });
             }
           } else if (e.type === 'done') {
-            if (e.ok) {
-              turn.answer = answer;
-              send('done', { answer });
-            } else {
+            if (!e.ok) {
               send('error', { message: e.error ?? 'The agent failed.' });
+              return finish();
             }
-            finish();
+            // Same as web's /api/agent: end the answer with an ```indicators
+            // block naming the stocks it is about, which the shared chat UI
+            // renders as indicator cards.
+            void gate.indicatorTickers(query, answer).then(
+              (tickers) => complete(withIndicatorBlock(answer, tickers)),
+              () => complete(answer),
+            );
           }
         };
 
@@ -262,6 +274,12 @@ export class LocalChat {
 function sseError(message: string): Response {
   const body = `event: error\ndata: ${JSON.stringify({ message })}\n\n`;
   return new Response(body, { headers: { 'content-type': 'text/event-stream', 'cache-control': 'no-cache' } });
+}
+
+/** Mirrors appendIndicatorBlock in src/agent/indicator-cards.ts. */
+function withIndicatorBlock(answer: string, tickers: string[]): string {
+  if (tickers.length === 0 || /```[ \t]*indicators/i.test(answer)) return answer;
+  return `${answer.trimEnd()}\n\n\`\`\`indicators\n${tickers.join('\n')}\n\`\`\`\n`;
 }
 
 function clip(s: string, n: number): string {
