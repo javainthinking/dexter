@@ -1,3 +1,4 @@
+import { scrubUpstreamText } from '../providers.js';
 export interface ApiErrorInfo {
   httpCode?: number;
   type?: string;
@@ -223,6 +224,11 @@ export function isNonRetryableError(raw?: string): boolean {
 }
 
 export function formatUserFacingError(raw: string, provider?: string): string {
+  // Upstream router names/URLs must never reach users.
+  return scrubUpstreamText(formatUserFacingErrorRaw(raw, provider));
+}
+
+function formatUserFacingErrorRaw(raw: string, provider?: string): string {
   if (!raw.trim()) {
     return 'LLM request failed with an unknown error.';
   }

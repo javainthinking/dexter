@@ -39,7 +39,7 @@ something like "What is the current price of AAPL?".
 
 ### Environment variables
 
-The agent needs API keys (MEMORYLAKE_LLM_API_KEY, VALYU_API_KEY, …).
+The agent needs API keys (LLM_ROUTER_BASE_URL, LLM_ROUTER_API_KEY, VALYU_API_KEY, …).
 Next.js auto-loads `apps/web/.env.local` and **does not** look at the
 repo-root `.env`. Pick one of:
 
@@ -106,7 +106,8 @@ once that resolution lands (or after a one-time migration that strips
 2. **Set Root Directory to `apps/web`** in the project settings.
 3. Add secrets either via the dashboard or CLI:
    ```bash
-   echo "$MEMORYLAKE_LLM_API_KEY" | vercel env add MEMORYLAKE_LLM_API_KEY production preview --sensitive
+   echo "$LLM_ROUTER_BASE_URL" | vercel env add LLM_ROUTER_BASE_URL production preview --sensitive
+   echo "$LLM_ROUTER_API_KEY" | vercel env add LLM_ROUTER_API_KEY production preview --sensitive
    echo "$VALYU_API_KEY" | vercel env add VALYU_API_KEY production preview --sensitive
    # …repeat for every key the agent needs
    ```

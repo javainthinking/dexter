@@ -13,7 +13,7 @@
  * - The finance catalog + tool execution use dexter's real tools
  *   (src/tools/finance), so schemas and results match production; without
  *   data-provider keys they fall back to Yahoo.
- * - The LLM endpoint proxies to the MemoryLake router when MEMORYLAKE_LLM_API_KEY is set, otherwise
+ * - The LLM endpoint proxies to the LLM router when LLM_ROUTER_API_KEY is set, otherwise
  *   plays a scripted turn: call get_stock_price(NVDA), then summarise.
  * - Turn admission + metering follow apps/web/lib/desktop-turns.ts in memory:
  *   POST /api/desktop/turns gates on a conversation limit (402 like web), LLM
@@ -22,7 +22,7 @@
  *   POST /__mock/limit {conversations} (null = unlimited).
  */
 import { createHash, randomBytes } from 'node:crypto';
-import { MEMORYLAKE_LLM_BASE_URL } from '../../../src/providers';
+import { getLlmRouterBaseUrl } from '../../../src/providers';
 import { z } from 'zod';
 import {
   getStockPrice,
@@ -224,11 +224,11 @@ Bun.serve({
       if (!turn) return json({ error: { message: 'no_admitted_turn', code: 'turn_required' } }, 409);
       const body = await req.json();
       let res: Response;
-      if (!process.env.MEMORYLAKE_LLM_API_KEY) res = await scriptedCompletion(body);
+      if (!process.env.LLM_ROUTER_API_KEY) res = await scriptedCompletion(body);
       else {
-        const upstream = await fetch(`${MEMORYLAKE_LLM_BASE_URL}/chat/completions`, {
+        const upstream = await fetch(`${getLlmRouterBaseUrl()}/chat/completions`, {
           method: 'POST',
-          headers: { 'content-type': 'application/json', authorization: `Bearer ${process.env.MEMORYLAKE_LLM_API_KEY}` },
+          headers: { 'content-type': 'application/json', authorization: `Bearer ${process.env.LLM_ROUTER_API_KEY}` },
           body: JSON.stringify({ ...body, model: process.env.DESKTOP_LLM_MODEL ?? 'deepseek-v4-pro' }),
         });
         res = new Response(upstream.body, { status: upstream.status, headers: { 'content-type': upstream.headers.get('content-type') ?? 'application/json' } });

@@ -16,8 +16,9 @@ import { classifyError, isNonRetryableError } from '@/utils/errors';
 import {
   resolveProvider,
   getProviderById,
-  MEMORYLAKE_LLM_BASE_URL,
-  MEMORYLAKE_LLM_API_KEY_ENV,
+  getLlmRouterBaseUrl,
+  LLM_ROUTER_API_KEY_ENV,
+  scrubUpstreamText,
 } from '@/providers';
 
 export const DEFAULT_PROVIDER = 'deepseek';
@@ -41,12 +42,9 @@ async function withRetry<T>(fn: () => Promise<T>, provider: string, maxAttempts 
       const errorType = classifyError(message);
       logger.error(`[${provider} API] ${errorType} error (attempt ${attempt + 1}/${maxAttempts}): ${message}`);
 
-      if (isNonRetryableError(message)) {
-        throw new Error(`[${provider} API] ${message}`);
-      }
-
-      if (attempt === maxAttempts - 1) {
-        throw new Error(`[${provider} API] ${message}`);
+      if (isNonRetryableError(message) || attempt === maxAttempts - 1) {
+        // Thrown messages can surface in the UI; never name the upstream router.
+        throw new Error(`[${provider} API] ${scrubUpstreamText(message)}`);
       }
       await new Promise((r) => setTimeout(r, 500 * 2 ** attempt));
     }
@@ -111,7 +109,7 @@ const MODEL_FACTORIES: Record<string, ModelFactory> = {
       },
     }),
   deepseek: (name, opts) => {
-    // DeepSeek models are served through the MemoryLake router, which forwards
+    // DeepSeek models are served through the LLM router, which forwards
     // unlisted params (reasoning_effort, thinking) to DeepSeek unchanged.
     // V4 Pro and the V4 / V4.1 Flash models support thinking mode.
     // temperature/top_p/presence_penalty/frequency_penalty are ignored in thinking mode.
@@ -120,9 +118,9 @@ const MODEL_FACTORIES: Record<string, ModelFactory> = {
     return new ChatOpenAI({
       model: name,
       ...opts,
-      apiKey: getApiKey(MEMORYLAKE_LLM_API_KEY_ENV),
+      apiKey: getApiKey(LLM_ROUTER_API_KEY_ENV),
       configuration: {
-        baseURL: MEMORYLAKE_LLM_BASE_URL,
+        baseURL: getLlmRouterBaseUrl(),
       },
       ...(isThinkingModel && {
         // reasoning_effort is a top-level param; thinking toggle goes in extra_body
@@ -155,12 +153,12 @@ const DEFAULT_FACTORY: ModelFactory = (name, opts) =>
   new ChatOpenAI({
     model: name,
     ...opts,
-    apiKey: getApiKey(MEMORYLAKE_LLM_API_KEY_ENV),
+    apiKey: getApiKey(LLM_ROUTER_API_KEY_ENV),
     configuration: {
-      baseURL: MEMORYLAKE_LLM_BASE_URL,
+      baseURL: getLlmRouterBaseUrl(),
     },
     // GPT-5.6 and GPT-6 require the Responses API when reasoning and function tools are combined.
-    // The MemoryLake router proxies /v1/responses as well as /v1/chat/completions.
+    // The LLM router proxies /v1/responses as well as /v1/chat/completions.
     useResponsesApi: name.startsWith('gpt-5.6-') || name.startsWith('gpt-6-'),
   });
 

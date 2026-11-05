@@ -49,7 +49,7 @@ export const LEGAL_CONTENT: LegalDocs = {
           "id": "data",
           "heading": "Where does the data come from?",
           "body": [
-            "Market data comes from licensed and public providers including Valyu and Yahoo Finance; company filings come from public sources such as SEC EDGAR; web research uses search providers such as Exa and Tavily. Language models are provided by OpenAI and other AI providers. Market data can be delayed or contain errors, and every page states the date of the data it shows."
+            "Market data comes from licensed and public providers including Valyu and Yahoo Finance; company filings come from public sources such as SEC EDGAR; web research uses search providers such as Exa and Tavily. Language models are provided by DeepSeek and other AI providers. Market data can be delayed or contain errors, and every page states the date of the data it shows."
           ]
         },
         {
@@ -107,7 +107,7 @@ export const LEGAL_CONTENT: LegalDocs = {
           "id": "data",
           "heading": "数据从哪里来？",
           "body": [
-            "行情数据来自 Valyu、Yahoo Finance 等授权及公开数据源；公司公告来自 SEC EDGAR 等公开渠道；网络检索使用 Exa、Tavily 等搜索服务。语言模型由 OpenAI 等 AI 服务商提供。行情数据可能存在延迟或误差，每个页面都会注明数据日期。"
+            "行情数据来自 Valyu、Yahoo Finance 等授权及公开数据源；公司公告来自 SEC EDGAR 等公开渠道；网络检索使用 Exa、Tavily 等搜索服务。语言模型由 DeepSeek 等 AI 服务商提供。行情数据可能存在延迟或误差，每个页面都会注明数据日期。"
           ]
         },
         {
@@ -165,7 +165,7 @@ export const LEGAL_CONTENT: LegalDocs = {
           "id": "data",
           "heading": "資料從哪裡來？",
           "body": [
-            "行情資料來自 Valyu、Yahoo Finance 等授權及公開資料來源；公司公告來自 SEC EDGAR 等公開渠道；網路檢索使用 Exa、Tavily 等搜尋服務。語言模型由 OpenAI 等 AI 服務商提供。行情資料可能存在延遲或誤差，每個頁面都會註明資料日期。"
+            "行情資料來自 Valyu、Yahoo Finance 等授權及公開資料來源；公司公告來自 SEC EDGAR 等公開渠道；網路檢索使用 Exa、Tavily 等搜尋服務。語言模型由 DeepSeek 等 AI 服務商提供。行情資料可能存在延遲或誤差，每個頁面都會註明資料日期。"
           ]
         },
         {
@@ -234,7 +234,7 @@ export const LEGAL_CONTENT: LegalDocs = {
           "id": "ai",
           "heading": "How is my content processed by AI?",
           "body": [
-            "To answer a request, PickSkill sends the relevant parts of your conversation to the language-model provider that serves it, currently OpenAI models accessed through the MemoryLake gateway, and may send search terms or ticker symbols to data and search providers. These providers process the data to return a result to us under their own terms and privacy policies. Do not include sensitive personal information (such as government ID numbers or account passwords) in your messages."
+            "To answer a request, PickSkill sends the relevant parts of your conversation to the language-model provider that serves it, currently DeepSeek models, and may send search terms or ticker symbols to data and search providers. These providers process the data to return a result to us under their own terms and privacy policies. Do not include sensitive personal information (such as government ID numbers or account passwords) in your messages."
           ]
         },
         {
@@ -249,7 +249,7 @@ export const LEGAL_CONTENT: LegalDocs = {
                 "Cloudflare R2: storage for generated files and feedback attachments.",
                 "Stripe: payment processing and subscription billing.",
                 "Google: Google sign-in and Google Analytics.",
-                "MemoryLake and OpenAI: language-model processing.",
+                "Our language-model providers (currently DeepSeek models): language-model processing.",
                 "Valyu, Yahoo Finance, Exa and Tavily: market data and web search (these receive queries such as tickers or search terms, not your account details).",
                 "Our email delivery provider: sending sign-in codes and service emails."
               ]
@@ -377,7 +377,7 @@ export const LEGAL_CONTENT: LegalDocs = {
           "id": "ai",
           "heading": "我的内容如何经过 AI 处理？",
           "body": [
-            "为回答你的请求，PickSkill 会将对话中的相关内容发送给提供服务的语言模型服务商（目前为通过 MemoryLake 网关调用的 OpenAI 模型），并可能将搜索词或股票代码发送给数据和搜索服务商。这些服务商依据其自身条款和隐私政策处理数据并将结果返回给我们。请不要在消息中包含敏感个人信息（如身份证号或账户密码）。"
+            "为回答你的请求，PickSkill 会将对话中的相关内容发送给提供服务的语言模型服务商（目前为 DeepSeek 模型），并可能将搜索词或股票代码发送给数据和搜索服务商。这些服务商依据其自身条款和隐私政策处理数据并将结果返回给我们。请不要在消息中包含敏感个人信息（如身份证号或账户密码）。"
           ]
         },
         {
@@ -392,7 +392,7 @@ export const LEGAL_CONTENT: LegalDocs = {
                 "Cloudflare R2：存储生成的文件和反馈附件。",
                 "Stripe：支付处理与订阅计费。",
                 "Google：Google 登录与 Google Analytics。",
-                "MemoryLake 与 OpenAI：语言模型处理。",
+                "语言模型服务商（目前为 DeepSeek 模型）：语言模型处理。",
                 "Valyu、Yahoo Finance、Exa 与 Tavily：行情数据与网络检索（它们接收的是股票代码或搜索词等查询内容，而非你的账户信息）。",
                 "邮件发送服务商：发送登录验证码和服务邮件。"
               ]
@@ -520,7 +520,7 @@ export const LEGAL_CONTENT: LegalDocs = {
           "id": "ai",
           "heading": "我的內容如何經過 AI 處理？",
           "body": [
-            "為回答你的請求，PickSkill 會將對話中的相關內容傳送給提供服務的語言模型服務商（目前為透過 MemoryLake 閘道器呼叫的 OpenAI 模型），並可能將搜尋詞或股票程式碼傳送給資料和搜尋服務商。這些服務商依據其自身條款和隱私政策處理資料並將結果返回給我們。請不要在訊息中包含敏感個人資訊（如身份證號或帳戶密碼）。"
+            "為回答你的請求，PickSkill 會將對話中的相關內容傳送給提供服務的語言模型服務商（目前為 DeepSeek 模型），並可能將搜尋詞或股票程式碼傳送給資料和搜尋服務商。這些服務商依據其自身條款和隱私政策處理資料並將結果返回給我們。請不要在訊息中包含敏感個人資訊（如身份證號或帳戶密碼）。"
           ]
         },
         {
@@ -535,7 +535,7 @@ export const LEGAL_CONTENT: LegalDocs = {
                 "Cloudflare R2：儲存生成的檔案和意見回饋附件。",
                 "Stripe：支付處理與訂閱計費。",
                 "Google：Google 登入與 Google Analytics。",
-                "MemoryLake 與 OpenAI：語言模型處理。",
+                "語言模型服務商（目前為 DeepSeek 模型）：語言模型處理。",
                 "Valyu、Yahoo Finance、Exa 與 Tavily：行情資料與網路檢索（它們接收的是股票程式碼或搜尋詞等查詢內容，而非你的帳戶資訊）。",
                 "郵件傳送服務商：傳送登入驗證碼和服務郵件。"
               ]

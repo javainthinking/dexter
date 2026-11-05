@@ -25,7 +25,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promi
   });
 }
 
-// OpenAI models go through the MemoryLake router, which serves no embedding
+// Chat models go through the LLM router, which serves no embedding
 // models; a saved 'openai' preference is treated as 'auto'.
 function resolveProvider(preferred: EmbeddingProviderId): ResolvedProvider | null {
   if (preferred === 'gemini' && process.env.GOOGLE_API_KEY) {

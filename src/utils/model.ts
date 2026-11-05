@@ -12,7 +12,7 @@ interface Provider {
 }
 
 const PROVIDER_MODELS: Record<string, Model[]> = {
-  // MemoryLake router catch-all (no GPT models on this account).
+  // LLM router catch-all (the router serves no GPT models).
   openai: [
     { id: 'qwen3.8-max', displayName: 'Qwen 3.8 Max' },
     { id: 'glm-5.3', displayName: 'GLM 5.3' },

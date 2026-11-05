@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { unstable_cache } from 'next/cache';
-import { MEMORYLAKE_LLM_BASE_URL } from '@dexter/core/providers';
+import { getLlmRouterBaseUrl } from '@dexter/core/providers';
 import { DIMENSION_KEYS, type DimensionKey } from '../indicators/labels';
 import type { Bucket } from '../indicators/math';
 import { latestTally, toneOf, type StockSnapshot, type Tone } from './snapshot';
@@ -286,9 +286,9 @@ const BANNED = /\b(buy|sell|price target|we recommend|should invest)\b|买入|�
 const WRONG_COUNT = /\b(?:[0-79]|1\d)\s+(?:technical\s+)?indicators\b|\bof\s+(?:[0-79]|1\d)\s+(?:technical\s+)?indicators\b|(?:[0-79]|1\d)\s*[项項](?:指标|指標)?中(?!性)/i;
 
 async function generateAi(facts: NarrativeFacts, lang: NarrativeLang): Promise<string[]> {
-  const apiKey = process.env.MEMORYLAKE_LLM_API_KEY;
-  if (!apiKey) throw new Error('MEMORYLAKE_LLM_API_KEY not set');
-  const res = await fetch(`${MEMORYLAKE_LLM_BASE_URL}/chat/completions`, {
+  const apiKey = process.env.LLM_ROUTER_API_KEY;
+  if (!apiKey) throw new Error('LLM_ROUTER_API_KEY not set');
+  const res = await fetch(`${getLlmRouterBaseUrl()}/chat/completions`, {
     method: 'POST',
     headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` },
     signal: AbortSignal.timeout(25_000),

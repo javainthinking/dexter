@@ -78,7 +78,7 @@
 
 ## Environment Variables
 
-- LLM keys: `MEMORYLAKE_LLM_API_KEY` (OpenAI models via the MemoryLake router at app.memorylake.cn, `src/providers.ts`), `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, `XAI_API_KEY`, `OPENROUTER_API_KEY`
+- LLM keys: `LLM_ROUTER_BASE_URL` + `LLM_ROUTER_API_KEY` (default DeepSeek models via an OpenAI-compatible router, `src/providers.ts`), `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, `XAI_API_KEY`, `OPENROUTER_API_KEY`
 - Ollama: `OLLAMA_BASE_URL` (default `http://127.0.0.1:11434`)
 - Finance: `VALYU_API_KEY` (Yahoo Finance is the keyless fallback)
 - Search: `EXASEARCH_API_KEY` (preferred), `TAVILY_API_KEY` (fallback)

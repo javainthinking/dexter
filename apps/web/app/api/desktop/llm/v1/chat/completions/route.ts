@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { getCurrentUser } from '../../../../../../../lib/auth/session';
 import { claimDesktopTurn, meterDesktopTurn } from '../../../../../../../lib/desktop-turns';
-import { MEMORYLAKE_LLM_BASE_URL } from '@dexter/core/providers';
+import { getLlmRouterBaseUrl, scrubUpstreamText } from '@dexter/core/providers';
 
 /**
  * POST /api/desktop/llm/v1/chat/completions
@@ -11,8 +11,8 @@ import { MEMORYLAKE_LLM_BASE_URL } from '@dexter/core/providers';
  * turn, swap the public model alias for the upstream model, and stream the
  * upstream response straight back.
  *
- * Upstream is the MemoryLake router (OpenAI-compatible, same as the web
- * agent — see src/providers.ts), keyed by MEMORYLAKE_LLM_API_KEY.
+ * Upstream is the LLM router (OpenAI-compatible, same as the web
+ * agent — see src/providers.ts), keyed by LLM_ROUTER_API_KEY / LLM_ROUTER_BASE_URL.
  *   DESKTOP_LLM_MODEL     (default deepseek-v4-pro) — what `analyst-default` maps to
  *
  * Quota works as on web: the desktop admits each chat turn through
@@ -55,19 +55,30 @@ export async function POST(request: NextRequest): Promise<Response> {
     return NextResponse.json({ error: { message: 'no_admitted_turn', code: 'turn_required' } }, { status: 409 });
   }
 
-  const apiKey = process.env.MEMORYLAKE_LLM_API_KEY;
-  if (!apiKey) {
+  const apiKey = process.env.LLM_ROUTER_API_KEY;
+  if (!apiKey || !process.env.LLM_ROUTER_BASE_URL) {
     return NextResponse.json({ error: { message: 'gateway_not_configured' } }, { status: 503 });
   }
 
-  const upstream = await fetch(`${MEMORYLAKE_LLM_BASE_URL}/chat/completions`, {
+  const upstream = await fetch(`${getLlmRouterBaseUrl()}/chat/completions`, {
     method: 'POST',
     headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` },
     body: JSON.stringify({ ...body, model: resolve(), user: user.id }),
     signal: request.signal,
   });
 
-  if (upstream.ok) await meterDesktopTurn(user.id, turnId);
+  if (!upstream.ok) {
+    // Error bodies reach the desktop UI; never name the upstream router.
+    return new Response(scrubUpstreamText(await upstream.text()), {
+      status: upstream.status,
+      headers: {
+        'content-type': upstream.headers.get('content-type') ?? 'application/json',
+        'cache-control': 'no-store',
+      },
+    });
+  }
+
+  await meterDesktopTurn(user.id, turnId);
 
   return new Response(upstream.body, {
     status: upstream.status,

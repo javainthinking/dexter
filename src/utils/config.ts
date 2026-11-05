@@ -18,7 +18,7 @@ const MODEL_TO_PROVIDER_MAP: Record<string, string> = {
 
 // Deprecated model IDs to upgrade on load
 const DEPRECATED_MODEL_UPGRADES: Record<string, string> = {
-  // The memorylake.cn router serves no GPT models, so saved GPT selections
+  // The LLM router serves no GPT models, so saved GPT selections
   // move to the default DeepSeek V4 Pro.
   'gpt-5.6-sol': 'deepseek-v4-pro',
   'gpt-5.6-terra': 'deepseek-v4-pro',

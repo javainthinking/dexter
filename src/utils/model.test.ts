@@ -6,7 +6,7 @@ import {
   getModelIdsForProvider,
 } from './model.js';
 
-describe('MemoryLake router catalog', () => {
+describe('LLM router catalog', () => {
   test('offers router-hosted models under the catch-all provider', () => {
     expect(getModelIdsForProvider('openai')).toEqual(['qwen3.8-max', 'glm-5.3']);
   });
@@ -38,5 +38,30 @@ describe('Anthropic model catalog', () => {
     expect(getModelDisplayName('claude-sonnet-5')).toBe('Sonnet 5');
     expect(getModelDisplayName('claude-opus-5-5')).toBe('Opus 5.5');
     expect(getModelDisplayName('claude-fable-5-1')).toBe('Fable 5.1');
+  });
+});
+
+describe('upstream router is never named to users', () => {
+  test('scrubs the router host and brand derived from LLM_ROUTER_BASE_URL', async () => {
+    const prev = process.env.LLM_ROUTER_BASE_URL;
+    process.env.LLM_ROUTER_BASE_URL = 'https://app.acmerouter.cn/openapi/acmerouter/router/openai/v1';
+    try {
+      const { scrubUpstreamText } = await import('../providers.js');
+      const { formatUserFacingError } = await import('./errors.js');
+      const raw =
+        '404 model not found at https://app.acmerouter.cn/openapi/acmerouter/router/openai/v1 (Acme Router balance low)';
+      for (const out of [scrubUpstreamText(raw), formatUserFacingError(raw, 'DeepSeek')]) {
+        expect(out.toLowerCase()).not.toContain('acmerouter');
+        expect(out.toLowerCase()).not.toContain('acme router');
+      }
+    } finally {
+      if (prev === undefined) delete process.env.LLM_ROUTER_BASE_URL;
+      else process.env.LLM_ROUTER_BASE_URL = prev;
+    }
+  });
+
+  test('provider display names do not mention a vendor router', () => {
+    expect(getProviderById('openai')?.displayName).toBe('Qwen / GLM');
+    expect(getProviderById('deepseek')?.displayName).toBe('DeepSeek');
   });
 });
