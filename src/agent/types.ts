@@ -76,6 +76,12 @@ export interface AgentConfig {
    */
   disableFileGeneration?: boolean;
   /**
+   * Web chat only: after the answer is written, append an ```indicators
+   * block naming the stocks the turn is about (extracted by the fast
+   * model), which the web UI renders as live indicator cards.
+   */
+  inlineIndicatorCards?: boolean;
+  /**
    * Restrict this agent to a subset of tools, by registry name. When set, only
    * matching tools are bound. Used to give a delegated worker a focused toolset.
    */

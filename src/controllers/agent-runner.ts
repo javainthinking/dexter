@@ -1,4 +1,6 @@
 import { Agent } from '../agent/agent.js';
+import { withIndicatorCards } from '../agent/indicator-cards.js';
+import { DEFAULT_MODEL } from '../model/llm.js';
 import type { InMemoryChatHistory } from '../utils/in-memory-chat-history.js';
 import { defaultQueue } from '../utils/message-queue.js';
 import type {
@@ -378,7 +380,13 @@ export class AgentRunnerController {
           return undefined;
         }
         if (event.type === 'done') {
-          finalAnswer = (event as DoneEvent).answer;
+          let answer = (event as DoneEvent).answer;
+          // Web chat: name the stocks this turn is about so the UI can embed
+          // indicator cards. Best-effort; returns the answer unchanged on failure.
+          if (this.agentConfig.inlineIndicatorCards) {
+            answer = await withIndicatorCards(query, answer, this.agentConfig.model ?? DEFAULT_MODEL);
+          }
+          finalAnswer = answer;
           // Drain the office-run touch set: upload every non-empty file
           // the agent touched to R2 in one batch and attach the
           // resulting deliverables to the event. drainOfficeRun is a
@@ -392,7 +400,7 @@ export class AgentRunnerController {
             // ships without download chips. drainOfficeRun already
             // logged the individual failures.
           }
-          const finalEvent = { ...event, deliverables } as DoneEvent;
+          const finalEvent = { ...event, answer, deliverables } as DoneEvent;
           if (chunkOpts?.onDone) {
             // Deep-research signal: a search this invocation, OR one in an
             // earlier chunk (the rehydrated history carries prior tool

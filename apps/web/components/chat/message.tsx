@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useSession } from 'next-auth/react';
 import { Download } from 'lucide-react';
-import { Markdown } from './markdown';
+import { AnswerBody } from './answer-body';
 import { ToolCard, type ToolCardEvent } from './tool-card';
 import { Logo } from '../logo';
 import { useDictionary, format } from '../i18n/dictionary-provider';
@@ -199,7 +199,7 @@ export function AssistantMessage({
               turn.status === 'streaming' && 'caret',
             )}
           >
-            <Markdown>{turn.answer}</Markdown>
+            <AnswerBody answer={turn.answer} />
           </div>
         )}
 
