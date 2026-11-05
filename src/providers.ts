@@ -19,21 +19,29 @@ export interface ProviderDef {
 }
 
 /**
- * OpenAI-family models (the default, unprefixed provider) are served through
- * the MemoryLake router — an OpenAI-compatible endpoint keyed by
- * MEMORYLAKE_API_KEY. Used by the agent (src/model/llm.ts) and the desktop
- * app's LLM gateway (apps/web/app/api/desktop/llm).
+ * Router-hosted models are served through the MemoryLake (memorylake.cn) Model
+ * Router. That covers DeepSeek (the default: deepseek-v4-pro, fast model
+ * deepseek-v4.1-flash) and any unprefixed id such as qwen3.8-max or glm-5.3.
+ * The router account has no GPT models. It is reached — an OpenAI-compatible endpoint
+ * keyed by MEMORYLAKE_LLM_API_KEY. This key is separate from MEMORYLAKE_API_KEY,
+ * which stays the memory-backend key (MEMORYLAKE_BASE_URL). Used by the agent
+ * (src/model/llm.ts), the desktop app's LLM gateway (apps/web/app/api/desktop/llm)
+ * and the stock-page narratives (apps/web/lib/stocks/narrative.ts).
+ * Docs: https://docs.memorylake.cn/features/memory-router/quickstart
  */
-export const MEMORYLAKE_LLM_BASE_URL = 'https://app.memorylake.ai/openai/v1';
+export const MEMORYLAKE_LLM_BASE_URL = 'https://app.memorylake.cn/openapi/memorylake/router/openai/v1';
+export const MEMORYLAKE_LLM_API_KEY_ENV = 'MEMORYLAKE_LLM_API_KEY';
 
 export const PROVIDERS: ProviderDef[] = [
   {
+    // Kept as id 'openai' so saved settings keep resolving; it is the unprefixed
+    // catch-all for MemoryLake router models (qwen*, glm*, …).
     id: 'openai',
-    displayName: 'OpenAI (MemoryLake)',
+    displayName: 'MemoryLake Router',
     modelPrefix: '',
-    apiKeyEnvVar: 'MEMORYLAKE_API_KEY',
-    fastModel: 'gpt-5.4-mini',
-    contextWindow: 1_047_576,
+    apiKeyEnvVar: 'MEMORYLAKE_LLM_API_KEY',
+    fastModel: 'deepseek-v4.1-flash',
+    contextWindow: 256_000,
   },
   {
     id: 'anthropic',
@@ -68,11 +76,12 @@ export const PROVIDERS: ProviderDef[] = [
     contextWindow: 1_000_000,
   },
   {
+    // Served through the MemoryLake router (see MEMORYLAKE_LLM_BASE_URL).
     id: 'deepseek',
-    displayName: 'DeepSeek',
+    displayName: 'DeepSeek (MemoryLake)',
     modelPrefix: 'deepseek-',
-    apiKeyEnvVar: 'DEEPSEEK_API_KEY',
-    fastModel: 'deepseek-flash',
+    apiKeyEnvVar: 'MEMORYLAKE_LLM_API_KEY',
+    fastModel: 'deepseek-v4.1-flash',
     contextWindow: 1_000_000,
   },
   {
@@ -102,7 +111,7 @@ const defaultProvider = PROVIDERS.find((p) => p.id === 'openai')!;
 
 /**
  * Resolve the provider for a given model name based on its prefix.
- * Falls back to OpenAI when no prefix matches.
+ * Falls back to the MemoryLake router catch-all when no prefix matches.
  */
 export function resolveProvider(modelName: string): ProviderDef {
   return (

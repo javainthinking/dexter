@@ -286,14 +286,14 @@ const BANNED = /\b(buy|sell|price target|we recommend|should invest)\b|买入|�
 const WRONG_COUNT = /\b(?:[0-79]|1\d)\s+(?:technical\s+)?indicators\b|\bof\s+(?:[0-79]|1\d)\s+(?:technical\s+)?indicators\b|(?:[0-79]|1\d)\s*[项項](?:指标|指標)?中(?!性)/i;
 
 async function generateAi(facts: NarrativeFacts, lang: NarrativeLang): Promise<string[]> {
-  const apiKey = process.env.MEMORYLAKE_API_KEY;
-  if (!apiKey) throw new Error('MEMORYLAKE_API_KEY not set');
+  const apiKey = process.env.MEMORYLAKE_LLM_API_KEY;
+  if (!apiKey) throw new Error('MEMORYLAKE_LLM_API_KEY not set');
   const res = await fetch(`${MEMORYLAKE_LLM_BASE_URL}/chat/completions`, {
     method: 'POST',
     headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` },
     signal: AbortSignal.timeout(25_000),
     body: JSON.stringify({
-      model: 'gpt-5.4-mini',
+      model: 'deepseek-v4.1-flash',
       response_format: { type: 'json_object' },
       messages: [
         {

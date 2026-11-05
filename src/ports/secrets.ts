@@ -10,6 +10,7 @@
 
 export type SecretName =
   | 'MEMORYLAKE_API_KEY'
+  | 'MEMORYLAKE_LLM_API_KEY'
   | 'ANTHROPIC_API_KEY'
   | 'GOOGLE_API_KEY'
   | 'OLLAMA_BASE_URL'

@@ -18,9 +18,8 @@ import { AgentToolExecutor } from './tool-executor.js';
 import { MemoryManager } from '../memory/index.js';
 import { runMemoryFlush, shouldRunMemoryFlush } from '../memory/flush.js';
 import { resolveProvider } from '../providers.js';
+import { DEFAULT_MODEL } from '../model/llm.js';
 
-
-const DEFAULT_MODEL = 'gpt-5.5';
 // 30 because multi-phase tool chains (e.g. OfficeCLI authoring a
 // designed deck: create → set /theme → batch slides → view issues →
 // validate → screenshot) already consume 6-10 before any upstream

@@ -3,8 +3,8 @@ import { getChatModel } from './llm.js';
 
 describe('OpenAI API routing', () => {
   test('uses the Responses API for the GPT-6 and GPT-5.6 families', () => {
-    const previousApiKey = process.env.MEMORYLAKE_API_KEY;
-    process.env.MEMORYLAKE_API_KEY = 'test-key';
+    const previousApiKey = process.env.MEMORYLAKE_LLM_API_KEY;
+    process.env.MEMORYLAKE_LLM_API_KEY = 'test-key';
 
     try {
       for (const model of ['gpt-6-astra', 'gpt-6-sol', 'gpt-6-luna', 'gpt-5.6-sol']) {
@@ -16,9 +16,9 @@ describe('OpenAI API routing', () => {
       expect(fallback.useResponsesApi).toBe(false);
     } finally {
       if (previousApiKey === undefined) {
-        delete process.env.MEMORYLAKE_API_KEY;
+        delete process.env.MEMORYLAKE_LLM_API_KEY;
       } else {
-        process.env.MEMORYLAKE_API_KEY = previousApiKey;
+        process.env.MEMORYLAKE_LLM_API_KEY = previousApiKey;
       }
     }
   });

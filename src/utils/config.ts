@@ -18,12 +18,17 @@ const MODEL_TO_PROVIDER_MAP: Record<string, string> = {
 
 // Deprecated model IDs to upgrade on load
 const DEPRECATED_MODEL_UPGRADES: Record<string, string> = {
-  'gpt-5.6-sol': 'gpt-6-sol',
-  'gpt-5.6-terra': 'gpt-6-sol',
-  'gpt-5.6-luna': 'gpt-6-luna',
-  // gpt-5.5 stays the default on the MemoryLake gateway, so saved 5.5/5.4
-  // selections are kept as-is rather than moved to gpt-6.
-  'gpt-5.2': 'gpt-5.5',
+  // The memorylake.cn router serves no GPT models, so saved GPT selections
+  // move to the default DeepSeek V4 Pro.
+  'gpt-5.6-sol': 'deepseek-v4-pro',
+  'gpt-5.6-terra': 'deepseek-v4-pro',
+  'gpt-5.6-luna': 'deepseek-v4-pro',
+  'gpt-6-astra': 'deepseek-v4-pro',
+  'gpt-6-sol': 'deepseek-v4-pro',
+  'gpt-6-luna': 'deepseek-v4-pro',
+  'gpt-5.5': 'deepseek-v4-pro',
+  'gpt-5.4': 'deepseek-v4-pro',
+  'gpt-5.2': 'deepseek-v4-pro',
   'claude-sonnet-4-6': 'claude-sonnet-5',
   'claude-opus-4-8': 'claude-opus-5-5',
   'claude-fable-5': 'claude-fable-5-1',
@@ -31,12 +36,13 @@ const DEPRECATED_MODEL_UPGRADES: Record<string, string> = {
   'grok-4-0709': 'grok-4.7',
   'grok-4-1-fast-reasoning': 'grok-4.7',
   'kimi-k2-5': 'kimi-k3',
-  'deepseek-v4-flash': 'deepseek-flash',
+  'deepseek-v4-flash': 'deepseek-v4.1-flash',
+  'deepseek-flash': 'deepseek-v4.1-flash',
 };
 
 interface Config {
   provider?: string;
-  modelId?: string;  // Selected model ID (e.g., "gpt-5.5", "ollama:llama3.1")
+  modelId?: string;  // Selected model ID (e.g., "deepseek-v4-pro", "ollama:llama3.1")
   model?: string;    // Legacy key, kept for migration
   webSearchPreferredProvider?: 'exa' | 'perplexity' | 'tavily';
   memory?: {

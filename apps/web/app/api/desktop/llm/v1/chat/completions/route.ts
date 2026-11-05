@@ -12,8 +12,8 @@ import { MEMORYLAKE_LLM_BASE_URL } from '@dexter/core/providers';
  * upstream response straight back.
  *
  * Upstream is the MemoryLake router (OpenAI-compatible, same as the web
- * agent — see src/providers.ts), keyed by MEMORYLAKE_API_KEY.
- *   DESKTOP_LLM_MODEL     (default gpt-5.5) — what `analyst-default` maps to
+ * agent — see src/providers.ts), keyed by MEMORYLAKE_LLM_API_KEY.
+ *   DESKTOP_LLM_MODEL     (default deepseek-v4-pro) — what `analyst-default` maps to
  *
  * Quota works as on web: the desktop admits each chat turn through
  * POST /api/desktop/turns (the same gate as /api/agent), and a call here
@@ -27,7 +27,7 @@ export const runtime = 'nodejs';
 export const maxDuration = 300;
 
 const MODEL_ALIASES: Record<string, () => string> = {
-  'analyst-default': () => process.env.DESKTOP_LLM_MODEL || 'gpt-5.5',
+  'analyst-default': () => process.env.DESKTOP_LLM_MODEL || 'deepseek-v4-pro',
 };
 
 export async function POST(request: NextRequest): Promise<Response> {
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest): Promise<Response> {
     return NextResponse.json({ error: { message: 'no_admitted_turn', code: 'turn_required' } }, { status: 409 });
   }
 
-  const apiKey = process.env.MEMORYLAKE_API_KEY;
+  const apiKey = process.env.MEMORYLAKE_LLM_API_KEY;
   if (!apiKey) {
     return NextResponse.json({ error: { message: 'gateway_not_configured' } }, { status: 503 });
   }

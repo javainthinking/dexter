@@ -90,7 +90,7 @@ bun install
 cp env.example .env
 
 # Edit .env and add your API keys (if using cloud providers)
-# MEMORYLAKE_API_KEY=your-memorylake-api-key (OpenAI models via the MemoryLake router)
+# MEMORYLAKE_LLM_API_KEY=your-memorylake-cn-router-key (OpenAI models via the MemoryLake router, app.memorylake.cn)
 # ANTHROPIC_API_KEY=your-anthropic-api-key (optional)
 # GOOGLE_API_KEY=your-google-api-key (optional)
 # XAI_API_KEY=your-xai-api-key (optional)

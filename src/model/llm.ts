@@ -13,10 +13,15 @@ import { DEFAULT_SYSTEM_PROMPT } from '@/agent/prompts';
 import type { TokenUsage } from '@/agent/types';
 import { logger } from '@/utils';
 import { classifyError, isNonRetryableError } from '@/utils/errors';
-import { resolveProvider, getProviderById, MEMORYLAKE_LLM_BASE_URL } from '@/providers';
+import {
+  resolveProvider,
+  getProviderById,
+  MEMORYLAKE_LLM_BASE_URL,
+  MEMORYLAKE_LLM_API_KEY_ENV,
+} from '@/providers';
 
-export const DEFAULT_PROVIDER = 'openai';
-export const DEFAULT_MODEL = 'gpt-5.5';
+export const DEFAULT_PROVIDER = 'deepseek';
+export const DEFAULT_MODEL = 'deepseek-v4-pro';
 
 /**
  * Gets the fast model variant for the given provider.
@@ -106,16 +111,18 @@ const MODEL_FACTORIES: Record<string, ModelFactory> = {
       },
     }),
   deepseek: (name, opts) => {
-    // V4 Pro and V4.1 Flash (plus the retired V4 Flash id) support thinking mode.
+    // DeepSeek models are served through the MemoryLake router, which forwards
+    // unlisted params (reasoning_effort, thinking) to DeepSeek unchanged.
+    // V4 Pro and the V4 / V4.1 Flash models support thinking mode.
     // temperature/top_p/presence_penalty/frequency_penalty are ignored in thinking mode.
     const isThinkingModel =
-      name === 'deepseek-v4-pro' || name === 'deepseek-flash' || name === 'deepseek-v4-flash';
+      name === 'deepseek-v4-pro' || name === 'deepseek-v4.1-flash' || name === 'deepseek-v4-flash';
     return new ChatOpenAI({
       model: name,
       ...opts,
-      apiKey: getApiKey('DEEPSEEK_API_KEY'),
+      apiKey: getApiKey(MEMORYLAKE_LLM_API_KEY_ENV),
       configuration: {
-        baseURL: 'https://api.deepseek.com',
+        baseURL: MEMORYLAKE_LLM_BASE_URL,
       },
       ...(isThinkingModel && {
         // reasoning_effort is a top-level param; thinking toggle goes in extra_body
@@ -148,12 +155,12 @@ const DEFAULT_FACTORY: ModelFactory = (name, opts) =>
   new ChatOpenAI({
     model: name,
     ...opts,
-    apiKey: getApiKey('MEMORYLAKE_API_KEY'),
+    apiKey: getApiKey(MEMORYLAKE_LLM_API_KEY_ENV),
     configuration: {
       baseURL: MEMORYLAKE_LLM_BASE_URL,
     },
     // GPT-5.6 and GPT-6 require the Responses API when reasoning and function tools are combined.
-    // The MemoryLake gateway proxies /v1/responses as well as /v1/chat/completions.
+    // The MemoryLake router proxies /v1/responses as well as /v1/chat/completions.
     useResponsesApi: name.startsWith('gpt-5.6-') || name.startsWith('gpt-6-'),
   });
 

@@ -12,12 +12,10 @@ interface Provider {
 }
 
 const PROVIDER_MODELS: Record<string, Model[]> = {
+  // MemoryLake router catch-all (no GPT models on this account).
   openai: [
-    { id: 'gpt-5.5', displayName: 'GPT 5.5' },
-    { id: 'gpt-5.4', displayName: 'GPT 5.4' },
-    { id: 'gpt-6-astra', displayName: 'GPT 6 Astra' },
-    { id: 'gpt-6-sol', displayName: 'GPT 6 Sol' },
-    { id: 'gpt-6-luna', displayName: 'GPT 6 Luna' },
+    { id: 'qwen3.8-max', displayName: 'Qwen 3.8 Max' },
+    { id: 'glm-5.3', displayName: 'GLM 5.3' },
   ],
   anthropic: [
     { id: 'claude-sonnet-5', displayName: 'Sonnet 5' },
@@ -32,7 +30,7 @@ const PROVIDER_MODELS: Record<string, Model[]> = {
   moonshot: [{ id: 'kimi-k3', displayName: 'Kimi K3' }],
   deepseek: [
     { id: 'deepseek-v4-pro', displayName: 'DeepSeek V4 Pro' },
-    { id: 'deepseek-flash', displayName: 'DeepSeek V4.1 Flash' },
+    { id: 'deepseek-v4.1-flash', displayName: 'DeepSeek V4.1 Flash' },
   ],
 };
 

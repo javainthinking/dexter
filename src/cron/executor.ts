@@ -13,6 +13,7 @@ import { dexterPath } from '../utils/paths.js';
 import { saveCronStore } from './store.js';
 import { computeNextRunAtMs } from './schedule.js';
 import type { ActiveHours, CronJob, CronStore } from './types.js';
+import { DEFAULT_MODEL, DEFAULT_PROVIDER } from '../model/llm.js';
 
 const LOG_PATH = dexterPath('gateway-debug.log');
 
@@ -125,8 +126,8 @@ export async function executeCronJob(
   }
 
   // 3. Resolve model
-  const model = job.payload.model ?? (getSetting('modelId', 'gpt-6-astra') as string);
-  const modelProvider = job.payload.modelProvider ?? (getSetting('provider', 'openai') as string);
+  const model = job.payload.model ?? (getSetting('modelId', DEFAULT_MODEL) as string);
+  const modelProvider = job.payload.modelProvider ?? (getSetting('provider', DEFAULT_PROVIDER) as string);
 
   // 4. Build query
   let query = `[CRON JOB: ${job.name}]\n\n${job.payload.message}`;
