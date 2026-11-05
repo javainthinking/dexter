@@ -2,9 +2,9 @@ import Link from 'next/link';
 import { cn } from '../../lib/utils';
 import { getLocalizedPath } from '../../lib/i18n/paths';
 import type { Locale } from '../../lib/i18n/locales';
-import { latestTally, toneOf, type StockSnapshot, type Tone } from '../../lib/stocks/snapshot';
+import { latestTally, toneOf, type StockSnapshot, type Tone } from '../../lib/stocks/snapshot-core';
 import { displaySymbol, stockName, type StockEntry } from '../../lib/stocks/universe';
-import type { NarrativeLang } from '../../lib/stocks/narrative';
+import type { NarrativeLang } from '../../lib/stocks/narrative-types';
 import type { StockCopy } from '../../lib/stocks/copy';
 import { MiniSparkline } from './mini-sparkline';
 

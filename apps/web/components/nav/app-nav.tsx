@@ -4,6 +4,7 @@ import {
   Wallet,
   LineChart,
   Activity,
+  CandlestickChart,
   MessageSquare,
   type LucideIcon,
 } from 'lucide-react';
@@ -58,6 +59,14 @@ export function AppNav() {
       icon: LineChart,
       label: dict.nav?.indicators ?? 'Indicators',
       active: cleanPath === '/indicators' || cleanPath.startsWith('/indicators/'),
+    },
+    {
+      // Per-ticker signal pages (search any US / HK / A-share ticker).
+      key: 'stocks',
+      href: '/stocks',
+      icon: CandlestickChart,
+      label: dict.nav?.stocks ?? 'Stocks',
+      active: cleanPath === '/stocks' || cleanPath.startsWith('/stocks/'),
     },
     {
       // Market is the market-wide surface (gainers/losers today; sector

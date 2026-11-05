@@ -1,4 +1,4 @@
-// next/link for the desktop renderer: in-app paths go through ../router,
+// next/link for the desktop renderer: in-app paths (even target="_blank") go through ../router,
 // external URLs fall through to the browser default (main opens them in
 // the system browser).
 import { forwardRef, type AnchorHTMLAttributes, type MouseEvent } from 'react';
@@ -29,7 +29,9 @@ const Link = forwardRef<HTMLAnchorElement, Props>(
     const handle = (e: MouseEvent<HTMLAnchorElement>) => {
       onClick?.(e);
       if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      if (isExternal(target) || rest.target === '_blank' || rest.download != null) return;
+      // In-app paths stay in the app even with target="_blank" (e.g. the
+      // chat's indicator cards): there is no second tab to open them in.
+      if (isExternal(target) || rest.download != null) return;
       e.preventDefault();
       navigate(target, { replace });
     };

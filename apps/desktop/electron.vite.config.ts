@@ -12,6 +12,9 @@ export default defineConfig({
     // The agent worker (src/agent/worker.ts) is bundled separately by
     // scripts/bundle-worker.mjs so the packaged app needs no node_modules.
     plugins: [externalizeDepsPlugin()],
+    // Keep out/main/agent-worker.js (written by bundle-worker.mjs) across
+    // main rebuilds, so `pnpm dev` doesn't delete the worker it forks.
+    build: { emptyOutDir: false },
   },
   preload: {
     plugins: [externalizeDepsPlugin()],
@@ -25,6 +28,10 @@ export default defineConfig({
     root: resolve(__dirname, 'src/renderer'),
     publicDir: resolve(web, 'public'),
     plugins: [react()],
+    // Shared web modules read server env (e.g. lib/plans.ts's Stripe price
+    // ids). The production build tree-shakes those reads away; dev doesn't,
+    // and there is no `process` in the renderer.
+    define: { 'process.env': '{}' },
     resolve: {
       alias: [
         { find: /^react$/, replacement: webRequire.resolve('react') },

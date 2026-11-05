@@ -19,6 +19,8 @@ const IndicatorsClient = lazy(() => import('@web/app/[lang]/indicators/indicator
 const MarketClient = lazy(() => import('@web/app/[lang]/market/market-client').then((m) => ({ default: m.MarketClient })));
 const FeedbackClient = lazy(() => import('@web/app/[lang]/feedback/feedback-client').then((m) => ({ default: m.FeedbackClient })));
 const ChatRoute = lazy(() => import('@web/app/[lang]/chat/page'));
+const StocksIndexPage = lazy(() => import('./stocks/StocksPages').then((m) => ({ default: m.StocksIndexPage })));
+const StockDetailPage = lazy(() => import('./stocks/StocksPages').then((m) => ({ default: m.StockDetailPage })));
 
 type PortfolioList = Parameters<typeof PortfoliosClient>[0]['initialPortfolios'];
 
@@ -69,6 +71,11 @@ function Routes({ plan, userName }: { plan: PlanId; userName: string | null }) {
   else if (path === '/market') page = <MarketClient />;
   else if (path === '/feedback') page = <FeedbackClient />;
   else if (path === '/chat') page = <ChatRoute />;
+  else if (path === '/stocks') page = <StocksIndexPage />;
+  else if (/^\/stocks\/[^/]+$/.test(path)) {
+    const slug = decodeURIComponent(path.slice('/stocks/'.length));
+    page = <StockDetailPage key={slug} slug={slug} />;
+  }
   else page = <OpenOnWeb path={pathname} />;
 
   return <Suspense fallback={<Splash />}>{page}</Suspense>;

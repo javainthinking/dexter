@@ -21,12 +21,8 @@ import { displaySymbol, stockName, type StockEntry } from './universe';
  *      computed numbers; nothing in it is a forecast or a recommendation.
  */
 
-export type NarrativeLang = 'en' | 'zh-CN' | 'zh-TW';
-
-export interface Narrative {
-  paragraphs: string[];
-  source: 'ai' | 'template';
-}
+import type { Narrative, NarrativeLang } from './narrative-types';
+export type { Narrative, NarrativeLang } from './narrative-types';
 
 interface NarrativeFacts {
   symbol: string;

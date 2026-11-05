@@ -1,7 +1,7 @@
 import type { Locale } from '../i18n/locales';
 import type { DimensionKey } from '../indicators/labels';
-import type { NarrativeLang } from './narrative';
-import type { Tone } from './snapshot';
+import type { NarrativeLang } from './narrative-types';
+import type { Tone } from './snapshot-core';
 import type { StockMarket } from './universe';
 
 /**
